@@ -902,22 +902,21 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     if (!err) err=[self sonixIICSensorWriteByte:0x15 to:0xe0];
     if (!err) err=[self sonixIICSensorWriteByte:0x16 to:0x02];
     if (!err) err=[self sonixIICSensorWriteByte:0x17 to:0x80];
-    if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0x2a];
-    if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0x2a];
-/*
  switch (resolution) {
-        case ResolutionVGA: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0x2a]; break;
-        case ResolutionSIF: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1]; break;
-        case ResolutionQSIF: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1]; break;
+        case ResolutionVGA:
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0x2a];
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0x2a];
+            break;
+        case ResolutionSIF:
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1];
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1];
+            break;
+        case ResolutionQSIF:
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1];
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1];
+            break;
         default: if (!err) err=CameraErrorInternal; break;
     }
-    switch (resolution) {
-        case ResolutionVGA: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0x2a]; break;
-        case ResolutionSIF: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1]; break;
-        case ResolutionQSIF: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1]; break;
-        default: if (!err) err=CameraErrorInternal; break;
-    }
-*/
     if (!err) err=[self sonixAsicWrite1:0x0134 byte1:0xa1];
 
     if (!err) [self setGain:[self gain]];
