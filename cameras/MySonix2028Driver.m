@@ -131,8 +131,8 @@ typedef enum SonixSensorType {
 + (unsigned short) cameraUsbVendorID { return VENDOR_AEL; }
 + (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"AEL Auracam DC-31UC"]; }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
-    CameraError err=[self usbConnectToCam:usbDeviceRef];
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
+    CameraError err=[self usbConnectToCam:usbLocationId configIdx:0];
 //setup connection to camera
     if (err!=CameraErrorOK) return err;
     memset(&grabContext,0,sizeof(SONIXGrabContext));
@@ -151,7 +151,7 @@ typedef enum SonixSensorType {
     [super setShutter:0.5f];
     [super setGain:0.5f];
     [self setCompression:0];
-    return [super startupWithUsbDeviceRef:usbDeviceRef];
+    return [super startupWithUsbLocationId:usbLocationId];
 }
 
 - (void) dealloc {

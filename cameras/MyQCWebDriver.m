@@ -34,10 +34,10 @@
     return ((r==ResolutionCIF)&&(fr==5));
 }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraError err;
 
-    err=[super startupWithUsbDeviceRef:usbDeviceRef];
+    err=[super startupWithUsbLocationId:usbLocationId];
 
     extraBytesInLine=4;
     mainToButtonThreadConnection=NULL;

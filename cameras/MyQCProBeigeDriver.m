@@ -65,11 +65,11 @@
     [super dealloc];
 }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraError err;
     
     //setup connection to camera
-    err=[self usbConnectToCam:usbDeviceRef];
+    err=[self usbConnectToCam:usbLocationId configIdx:0];
     if (err!=CameraErrorOK) return err;
 
     //Do the general camera startup sequence, if any ***
@@ -85,7 +85,7 @@
     [self setWhiteBalanceMode:WhiteBalanceLinear];
     
     //Do the remaining, usual connection stuff
-    err=[super startupWithUsbDeviceRef:usbDeviceRef];
+    err=[super startupWithUsbLocationId:usbLocationId];
     if (err!=CameraErrorOK) return err;
 
     return err;

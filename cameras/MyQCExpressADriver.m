@@ -53,8 +53,8 @@
 + (unsigned short) cameraUsbVendorID { return 0x46d; }
 + (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"QuickCam Express"]; }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
-    CameraError err=[self usbConnectToCam:usbDeviceRef];
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
+    CameraError err=[self usbConnectToCam:usbLocationId configIdx:0];
     if (err!=CameraErrorOK) return err;
     memset(&grabContext,0,sizeof(STV600GrabContext));
     if (![self camBoot]) return CameraErrorUnimplemented;
@@ -69,7 +69,7 @@
     [self setSharpness:1.0f];
     [self setAutoGain:YES];
     extraBytesInLine=0;
-    return [super startupWithUsbDeviceRef:usbDeviceRef];
+    return [super startupWithUsbLocationId:usbLocationId];
 }
 
 - (void) dealloc {

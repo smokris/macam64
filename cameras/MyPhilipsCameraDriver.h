@@ -143,7 +143,7 @@ typedef struct PhilipsGrabContext {	//Everything the grabbing thread internals n
 + (NSString*) cameraName;
 
 //start/stop
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 - (void) dealloc;
 
 //Note that we never read properties directly from the cam but use our own caches for the properties

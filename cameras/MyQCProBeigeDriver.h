@@ -57,7 +57,7 @@
 + (NSString*) cameraName;
 
 - (id) initWithCentral:(id)c;
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 - (void) dealloc;
 
 - (BOOL) supportsResolution:(CameraResolution)res fps:(short)rate;

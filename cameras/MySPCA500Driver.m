@@ -77,9 +77,9 @@ extern UInt8 QTables[];
 }
 
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraError err;
-    err=[self usbConnectToCam:usbDeviceRef];
+    err=[self usbConnectToCam:usbLocationId configIdx:0];
     fps=5;
     resolution=ResolutionVGA;
     if (!err) {
@@ -130,7 +130,7 @@ extern UInt8 QTables[];
         (**pccamImgDesc).depth=24;
         (**pccamImgDesc).clutID=-1;
     }
-    if (err==CameraErrorOK) err=[super startupWithUsbDeviceRef:usbDeviceRef];
+    if (err==CameraErrorOK) err=[super startupWithUsbLocationId:usbLocationId];
     if (err==CameraErrorOK) err=[self openDSCInterface];
     
     return err;
@@ -701,12 +701,6 @@ static bool StartNextIsochRead(SPCA500GrabContext* gCtx, int transferIdx) {
     //We don't really count here - it was dont in [loadTocAndImage] when the camera dsc interface was opened.
     if (!storedFileInfo) return 0;
     return [storedFileInfo count];
-}
-
-- (void) eraseStoredMedia {
-#ifdef VERBOSE
-    NSLog(@"MySPCA500Driver: eraseStoredMedia not implemented");
-#endif
 }
 
 //DSC USB COMMAND FUNCTIONS

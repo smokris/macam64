@@ -74,7 +74,7 @@ typedef struct SPCA500GrabContext {
 + (unsigned short) cameraUsbVendorID;
 + (NSString*) cameraName;
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 - (void) shutdown;
 
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;
@@ -94,7 +94,6 @@ typedef struct SPCA500GrabContext {
 - (BOOL) canStoreMedia;
 - (long) numberOfStoredMediaObjects;
 - (NSDictionary*) getStoredMediaObject:(long)idx;
-- (void) eraseStoredMedia;
 
 
 

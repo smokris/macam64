@@ -62,8 +62,8 @@ static long numFormats=7;
     return [NSArray arrayWithObjects:dict1,dict2,dict3,NULL];
 }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
-    CameraError err=[super startupWithUsbDeviceRef:usbDeviceRef];
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
+    CameraError err=[super startupWithUsbLocationId:usbLocationId];
     if (!err) {
         chunkHeader=8;
         chunkFooter=4;

@@ -30,10 +30,10 @@
 + (unsigned short) cameraUsbVendorID { return 0x46d; }
 + (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"QuickCam Express"]; }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraError err;
 
-    err=[super startupWithUsbDeviceRef:usbDeviceRef];
+    err=[super startupWithUsbLocationId:usbLocationId];
     if (err==CameraErrorOK) {
 /*Start stv600 emulation (or whatever it is). Without it, image data is shifted by one byte which is 0x01 for the first image and 0x00 for the following ones */
         if (![self writeSTVRegister:0x1446 value:1]) {

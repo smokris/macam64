@@ -34,7 +34,7 @@
 //Start/stop
 - (id) initWithError:(CameraError)err central:(MyCameraCentral*)c;
 - (id) initWithCentral:(MyCameraCentral*)c;	//same as above with CameraErrorOK
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 
 //Camera introspection
 - (BOOL) realCamera;

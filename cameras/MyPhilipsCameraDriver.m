@@ -45,8 +45,8 @@
 + (unsigned short) cameraUsbVendorID { return VENDOR_PHILIPS; }
 + (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"abstract Philips generic camera"]; }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
-    CameraError err=[self usbConnectToCam:usbDeviceRef];
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
+    CameraError err=[self usbConnectToCam:usbLocationId configIdx:0];
 //setup connection to camera
      if (err!=CameraErrorOK) return err;
 //set internals
@@ -61,7 +61,7 @@
     [self setGain:0.5f];
     [self setShutter:0.5f];
     [self setAutoGain:YES];
-    return [super startupWithUsbDeviceRef:usbDeviceRef];
+    return [super startupWithUsbLocationId:usbLocationId];
 }
 
 - (void) dealloc {

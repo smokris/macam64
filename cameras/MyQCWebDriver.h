@@ -39,7 +39,7 @@
 
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;	//Does this combination work?
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 - (void) shutdown;
 
 - (void) buttonThread:(id)data;

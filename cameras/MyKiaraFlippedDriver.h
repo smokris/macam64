@@ -27,7 +27,7 @@
 
 + (NSArray*) cameraUsbDescriptions;
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 
 
 @end

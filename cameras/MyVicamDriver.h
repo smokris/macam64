@@ -90,7 +90,7 @@
 
 //Start/stop
 - (id) initWithCentral:(MyCameraCentral*)c;
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 - (void) dealloc;
 
 //Camera introspection

@@ -40,8 +40,8 @@
 
 
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
-    CameraError err=[super startupWithUsbDeviceRef:usbDeviceRef];
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
+    CameraError err=[super startupWithUsbLocationId:usbLocationId];
     camHFlip=YES;
     return err;
 }

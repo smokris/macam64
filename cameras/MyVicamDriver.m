@@ -380,11 +380,11 @@ VicamInfo	gVicamInfo[] =
     return (!err);
 }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId
 {
 	CameraError	err;
 
-	err = [self usbConnectToCam:usbDeviceRef];
+	err = [self usbConnectToCam:usbLocationId configIdx:0];
 	controlChange = YES;
 	
 	//setup connection to camera
@@ -405,7 +405,7 @@ VicamInfo	gVicamInfo[] =
 	// LED - Need to pause before sending this, otherwise it does not seem to work...
 	[self usbIntfWriteCmdWithBRequest:0x55 wValue:3 wIndex:0 buf:0 len:0];
 	
-	return [super startupWithUsbDeviceRef:usbDeviceRef];
+	return [super startupWithUsbLocationId:usbLocationId];
 }
 
 // --------------------------------------------------------------------------------

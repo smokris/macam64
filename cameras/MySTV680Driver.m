@@ -46,10 +46,10 @@
     [super dealloc];
 }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraError err;
     UInt8 cameraInfo[16];
-    err=[self usbConnectToCam:usbDeviceRef];
+    err=[self usbConnectToCam:usbLocationId configIdx:0];
     //setup connection to camera
     if (err!=CameraErrorOK) return err;
     //wake up camera
@@ -63,7 +63,7 @@
     [self setSaturation:0.5];
     [self setSharpness:0.5];
 
-    return [super startupWithUsbDeviceRef:usbDeviceRef];
+    return [super startupWithUsbLocationId:usbLocationId];
 }
 
 - (BOOL) canSetBrightness { return YES; }
@@ -185,7 +185,7 @@
     UInt8 buf[16];
     UInt8 originalPhotoResolution;
     CameraError ret=CameraErrorOK;
-    [self eraseStoredMedia];//Erase images. They are lost anyway and doing so, we get correct stream info
+    [self deleteAll];//Erase images. They are lost anyway and doing so, we get correct stream info
     videoBulkReadsPending=0;
     emptyChunks=NULL;
     fullChunks=NULL;
@@ -593,9 +593,14 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
         imageRep,@"data",@"bitmap",@"type",NULL];
 }
 
-- (void) eraseStoredMedia {
+- (BOOL) canDeleteAll {
+    return YES;
+}
+
+- (CameraError) deleteAll {
 /* I don't know how to do this directly - so the approach is to setup streaming and stop immediately. This will also erase all stored images. */
     UInt16 val=0;
+    CameraError err=CameraErrorOK;
     switch (resolution) {
         case ResolutionCIF:  val=0x0000; break;
         case ResolutionVGA:  val=0x0100; break;
@@ -603,13 +608,20 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
         case ResolutionSIF:  val=0x0300; break;
         default:
 #ifdef VERBOSE
-            NSLog(@"eraseStoredMedia: Invalid resolution!");
+            NSLog(@"deleteAll: Invalid resolution!");
 #endif
-            return;
+            err=CameraErrorInternal;
             break;
     }
-    [self usbWriteCmdWithBRequest:SET_STREAMING_MODE wValue:val wIndex:0 buf:NULL len:0];
-    [self usbWriteCmdWithBRequest:SET_CAMERA_IDLE wValue:0 wIndex:0 buf:NULL len:0];
+    if (err==CameraErrorOK) {
+        if (![self usbWriteCmdWithBRequest:SET_STREAMING_MODE wValue:val wIndex:0 buf:NULL len:0]) {
+            err=CameraErrorUSBProblem;
+        }
+        if (![self usbWriteCmdWithBRequest:SET_CAMERA_IDLE wValue:0 wIndex:0 buf:NULL len:0]) {
+            err=CameraErrorUSBProblem;
+        }
+    }
+    return err;
 }
 
 

@@ -31,7 +31,7 @@
 
 }
 + (NSArray*) cameraUsbDescriptions;
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 - (BOOL) canSetSaturation;					//Override to disable
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;	//Returns if this combination is supported
 - (void) setResolution:(CameraResolution)r fps:(short)fr;	//Set a resolution and frame rate.

@@ -129,10 +129,10 @@ void tmpcopy32(u_char *buffer, int offset, int size, u_char *tmpbuf, long *tmpsi
 static unsigned char yQuanTable511[] = OV511_YQUANTABLE;
 static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     UInt8 buf[16], cid;
     long i;
-    CameraError err=[self usbConnectToCam:usbDeviceRef];
+    CameraError err=[self usbConnectToCam:usbLocationId configIdx:0];
 //setup connection to camera
      if (err!=CameraErrorOK) return err;
 
@@ -259,7 +259,7 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 //    [self setShutter:0.5f];
 //    [self setAutoGain:YES];
 
-    return [super startupWithUsbDeviceRef:usbDeviceRef];
+    return [super startupWithUsbLocationId:usbLocationId];
 }
 
 - (void) dealloc {

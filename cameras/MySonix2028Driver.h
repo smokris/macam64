@@ -87,7 +87,7 @@ typedef struct SONIXGrabContext {
 + (unsigned short) cameraUsbVendorID;
 + (NSString*) cameraName;
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 - (void) dealloc;
 
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;

@@ -43,8 +43,8 @@
     return [self initWithError:CameraErrorOK central:c];
 }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
-    return [super startupWithUsbDeviceRef:usbDeviceRef];
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
+    return [super startupWithUsbLocationId:usbLocationId];
 }
 
 - (BOOL) realCamera {	//Returns if the camera is a real image grabber or a dummy
