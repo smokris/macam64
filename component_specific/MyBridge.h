@@ -140,7 +140,7 @@ typedef enum BridgeClientState {
 
 - (BOOL) canBlackWhiteMode;		//If camera can adjust color/greyscale at all
 - (BOOL) blackWhiteMode;		//The current color mode
-- (void) setBlackWhiteModeMode:(BOOL)m;	//Set the current color mode
+- (void) setBlackWhiteMode:(BOOL)m;	//Set the current color mode
 
 - (BOOL) canSetLed;			//Can the camera toggle its LED
 - (BOOL) isLedOn;			//The current LED status
