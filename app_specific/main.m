@@ -20,8 +20,10 @@
 */
 
 #import <Cocoa/Cocoa.h>
+#import <QuickTime/QuickTime.h>
 
 int main(int argc, const char *argv[])
 {
+    EnterMovies();
     return NSApplicationMain(argc, argv);
 }
