@@ -542,66 +542,65 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
     long               i;
     CameraError        err = CameraErrorOK;
 
-	grabbingThreadRunning = NO;
+    grabbingThreadRunning = NO;
 
-
-	if (![self setupGrabContext])
-	{
+    if (![self setupGrabContext])
+    {
         err = CameraErrorNoMem;
         shouldBeGrabbing=NO;
     }
 
     if (shouldBeGrabbing)
-	{
-		grabbingThreadRunning=YES;
-		[NSThread detachNewThreadSelector:@selector(grabbingThread:) toTarget:self withObject:NULL];    //start grabbingThread
+    {
+        grabbingThreadRunning=YES;
+        [NSThread detachNewThreadSelector:@selector(grabbingThread:) toTarget:self withObject:NULL];    //start grabbingThread
     }
 
 
     while (shouldBeGrabbing)
-	{
-		// wait for ready-to-decode chunks
-		[grabContext.chunkReadyLock lock];				
+    {
+        // wait for ready-to-decode chunks
+        [grabContext.chunkReadyLock lock];
 
-		// decode new chunks or skip if we have stopped grabbing
-		if ((grabContext.numFullBuffers>0)&&(shouldBeGrabbing))
-		{
-			// lock access to chunk list
-			[grabContext.chunkListLock lock];
+        // decode new chunks or skip if we have stopped grabbing
+        if ((grabContext.numFullBuffers>0)&&(shouldBeGrabbing))
+        {
+            // lock access to chunk list
+            [grabContext.chunkListLock lock];
 
-			// discard all but the newest new chunk
-			currChunk = grabContext.fullChunkBuffers[--grabContext.numFullBuffers];
-			for (;grabContext.numFullBuffers > 0; grabContext.numFullBuffers--)
-				grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers++] = grabContext.fullChunkBuffers[grabContext.numFullBuffers-1];
+            // discard all but the newest new chunk
+            currChunk = grabContext.fullChunkBuffers[--grabContext.numFullBuffers];
+            for (;grabContext.numFullBuffers > 0; grabContext.numFullBuffers--)
+                grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers++] = grabContext.fullChunkBuffers[grabContext.numFullBuffers-1];
 
-			// we're done accessing the chunk list.
-			[grabContext.chunkListLock unlock];
+            // we're done accessing the chunk list.
+            [grabContext.chunkListLock unlock];
 
-			// do the work
-			[self decodeChunk:&currChunk];
+            // do the work
+            [self decodeChunk:&currChunk];
 
-			// lock for access to chunk list
-			[grabContext.chunkListLock lock];			
+            // lock for access to chunk list
+            [grabContext.chunkListLock lock];
 
-			// re-insert the used chunk buffer
-			grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers++]=currChunk;
+            // re-insert the used chunk buffer
+            grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers++]=currChunk;
 
-			// we're done accessing the chunk list.
-			[grabContext.chunkListLock unlock];			
+            // we're done accessing the chunk list.
+            [grabContext.chunkListLock unlock];
         }
     }
 
-	// Active wait until grabbing thread stops
-    while (grabbingThreadRunning) {}			
+    // Active wait until grabbing thread stops
+    while (grabbingThreadRunning) { usleep(100000); }
 
-	// grabbingThread doesn't need the context any more since it's done
+    // grabbingThread doesn't need the context any more since it's done
     [self cleanupGrabContext];
 
-	// Forward decoding thread error if sensible
+    // Forward decoding thread error if sensible
     if (!err)
-		return grabContext.err;
-	else
-		return err;
+        return grabContext.err;
+    else
+        return err;
 }
 
 - (void) decodeChunk:(STV600ChunkBuffer*) chunkBuffer
