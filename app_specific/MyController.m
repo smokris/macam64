@@ -381,10 +381,10 @@ static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
             extension=NULL;
             if ([[media objectForKey:@"type"] isEqualToString:@"jpeg"]) {
                 mediaData=[media objectForKey:@"data"];
-                extension=@"tiff";
-            } else if ([[media objectForKey:@"type"] isEqualToString:@"jpeg"]) {
-                mediaData=[[media objectForKey:@"data"] 		TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
                 extension=@"jpg";
+            } else if ([[media objectForKey:@"type"] isEqualToString:@"bitmap"]) {
+                mediaData=[[media objectForKey:@"data"] 		TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
+                extension=@"tiff";
             }
             if (mediaData) {
                 idxFound=NO;
