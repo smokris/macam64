@@ -31,7 +31,6 @@
                 doQuit = id; 
                 doSaveImage = id; 
                 doSavePrefs = id; 
-                doStopGrab = id; 
                 formatChanged = id; 
                 gainChanged = id; 
                 gammaChanged = id; 
@@ -65,6 +64,30 @@
                 sizePopup = NSPopUpButton; 
                 statusText = NSTextField; 
                 whiteBalancePopup = NSPopUpButton; 
+                window = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                movieCompressionChanged = id; 
+                moviePathBrowse = id; 
+                moviePathChanged = id; 
+                movieQualityChanged = id; 
+                movieTimeTypeChanged = id; 
+                openPrefsWindow = id; 
+                snapshotFormatChanged = id; 
+                snapshotQualityChanged = id; 
+            }; 
+            CLASS = MyPrefsWindowController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                movieCompressionPopup = NSPopUpButton; 
+                moviePathField = NSTextField; 
+                movieQualitySlider = NSSlider; 
+                movieTimeTypePopup = NSPopUpButton; 
+                snapshotFormatPopup = NSPopUpButton; 
+                snapshotQualitySlider = NSSlider; 
                 window = NSWindow; 
             }; 
             SUPERCLASS = NSObject; 
