@@ -20,10 +20,13 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#import <QuickTime/QuickTime.h>
+#include <Carbon/Carbon.h>
+#include <QuickTime/QuickTime.h>
+#include "QTDummyPanel.h"
 
 int main(int argc, const char *argv[])
 {
+    RegisterDummyComponent();
     EnterMovies();
     return NSApplicationMain(argc, argv);
 }
