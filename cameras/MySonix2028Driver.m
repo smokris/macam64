@@ -340,7 +340,7 @@ inline static void discardCurrentChunk(SONIXGrabContext* gCtx) {
 }
 
 //Puts the current chunk to the full chunk list and notifies the decoder. Afterwards, there's no current chunk
-//This is probably not the best place for auto exposure calculations, but it is efficient because every valid chunk passes this point. And these calculations don't need much time. So it is done here. The real adjustment commands are sent in the decoding thread.
+//This is a good place for some auto exposure calculations because every valid chunk passes this point. The real decisions are made and the adjustment commands are sent in the decoding thread.
 inline static void passCurrentChunk(SONIXGrabContext* gCtx) {
     if (!(gCtx->fillingChunk)) return;		//Nothing to pass
     {	//Do auto exposure calculations here
@@ -349,10 +349,6 @@ inline static void passCurrentChunk(SONIXGrabContext* gCtx) {
         else gCtx->underexposuredFrames=0;
         if (lightness>SONIX_AE_WANTED_BRIGHTNESS+SONIX_AE_ACCEPTED_TOLERANCE) gCtx->overexposuredFrames++;
         else gCtx->overexposuredFrames=0;
-        if (gCtx->underexposuredFrames>=SONIX_AE_ADJUST_LATENCY) gCtx->autoExposure-=SONIX_AE_ADJUST_STEP;
-        else if (gCtx->overexposuredFrames>=SONIX_AE_ADJUST_LATENCY) gCtx->autoExposure+=SONIX_AE_ADJUST_STEP;
-        if (gCtx->autoExposure>1.0f) gCtx->autoExposure=1.0f;
-        if (gCtx->autoExposure<0.0f) gCtx->autoExposure=0.0f;
     }
     [gCtx->chunkListLock lock];			//Get permission to manipulate chunk lists
     gCtx->fullChunkBuffers[gCtx->numFullBuffers]=gCtx->fillingChunkBuffer;
@@ -685,12 +681,24 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
                 [imageBufferLock unlock];			//release lock
                 [self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer
                 if (autoGain) {
-                    int v=grabContext.autoExposure*50.0f;
-                    [self writeRegisterBlind:0x1b32 value:v<<8];
-                    [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
-                    v=(1.0f-grabContext.autoExposure)*2560.0f;
-                    [self writeRegisterBlind:0x1d25 value:v];
-                    [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
+                    float oldAutoExposure=grabContext.autoExposure;	//Remember old value
+                    float correction=oldAutoExposure*SONIX_AE_MIN_ADJUST_STEP+
+                        (1.0f-oldAutoExposure)*SONIX_AE_MAX_ADJUST_STEP;
+                    if (grabContext.underexposuredFrames>SONIX_AE_ADJUST_LATENCY) {		//too dark?
+                        grabContext.autoExposure-=correction;
+                        if (grabContext.autoExposure<0.0f) grabContext.autoExposure=0.0f;
+                    } else if (grabContext.overexposuredFrames>SONIX_AE_ADJUST_LATENCY) {	//too bright?
+                        grabContext.autoExposure+=correction;
+                        if (grabContext.autoExposure>1.0f) grabContext.autoExposure=1.0f;
+                    }
+                    if (grabContext.autoExposure!=oldAutoExposure) {	//Did something change?
+                        int v=grabContext.autoExposure*50.0f;
+                        [self writeRegisterBlind:0x1b32 value:v<<8];
+                        [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
+                        v=(1.0f-grabContext.autoExposure)*2560.0f;
+                        [self writeRegisterBlind:0x1d25 value:v];
+                        [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
+                    }
                 }
             }
             

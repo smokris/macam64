@@ -32,7 +32,8 @@
 #define SONIX_AE_WANTED_BRIGHTNESS 5000
 #define SONIX_AE_ACCEPTED_TOLERANCE 1000
 #define SONIX_AE_ADJUST_LATENCY 3
-#define SONIX_AE_ADJUST_STEP 0.01
+#define SONIX_AE_MIN_ADJUST_STEP 0.01
+#define SONIX_AE_MAX_ADJUST_STEP 0.02
 
 typedef struct SONIXTransferContext {	//Everything a usb completion callback need to know
     IOUSBIsocFrame frameList[SONIX_FRAMES_PER_TRANSFER];		//The results of the usb frames I received
@@ -64,7 +65,7 @@ typedef struct SONIXGrabContext {
     long framesSinceLastChunk;		//Counter to find out an invalid data stream
     long underexposuredFrames;		//Counter for the sequence of underexposured frames
     long overexposuredFrames;		//Counter for the sequence of overexposured frames
-    float autoExposure;			//Value for shutter/exposure [0..1]
+    float autoExposure;			//Value for shutter/exposure [0..1] - higher means less amplification
 } SONIXGrabContext;
 
 @interface MySonix2028Driver : MyCameraDriver {
