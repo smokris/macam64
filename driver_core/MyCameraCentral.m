@@ -151,7 +151,6 @@ static NSMutableDictionary* prefsDict=NULL;
 //Add Driver classes (this is where we have to add new model classes!)
 
 
-//    [self registerCameraDriver:[MySPCA504Driver class]];
     [self registerCameraDriver:[MyToUCamFunDriver class]];
     [self registerCameraDriver:[MyToUCamProDriver class]];
     [self registerCameraDriver:[MyToUCamPro3DDriver class]];
@@ -166,6 +165,7 @@ static NSMutableDictionary* prefsDict=NULL;
     [self registerCameraDriver:[MyQCExpressBDriver class]];
     [self registerCameraDriver:[MyQCWebDriver class]];
     [self registerCameraDriver:[MyVicamDriver class]];
+    [self registerCameraDriver:[MySPCA504Driver class]];
 
     doNotificationsOnMainThread=nomt;	//Remember this!
     if (doNotificationsOnMainThread) {	//The client wants merged threads: Build a connection to the new thread
