@@ -25,6 +25,8 @@
 
 }
 
++ (NSArray*) cameraUsbDescriptions;
+
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
 
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;	//Returns if this combination is supported

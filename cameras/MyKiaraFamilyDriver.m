@@ -42,6 +42,26 @@ static long numFormats=7;
 
 @implementation MyKiaraFamilyDriver
 
+#define PRODUCT_TOUCAM_PRO 0x0311
+#define PRODUCT_TOUCAM_PRO_3D 0x0312
+#define PRODUCT_QUICKCAM_PRO_4000 0x08b2
+
++ (NSArray*) cameraUsbDescriptions {
+    NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idProduct",
+        [NSNumber numberWithUnsignedShort:PRODUCT_TOUCAM_PRO],@"idVendor",
+        @"Philips ToUCam Pro",@"name",NULL];
+    NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idProduct",
+        [NSNumber numberWithUnsignedShort:PRODUCT_TOUCAM_PRO_3D],@"idVendor",
+        @"Philips ToUCam Pro 3D",@"name",NULL];
+    NSDictionary* dict3=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_PRO_4000],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
+        @"Logitech QuickCam Pro 4000",@"name",NULL];
+    return [NSArray arrayWithObjects:dict1,dict2,dict3,NULL];
+}
+
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
     CameraError err=[super startupWithUsbDeviceRef:usbDeviceRef];
     if (!err) {
