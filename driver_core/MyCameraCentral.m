@@ -46,6 +46,7 @@
 #import "MyQCProBeigeDriver.h"
 #import "MySPCA500Driver.h"
 #include "unistd.h"
+    
 
 void DeviceAdded(void *refCon, io_iterator_t iterator);
 
@@ -136,7 +137,7 @@ static NSMutableDictionary* prefsDict=NULL;
     if (cameras!=NULL) [cameras release]; cameras=NULL;
 }
 
-- (BOOL) startupWithNotificationsOnMainThread:(BOOL)nomt {
+- (BOOL) startupWithNotificationsOnMainThread:(BOOL)nomt recognizeLaterPlugins:(BOOL)rlp{
     MyCameraInfo* 		info=NULL;
     long 			i;
     long 			numTestCameras=0;
@@ -149,12 +150,13 @@ static NSMutableDictionary* prefsDict=NULL;
     SInt32			usbVendor;
     SInt32			usbProduct;
     io_iterator_t		iterator;
-
+    
     NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
     assert(cameraTypes);
     assert(cameras);
 
     doNotificationsOnMainThread=nomt;
+    recognizeLaterPlugins=rlp;
     
     //Add Driver classes (this is where we have to add new model classes!)
     [self registerCameraDriver:[MySPCA500Driver class]];
@@ -212,15 +214,30 @@ static NSMutableDictionary* prefsDict=NULL;
         CFDictionarySetValue(matchingDict,CFSTR(kUSBProductID),numberRef);
         CFRelease(numberRef); numberRef=NULL;
 
-        //Request notification if matching devices are plugged in
-        ret = IOServiceAddMatchingNotification(notifyPort,
-                                               kIOFirstMatchNotification,
+        if (recognizeLaterPlugins) {
+            //Request notification if matching devices are plugged in or...
+            ret = IOServiceAddMatchingNotification(notifyPort,
+                                                   kIOFirstMatchNotification,
+                                                   matchingDict,
+                                                   DeviceAdded,
+                                                   info,
+                                                   &iterator);
+        } else {
+            //... just get the currently connected devices
+            ret = IOServiceGetMatchingServices(masterPort,
                                                matchingDict,
-                                               DeviceAdded,
-                                               info,
                                                &iterator);
-        //Get first devices and trigger notification process
-        DeviceAdded(info, iterator);
+            
+        }
+        if (ret==0) {
+            //Get first devices and trigger notification process
+            DeviceAdded(info, iterator);
+
+            //If we don't later notifications, we can release the enumerator
+            if (!recognizeLaterPlugins) {
+                IOObjectRelease(iterator);
+            }
+        }
     }
     //Try to find out how many test cameras we have
     obj=[self prefsForKey:@"Dummy cameras"];
@@ -558,7 +575,6 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
     io_service_t	usbDeviceRef;
     MyCameraInfo*	dev;
     io_object_t		notification;
-
     while (usbDeviceRef = IOIteratorNext(iterator)) {
         //Setup our data object we use to track the device while it is plugged
         dev=[type copy];
@@ -584,7 +600,6 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
             [dev release];
             continue;
         }
-
         //Remember the notification (we have to release it later)
         [dev setNotification:notification];
 
