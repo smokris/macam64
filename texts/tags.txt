@@ -1,0 +1,7 @@
+Tags:
+	1.1
+		non functional/broken import.
+	INITIAL_INSPECTOR
+		baseline inspector copy; first functional
+		copy; based on a 0.6b1 codebase modified
+		to include the inspector.
