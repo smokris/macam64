@@ -47,10 +47,15 @@ macam - webcam app and QuickTime driver component
     NSAssert(reg23Value>=0,@"Your subclass of MySTV600Sensor must set reg23Value on init");
     NSAssert(i2cIdentityRegister>=0,@"Your subclass of MySTV600Sensor must set i2cIdentityRegister on init");
     NSAssert(i2cIdentityValue>=0,@"Your subclass of MySTV600Sensor must set i2cIdentityValue on init");
+
     [camera writeSTVRegister:0x0423 value:reg23Value];
     ok=[self readI2CRegister:i2cIdentityRegister to:&sensorID];
     if (!ok) return NO;
     if (sensorID!=i2cIdentityValue) return NO;	//It's not our sensor...
+    //Remote debugging: Give out the sensor and camera class to the console
+    NSLog(@"Found image sensor of class:%@, camera of class:%@",
+        NSStringFromClass([self class]),
+        NSStringFromClass([camera class]));
     return YES;
 }
 
