@@ -1,6 +1,7 @@
 /*
-    macam - webcam app and QuickTime driver component
-    Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
+ MyQCExpressADriver.m - macam camera driver class for QuickCam Express (STV600)
+
+ Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -66,6 +67,7 @@
     [self setShutter:1.0f];
     [self setSharpness:1.0f];
     [self setAutoGain:YES];
+    extraBytesInLine=0;
     return [super startupWithUsbDeviceRef:usbDeviceRef];
 }
 
@@ -365,9 +367,10 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     if (*(gCtx->shouldBeGrabbing)) {
         for (i=0;i<STV600_FRAMES_PER_TRANSFER;i++) {			//let's have a look into the usb frames we got
             currFrameLength=myFrameList[i].frActCount;			//Cache this - it won't change and we need it several times
+            
             frameRun=0;
             frameBase=gCtx->transferContexts[transferIdx].buffer+gCtx->bytesPerFrame*i;
-            
+ 
             while (frameRun<currFrameLength) {
                 dataRunCode=(frameBase[frameRun]<<8)+frameBase[frameRun+1];
                 dataRunLength=(frameBase[frameRun+2]<<8)+frameBase[frameRun+3];
@@ -448,7 +451,7 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
     ChangeMyThreadPriority(10);	//We need to update the isoch read in time, so timing is important for us
 
     if (ok) {
-        if (![self usbSetAltInterfaceTo:3 testPipe:1]) {
+        if (![self usbSetAltInterfaceTo:1 testPipe:1]) {	//*** Check this for QuickCam Express! was alt 3!
             if (!grabContext.err) grabContext.err=CameraErrorNoBandwidth;
             ok=NO;
         }
@@ -562,7 +565,7 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
     if (nextImageBuffer!=NULL) {
         [bayerConverter convertFromSrc:chunkBuffer->buffer
                                 toDest:nextImageBuffer
-                           srcRowBytes:[self width]
+                           srcRowBytes:[self width]+extraBytesInLine
                            dstRowBytes:nextImageBufferRowBytes
                                 dstBPP:nextImageBufferBPP];
     }

@@ -1,6 +1,7 @@
 /*
-    macam - webcam app and QuickTime driver component
-    Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
+ MyQCExpressADriver.h - macam camera driver class for QuickCam Express (STV600)
+
+ Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -70,6 +71,14 @@ typedef struct STV600GrabContext {
     BayerConverter* bayerConverter;
     MySTV600Sensor* sensor;
     BOOL grabbingThreadRunning;
+    long extraBytesInLine;	
+
+/*
+
+ Concerning the extraBytesInLine: I only had a QC Express (STV600/HDCS1020), a DexxaCam (STV600/PB0100) and a QuickCam Web (STV610/VV6410) to test. The Dexxa and the Express aren't available to me any more, so this code is quite speculative. The QC Web has four more padding bytes - I don't know if this comes from the VV6410 sensor or from the STV610 controller. Please correct me if I'm wrong. Someone with a  QC Express with a VV6410 sensor? Or a QC Web with a HDCS?
+
+*/
+
 }
 
 + (unsigned short) cameraUsbProductID;
