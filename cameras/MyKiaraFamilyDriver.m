@@ -48,16 +48,16 @@ static long numFormats=7;
 
 + (NSArray*) cameraUsbDescriptions {
     NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idProduct",
-        [NSNumber numberWithUnsignedShort:PRODUCT_TOUCAM_PRO],@"idVendor",
+        [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_TOUCAM_PRO],@"idProduct",
         @"Philips ToUCam Pro",@"name",NULL];
     NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idProduct",
-        [NSNumber numberWithUnsignedShort:PRODUCT_TOUCAM_PRO_3D],@"idVendor",
+        [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_TOUCAM_PRO_3D],@"idProduct",
         @"Philips ToUCam Pro 3D",@"name",NULL];
     NSDictionary* dict3=[NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_PRO_4000],@"idProduct",
         [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_PRO_4000],@"idProduct",
         @"Logitech QuickCam Pro 4000",@"name",NULL];
     return [NSArray arrayWithObjects:dict1,dict2,dict3,NULL];
 }
