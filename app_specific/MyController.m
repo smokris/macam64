@@ -289,7 +289,9 @@ extern NSString* SnapshotQualityPrefsKey;
 - (void) stopMovieRecording {
     if (movieRecorder) {
         NSString* tempMoviePath;
-        double time=(movieRecordStart>0.0)?(CFAbsoluteTimeGetCurrent()-movieRecordStart):1.0f;
+        double time;
+        if (movieRecordStart>0.0) time=(CFAbsoluteTimeGetCurrent()-movieRecordStart)/movieRecordingTimeFactor;
+        else time=1.0f;
         [self setImageOfToolbarItem:RecordMovieToolbarItemIdentifier to:@"RecordMovieToolbarItem"];   
         [movieRecorder finishRecordingAt:time];
         tempMoviePath=[movieRecorder moviePath];
