@@ -105,7 +105,7 @@
     return self;    
 }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraResolution r;
     short fr;
     WhiteBalanceMode wb;
@@ -498,8 +498,38 @@
     return NULL;
 }
 
-- (void) eraseStoredMedia {
+- (BOOL) canGetStoredMediaObjectInfo {
+    return NO;
 }
+
+- (NSDictionary*) getStoredMediaObjectInfo:(long)idx {
+    return NULL;
+}
+
+- (BOOL) canDeleteAll {
+    return NO;
+}
+
+- (CameraError) deleteAll {
+    return CameraErrorUnimplemented;
+}
+
+- (BOOL) canDeleteOne {
+    return NO;
+}
+
+- (CameraError) deleteOne:(long)idx {
+    return CameraErrorUnimplemented;
+}
+
+- (BOOL) canCaptureOne {
+    return NO;
+}
+
+- (CameraError) captureOne {
+    return CameraErrorUnimplemented;
+}
+
 
 - (BOOL) supportsCameraFeature:(CameraFeature)feature {
     BOOL supported=NO;
@@ -684,7 +714,7 @@
     return ok;
 }
 
-- (CameraError) usbConnectToCam:(io_service_t)usbDeviceRef {
+- (CameraError) usbConnectToCam:(UInt32)usbLocationId configIdx:(short)configIdx{
     IOReturn				err;
     IOCFPlugInInterface 		**iodev;		// requires <IOKit/IOCFPlugIn.h>
     SInt32 				score;
@@ -694,22 +724,79 @@
     io_iterator_t			iterator;
     io_service_t			usbInterfaceRef;
     short    				retries;
+    kern_return_t			ret;
+    io_service_t			usbDeviceRef=NULL;
+    mach_port_t				masterPort;
+    CFMutableDictionaryRef 		matchingDict;
     
-//build IOKit plugin interface
+//Get a master port (we should rlease it later...) *******
+
+    ret=IOMasterPort(MACH_PORT_NULL,&masterPort);
+    if (ret) {
+#ifdef VERBOSE
+        NSLog(@"usbConnectToCam: Could not get master port (err:%08x)",ret);
+#endif
+        return CameraErrorInternal;
+    }
+
+//Search device with given location Id
+    matchingDict = IOServiceMatching(kIOUSBDeviceClassName);
+    if (!matchingDict) {
+#ifdef VERBOSE
+            NSLog(@"usbConnectToCam: Could not build matching dict");
+#endif
+            return CameraErrorNoMem;
+    }
+    ret = IOServiceGetMatchingServices(masterPort,
+                                       matchingDict,
+                                       &iterator);
     
-    err = IOCreatePlugInInterfaceForService(usbDeviceRef, kIOUSBDeviceUserClientTypeID, kIOCFPlugInInterfaceID, &iodev, &score);
-    CheckError(err,"usbConnectToCam-IOCreatePlugInInterfaceForService");
-    assert(iodev);
+    if ((ret)||(!iterator)) {
+#ifdef VERBOSE
+        NSLog(@"usbConnectToCam: Could not build iterate services");
+#endif
+        return CameraErrorNoMem;
+    }
+
+    //Go through results
     
-//ask plugin interface for device interface
-    err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID), (LPVOID)&dev);
-    assert(dev);
-    CheckError(err,"usbConnectToCam-QueryInterface1");
+    while (usbDeviceRef=IOIteratorNext(iterator)) {
+        UInt32 locId;
+        
+        err = IOCreatePlugInInterfaceForService(usbDeviceRef, kIOUSBDeviceUserClientTypeID, kIOCFPlugInInterfaceID, &iodev, &score);
+        CheckError(err,"usbConnectToCam-IOCreatePlugInInterfaceForService");
+        if ((!iodev)||(err)) return CameraErrorInternal;	//Bail - find better error code ***
+
+        //ask plugin interface for device interface
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID), (LPVOID)&dev);
+        //IOPlugin interface is done
+        (*iodev)->Release(iodev);
+        if ((!dev)||(err)) return CameraErrorInternal;		//Bail - find better error code ***
+        CheckError(err,"usbConnectToCam-QueryInterface1");
+
+        ret = (*dev)->GetLocationID(dev,&locId);
+        if (ret) {
+#ifdef VERBOSE
+            NSLog(@"could not get location id (err:%08x)",ret);
+#endif
+            (*dev)->Release(dev);
+            return CameraErrorUSBProblem;
+        }
+        if (usbLocationId==locId) break;	//We found our device
+        else {
+            (*dev)->Release(dev);
+            IOObjectRelease(usbDeviceRef);
+            dev=NULL;
+        }            
+    }
+
+    IOObjectRelease(iterator); iterator=NULL;
     
-//IOPlugin interface is done
-    (*iodev)->Release(iodev);
+    if (!dev) return CameraErrorNoCam;
     
-//open device interface. Retry this to get it from Classic (see ClassicUSBDeviceArb.html - simplified mechanism)
+    //Now we should have the correct device interface.    
+
+    //open device interface. Retry this to get it from Classic (see ClassicUSBDeviceArb.html - simplified mechanism)
     for (retries=10;retries>0;retries--) {
         err = (*dev)->USBDeviceOpen(dev);
         CheckError(err,"usbConnectToCam-USBDeviceOpen");
@@ -722,36 +809,38 @@
         dev=NULL;
         return CameraErrorBusy;
     }
-    //do a device reset. Shouldn't harm.
-    err = (*dev)->ResetDevice(dev);
-    CheckError(err,"usbConnectToCam-ResetDevice");
 
-    //Count configurations
-    err = (*dev)->GetNumberOfConfigurations(dev, &numConf);
-    CheckError(err,"usbConnectToCam-GetNumberOfConfigurations");
-    assert(numConf);
-    
-//We'll take the first one...
-    err = (*dev)->GetConfigurationDescriptorPtr(dev, 0, &confDesc);			// get the first config desc (index 0)
-    CheckError(err,"usbConnectToCam-GetConfigurationDescriptorPtr");
-    
-//...and use it
-    retries=3;
-    do {
-        err = (*dev)->SetConfiguration(dev, confDesc->bConfigurationValue);
-        CheckError(err,"usbConnectToCam-SetConfiguration");
-        if (err==kIOUSBNotEnoughPowerErr) {							//no power?
+    if (configIdx>=0) {	//Set configIdx to -1 if you don't want a config to be selected
+        //do a device reset. Shouldn't harm.
+        err = (*dev)->ResetDevice(dev);
+        CheckError(err,"usbConnectToCam-ResetDevice");
+        //Count configurations
+        err = (*dev)->GetNumberOfConfigurations(dev, &numConf);
+        CheckError(err,"usbConnectToCam-GetNumberOfConfigurations");
+        if (numConf<configIdx) {
+            NSLog(@"Invalid configuration index");
+            err = (*dev)->Release(dev);
+            dev=NULL;
+            return CameraErrorInternal;
+        }
+        err = (*dev)->GetConfigurationDescriptorPtr(dev, configIdx, &confDesc);		        	CheckError(err,"usbConnectToCam-GetConfigurationDescriptorPtr");
+        retries=3;
+        do {
+            err = (*dev)->SetConfiguration(dev, confDesc->bConfigurationValue);
+            CheckError(err,"usbConnectToCam-SetConfiguration");
+            if (err==kIOUSBNotEnoughPowerErr) {		//no power?
+                err = (*dev)->Release(dev);
+                CheckError(err,"usbConnectToCam-Release Device (low power)");
+                dev=NULL;
+                return CameraErrorNoPower;
+            }
+        } while((err)&&((--retries)>0));
+        if (err) {					//error opening interface?
             err = (*dev)->Release(dev);
             CheckError(err,"usbConnectToCam-Release Device (low power)");
             dev=NULL;
-            return CameraErrorNoPower;
+            return CameraErrorUSBProblem;
         }
-    } while((err)&&((--retries)>0));
-    if (err) {									//error opening interface?
-        err = (*dev)->Release(dev);
-        CheckError(err,"usbConnectToCam-Release Device (low power)");
-        dev=NULL;
-        return CameraErrorUSBProblem;
     }
 
     interfaceRequest.bInterfaceClass = kIOUSBFindInterfaceDontCare;		// requested class

@@ -108,7 +108,7 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 
 //Start/stop
 - (id) initWithCentral:(id)c;
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 - (void) shutdown; // shuts the driver down or initiates this procedure. You will receive a [cameraHasShutDown] message.
 - (void) stopUsingUSB; //Makes sure no further USB calls to intf and dev are sent.
 - (void) dealloc;
@@ -116,7 +116,7 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 //delegate management
 - (id) delegate;
 - (void) setDelegate:(id)d;
-- (void) enableNotifyOnMainThread;	//Has to be enabled before [startupWithUsbDeviceRef]! Cannot be unset - anymore!
+- (void) enableNotifyOnMainThread;	//Has to be enabled before [startupWithUsbLocationId]! Cannot be unset - anymore!
 - (void) setCentral:(id)c;		//Don't use unless you know what you're doing!
 - (id) central;				//Don't use unless you know what you're doing!
 
@@ -220,8 +220,20 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 //"bitmap"	NSBitmapImageRep object
 //"jpeg"	NSData with JPEG (JFIF) file contents
 
+- (BOOL) canGetStoredMediaObjectInfo;	//does the camera support [getStoredMediaObjectInfo:]?
+- (NSDictionary*) getStoredMediaObjectInfo:(long)idx;	//gets a media object info
+//required fields: type (currently "bitmap","jpeg")
+//required fields for type="bitmap" or "jpeg": "width", "height", recommended: "size"
 
-- (void) eraseStoredMedia;				//Clears the camera media memory
+- (BOOL) canDeleteAll;			//Does the camera support [deleteAll]?
+- (CameraError) deleteAll;		//Clears the camera media memory
+
+- (BOOL) canDeleteOne;			//Does the camera support [deleteOne:]?
+- (CameraError) deleteOne:(long)idx;	//Clears one camera media object
+
+- (BOOL) canCaptureOne;			//Does the camera support [CaptureOne]?
+- (CameraError) captureOne;		//Captures one image (or whatever - camera's current setting)
+
 
 //Camera Custom features
 - (BOOL) supportsCameraFeature:(CameraFeature)feature;
@@ -251,7 +263,8 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (BOOL) usbWriteVICmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len;//Sends a OUT|VENDOR|INTERFACE command 
 
 - (BOOL) usbSetAltInterfaceTo:(short)alt testPipe:(short)pipe;	//Sets the alt interface and optionally tests if a pipe exists
-- (CameraError) usbConnectToCam:(io_service_t)usbDeviceRef;	//Standard open dev, reset device, set first config, open intf 
+- (CameraError) usbConnectToCam:(UInt32)usbLocationId configIdx:(short)configIdx;
+    //Standard open dev, reset device, set config (if>=0), open intf 
 - (void) usbCloseConnection;				//Close and release intf and dev
 - (BOOL) usbGetSoon:(UInt64*)to;			//Get a bus frame number in the near future
 
