@@ -289,8 +289,7 @@
     return YES;
 }
 
-void GetFillingChunk(STV600GrabContext* gCtx)
-{
+void GetFillingChunk(STV600GrabContext* gCtx) {
 	//Make sure there is a filling buffer
     if (gCtx->fillingChunk)
 	{
@@ -355,148 +354,127 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     long frameRun;
     long dataRunCode;
     long dataRunLength;
-
-
-	gCtx->framesSinceLastChunk+=STV600_FRAMES_PER_TRANSFER;
-
-	// USB error handling
-	switch (result)
-	{
-		case 0:
-			// no error is fine with us :-)
-			break;
-
-		case kIOReturnUnderrun:
-		case kIOUSBNotSent2Err:
-		case kIOReturnIsoTooOld:
-			// ignore these errors
-			result = 0;
-			break;
-
-		case kIOReturnOverrun:
-			// we didn't setup the transfer in time
-			*(gCtx->shouldBeGrabbing) = NO;
-			if (! gCtx->err)
-				gCtx->err=CameraErrorTimeout;		
-			break;
-
-		default:
-			*(gCtx->shouldBeGrabbing) = NO;
-			if (!gCtx->err)
-				gCtx->err=CameraErrorUSBProblem;
-
-			// log to console
-			CheckError(result,"isocComplete");
+    
+    
+    gCtx->framesSinceLastChunk+=STV600_FRAMES_PER_TRANSFER;
+    
+    // USB error handling
+    switch (result) {
+        case 0:
+            // no error is fine with us :-)
+            break;
+            
+        case kIOReturnUnderrun:
+        case kIOUSBNotSent2Err:
+        case kIOReturnIsoTooOld:
+            // ignore these errors
+            result = 0;
+            break;
+            
+        case kIOReturnOverrun:
+            // we didn't setup the transfer in time
+            *(gCtx->shouldBeGrabbing) = NO;
+            if (! gCtx->err)
+                gCtx->err=CameraErrorTimeout;		
+                break;
+            
+        default:
+            *(gCtx->shouldBeGrabbing) = NO;
+            if (!gCtx->err)
+                gCtx->err=CameraErrorUSBProblem;
+                
+                // log to console
+                CheckError(result,"isocComplete");
 	}
-
-    if (*(gCtx->shouldBeGrabbing))
-	{
-		//look up which transfer we are
-		while ((!frameListFound)&&(transferIdx<STV600_NUM_TRANSFERS))
-		{
-            if ((gCtx->transferContexts[transferIdx].frameList)==myFrameList)
-				frameListFound=true;
-            else
-				transferIdx++;
+    
+    if (*(gCtx->shouldBeGrabbing)) {
+        //look up which transfer we are
+        while ((!frameListFound)&&(transferIdx<STV600_NUM_TRANSFERS)) {
+            if ((gCtx->transferContexts[transferIdx].frameList)==myFrameList) frameListFound=true;
+            else transferIdx++;
         }
-
-        if (!frameListFound)
-		{
+        
+        if (!frameListFound) {
 #ifdef VERBOSE
             NSLog(@"isocComplete: Didn't find my frameList");
 #endif
             *(gCtx->shouldBeGrabbing)=NO;
         }
     }
-
-    if (*(gCtx->shouldBeGrabbing))
-	{
-		//let's have a look into the usb frames we got
-		for (i=0;i<STV600_FRAMES_PER_TRANSFER;i++)
-		{
-			// cache this - it won't change and we need it several times
-			const long currFrameLength = myFrameList[i].frActCount;
-
+    
+    if (*(gCtx->shouldBeGrabbing)) {
+        //let's have a look into the usb frames we got
+        for (i=0;i<STV600_FRAMES_PER_TRANSFER;i++) {
+            // cache this - it won't change and we need it several times
+            const long currFrameLength = myFrameList[i].frActCount;
+            
             frameRun=0;
             frameBase=gCtx->transferContexts[transferIdx].buffer+gCtx->bytesPerFrame*i;
- 
-            while (frameRun<currFrameLength)
-			{
+            
+            while (frameRun<currFrameLength) {
                 dataRunCode    = (frameBase[frameRun]  <<8)+frameBase[frameRun+1];
                 dataRunLength  = (frameBase[frameRun+2]<<8)+frameBase[frameRun+3];
                 frameRun      += 4;
-
-                switch (dataRunCode)
-				{
+                
+                switch (dataRunCode) {
                     case 0x8005:	//Start of image chunk - sensor change pending (???)
                     case 0xc001:	//Start of image chunk - some exposure error (???)
                     case 0xc005:	//Start of image chunk - some exposure error (???)
-//						NSLog (@"flagged start chunk");
+                                 //						NSLog (@"flagged start chunk");
                     case 0x8001:	//Start of image chunk
                         GetFillingChunk(gCtx);
                         break;
                     case 0x8006:	//End of image chunk - sensor change pending (???)
                     case 0xc002:	//End of image chunk - some exposure error (???)
                     case 0xc006:	//End of image chunk - some exposure error (???)
-//						NSLog (@"flagged end chunk");
+                                 //						NSLog (@"flagged end chunk");
                     case 0x8002:	//End of image chunk
                         gCtx->framesSinceLastChunk=0;
                         FinishFillingChunk(gCtx);
                         break;
                     case 0x4200:	//Data run with some flag set (lighting? timing?)
-//						NSLog (@"flagged data chunk");
+                                 //						NSLog (@"flagged data chunk");
                     case 0x0200:	//Data run
-                        if (gCtx->fillingChunk)
-						{
-                            if (gCtx->fillingChunkBuffer.numBytes+dataRunLength<=gCtx->chunkBufferLength)
-							{
-								// copy the data run to our chunk
+                        if (gCtx->fillingChunk) {
+                            if (gCtx->fillingChunkBuffer.numBytes+dataRunLength<=gCtx->chunkBufferLength) {
+                                // copy the data run to our chunk
                                 memcpy (gCtx->fillingChunkBuffer.buffer
-									+ gCtx->fillingChunkBuffer.numBytes,
-									frameBase+frameRun,
-									dataRunLength);
-
-								gCtx->fillingChunkBuffer.numBytes+=dataRunLength;
+                                        + gCtx->fillingChunkBuffer.numBytes,
+                                        frameBase+frameRun,
+                                        dataRunLength);
+                                gCtx->fillingChunkBuffer.numBytes+=dataRunLength;
+                            } else {
+                                //Buffer Overflow
+                                NSLog (@"buffer overflow");
+                                DiscardFillingChunk(gCtx);
                             }
-							else
-							{
-								//Buffer Overflow
-								NSLog (@"buffer overflow");
-								DiscardFillingChunk(gCtx);
-							}
                         }
                         break;
                     default:
                         NSLog(@"unknown chunk %04x, length: %i",(unsigned short)dataRunCode,dataRunLength);
                         if (dataRunLength) DumpMem(frameBase+frameRun,dataRunLength);
                             break;
-                };
+                } 
                 frameRun+=dataRunLength;
             }
         }
     }
     
-    if (gCtx->framesSinceLastChunk>1000)
-	{
-		// more than a second without data?
+    if (gCtx->framesSinceLastChunk>1000) {
+        // more than a second without data?
         *(gCtx->shouldBeGrabbing)=NO;
-        if (!gCtx->err)
-			gCtx->err=CameraErrorUSBProblem;
+        if (!gCtx->err) gCtx->err=CameraErrorUSBProblem;
     }
-
-    if (*(gCtx->shouldBeGrabbing))
-	{
-		// initiate next transfer
-        if (!StartNextIsochRead(gCtx,transferIdx))
-			*(gCtx->shouldBeGrabbing)=NO;
+    
+    if (*(gCtx->shouldBeGrabbing)) {
+        // initiate next transfer
+        if (!StartNextIsochRead(gCtx,transferIdx)) *(gCtx->shouldBeGrabbing)=NO;
     }
-
-    if (!(*(gCtx->shouldBeGrabbing)))
-	{
-		// on error: collect finished transfers and exit if all transfers have ended
+    
+    if (!(*(gCtx->shouldBeGrabbing))) {
+        // on error: collect finished transfers and exit if all transfers have ended
         gCtx->finishedTransfers++;
-        if ((gCtx->finishedTransfers)>=(STV600_NUM_TRANSFERS))
-		{
+        if ((gCtx->finishedTransfers)>=(STV600_NUM_TRANSFERS)) {
             CFRunLoopStop(CFRunLoopGetCurrent());
         }
     }
@@ -672,68 +650,66 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
     [self cleanupGrabContext];
 
     // Forward decoding thread error if sensible
-    if (!err)
-        return grabContext.err;
-    else
-        return err;
+    if (!err) return grabContext.err;
+    else return err;
 }
 
-- (void) decodeChunk:(STV600ChunkBuffer*) chunkBuffer
-{
-	unsigned char  * bayerData = 0;
-
-	// no need to decode
-    if (!nextImageBufferSet)
-	{
-		NSLog (@"no next image buffer set");
+- (void) decodeChunk:(STV600ChunkBuffer*) chunkBuffer {
+    unsigned char  * bayerData = 0;
+    
+    // no need to decode
+    if (!nextImageBufferSet) {
+        NSLog (@"no next image buffer set");
         return;
-	}
-
-	// lock image buffer access
-	[imageBufferLock lock];
-
-	// check if an output buffer is available
+    }
+    
+    // lock image buffer access
+    [imageBufferLock lock];
+    
+    // check if an output buffer is available
     if (!nextImageBuffer)
-	{
-		// release lock
-		[imageBufferLock unlock];
-		NSLog (@"no next image buffer");
-		return;
-	}
-
-	// quick-hack fix by Mark.Asbach
-	if (resolution==ResolutionCIF)
-		bayerData = chunkBuffer->buffer + 3;
-	else
-		bayerData = chunkBuffer->buffer + 2;
-
-	// convert the data
-	[bayerConverter convertFromSrc: bayerData
-	                        toDest: nextImageBuffer
-	                   srcRowBytes: [self width] + extraBytesInLine
-	                   dstRowBytes: nextImageBufferRowBytes
-	                        dstBPP: nextImageBufferBPP
-	                          flip: hFlip];
-
-	// advance buffer
-	lastImageBuffer         = nextImageBuffer;
-	lastImageBufferBPP      = nextImageBufferBPP;
-	lastImageBufferRowBytes = nextImageBufferRowBytes;
-
-	// nextBuffer has been eaten up
-	nextImageBufferSet      = NO;				
-
-	// release lock
-	[imageBufferLock unlock];				
-
-	// notify delegate about the image. perhaps get a new buffer
+    {
+        // release lock
+        [imageBufferLock unlock];
+        NSLog (@"no next image buffer");
+        return;
+    }
+    
+    // quick-hack fix by Mark.Asbach
+    //disabled because it causes trouble with QCWeb / VV6410 - mattik
+    
+    /*	if (resolution==ResolutionCIF)
+        bayerData = chunkBuffer->buffer + 3;
+    else
+        */
+    bayerData = chunkBuffer->buffer + 2;
+    
+    // convert the data
+    [bayerConverter convertFromSrc: bayerData
+                            toDest: nextImageBuffer
+                       srcRowBytes: [self width] + extraBytesInLine
+                       dstRowBytes: nextImageBufferRowBytes
+                            dstBPP: nextImageBufferBPP
+                              flip: hFlip];
+    
+    // advance buffer
+    lastImageBuffer         = nextImageBuffer;
+    lastImageBufferBPP      = nextImageBufferBPP;
+    lastImageBufferRowBytes = nextImageBufferRowBytes;
+    
+    // nextBuffer has been eaten up
+    nextImageBufferSet      = NO;				
+    
+    // release lock
+    [imageBufferLock unlock];				
+    
+    // notify delegate about the image. perhaps get a new buffer
     [self mergeImageReady];
-
-	// adapt gain if necessary
-	if (autoGain)
-	{
-		[sensor setLastMeanBrightness: [bayerConverter lastMeanBrightness]];
-		[sensor adjustExposure];
+    
+    // adapt gain if necessary
+    if (autoGain) {
+        [sensor setLastMeanBrightness: [bayerConverter lastMeanBrightness]];
+        [sensor adjustExposure];
     }
 }
 

@@ -1088,7 +1088,9 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
 //                                grabContext.tmpBuffer, &grabContext.tmpLength);
                         }
 {
+//To avoid compiler warning when NSLog is commented out - mattik
                         int size = Decompress420(grabContext.tmpBuffer, grabContext.chunkBuffer, NULL, width, height, grabContext.tmpLength);
+#pragma unused (size) 
 //NSLog(@"OV511:org size %d decomp size = %d", grabContext.tmpLength,size);
 }
                     } else {
