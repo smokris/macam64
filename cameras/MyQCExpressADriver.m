@@ -207,6 +207,7 @@
     grabContext.intf=intf;
     grabContext.shouldBeGrabbing=&shouldBeGrabbing;
     grabContext.err=CameraErrorOK;
+    grabContext.framesSinceLastChunk=0;
 //Note: There's no danger of random memory pointers in the structs since we call [cleanupGrabContext] before
     
 //Allocate the locks
@@ -341,7 +342,8 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     long frameRun;
     long dataRunCode;
     long dataRunLength;
-    
+    if (result==kIOReturnUnderrun) result=0;			//Data underrun is not too bad (Jaguar fix)
+    gCtx->framesSinceLastChunk+=STV600_FRAMES_PER_TRANSFER;
     if (result) {						//USB error handling
         *(gCtx->shouldBeGrabbing)=NO;				//We'll stop no matter what happened
         if (!gCtx->err) {
@@ -379,11 +381,14 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                     case 0x8001:	//Start of image chunk
                     case 0x8005:	//Start of image chunk - sensor change pending (???)
                     case 0xc001:	//Start of image chunk - some exposure error (???)
+                    case 0xc005:	//Start of image chunk - some exposure error (???)
                         GetFillingChunk(gCtx);
                         break;
                     case 0x8002:	//End of image chunk
                     case 0x8006:	//End of image chunk - sensor change pending (???)
                     case 0xc002:	//End of image chunk - some exposure error (???)
+                    case 0xc006:	//End of image chunk - some exposure error (???)
+                        gCtx->framesSinceLastChunk=0;
                         FinishFillingChunk(gCtx);
                         break;
                     case 0x0200:	//Data run
@@ -405,6 +410,12 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
             }
         }
     }
+    
+    if (gCtx->framesSinceLastChunk>1000) {	//More than a second without data?
+        *(gCtx->shouldBeGrabbing)=NO;
+        if (!gCtx->err) gCtx->err=CameraErrorUSBProblem;
+    }
+    
     if (*(gCtx->shouldBeGrabbing)) {	//initiate next transfer
         if (!StartNextIsochRead(gCtx,transferIdx)) *(gCtx->shouldBeGrabbing)=NO;
     }

@@ -63,6 +63,7 @@ typedef struct STV600GrabContext {
     NSLock* chunkListLock;		//Mutex for chunkBuffer manipulation
     BOOL* shouldBeGrabbing;		//Ref to the global indicator if the grab should go on
     CameraError err;			//Return value for common errors during grab
+    long framesSinceLastChunk;		//Number of frames since the last chunk was completed
 } STV600GrabContext;
 
 @interface MyQCExpressADriver : MyCameraDriver {
