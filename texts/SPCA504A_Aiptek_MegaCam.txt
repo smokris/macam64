@@ -1,0 +1,194 @@
+A glance at the SPCA504A / Aiptek MiniCam 1.3
+---------------------------------------------
+
+
+The cam registers as a composite device. There are two interfaces: The irst one has the standard control pipe and an isochronous IN pipe. This interface is probably used for live camera applications. The second interface has the standard control pipe, a bulk in pipe (for reading data from the cam), a bulk out pipe (for sending data to the cam - I don't know if this is supported with the Aiptek firmware) and an interrupt pipe (for camera events - can we read the button?). 
+
+The remainder of this text is just about the second interface. For downloading images, only the control pipe and the bulk in pipe are used.
+
+----------------------------------------------------------------------------------------------------------
+
+
+There seem to be registers that can be read and set. The chip register base address seems to be 0x2000. The registers seem to be similar to those of the SPCA500A (except that their base address is 0x8000)
+
+Write register
+--------------
+
+Control request (vendor,interface,out) req:0x00 value:0x00aa index:0xbbbb len=0 (aa=value, bbbb=register address)
+
+Read register
+-------------
+
+Control reauest (vendor,interface,out) req:0x00 value:0x0000 index:0xbbbb len=1 (bbbb=register address) -> returns value
+
+According to the SPCA500A specs, register blocks are:
+
+0x2000 - 0x20ff : global control registers
+0x2100 - 0x21ff : CDSP (image processing) control registers
+0x2200 - 0x22ff : TG (timing generator) control registers
+0x2300 - 0x23ff : Post buffer (transfer memory) control registers 
+0x2400 - 0x24ff : Flash memory control registers
+0x2500 - 0x25ff : USB control registers
+0x2600 - 0x26ff : Audio control registers
+0x2700 - 0x27ff : DRAM control registers
+0x2800 - 0x28ff : JPEG control registers
+0x2900 - 0x29ff : CPU control registers
+0x2a00 - 0x2aff : Synchronous control registers
+0x3000 - 0x9fff?: Internal SRAM test registers / Test mode (???)
+
+The win driver accesses the following banks:
+
+global: 	0x2000 is set to 0x00 at the very start
+post buffer:	0x2301 is set to 0x13 on start. 0x2306 is set to 0x00 (not directly) before and to 0x01 after the image data transfer
+USB control:	0x2501 is set to 0x01 once (not directly) before the data transfer.
+JPEG control: 	The banks from 0x2800 to 0x283f and 0x2840 to 0x287f are set (interleavedly) - this would match setting of the Y and C quantization matrices
+
+There seem to be more sensible commands than getting and setting registers (although they have a request code other than 0x00).
+
+----------------------------------------------------------------------------------------------------------
+
+
+Guesses about the communication to/from the camera:
+
+
+OP						guess (very hypothetical)
+----------------------------------------------------------------------------------------------------------
+
+1. General startup
+------------------
+
+set reg 0x2000 to 0x00				upload operation mode (SPCA500=idle?)
+set reg 0x2301 to 0x13				usb reads flash, post buffer data port 1
+						(precisely: flash memory -> usb)
+
+set reg 0x2800-0x287f				set quantization tables: Y (0x2800-283f) and C (0x2840-0x287f)
+0x2501 -> 0x01					accept EP0 packet? (whatever...)
+0x2306 -> 0x00					No corresponding register in SPCA500, must be something new :)
+
+set reg 0x2501 to 0x01				???
+set reg 0x2306 to 0x00				???
+
+						addresses 0x0000 - 0x0fff = 
+						Access to the firmware-controlled Microcontroller 4K-DRAM?
+
+out: req 0x08 val 0x0000 idx 0x0006		???
+in:  req 0x01 val 0x0000 idx 0x0001 len 1 	called repeatedly - status request / wait for 0x86
+						You have wo wait a bit inside the loop -
+						sleep(1) is slow but works
+
+out: req 0x01 val 0x0000 idx 0x000f		???
+
+
+I don't understand the following block of communication -
+I guess it's for data not stored on Flash memory but in volatile RAM or for cams with other firmware.
+I also issue this commands and ignore the results - just because the win driver does them...
+
+in:  req 0x0b val 0x0000 idx 0x0000 len 2	ask for number of objects
+						(little endian, result is images * 2 - thumb + image?)
+out: req 0x0a val 0x00zz idx 0x000c		zz = number returned from previous call
+in : req 0x0b val 0x0000 idx 0x0004 len 1	query bulk transfer status: 1 = transfer ready, 0 otherwise
+
+Bulk read as in "Get TOC" (see below)
+
+in : req 0x01 val 0x0000 idx 0x0005 len 1
+in : req 0x01 val 0x0001 idx 0x0005 len 1
+in : req 0x01 val 0x0002 idx 0x0005 len 1
+in : req 0x01 val 0x0003 idx 0x0005 len 1
+in : req 0x01 val 0x0000 idx 0x0005 len 1
+in : req 0x01 val 0x0001 idx 0x0005 len 1
+
+----------------------------------------------------------------------------------------------------------
+
+2. Get TOC
+----------
+
+in:  req 0x0b val 0x0000 idx 0x0000 len 2	ask for number of objects
+						(little endian, result is images * 2 - thumb + image?)
+out: req 0x0a val 0x00zz idx 0x000c		zz = number returned from previous call
+						Request buld read of TOC
+in : req 0x0b val 0x0000 idx 0x0004 len 1	query bulk transfer status: 1 = transfer ready, 0 otherwise
+						You have wo wait a bit inside the loop -
+						sleep(1) is slow but works
+
+Bulk read (in blocks of 256 bytes)
+It seems that you have to download the whole TOC. If it doesn't fit exactly, the rest of the last block is filled with junk.
+
+
+----------------------------------------------------------------------------------------------------------
+
+3. Get Image
+------------
+
+in : req 0x0b val 0x0000 idx 0x0005 len 1	Same as "Get Thumbnail"
+in : req 0x01 val 0x0040 idx 0x0005 len 1	Same as "Get Thumbnail"
+out: req 0x0a val 0x00zz idx 0x000d		Request bulk read of image zz
+in : req 0x0b val 0x0000 idx 0x0004 len 1	Same as "Get TOC"
+
+Bulk read (in blocks of 256 bytes). You can get the JPEG file length from the TOC entry. However, the camera tends to send more data than necessary. If you don't read all sent data, you are in trouble because you will get junk in the next bulk read. I don't know how the win driver finds out the exact amount to read (it seems to know that). I currently issue the read commands with a timeout of 0.3 seconds - if they time out, the pipe is clear.
+
+----------------------------------------------------------------------------------------------------------
+
+4. Get Thumbnail
+----------------
+
+in : req 0x0b val 0x0000 idx 0x0005 len 1	Some sort of status request - should return 0x20
+in : req 0x01 val 0x0040 idx 0x0005 len 1	Some sort of status request - should return 0x00
+out: req 0x0c val 0x00zz idx 0x0006		Request bulk read of thumbnail zz
+in : req 0x0b val 0x0000 idx 0x0004 len 1	Same as "Get TOC"
+
+Bulk read (in blocks of 256 bytes)
+I haven't tried this, but it seems that you have to do the same read thing as in "Get Image".
+
+----------------------------------------------------------------------------------------------------------
+
+5. Shutdown
+-----------
+
+set reg 0x2306 to 0x01				Cleanup
+set reg 0x0d04 to 0x00				Cleanup
+
+
+----------------------------------------------------------------------------------------------------------
+
+TOC format
+----------
+
+It seems that the TOC is a structure with a 32 byte entry for each entry:
+
+Offset		Length		Guessed meaning
+0x00		4		"Magic number" - Always ASCII "SUNP" 
+0x04		4		ASCII four digit number
+0x08		4		Format - either "THM " or "JPG "
+--- the first three entries form an ASCII file name ---
+
+0x0c		2		For JPG: Width of image in pixels (little endian), for THM: 0x0000
+0x0e		2		For JPG: Height of image in pixels (little endian), for THM: 0x0000
+0x10		4		Unknown 1 - 0x00000000 in all of my cases
+0x14		4		Unknown 2 - 0x00000000 in all of my cases
+0x18		4		start address (little endian)
+0x1c		4		length (little endian)
+
+----------------------------------------------------------------------------------------------------------
+
+Thumbnail format
+----------------
+
+???
+
+----------------------------------------------------------------------------------------------------------
+
+Image format
+------------
+
+The images are plain JPEG image files. You can store them and read them directly. Thanks, Sunplus!
+
+----------------------------------------------------------------------------------------------------------
+
+Timing
+------
+
+The device seems to be a bit timing sensitive. Sometimes, you cannot issue the commands too fast. I.E. wait-for-ready loops had to be slowed down in my experiments in order not to crash the firmware. I added a sleep(1) into the two waiting 
+
+
+Matthias Krau§
+
