@@ -514,7 +514,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 //This is the "netto" decoder - maybe some work left to do :)
 
 #define PEEK_BITS(num,to) {\
-    if (bitBufCount<num) {do {bitBuf=(bitBuf<<8)|(*(src++)); bitBufCount+=8;} while (bitBufCount<24);}\
+    if (bitBufCount<num){do{bitBuf=(bitBuf<<8)|(*(src++));bitBufCount+=8;}while(bitBufCount<24);}\
     to=bitBuf>>(bitBufCount-num);}
 //PEEK_BITS puts the next <num> bits into the low bits of <to>. when the buffer is empty, it is completely refilled. This strategy tries to reduce memory access. Note that the high bits are NOT set to zero!
 
@@ -525,18 +525,19 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 #define PARSE_PIXEL(val) {\
     PEEK_BITS(10,bits);\
     if ((bits&0x00000200)==0) { EAT_BITS(1); }\
-    else if ((bits&0x00000380)==0x00000280) { EAT_BITS(3); val+=3; }\
-    else if ((bits&0x00000380)==0x00000300) { EAT_BITS(3); val-=3; }\
-    else if ((bits&0x000003c0)==0x00000200) { EAT_BITS(4); val+=8; }\
-    else if ((bits&0x000003c0)==0x00000240) { EAT_BITS(4); val-=8; }\
-    else if ((bits&0x000003c0)==0x000003c0) { EAT_BITS(4); val-=18; }\
-    else if ((bits&0x000003e0)==0x00000380) { EAT_BITS(5); val+=18; }\
+    else if ((bits&0x00000380)==0x00000280) { EAT_BITS(3); val+=3; if (val>255) val=255; }\
+    else if ((bits&0x00000380)==0x00000300) { EAT_BITS(3); val-=3; if (val<0) val=0;}\
+    else if ((bits&0x000003c0)==0x00000200) { EAT_BITS(4); val+=8; if (val>255) val=255;}\
+    else if ((bits&0x000003c0)==0x00000240) { EAT_BITS(4); val-=8; if (val<0) val=0;}\
+    else if ((bits&0x000003c0)==0x000003c0) { EAT_BITS(4); val-=18; if (val<0) val=0;}\
+    else if ((bits&0x000003e0)==0x00000380) { EAT_BITS(5); val+=18; if (val>255) val=255;}\
     else { EAT_BITS(10); val=8*(bits&0x0000001f)+4; }}
 
-#define PUT_PIXEL(val) {\
-    UInt8 ch;\
-    ch=CLAMP(val,0,255);\
-    *(dst++)=ch; }
+
+#define PUT_PIXEL_PAIR {\
+    SInt32 pp=(c1val<<8)+c2val;*/\
+    *((UInt16*)dst)=pp;\
+    dst+=2; }
     
 - (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb {
     UInt8* dst=bayerBuffer+[self width];
@@ -547,7 +548,6 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     UInt32 bitBufCount=0;
     src+=12;
     width-=2;		//The camera's data is actually 2 columns smaller
-
     for (y=0;y<height;y++) {
         PEEK_BITS(8,bits);
         EAT_BITS(8);
@@ -557,9 +557,8 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
         c2val=bits&0x000000ff;
         for (x=0;x<width;x+=2) {
             PARSE_PIXEL(c1val);
-            PUT_PIXEL(c1val);
             PARSE_PIXEL(c2val);
-            PUT_PIXEL(c2val);
+            PUT_PIXEL_PAIR;
         }
         dst+=2;
     }
