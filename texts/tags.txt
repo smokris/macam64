@@ -5,3 +5,5 @@ Tags:
 		baseline inspector copy; first functional
 		copy; based on a 0.6b1 codebase modified
 		to include the inspector.
+	macam-0_8
+		Official release 0.8 of macam.
