@@ -55,7 +55,9 @@
 
 + (unsigned short) cameraUsbProductID { return PRODUCT_SPCA504; }
 + (unsigned short) cameraUsbVendorID { return VENDOR_SUNPLUS; }
-+ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"Dual Mode Camera (SPCA504)"]; }
++ (NSString*) cameraName { 
+    return [MyCameraCentral localizedStringFor:@"Dual Mode Camera (SPCA504)"]; 
+}
 
 
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {

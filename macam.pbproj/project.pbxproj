@@ -117,9 +117,11 @@
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = macam;
+				PROFILING_CODE = YES;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 				WRAPPER_EXTENSION = app;
@@ -132,8 +134,8 @@
 			productName = wc;
 			productReference = 17587328FF379C6511CA2CBB;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -232,8 +234,10 @@
 				F57D11B1C5B26FF6010B00CC,
 				F5F4374202D27B4B018D4F8C,
 				F5F4375402D5299C018D4F8C,
+				F5C5790503049028010B006D,
 			);
 			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		29B97328FDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
@@ -262,6 +266,7 @@
 				F5794DE00285B922010B00CC,
 			);
 			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		29B9732BFDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
@@ -306,8 +311,10 @@
 				F57D11B2C5B26FF6010B00CC,
 				F5F4374302D27B4C018D4F8C,
 				F5F4375202D5294A018D4F8C,
+				F5C5790903049095010B006D,
 			);
 			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		29B9732DFDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
@@ -317,6 +324,7 @@
 				F5AA417901DA8F350157C38C,
 			);
 			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 //290
 //291
@@ -790,8 +798,8 @@
 			productName = component;
 			productReference = F538BD2201E5D23F0166DE0F;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
-<plist version=\"0.9\">
+<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
+<plist version=\"1.0\">
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>English</string>
@@ -864,6 +872,7 @@
 				F5F4375102D52947018D4F8C,
 			);
 			isa = PBXHeadersBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F538BD2501E5D23F0166DE0F = {
 			buildActionMask = 2147483647;
@@ -872,6 +881,7 @@
 				F5BFF545029B59E601B6CBC8,
 			);
 			isa = PBXResourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F538BD2601E5D23F0166DE0F = {
 			buildActionMask = 2147483647;
@@ -915,6 +925,7 @@
 				F5F4374F02D52947018D4F8C,
 			);
 			isa = PBXSourcesBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F538BD2701E5D23F0166DE0F = {
 			buildActionMask = 2147483647;
@@ -926,6 +937,7 @@
 				F538BD3901E5D2DF0166DE0F,
 			);
 			isa = PBXFrameworksBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F538BD2801E5D23F0166DE0F = {
 			buildActionMask = 2147483647;
@@ -933,6 +945,7 @@
 				F55DD851021311680166DE0F,
 			);
 			isa = PBXRezBuildPhase;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F538BD3501E5D2DF0166DE0F = {
 			fileRef = F5AA417601DA8EF70157C38C;
@@ -968,7 +981,6 @@
 			children = (
 				F53B90550240CDFF0166DE75,
 				F563AB4B0247FDC601BF65F7,
-				F55855D202EEF4A20166DE1F,
 			);
 			isa = PBXVariantGroup;
 			name = MyImageDocument.nib;
@@ -1008,18 +1020,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		F55855D102EEF4990166DE1F = {
-			isa = PBXFileReference;
-			name = French;
-			path = French.lproj/MainMenu.nib;
-			refType = 4;
-		};
-		F55855D202EEF4A20166DE1F = {
-			isa = PBXFileReference;
-			name = French;
-			path = French.lproj/MyImageDocument.nib;
-			refType = 4;
 		};
 		F55855D302EEF4A70166DE1F = {
 			isa = PBXFileReference;
@@ -1284,7 +1284,6 @@
 			children = (
 				F55DD83B021311680166DE0F,
 				F563AB4C0247FDC601BF65F7,
-				F55855D102EEF4990166DE1F,
 			);
 			isa = PBXVariantGroup;
 			name = MainMenu.nib;
@@ -1923,6 +1922,34 @@
 			path = texts/Supported_Cameras.html;
 			refType = 4;
 		};
+		F5C5790403049028010B006D = {
+			isa = PBXFileReference;
+			name = MyIntelPCCameraPro.h;
+			path = /Users/dirkx/QX3/macam/cameras/MyIntelPCCameraPro.h;
+			refType = 0;
+		};
+		F5C5790503049028010B006D = {
+			fileRef = F5C5790403049028010B006D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5C5790603049095010B006D = {
+			isa = PBXFileReference;
+			path = MyIntelPCCameraPro.h;
+			refType = 4;
+		};
+		F5C5790703049095010B006D = {
+			isa = PBXFileReference;
+			path = MyIntelPCCameraPro.m;
+			refType = 4;
+		};
+		F5C5790903049095010B006D = {
+			fileRef = F5C5790703049095010B006D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5C80D8D02417A800166DE75 = {
 			isa = PBXFileReference;
 			path = MyScrollView.h;
@@ -2075,6 +2102,8 @@
 				F5B40F5D024BB1D90166DE1F,
 				F5B40F5E024BB1D90166DE1F,
 				F5B40F5F024BB1D90166DE1F,
+				F5C5790603049095010B006D,
+				F5C5790703049095010B006D,
 			);
 			isa = PBXGroup;
 			path = cameras;

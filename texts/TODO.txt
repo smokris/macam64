@@ -15,6 +15,17 @@ Domain - would it make sense to make this a
     do anything but has to be unique; in which
     case de.matthias-krauss.macam is fine and
     a nice historic reminder.
+
+Added a whole slew of SPCA50x based camears in
+MyIntelPCCameraPro. These are not ready for
+public consuption. Perhaps we need an iface in
+which we can limit to just known/production cameras
+and an extra one where you can run time try out
+a driver with a camera by fidling the numbers.
+-> the MyIntelPCCameraPro.h/m files need to be
+   split up and/or we need a slightly more
+   clever recognition system to cope with
+   lists rather than single id pairs.
      
 $Id$
 
