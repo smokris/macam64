@@ -55,6 +55,12 @@
 
 }
 
+//Access to the shared instance of MyCameraCentral
++ (MyCameraCentral*) sharedCameraCentral;
+
+//See if someone has requested (and therefore initialized) MyCameraCentral before
++ (BOOL) isCameraCentralExisting;
+
 //Localization services - we may be in an external application so system services won't work dirctly. Make sure you have an an AutoreleasePool
 + (NSString*) localizedStringFor:(NSString*) str;
 

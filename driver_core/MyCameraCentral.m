@@ -52,6 +52,8 @@ void DeviceAdded(void *refCon, io_iterator_t iterator);
 
 static NSString* driverBundleName=@"net.sourceforge.webcam-osx.common";
 static NSMutableDictionary* prefsDict=NULL;
+MyCameraCentral* sharedCameraCentral=NULL;
+
 
 @interface MyCameraCentral (Private)
 
@@ -65,6 +67,19 @@ static NSMutableDictionary* prefsDict=NULL;
     
 
 @implementation MyCameraCentral
+
+
+//MyCameraCentral is a singleton. Use this function to get the shared instance
++ (MyCameraCentral*) sharedCameraCentral {
+    if (!sharedCameraCentral) sharedCameraCentral=[[MyCameraCentral alloc] init];
+    return sharedCameraCentral;
+}
+
+//See if someone has requested MyCameraCentral before
++ (BOOL) isCameraCentralExisting {
+    return (sharedCameraCentral!=NULL)?YES:NO;
+}
+
 
 //Localization for driver-specific stuff. As a component, the standard stuff won't work...
 
