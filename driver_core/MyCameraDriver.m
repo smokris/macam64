@@ -600,11 +600,11 @@
 
 //USB Tool functions for subclasses
 
-//sends a USB IN|VENDOR|DEVICE command
-- (BOOL) usbReadCmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len {
+//Sends a generic command
+- (BOOL) usbCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len {
     IOReturn err;
     IOUSBDevRequest req;
-    req.bmRequestType=USBmakebmRequestType(kUSBIn, kUSBVendor, kUSBDevice);
+    req.bmRequestType=bReqType;
     req.bRequest=bReq;
     req.wValue=wVal;
     req.wIndex=wIdx;
@@ -613,75 +613,52 @@
     if ((!isUSBOK)||(!intf)) return NO;
     err=(*intf)->ControlRequest(intf,0,&req);
 #ifdef LOG_USB_CALLS
-    NSLog(@"usb read vendor,device req:%i val:%i idx:%i len:%i ret:%i",bReq,wVal,wIdx,len,err);
+    NSLog(@"usb command reqType:%i req:%i val:%i idx:%i len:%i ret:%i",bReqType,bReq,wVal,wIdx,len,err);
     if (len>0) DumpMem(buf,len);
 #endif
-    CheckError(err,"usbReadCmdWithBRequest");
-    if (err==kIOUSBPipeStalled) (*intf)->ClearPipeStall(intf,0);
+    CheckError(err,"usbCmdWithBRequestType");
+    if ((err==kIOUSBPipeStalled)&&(intf)) (*intf)->ClearPipeStall(intf,0);
     return (!err);
+}
+
+//sends a USB IN|VENDOR|DEVICE command
+- (BOOL) usbReadCmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len {
+    return [self usbCmdWithBRequestType:USBmakebmRequestType(kUSBIn, kUSBVendor, kUSBDevice)
+                               bRequest:bReq
+                                 wValue:wVal
+                                 wIndex:wIdx
+                                    buf:buf
+                                    len:len];
 }
 
 //sends a USB IN|VENDOR|INTERFACE command
 - (BOOL) usbReadVICmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len {
-    IOReturn err;
-    IOUSBDevRequest req;
-    req.bmRequestType=USBmakebmRequestType(kUSBIn, kUSBVendor, kUSBInterface);
-    req.bRequest=bReq;
-    req.wValue=wVal;
-    req.wIndex=wIdx;
-    req.wLength=len;
-    req.pData=buf;
-    if ((!isUSBOK)||(!intf)) return NO;
-    err=(*intf)->ControlRequest(intf,0,&req);
-#ifdef LOG_USB_CALLS
-    NSLog(@"usb read vendor,interface req:%i val:%i idx:%i len:%i ret:%i",bReq,wVal,wIdx,len,err);
-    if (len>0) DumpMem(buf,len);
-#endif
-    CheckError(err,"usbReadVICmdWithBRequest");
-    if (err==kIOUSBPipeStalled) (*intf)->ClearPipeStall(intf,0);
-    return (!err);
+    return [self usbCmdWithBRequestType:USBmakebmRequestType(kUSBIn, kUSBVendor, kUSBInterface)
+                               bRequest:bReq
+                                 wValue:wVal
+                                 wIndex:wIdx
+                                    buf:buf
+                                    len:len];
 }
 
 //sends a USB OUT|VENDOR|DEVICE command
 - (BOOL) usbWriteCmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len {
-    IOReturn err;
-    IOUSBDevRequest req;
-    req.bmRequestType=USBmakebmRequestType(kUSBOut, kUSBVendor, kUSBDevice);
-    req.bRequest=bReq;
-    req.wValue=wVal;
-    req.wIndex=wIdx;
-    req.wLength=len;
-    req.pData=buf;
-    if ((!isUSBOK)||(!intf)) return NO;
-    err=(*intf)->ControlRequest(intf,0,&req);
-#ifdef LOG_USB_CALLS
-    NSLog(@"usb write vendor,device req:%i val:%i idx:%i len:%i ret:%i",bReq,wVal,wIdx,len,err);
-    if (len>0) DumpMem(buf,len);
-#endif
-    CheckError(err,"usbWriteCmdWithBRequest");
-    if ((err==kIOUSBPipeStalled)&&(intf)) (*intf)->ClearPipeStall(intf,0);
-    return (!err);
+    return [self usbCmdWithBRequestType:USBmakebmRequestType(kUSBOut, kUSBVendor, kUSBDevice)
+                               bRequest:bReq
+                                 wValue:wVal
+                                 wIndex:wIdx
+                                    buf:buf
+                                    len:len];
 }
 
 //sends a USB OUT|VENDOR|INTERFACE command
 - (BOOL) usbWriteVICmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len {
-    IOReturn err;
-    IOUSBDevRequest req;
-    req.bmRequestType=USBmakebmRequestType(kUSBOut, kUSBVendor, kUSBInterface);
-    req.bRequest=bReq;
-    req.wValue=wVal;
-    req.wIndex=wIdx;
-    req.wLength=len;
-    req.pData=buf;
-    if ((!isUSBOK)||(!intf)) return NO;
-    err=(*intf)->ControlRequest(intf,0,&req);
-#ifdef LOG_USB_CALLS
-    NSLog(@"usb write vendor,interface req:%i val:%i idx:%i len:%i ret:%i",bReq,wVal,wIdx,len,err);
-    if (len>0) DumpMem(buf,len);
-#endif
-    CheckError(err,"usbWriteVICmdWithBRequest");
-    if ((err==kIOUSBPipeStalled)&&(intf)) (*intf)->ClearPipeStall(intf,0);
-    return (!err);
+    return [self usbCmdWithBRequestType:USBmakebmRequestType(kUSBOut, kUSBVendor, kUSBInterface)
+                               bRequest:bReq
+                                 wValue:wVal
+                                 wIndex:wIdx
+                                    buf:buf
+                                    len:len];
 }
 
 - (BOOL) usbSetAltInterfaceTo:(short)alt testPipe:(short)pipe {
