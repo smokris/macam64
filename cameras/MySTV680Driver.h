@@ -72,6 +72,9 @@
 - (void) setGamma:(float)v;
 - (BOOL) canSetSaturation;
 - (void) setSaturation:(float)v;
+- (BOOL) canSetSharpness;
+- (void) setSharpness:(float)v;
+- (BOOL) canSetHFlip;
 
 //White Balance
 - (BOOL) canSetWhiteBalanceMode;

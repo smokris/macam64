@@ -427,9 +427,12 @@ VicamInfo	gVicamInfo[] =
 		case ResolutionQSIF:
 		case ResolutionSQSIF:
 		case ResolutionVGA:
-			result = YES;
+                    result = YES;
 		break;
-	}
+                default:
+                    result = NO;
+                    break;
+        }
 	
 	return (result);
 }
@@ -635,6 +638,9 @@ Why CFRunLoops? Somehow, I didn't manage to get the NSRunLoop stopped after inva
             requestIndex = 0;
             break;
 
+        default:
+            requestIndex = 0;
+            break;
     }
 	
     videoBulkReadsPending=0;

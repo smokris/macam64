@@ -102,6 +102,10 @@
     [bayerConverter setSharpness:[self sharpness]];
 }
 
+- (BOOL) canSetHFlip {
+    return YES;
+}
+
 - (BOOL) supportsResolution:(CameraResolution)res fps:(short)rate {
     switch (res) {
         case ResolutionCIF:
@@ -472,7 +476,8 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
                                         toDest:lastImageBuffer
                                    srcRowBytes:grabWidth
                                    dstRowBytes:lastImageBufferRowBytes
-                                        dstBPP:lastImageBufferBPP];
+                                        dstBPP:lastImageBufferBPP
+                                          flip:hFlip];
                 [imageBufferLock unlock];
                 [self mergeImageReady];
             } else {
@@ -575,7 +580,8 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
                                    toDest:[imageRep bitmapData]
                               srcRowBytes:rawWidth
                               dstRowBytes:[imageRep bytesPerRow]
-                                   dstBPP:[imageRep bitsPerPixel]/8];
+                                   dstBPP:[imageRep bitsPerPixel]/8
+                                     flip:NO];
     }
 //Cleanup
     if (rawBuffer) [rawBuffer release]; rawBuffer=NULL;

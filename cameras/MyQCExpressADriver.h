@@ -108,6 +108,7 @@ typedef struct STV600GrabContext {
 - (BOOL) canSetShutter;
 - (void) setShutter:(float)v;
 - (BOOL) canSetAutoGain;
+- (BOOL) canSetHFlip;
 
 //White Balance
 - (BOOL) canSetWhiteBalanceMode;

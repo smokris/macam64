@@ -94,7 +94,11 @@ sourceFormat specifies serialization type. Examples show first two lines of a 6-
 
 //Do the whole decoding
 - (BOOL) convertFromSrc:(unsigned char*)src toDest:(unsigned char*)dst
+            srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP flip:(BOOL)flip;
+
+- (BOOL) convertFromSrc:(unsigned char*)src toDest:(unsigned char*)dst
             srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP;
+
 
 
 @end

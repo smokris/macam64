@@ -150,7 +150,11 @@
     [bayerConverter setMakeImageStats:ag];
     if (!autoGain) [sensor adjustExposure];	//Make sure they are correct
 }
-        
+
+- (BOOL) canSetHFlip {
+    return YES;
+}
+
 - (BOOL) canSetWhiteBalanceMode { return YES; }
 
 - (BOOL) canSetWhiteBalanceModeTo:(WhiteBalanceMode)newMode {
@@ -578,7 +582,8 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
                                 toDest:nextImageBuffer
                            srcRowBytes:[self width]+extraBytesInLine
                            dstRowBytes:nextImageBufferRowBytes
-                                dstBPP:nextImageBufferBPP];
+                                dstBPP:nextImageBufferBPP
+                                  flip:hFlip];
     }
     lastImageBuffer=nextImageBuffer;			//Copy nextBuffer info into lastBuffer
     lastImageBufferBPP=nextImageBufferBPP;

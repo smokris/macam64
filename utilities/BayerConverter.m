@@ -23,7 +23,7 @@
 @interface BayerConverter (Private)
 - (void) demosaicFrom:(unsigned char*)src type:(short)type srcRowBytes:(long)srcRowBytes;
                //Type: 1=STV680-style, 2=STV600-style
-- (void) postprocessGRBGTo:(unsigned char*)dst dstRowBytes:(long)dstRowBytes dstBPP:(short)dstBPP;
+- (void) postprocessGRBGTo:(unsigned char*)dst dstRowBytes:(long)dstRowBytes dstBPP:(short)dstBPP flip:(BOOL)flip;
 - (void) calcColorStatistics;
 - (void) updateGainsToColorStats;
 - (void) recalcTransferLookup;
@@ -145,14 +145,20 @@
     return ((float)(meanRed+meanGreen+meanBlue))/768.0f;
 }
 
-//Do the whole decoding
+//This is the same as the next function with no flipping - it's kept here for backwards compatibility reasons
 - (BOOL) convertFromSrc:(unsigned char*)src toDest:(unsigned char*)dst
             srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP {
+    [self convertFromSrc:src toDest:dst srcRowBytes:srcRB dstRowBytes:dstRB dstBPP:dstBPP flip:NO];
+}
+
+    //Do the whole decoding
+- (BOOL) convertFromSrc:(unsigned char*)src toDest:(unsigned char*)dst
+            srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP flip:(BOOL)flip {
     if (!rgbBuffer) return NO;
     [self demosaicFrom:src type:sourceFormat srcRowBytes:srcRB];
     if (updateGains||produceColorStats) [self calcColorStatistics];
     if (updateGains) [self updateGainsToColorStats];
-    [self postprocessGRBGTo:dst dstRowBytes:dstRB dstBPP:dstBPP];
+    [self postprocessGRBGTo:dst dstRowBytes:dstRB dstBPP:dstBPP flip:flip];
     return YES;
 }
 
@@ -367,7 +373,7 @@
                     b=CLAMP(b,0,255);\
 }
 
-- (void) postprocessGRBGTo:(unsigned char*)dst dstRowBytes:(long)dstRB dstBPP:(short)dstBPP {
+- (void) postprocessGRBGTo:(unsigned char*)dst dstRowBytes:(long)dstRB dstBPP:(short)dstBPP flip:(BOOL)flip{
 /* Does someone have a good idea how to do some speed optimizations in here? */
     unsigned char* src1Run=rgbBuffer;
     unsigned char* src2Run=rgbBuffer+3*sourceWidth;
@@ -390,8 +396,16 @@
     unsigned char* dst2Run=dst1Run+dstRB;
 
     long srcSkip=6*sourceWidth-3*width;			//Skip two lines of source minus the bytes we add internally
-    long dstSkip=2*dstRB-width*dstBPP;			//Skip two lines of destination minus the bytes we add internally	
+    long dstSkip=2*dstRB-width*dstBPP;			//Skip two lines of destination minus the bytes we add internally
 
+    short writeMode=dstBPP;				//To distinguish the way the pixels are written
+    if (flip) {
+        writeMode+=256;
+        dstSkip+=2*dstBPP*width;
+        dst1Run+=width*dstBPP;
+        dst2Run+=width*dstBPP;
+    }
+    
 //The following two nested loops do the postprocessing for all non-border pixels. Borders follow afterwards
     for (y=height/2;y>0;y--) {
         for (x=width/2;x>0;x--) {
@@ -469,20 +483,39 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
                 NOCOLORPROCESS(r4,g4,b4);
             }                
             //Step 4: Assemble values and write to destination, update destination pointers
-            if (dstBPP==4) {
-                *((unsigned long*)(dst1Run))=0xff000000+(r1<<16)+(g1<<8)+(b1);
-                *((unsigned long*)(dst1Run+4))=0xff000000+(r2<<16)+(g2<<8)+(b2);
-                *((unsigned long*)(dst2Run))=0xff000000+(r3<<16)+(g3<<8)+(b3);
-                *((unsigned long*)(dst2Run+4))=0xff000000+(r4<<16)+(g4<<8)+(b4);
-                dst1Run+=8;
-                dst2Run+=8;
-            } else {
-                *((unsigned long*)(dst1Run))=(r1<<24)+(g1<<16)+(b1<<8)+r2;
-                *((unsigned short*)(dst1Run+4))=(g2<<8)+b2;
-                *((unsigned long*)(dst2Run))=(r3<<24)+(g3<<16)+(b3<<8)+r4;
-                *((unsigned short*)(dst2Run+4))=(g4<<8)+b4;
-                dst1Run+=6;
-                dst2Run+=6;
+            switch (writeMode) {
+                case 3:
+                    *((unsigned long* )(dst1Run  ))=(r1<<24)+(g1<<16)+(b1<<8)+r2;
+                    *((unsigned short*)(dst1Run+4))=                  (g2<<8)+b2;
+                    *((unsigned long* )(dst2Run  ))=(r3<<24)+(g3<<16)+(b3<<8)+r4;
+                    *((unsigned short*)(dst2Run+4))=                  (g4<<8)+b4;
+                    dst1Run+=6;
+                    dst2Run+=6;
+                    break;
+                case 4:
+                    *((unsigned long*)(dst1Run  ))=0xff000000+(r1<<16)+(g1<<8)+(b1);
+                    *((unsigned long*)(dst1Run+4))=0xff000000+(r2<<16)+(g2<<8)+(b2);
+                    *((unsigned long*)(dst2Run  ))=0xff000000+(r3<<16)+(g3<<8)+(b3);
+                    *((unsigned long*)(dst2Run+4))=0xff000000+(r4<<16)+(g4<<8)+(b4);
+                    dst1Run+=8;
+                    dst2Run+=8;
+                    break;
+                case 259:
+                    dst1Run-=6;
+                    dst2Run-=6;
+                    *((unsigned long* )(dst1Run  ))=(r2<<24)+(g2<<16)+(b2<<8)+r1;
+                    *((unsigned short*)(dst1Run+4))=                  (g1<<8)+b1;
+                    *((unsigned long* )(dst2Run  ))=(r4<<24)+(g4<<16)+(b4<<8)+r3;
+                    *((unsigned short*)(dst2Run+4))=                  (g3<<8)+b3;
+                    break;
+                case 260:
+                    dst1Run-=8;
+                    dst2Run-=8;
+                    *((unsigned long*)(dst1Run  ))=0xff000000+(r2<<16)+(g2<<8)+(b2);
+                    *((unsigned long*)(dst1Run+4))=0xff000000+(r1<<16)+(g1<<8)+(b1);
+                    *((unsigned long*)(dst2Run  ))=0xff000000+(r4<<16)+(g4<<8)+(b4);
+                    *((unsigned long*)(dst2Run+4))=0xff000000+(r3<<16)+(g3<<8)+(b3);
+                    break;
             }
         }
         src1Run+=srcSkip;
@@ -495,22 +528,44 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
 
     //All inner pixels are done now. If we need to use borders as well, do it now. Some sensors give us additional borders to interpolate, others do not...
     if (topBorder) {
+        int topBorderWidth=width+((leftBorder)?1:0);
         src1Run=rgbBuffer+((leftBorder)?0:3);
         dst1Run=dst;
-        for (x=width+((leftBorder)?1:0);x>0;x--) {
+        if (flip) dst1Run+=topBorderWidth*dstBPP;
+        for (x=topBorderWidth;x>0;x--) {
             r1=*(src1Run++);
             g1=*(src1Run++);
             b1=*(src1Run++);
             COLORPROCESS(r1,g1,b1);
-            if (dstBPP==4) *(dst1Run++)=0xff;
-            *(dst1Run++)=r1;
-            *(dst1Run++)=g1;
-            *(dst1Run++)=b1;
+            switch (writeMode) {
+                case 3:
+                    *(dst1Run++)=r1;
+                    *(dst1Run++)=g1;
+                    *(dst1Run++)=b1;
+                    break;
+                case 4:
+                    *(dst1Run++)=0xff;
+                    *(dst1Run++)=r1;
+                    *(dst1Run++)=g1;
+                    *(dst1Run++)=b1;
+                case 259:
+                    *(--dst1Run)=b1;
+                    *(--dst1Run)=g1;
+                    *(--dst1Run)=r1;
+                    break;
+                case 260:
+                    *(--dst1Run)=b1;
+                    *(--dst1Run)=g1;
+                    *(--dst1Run)=r1;
+                    *(--dst1Run)=0xff;
+                    break;
+            }
         }
     }
     if (leftBorder) {
         src1Run=rgbBuffer+((topBorder)?0:(sourceWidth*3));
         dst1Run=dst;
+        if (flip) dst1Run+=(sourceWidth-1)*dstBPP;	//Flip? -> Move left to right border
         for (y=height+((topBorder)?1:0);y>0;y--) {
             r1=src1Run[0];
             g1=src1Run[1];
@@ -531,22 +586,44 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
         }
     }
     if (bottomBorder) {
+        int bottomBorderWidth=width+((leftBorder)?1:0)+((rightBorder)?1:0);
         src1Run=rgbBuffer+(sourceHeight-1)*(sourceWidth*3);	//Last line in rgbBuffer
         dst1Run=dst+(sourceHeight-1)*dstRB;			//Last line in dest buffer
-        for (x=width+((leftBorder)?1:0)+((rightBorder)?1:0);x>0;x--) {
+        if (flip) dst1Run+=bottomBorderWidth*dstBPP;
+        for (x=bottomBorderWidth;x>0;x--) {
             r1=*(src1Run++);
             g1=*(src1Run++);
             b1=*(src1Run++);
             COLORPROCESS(r1,g1,b1);
-            if (dstBPP==4) *(dst1Run++)=0xff;
-            *(dst1Run++)=r1;
-            *(dst1Run++)=g1;
-            *(dst1Run++)=b1;
+            switch (writeMode) {
+                case 3:
+                    *(dst1Run++)=r1;
+                    *(dst1Run++)=g1;
+                    *(dst1Run++)=b1;
+                    break;
+                case 4:
+                    *(dst1Run++)=0xff;
+                    *(dst1Run++)=r1;
+                    *(dst1Run++)=g1;
+                    *(dst1Run++)=b1;
+                case 259:
+                    *(--dst1Run)=b1;
+                    *(--dst1Run)=g1;
+                    *(--dst1Run)=r1;
+                    break;
+                case 260:
+                    *(--dst1Run)=b1;
+                    *(--dst1Run)=g1;
+                    *(--dst1Run)=r1;
+                    *(--dst1Run)=0xff;
+                    break;
+            }
         }
     }
     if (rightBorder) {
         src1Run=rgbBuffer+(sourceWidth-1)*3;			//Last column in rgbBuffer
         dst1Run=dst+(sourceWidth-1)*dstBPP;			//Last column in dset buffer
+        if (flip) dst-=(sourceWidth-1)*dstBPP;			//Flip? -> move right to left border
         for (y=height+((topBorder)?1:0)+((bottomBorder)?1:0);y>0;y--) {
             r1=src1Run[0];
             g1=src1Run[1];
