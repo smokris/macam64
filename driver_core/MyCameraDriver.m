@@ -878,10 +878,11 @@
                 bufRun+=lastImageBufferRowBytes-width*lastImageBufferBPP;
             }
             time=CFAbsoluteTimeGetCurrent();
-            h=(((unsigned long)time)/(60*60))%24;
-            m=(((unsigned long)time)/(60))%60;
-            s=((unsigned long)time)%60;
-            f=((unsigned long)(time*100.0f))%100;
+            h=(((long long)time)/(60*60))%24;
+            m=(((long long)time)/(60))%60;
+            s=((long long)time)%60;
+            time*=100.0;
+            f=((long long)(time))%100;
             sprintf(cstr,"%02i:%02i:%02i:%02i",h,m,s,f);
             MiniDrawString(lastImageBuffer,lastImageBufferBPP,lastImageBufferRowBytes,10,10,cstr);
         }
