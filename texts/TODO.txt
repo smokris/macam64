@@ -14,7 +14,12 @@ Domain - would it make sense to make this a
     settings field - or does the lattter not
     do anything but has to be unique; in which
     case de.matthias-krauss.macam is fine and
-    a nice historic reminder.
+    a nice historic reminder. (Dirk, you're 
+    right. I've changed it to net.sourceforge.
+    webcam-osx.common and .application. If there
+    we need more bundle names in the future,
+    they can be distinguished by the last part
+    of their name. --Matthias, 22.1.2003)
 
 Added a whole slew of SPCA50x based camears in
 MyIntelPCCameraPro. These are not ready for
@@ -25,7 +30,20 @@ a driver with a camera by fidling the numbers.
 -> the MyIntelPCCameraPro.h/m files need to be
    split up and/or we need a slightly more
    clever recognition system to cope with
-   lists rather than single id pairs.
+   lists rather than single id pairs. (I'm afraid
+   most of the SPCA50x cameras will not work this
+   way. The 500A, 501, 504A, 505, 506 and 508 have
+   some things in common, but nevertheless, they
+   differ substantially. For some of them, there
+   are even different firmwares to handle separately.
+   I've merged some of the vendor/product-only
+   classes into their parent classes by using the
+   new dictionary-based matching mechanism. I'm also
+   sceptical concerning the user-side fiddling of the
+   vendor/product id's - if they can't compile macam
+   on their own, this might result in very high email
+   traffic - at least too much for me... -Matthias,
+   22.1.2003)
      
 $Id$
 
