@@ -25,6 +25,8 @@
 #import "MyMovieRecorder.h"
 #import "MyImageDocument.h"
 
+#import "BayerConverter.h"
+#import "RGBScaler.h"
 
 static NSString* 	ControllerToolbarIdentifier	= @"Controller Toolbar Identifier";
 static NSString* 	PlayToolbarItemIdentifier	= @"Play Video Item Identifier";
@@ -63,9 +65,18 @@ extern NSString* SnapshotQualityPrefsKey;
 
 - (void) awakeFromNib {
     NSString* disclaimerOKVersion;
+    NSString* shortVersion;
+
+/*
+
+The following is a workaround for a quite weird thing. If there are classes that were not instantiated before the QuickTime component loads, the app will quit with a strange error message: "objc: thread is already initializing this class!". No crash log, nothing. Just a quit with error code 1. I guess its cause is that these classes have two implementations loaded. And I guess it's a rare bug in Apple's code (might also be mine, I couldn't find anything in the web. Please someone tell me what's going on... 
+ 
+*/
+    [[[BayerConverter alloc] init] release];
+    [[[RGBScaler alloc] init] release];
 
     //Get our short version string
-    NSString* shortVersion=[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    shortVersion=[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
 
     //Create a fallback preference if no version was ever used
     NSDictionary* dict=[NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:0.0f] forKey:@"DisclaimerOKVersion"];
@@ -130,7 +141,7 @@ extern NSString* SnapshotQualityPrefsKey;
     [previewView setImage:image];
     [window makeKeyAndOrderFront:self];
     [window display];
-    [central startupWithNotificationsOnMainThread:YES];
+    [central startupWithNotificationsOnMainThread:YES recognizeLaterPlugins:YES];
 }
 
 - (void) dealloc {
