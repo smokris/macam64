@@ -15,7 +15,6 @@
  You should have received a copy of the GNU General Public License
  along with this program; if not, write to the Free Software
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- $Id$
 
  $Id$
  */
@@ -26,8 +25,8 @@
 sourceFormat specifies serialization type. Examples show first two lines of a 6-pixel-wide image
 
 1 = GRBG Bayer, sent lienar per line, inversed matrix order.    RRRGGG GGGBBB (STV680-type, defaults to this)
-2 = GRBG Bayer, sent interlaced, correct matrix order.          GRGRGR BGBGBG (STV600-type)
-
+2 = GRBG Bayer, sent interleaved, correct matrix order.         GRGRGR BGBGBG (STV600-type)
+3 = GRBG Bayer, ?/green line, red/blue line			xGxGxG RBRBRB (QuickCam Pro subsampled-style)
 */
 
 @interface BayerConverter : NSObject {
@@ -92,9 +91,14 @@ sourceFormat specifies serialization type. Examples show first two lines of a 6-
 - (void) setMakeImageStats:(BOOL)on;	 //Enable/Disable construction of average brightness
 - (float) lastMeanBrightness;    //Only valid if imageStats are enabled and an image has been processed
 
+
+//Dummy decoding (copies b&w image - for debugging)
+- (BOOL) copyFromSrc:(unsigned char*)src toDest:(unsigned char*)dst srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP;
+
 //Do the whole decoding
 - (BOOL) convertFromSrc:(unsigned char*)src toDest:(unsigned char*)dst
             srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP flip:(BOOL)flip;
+
 
 
 

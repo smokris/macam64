@@ -81,7 +81,7 @@
 }
 
 - (void) setSourceFormat:(short)fmt {
-    if ((fmt<1)||(fmt>2)) return;
+    if ((fmt<1)||(fmt>3)) return;
     sourceFormat=fmt;
 }
 
@@ -150,6 +150,27 @@
     return ((float)(meanRed+meanGreen+meanBlue))/768.0f;
 }
 
+- (BOOL) copyFromSrc:(unsigned char*)src toDest:(unsigned char*)dst srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP {
+    int width =MIN(sourceWidth ,destinationWidth );
+    int height=MIN(sourceHeight,destinationHeight);
+    int srcRowSkip=sourceWidth-width;
+    int dstRowSkip=dstRB-width*dstBPP;
+    int x,y;
+    for (y=0;y<height;y++) {
+        for (x=0;x<height;x++) {
+            if (dstBPP==4) *(dst++)=255;
+            *(dst++)=*src;
+            *(dst++)=*src;
+            *(dst++)=*(src++);
+        }
+        src+=srcRowSkip;
+        dst+=dstRowSkip;
+    }
+    return YES;
+}
+
+
+
 //Do the whole decoding
 - (BOOL) convertFromSrc:(unsigned char*)src toDest:(unsigned char*)dst
             srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP flip:(BOOL)flip {
@@ -184,36 +205,43 @@
     long dstSkip=sourceWidth*3;
 
     //source type specific variables 
-    long firstComponentInRow,secondComponentInRow,componentStep,srcSkip;
+    long componentStep,srcSkip;
     switch (type) {
         case 1:	//Components planar in half row, order swapped (STV680-style)
-            firstComponentInRow=sourceWidth/2;
-            secondComponentInRow=0;
             componentStep=1;
-            srcSkip=2*srcRowBytes-((sourceWidth-2)/2);
+            green1Run =src+sourceWidth/2;
+            red1Run   =src;
+            blue1Run  =src+srcRowBytes+sourceWidth/2;
+            green2Run =src+srcRowBytes;
             break;
         case 2:	//Interleaved data (STV600-style)
-            firstComponentInRow=0;
-            secondComponentInRow=1;
             componentStep=2;
-            srcSkip=2*srcRowBytes-(sourceWidth-2);
+            green1Run =src;
+            red1Run   =src+1;
+            blue1Run  =src+srcRowBytes;
+            green2Run =src+srcRowBytes+1;
+            break;
+        case 3:	//Row 1: xGxG, Row 2: RBRB (QuickCam Pro subsampled-style)
+            componentStep=2;
+            red1Run   =src+srcRowBytes+1;
+            green1Run =src+1;
+            green2Run =src+1;
+            blue1Run  =src+srcRowBytes;
             break;
         default: //Assume type 2
 #ifdef VERBOSE
             NSLog(@"BayerConverter: Unknown bayer data type: %i",type);
 #endif VERBOSE
-            firstComponentInRow=0;
-            secondComponentInRow=1;
             componentStep=2;
-            srcSkip=2*srcRowBytes-(sourceWidth-2);
+            green1Run =src;
+            red1Run   =src+1;
+            blue1Run  =src+srcRowBytes;
+            green2Run =src+srcRowBytes+1;
             break;
     }
 
     //init data run pointers
-    green1Run =componentStep+src+firstComponentInRow;
-    red1Run   =componentStep+src+secondComponentInRow;
-    blue1Run  =componentStep+src+srcRowBytes+firstComponentInRow;
-    green2Run =componentStep+src+srcRowBytes+secondComponentInRow;
+    srcSkip =2*srcRowBytes-(((sourceWidth-2)/2)*componentStep);
     green3Run =green1Run+2*srcRowBytes;
     red2Run   =red1Run+2*srcRowBytes;
     blue2Run  =blue1Run+2*srcRowBytes;
@@ -242,7 +270,7 @@
     *(dst1Run++)=*red1Run;
     *(dst1Run++)=(*green1Run+*green2Run)/2;
     *(dst1Run++)=*blue1Run;
-//Reset the src data run pointers we chnaged in the first row - dst1RUn is ok now
+//Reset the src data run pointers we changed in the first row - dst1RUn is ok now
     green1Run =green3Run-2*srcRowBytes;
     red1Run   =red2Run-2*srcRowBytes;
     blue1Run  =blue2Run-2*srcRowBytes;
