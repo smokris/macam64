@@ -41,7 +41,6 @@ void <whatever>(int width, int height, unsigned char *src, unsigned char *dst, l
     long r11,g11,b11,r12,g12,b12,r13,g13,b13,r14,g14,b14;	//Destination rgb: first line
     long r21,g21,b21,r22,g22,b22,r23,g23,b23,r24,g24,b24;	//Destination rgb: second line
     long dstRowBytes;				//EXCLUDING the extra part, just the raw data length per row
-    long srcRow1Extra,srcRow2Extra;		//Bytes to skip after each row
     unsigned long ul1,ul2,ul3,ul4,ul5,ul6,ul7,ul8; 	//Temp vars to access memory
     unsigned short us1, us2;
 #ifdef YUV2RGB_ALPHA
@@ -55,11 +54,10 @@ void <whatever>(int width, int height, unsigned char *src, unsigned char *dst, l
     height/=2;
     dstRowBytes=4*bpp*width;
     s1=src;
-    s2=src+width*8+srcRowExtra;
+    s2=src+width*4+srcRowExtra;
     s3=src+width*height*8;
     s4=src+width*height*8+width*height*8/4;
-    srcRow1Extra=srcRow2Extra=
-    	2*srcRowExtra+4*width;			//skip y line since we're working two lines at once
+    srcRowExtra=2*srcRowExtra+4*width;		//skip y line since we're working two lines at once
     d1=dst;
     d2=dst+width*4*bpp+dstRowExtra;
 #ifndef YUV2RGB_FLIP
@@ -72,10 +70,10 @@ void <whatever>(int width, int height, unsigned char *src, unsigned char *dst, l
     for (y=height;y;y--) {
         for (x=width;x;x--) {
 //Read from source buffer
-            ul1=*((unsigned  long*)(s1)); s1+=4;	//Read yuyv in line 1
+            ul1=*((unsigned  long*)(s1)); s1+=4;	//Read y in line 1
             ul2=*((unsigned  long*)(s2)); s2+=4;	//Read y in line 2
-            us1=*((unsigned  short*)(s3)); s3+=2;	//
-            us2=*((unsigned  short*)(s4)); s4+=2;	//
+            us1=*((unsigned  short*)(s3)); s3+=2;	//Read u
+            us2=*((unsigned  short*)(s4)); s4+=2;	//Read v
 //Extract yuv pixel data
             y11=(ul1&0xff000000)>>16;
             y12=(ul1&0x00ff0000)>>8;
@@ -285,8 +283,8 @@ void <whatever>(int width, int height, unsigned char *src, unsigned char *dst, l
 #endif	//YUV2RGB_ALPHA
 #endif	//YUV2RGB_FLIP
         }
-        s1+=srcRow1Extra;
-        s2+=srcRow2Extra;
+        s1+=srcRowExtra;
+        s2+=srcRowExtra;
         d1+=dstRowExtra;
         d2+=dstRowExtra;
     }
