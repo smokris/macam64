@@ -42,7 +42,7 @@
 	<string>Status: Kamera herausgezogen</string>
 	<key>Status: Camera used by another app</key>
 	<string>Status: Kamera wird schon benutzt</string>
-	<key>Status: Conntected to </key>
+	<key>Status: Connected to </key>
 	<string>Status: Verbunden mit </string>
 	<key>Status: Downloading number %i</key>
 	<string>Status: Lade Objekt %i</string>

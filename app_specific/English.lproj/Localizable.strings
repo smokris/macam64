@@ -61,8 +61,8 @@
 	<string>Status: Camera unplugged</string>
 	<key>Status: Camera used by another app</key>
 	<string>Status: Camera used by another app</string>
-	<key>Status: Conntected to </key>
-	<string>Status: Conntected to </string>
+	<key>Status: Connected to </key>
+	<string>Status: Connected to </string>
 	<key>Status: Downloading number %i</key>
 	<string>Status: Downloading number %i</string>
 	<key>Status: Internal error (this shouldn't happen)</key>
