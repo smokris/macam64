@@ -60,6 +60,8 @@ typedef enum CameraFeature {
     BOOL hFlip;
     CameraResolution resolution;
     WhiteBalanceMode whiteBalanceMode;
+    BOOL blackWhiteMode;	// is color or Black and White (greyscale)
+    BOOL LEDon;			// is the LED on or off (Philips cameras)
     short fps;
     short compression;			//0 = uncompressed, higher means more compressed
 
@@ -165,6 +167,11 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (BOOL) isAutoGain;
 - (void) setAutoGain:(BOOL)v;
 
+//LED ON / OFF
+- (BOOL) canSetLed;
+- (BOOL) isLedOn;
+- (void) setLed:(BOOL)v;
+
 //Horizontal flipping
 - (BOOL) canSetHFlip;		//Horizontal flipping
 - (BOOL) hFlip;
@@ -181,6 +188,12 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (WhiteBalanceMode) defaultWhiteBalanceMode;
 - (WhiteBalanceMode) whiteBalanceMode;
 - (void) setWhiteBalanceMode:(WhiteBalanceMode)newMode;
+
+//Black & White Mode
+- (BOOL) canBlackWhiteMode;
+- (BOOL) blackWhiteMode;
+- (void) setBlackWhiteMode:(BOOL)newMode;
+
 
 //Resolution and frame rate
 - (short) width;						//Current image width

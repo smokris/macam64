@@ -68,6 +68,7 @@
     hFlip=NO;
     compression=0;
     whiteBalanceMode=WhiteBalanceLinear;
+    blackWhiteMode = FALSE;
     isStarted=NO;
     isGrabbing=NO;
     shouldBeGrabbing=NO;
@@ -311,6 +312,45 @@
         whiteBalanceMode=newMode;
     }
 }
+
+
+// ============== Color Mode ======================
+
+- (BOOL) canBlackWhiteMode {
+    return NO;
+}
+
+
+- (BOOL) blackWhiteMode {
+    return blackWhiteMode;
+}
+
+- (void) setBlackWhiteMode:(BOOL)newMode {
+    if ([self canBlackWhiteMode]) {
+        blackWhiteMode=newMode;
+    }
+}
+ 
+ 
+//================== Light Emitting Diode
+
+- (BOOL) canSetLed {
+    return NO;
+}
+
+
+- (BOOL) isLedOn {
+    return LEDon;
+}
+
+- (void) setLed:(BOOL)v {
+    if ([self canSetLed]) {
+        LEDon=v;
+    }
+}
+ 
+
+// =========================
 
 - (short) width {						//Current image width
     return WidthOfResolution(resolution);

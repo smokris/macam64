@@ -28,7 +28,9 @@
         }, 
         {
             ACTIONS = {
+                blackwhiteCheckboxChanged = id; 
                 brightnessChanged = id; 
+                colorModeChanged = id; 
                 compressionChanged = id; 
                 contrastChanged = id; 
                 disclaimerOK = id; 
@@ -43,6 +45,7 @@
                 gainChanged = id; 
                 gammaChanged = id; 
                 horizontalFlipChanged = id; 
+                ledCheckboxChanged = id; 
                 manGainChanged = id; 
                 saturationChanged = id; 
                 sharpnessChanged = id; 
@@ -53,6 +56,7 @@
             CLASS = MyController; 
             LANGUAGE = ObjC; 
             OUTLETS = {
+                blackwhiteCheckbox = id; 
                 brightnessSlider = NSSlider; 
                 central = MyCameraCentral; 
                 compressionSlider = NSSlider; 
@@ -63,6 +67,7 @@
                 gammaSlider = NSSlider; 
                 horizontalFlipCheckbox = NSButton; 
                 inspectorDrawer = NSDrawer; 
+                ledCheckbox = id; 
                 manGainCheckbox = NSButton; 
                 previewView = NSImageView; 
                 saturationSlider = NSSlider; 

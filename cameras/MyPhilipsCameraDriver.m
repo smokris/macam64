@@ -61,6 +61,7 @@
     [self setGain:0.5f];
     [self setShutter:0.5f];
     [self setAutoGain:YES];
+    [self setBlackWhiteMode:FALSE]; // tmolteno
     return [super startupWithUsbLocationId:usbLocationId];
 }
 
@@ -146,6 +147,25 @@
         }
     }
     [super setAutoGain:v];
+}    
+
+
+ // OxFF is Color 0x00 is Grey
+
+- (BOOL) canBlackWhiteMode { return YES; }
+- (void) setBlackWhiteMode:(BOOL)newMode {
+    UInt8 b;
+    if (![self canBlackWhiteMode]) return;
+    
+    if (newMode == blackWhiteMode) return; // no change
+    
+    if (newMode == NO) // color mode
+        b = 0xFF;
+    else
+        b = 0x00; // black & white mode
+        
+    [self usbWriteCmdWithBRequest:GRP_SET_CHROMA wValue:SEL_COLORMODE wIndex:INTF_CONTROL buf:&b len:1];
+    [super setBlackWhiteMode:newMode];
 }    
 
 - (BOOL)canSetHFlip { return YES; }

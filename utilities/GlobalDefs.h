@@ -58,6 +58,11 @@ typedef enum CameraError {
     CameraErrorInternal		= 9	//Some other, probably serious, error
 } CameraError;
 
+typedef enum ColorMode {
+    ColorModeColor		= 1,
+    ColorModeGray		= 2
+} ColorMode;
+
 
 //Global build settings. Comment unwanted stuff out
 

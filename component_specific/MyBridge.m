@@ -432,6 +432,45 @@
     if (driver) [driver setWhiteBalanceMode:m];
 }
 
+
+// ================= Color & Grey Mode
+
+- (BOOL) canBlackWhiteMode {
+    if (driver) return [driver canBlackWhiteMode];
+    else return NO;
+}
+
+
+- (BOOL) blackWhiteMode {
+    if (driver)
+		return [driver blackWhiteMode];
+    else
+		return NO; // default to color mode
+}
+
+- (void) setBlackWhiteMode:(BOOL)m {
+    if (driver) [driver setBlackWhiteMode:m];
+}
+
+// =================== LED state
+
+- (BOOL) canSetLed {
+    if (driver) return [driver canSetLed];
+    else return NO;
+}
+
+
+- (BOOL) isLedOn {
+    if (driver) return [driver isLedOn];
+    else return FALSE;
+}
+
+- (void) setLed:(BOOL)v {
+    if (driver) [driver setLed:v];
+}
+
+// =============================
+
 - (short) width {
     if (driver) return [driver width];
     else return 1;

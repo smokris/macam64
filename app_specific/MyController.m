@@ -269,6 +269,16 @@ The following is a workaround for a quite weird thing. If there are classes that
     [driver setWhiteBalanceMode:wb];
 }
 
+- (IBAction)blackwhiteCheckboxChanged:(id)sender {
+    BOOL BlackWhite =[blackwhiteCheckbox intValue];
+    [driver setBlackWhiteMode:BlackWhite];
+}
+
+- (IBAction)ledCheckboxChanged:(id)sender {
+    BOOL ledOn =[ledCheckbox intValue];
+    [driver setLed:ledOn];
+}
+
 - (IBAction)horizontalFlipChanged:(id)sender {
     BOOL flip=[horizontalFlipCheckbox intValue];
     [driver setHFlip:flip];
@@ -558,6 +568,7 @@ The following is a workaround for a quite weird thing. If there are classes that
             [fpsPopup setEnabled:YES];
             [whiteBalancePopup setEnabled:[driver canSetWhiteBalanceMode]];
             [horizontalFlipCheckbox setEnabled:[driver canSetHFlip]];
+            [blackwhiteCheckbox setEnabled:[driver canBlackWhiteMode]];
 
             [whiteBalancePopup selectItemAtIndex:[driver whiteBalanceMode]-1];
             [gainSlider setEnabled:([driver canSetGain])&&(![driver isAutoGain])];

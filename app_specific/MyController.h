@@ -43,12 +43,16 @@
     IBOutlet NSImageView* previewView;
     IBOutlet NSTextField* statusText;
     IBOutlet NSPopUpButton* whiteBalancePopup;
+    IBOutlet NSPopUpButton* colorModePopup;
     IBOutlet NSPopUpButton* sizePopup;
     IBOutlet NSPopUpButton* fpsPopup;
     IBOutlet MyCameraCentral* central;
     IBOutlet NSWindow* disclaimerWindow;
     IBOutlet NSDrawer* settingsDrawer;
     IBOutlet NSDrawer* inspectorDrawer;
+    IBOutlet id blackwhiteCheckbox;
+	IBOutlet id ledCheckbox;
+	
     MyCameraInspector* inspector;
     MyCameraDriver* driver;
     NSBitmapImageRep* imageRep;
@@ -87,6 +91,8 @@
 - (IBAction)compressionChanged:(id)sender;
 - (IBAction)whiteBalanceChanged:(id)sender;
 - (IBAction)horizontalFlipChanged:(id)sender;
+- (IBAction)blackwhiteCheckboxChanged:(id)sender;
+- (IBAction)ledCheckboxChanged:(id)sender;
 
 //UI: Actions to do
 - (IBAction)doGrab:(id)sender;

@@ -32,6 +32,7 @@
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;	//Returns if this combination is supported
 - (void) setResolution:(CameraResolution)r fps:(short)fr;	//Set a resolution and frame rate.
 - (CameraResolution) defaultResolutionAndRate:(short*)fps;
+- (void) setLed:(BOOL)v;		// switch LED on/off
 
 
 

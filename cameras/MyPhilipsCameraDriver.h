@@ -63,6 +63,8 @@ Doing these amounts of defines is often called bad style. We should find a bette
 #define TO_POWERSAVE(a) ((a)?0x0:0xff)
 #define CLAMP_UNIT(a) (CLAMP((a),0.0f,1.0f))
 
+#define TO_LEDON(a) ((a)?0xFF00:0x00FF) // OxFF00 is LED on 0x00FF is LED off
+
 //Command groups and selectors
 
 #define INTF_CONTROL	3
@@ -75,6 +77,7 @@ Doing these amounts of defines is often called bad style. We should find a bette
 #define SEL_GAIN			0x2100
 
 #define GRP_SET_CHROMA		0x03
+#define SEL_COLORMODE			0x1500
 #define SEL_SATURATION			0x1600
 
 #define GRP_SET_STATUS		0x05
@@ -159,6 +162,8 @@ typedef struct PhilipsGrabContext {	//Everything the grabbing thread internals n
 - (void) setGain:(float)v;
 - (void) setShutter:(float)v;
 - (void) setAutoGain:(BOOL)v;
+- (void) setBlackWhiteMode:(BOOL)newMode;	// set to color / black & white
+
 
 - (WhiteBalanceMode) defaultWhiteBalanceMode;
 
