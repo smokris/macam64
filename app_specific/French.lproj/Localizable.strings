@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<!--
+ macam - webcam app and QuickTime driver component
+ Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ $Id$
+
+ Traduit en français par Damien Persohn <damien@persohn.net>.
+
+-->
+<plist version="0.9">
+<dict>
+	<key>Camera video settings</key>
+	<string>Réglages de la caméra</string>
+	<key>Change camera</key>
+	<string>Changer de caméra</string>
+	<key>Download</key>
+	<string>Télécharger</string>
+	<key>Download Media?</key>
+	<string>Ouvrir le flux vidéo ?</string>
+	<key>Download media</key>
+	<string>Ouverture du flux vidéo</string>
+	<key>No</key>
+	<string>Non</string>
+	<key>Pause</key>
+	<string>Pause</string>
+	<key>Pause camera video</key>
+	<string>Mettre la caméra en pause</string>
+	<key>Play</key>
+	<string>Lire</string>
+	<key>Play camera video</key>
+	<string>Lecture du flux vidéo</string>
+	<key>Save current image</key>
+	<string>Enregistrer l'image en cours</string>
+	<key>Save image</key>
+	<string>Enregistrer l'image</string>
+	<key>Save like this</key>
+	<string>Enregistrer tel quel</string>
+	<key>Settings</key>
+	<string>Paramètres</string>
+	<key>Status: A problem occurred - please check files</key>
+	<string>Statut: Un problème est survenu, merci de vérifier les fichiers</string>
+	<key>Status: CPU too busy</key>
+	<string>Statut: La charge processeur est trop élevée</string>
+	<key>Status: Camera not found (this shouldn't happen)</key>
+	<string>Statut: Caméra introuvable (ceci ne devrait pas arriver)</string>
+	<key>Status: Camera switch failed</key>
+	<string>Statut: Le changement de caméra a échoué</string>
+	<key>Status: Camera unplugged</key>
+	<string>Statut: Caméra débranchée</string>
+	<key>Status: Camera used by another app</key>
+	<string>Statut: La caméra est utilisée par une autre application</string>
+	<key>Status: Conntected to </key>
+	<string>Status: Connecté à </string>
+	<key>Status: Downloading number %i</key>
+	<string>Statut: téléchargement du numéro %i</string>
+	<key>Status: Internal error (this shouldn't happen)</key>
+	<string>Statut: Erreur interne (ceci ne devrait pas se produire)</string>
+	<key>Status: Media downloaded from camera</key>
+	<string>Statut: flux enregistré depuis la caméra</string>
+	<key>Status: Media not downloaded</key>
+	<string>Statut: Aucun flux enregistré</string>
+	<key>Status: No Camera</key>
+	<string>Statut: Pas de caméra</string>
+	<key>Status: Not enough USB bus power</key>
+	<string>Statut: Pas assez de puissance sur le bus USB</string>
+	<key>Status: Not enough bandwidth</key>
+	<string>Statut: Bande passante trop faible</string>
+	<key>Status: Out of memory</key>
+	<string>Statut: Pas assez de mémoire</string>
+	<key>Status: Unsupported</key>
+	<string>Statut: Non supporté</string>
+	<key>Status: Paused</key>
+	<string>Statut: En pause</string>
+	<key>Status: Pausing</key>
+	<string>Statut: mise en pause...</string>
+	<key>Status: Playing</key>
+	<string>Statut: Lecture</string>
+	<key>Status: USB communication problem</key>
+	<string>Statut: problème de communication sur USB</string>
+	<key>Status: Unknown error (this shouldn't happen)</key>
+	<string>Statut: Erreur inconnue (ceci ne devrait pas se produire)</string>
+	<key>Switch to next camera</key>
+	<string>Bascule vers la caméra suivante</string>
+	<key>The camera you just plugged in contains %i stored images. Do you want to download them to your computer?</key>
+	<string>La caméra que vous venez de brancher contient %i images. Souhaitez-vous les enregistrer sur votre ordinateur ?</string>
+	<key>The camera you just plugged in contains one stored image. Do you want to download them to your computer?</key>
+	<string>La caméra que vous venez de brancher contient une image. Souhaitez-vous l'enregistrer sur votre ordinateur ?</string>
+	<key>Yes</key>
+	<string>Oui</string>
+</dict>
+</plist>
