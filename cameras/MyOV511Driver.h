@@ -287,6 +287,8 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
 //Compress
 - (int) ov511_upload_quan_tables;
 
+- (void) mergeCameraEventHappened:(CameraEvent)evt;
+
 @end
 
 @interface MyOV511PlusDriver : MyOV511Driver 
