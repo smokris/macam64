@@ -1,0 +1,24 @@
+<HTML>
+<!-- $Id$ -->
+
+	<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Tricks and Hints</TITLE>
+		<META NAME="AppleFont" CONTENT="Lucida Grande,Helvetica">
+		<META NAME="AppleSearchResultsFont" CONTENT="Lucida Grande,Helvetica">
+	</HEAD>
+
+	<BODY BGCOLOR="#ffffff" TOPMARGIN="0" LEFTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">
+<H2>Tricks and Hints</H2>
+<H3>Using macam without a webcam</H3>
+
+<P>
+At the first glance, this seems to be senseless, but it may help developers of QuickTime applications to find problems in conjunction with macam. Open the file "de.matthias-krauss.webcam.plist" in the Preferences folder in your Library folder in your home folder (if you're a developer, you are probably already familiar with the PropertyListEditor application). In the main dictionary, add an entry with the key "Dummy cameras" (if it's not already there). The value should be a Number type. Enter the number of desired dummy cameras (0 for default behaviour without dummies). At the next launch, you see your entered amount of simulated camera devices. Each produces a color bar image with a timecode.
+</P>
+<H3>Smooth recording</H3>
+
+<P>
+For best recording performance, make sure that the preview or recording window size matches exactly the size of the images sent from the camera. In this case, a rescaling step can be skipped which could otherwise reduce performance. 
+</P>
+</BODY>
+</HTML>

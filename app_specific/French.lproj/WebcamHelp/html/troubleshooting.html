@@ -1,0 +1,52 @@
+<HTML>
+<!-- $Id$ -->
+
+	<HEAD>
+		<META HTTP-EQUIV="content-type" CONTENT="text/html;charset=iso-8859-1">
+		<TITLE>Troubleshooting</TITLE>
+		<META NAME="AppleFont" CONTENT="Lucida Grande,Helvetica">
+		<META NAME="AppleSearchResultsFont" CONTENT="Lucida Grande,Helvetica">
+	</HEAD>
+
+	<BODY BGCOLOR="#ffffff" TOPMARGIN="0" LEFTMARGIN="0" MARGINHEIGHT="0" MARGINWIDTH="0">
+<H2>Troubleshooting</H2>
+<H3>Common things to do</H3>
+<P>Please follow these steps if you encounter a problem - either if it's not listed below or if the steps listed there didn't help:</P>
+<P>Check your USB cables. Restart macam. Unplug and replug the device. Make sure you have the latest version of Mac OS X. Connect the camera directly (without USB hubs) to a built-in USB port of your computer (not to a third-party host adapter). Check in the release notes and on the macam <A HREF="http://www.matthias-krauss.de/wc">home page</A> if it is a known problem. See the bottom of this page to find out how to write a bug report.</P>
+<H3>Problem: No video, no message</H3>
+<P>Your camera is currently not supported. See the list of supported cameras on the macam  <A HREF="http://www.matthias-krauss.de/wc">home page</A> for further information.</P>
+<H3>Message: Camera used by another application</H3>
+<P>Quit all other running applications. Quit the Classic environment. Unplug and replug your camera. Restart macam.</P>
+<H3>Message: Not enough USB power</H3>
+<P>Plug your camera directly into an USB port of your computer or into a self-powered USB hub (one with a power adapter).</P>
+<H3>Message: Not enough USB bandwidth</H3>
+<P>Unplug other USB devices or plug them into a different USB port of the computer. Lower the image format, frame rate or increase the compression if available.</P>
+<H3>Message: Not enough CPU power</H3>
+<P>Retry grabbing video. If you encounter the problem frequently: Quit other applications. Do less things that consume computing power. Use less cameras at the same time. Lower the image size or frame rate. Buy a faster Macintosh...</P>
+<H3>Message: Not enough memory</H3>
+<P>Restart macam or your video application. Quit other applications. Increase your computer's RAM.</P>
+<H3>Message: Unsupported</H3>
+<P>Your camera is currently not supported. See the list of supported cameras on the macam  <A HREF="http://www.matthias-krauss.de/wc">home page</A> for further information.</P>
+<H3>Audio problems</H3>
+<P>Audio is not handled by the driver but by Mac OS X's own USB audio drivers. Please look into the documentation there.</P>
+<H3>Problems installing macam.component</H3>
+<P>Please make sure you use the QuickTime folder in the Library directly in the root level of your hard disk (do not mix up libraries at other locations). Make sure you have administration privileges. Move older copies of macam.component or webcam.component to the Trash prior to installing the new one (if you encounter problems deleting the files: It will work after a restart). Try running without other components (move them temporarily to another location and restart).</P>
+<H3>Program freezes, Kernel panics, really weird things</H3>
+<P>Contact the author. Provide detailled information. Help debugging. Wait for the next release...</P>
+
+<H3>Errors in conjunction with the QuickTime component</H3>
+<P>Please try to repeat the same problem with another QuickTime application. If the problem is repeatable, it is likely a bug in macam. If the error is specific to a single application, it may also be a bug in the specific application. Please consult the application's documentation  about known bugs. It may still be a macam bug, so please contact both authors.</P>
+
+
+<H3>Sending a bug report</H3>
+<P>If you have experienced something that looks like an error in macam, your help is appreciated: Please tell the author about it. Some information is necessary in order to effiectively find and fix the error. Try to isolate the error. If it is a crash, please enable crash logging in the preferences section of the console application and repeat the crash. You will receive a crash log. Please include it in the report. Also include messages from the console - beginning at the launch of the crashing application. More things you might want to include are:
+<UL>
+<LI>Your Macintosh model, Processor(s), Frequencency, RAM, other extensions
+<LI>The version of Mac OS X you are using
+<LI>Special peripherals
+<LI>Other USB devices
+</UL>
+Send an email with the information mentioned above to <A HREF="mailto:macam@matthias-krauss.de">macam@matthias-krauss.de</A>.
+</P>
+</BODY>
+</HTML>

@@ -1,0 +1,88 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {
+                magnify100 = id; 
+                magnify200 = id; 
+                magnify50 = id; 
+                magnifyLarger = id; 
+                magnifySmaller = id; 
+                rotateCCW = id; 
+                rotateCW = id; 
+            }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            CLASS = MyCameraCentral; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {delegate = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            CLASS = MyCameraDriver; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {delegate = id; }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            ACTIONS = {
+                brightnessChanged = id; 
+                compressionChanged = id; 
+                contrastChanged = id; 
+                disclaimerOK = id; 
+                disclaimerQuit = id; 
+                doDownloadMedia = id; 
+                doGrab = id; 
+                doNextCam = id; 
+                doQuit = id; 
+                doSaveImage = id; 
+                doSavePrefs = id; 
+                doStopGrab = id; 
+                formatChanged = id; 
+                gainChanged = id; 
+                gammaChanged = id; 
+                horizontalFlipChanged = id; 
+                manGainChanged = id; 
+                saturationChanged = id; 
+                sharpnessChanged = id; 
+                shutterChanged = id; 
+                toggleSettingsDrawer = id; 
+                whiteBalanceChanged = id; 
+            }; 
+            CLASS = MyController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                brightnessSlider = NSSlider; 
+                central = MyCameraCentral; 
+                compressionSlider = NSSlider; 
+                contrastSlider = NSSlider; 
+                disclaimerWindow = NSWindow; 
+                fpsPopup = NSPopUpButton; 
+                gainSlider = NSSlider; 
+                gammaSlider = NSSlider; 
+                horizontalFlipCheckbox = NSButton; 
+                inspectorDrawer = NSDrawer; 
+                manGainCheckbox = NSButton; 
+                previewView = NSImageView; 
+                saturationSlider = NSSlider; 
+                settingsDrawer = NSDrawer; 
+                sharpnessSlider = NSSlider; 
+                shutterSlider = NSSlider; 
+                sizePopup = NSPopUpButton; 
+                statusText = NSTextField; 
+                whiteBalancePopup = NSPopUpButton; 
+                window = NSWindow; 
+            }; 
+            SUPERCLASS = NSObject; 
+        }, 
+        {
+            CLASS = MyToUCamProDriver; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {delegate = id; }; 
+            SUPERCLASS = MyCameraDriver; 
+        }
+    ); 
+    IBVersion = 1; 
+}
