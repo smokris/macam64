@@ -31,6 +31,7 @@
 
 #define OV511_DEBUG
 #define USE_COMPRESS
+//#define VERBOSE
 
 #ifdef USE_COMPRESS
 //int Decompress420(unsigned char *pIn, unsigned char *pOut,int w,int h,int inSize);
@@ -392,7 +393,8 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
             if ((sensorType == SENS_OV7610 || sensorType == SENS_OV7620 ||
                 sensorType == SENS_SAA7111A || sensorType == SENS_SAA7111A_WITH_FI1236MK2) &&
                 rate<=10) return YES; 
-            return YES;
+            else if (sensorType == SENS_OV6620 && rate<=10) return YES;
+            return NO;
             break;
         case ResolutionCIF:
             if (sensorType == SENS_OV6620 && rate<=10) return YES;
@@ -610,7 +612,13 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
             [self i2cWrite:OV7610_REG_RBS val:0x24];
 
             // SIF
-            [self i2cWrite:OV7610_REG_SYN_CLK val:0x01];
+//            [self i2cWrite:OV7610_REG_SYN_CLK val:0x01];
+            if([self fps] <= 5) 
+                [self i2cWrite:OV7610_REG_SYN_CLK val:0x02];
+            else if([self fps] <= 10)
+                [self i2cWrite:OV7610_REG_SYN_CLK val:0x01];
+            else
+                [self i2cWrite:OV7610_REG_SYN_CLK val:0x00];
             [self i2cWrite:OV7610_REG_COMA val:0x04];
             [self i2cWrite:OV7610_REG_COMC val:0x24];
             [self i2cWrite:OV7610_REG_COML val:0x9e];
@@ -619,7 +627,15 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 
             // This code from Linux driver
             [self i2cWrite:0x12 val:0x80]; /* reset */
-            [self i2cWrite:0x11 val:0x01];
+//            [self i2cWrite:0x11 val:0x01];
+            if([self fps] <= 5) 
+                [self i2cWrite:0x11 val:0x06];
+            else if([self fps] <= 10)
+                [self i2cWrite:0x11 val:0x02];
+            else if([self fps] <= 15)
+                [self i2cWrite:0x11 val:0x01];
+            else
+                [self i2cWrite:0x11 val:0x00];
             [self i2cWrite:0x03 val:0x60];
             [self i2cWrite:0x05 val:0x7f]; /* For when autoadjust is off */
             [self i2cWrite:0x07 val:0xa8];
@@ -718,7 +734,13 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 
         if(resolution == ResolutionVGA &&
             (sensorType == SENS_OV7610 || sensorType == SENS_OV7620)) {
-            [self i2cWrite:OV7610_REG_SYN_CLK val:0x06];
+//            [self i2cWrite:OV7610_REG_SYN_CLK val:0x06];
+            if([self fps] <= 5) 
+                [self i2cWrite:OV7610_REG_SYN_CLK val:0x07];
+            else if([self fps] <= 10)
+                [self i2cWrite:OV7610_REG_SYN_CLK val:0x06];
+            else
+                [self i2cWrite:OV7610_REG_SYN_CLK val:0x05];
             [self i2cWrite:OV7610_REG_HE val:0x3a + ([self width]>>2)];
             [self i2cWrite:OV7610_REG_VE val:5 + ([self height]>>1)];
             [self i2cWrite:OV7610_REG_COMA val:0x24];
