@@ -133,6 +133,7 @@ short WidthOfResolution(CameraResolution r) {
         case ResolutionSIF:   ret = 320; break;
         case ResolutionCIF:   ret = 352; break;
         case ResolutionVGA:   ret = 640; break;
+        case ResolutionSVGA:  ret = 800; break;
         default:              ret =  -1; break;
     }
     return ret;
@@ -147,6 +148,7 @@ short HeightOfResolution(CameraResolution r) {
         case ResolutionSIF:   ret = 240; break;
         case ResolutionCIF:   ret = 288; break;
         case ResolutionVGA:   ret = 480; break;
+        case ResolutionSVGA:  ret = 600; break;
         default:              ret =  -1; break;
     }
     return ret;

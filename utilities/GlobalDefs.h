@@ -41,6 +41,7 @@ typedef enum CameraResolution {
     ResolutionSIF   = 4,	//sif   = 320 x 240
     ResolutionCIF   = 5,	//cif   = 352 x 288
     ResolutionVGA   = 6,	//vga   = 640 x 480
+    ResolutionSVGA  = 7		//svga  = 800 x 600
 } CameraResolution;
 
 typedef enum CameraError {
