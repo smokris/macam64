@@ -59,6 +59,8 @@ static NSMutableDictionary* prefsDict=NULL;
 - (id) prefsForKey:(NSString*) key;
 - (void) setPrefs:(id)prefs forKey:(NSString*)key;
 - (void) registerCameraDriver:(Class)driver;
+- (CameraError) locationIdOfUSBDeviceRef:(io_service_t)usbDeviceRef to:(UInt32*)outVal;
+
 @end
     
 
@@ -315,6 +317,14 @@ static NSMutableDictionary* prefsDict=NULL;
     return [[cameras objectAtIndex:idx] cid];
 }
 
+- (unsigned long) idOfCameraWithLocationID:(UInt32)locID {
+    short i;
+    for (i=0;i<[cameras count];i++) {
+        if ([[cameras objectAtIndex:i] locationID]==locID) return [[cameras objectAtIndex:i] cid];
+    }
+    return 0;    
+}
+
 - (CameraError) useCameraWithID:(unsigned long)cid to:(MyCameraDriver**)outCam acceptDummy:(BOOL)acceptDummy {
     long l;
     MyCameraInfo* dev=NULL;
@@ -345,12 +355,12 @@ static NSMutableDictionary* prefsDict=NULL;
     }
     if (!err) {
         [cam setDelegate:delegate];
-        err=[cam startupWithUsbDeviceRef:[dev usbDeviceRef]];
+        err=[cam startupWithUsbLocationId:[dev locationID]];
         if (err!=CameraErrorOK) {
             [cam release];
             cam=NULL;
         }
-    }	
+    }
     if (err&&acceptDummy) {	//We have an error and the sender wants a dummy in case of an error
         cam=[self useDummyForError:err];
     }
@@ -366,7 +376,7 @@ static NSMutableDictionary* prefsDict=NULL;
     MyCameraDriver* driver=[[MyDummyCameraDriver alloc] initWithError:err central:self];
     if (driver) {
         [driver setDelegate:delegate];
-        [driver startupWithUsbDeviceRef:NULL];
+        [driver startupWithUsbLocationId:0];
     }
     return driver;
 }
@@ -515,13 +525,6 @@ static NSMutableDictionary* prefsDict=NULL;
     return ok;
 }
 
-typedef struct MyPrivateData {
-    io_service_t	usbDeviceRef;	//A reference to our device in case we want to open it
-    io_object_t		notification;	//A reference to our notification we want when we are unplugged
-    CFStringRef		deviceName;	//The name of the device (unused)
-    
-} MyPrivateData;
-
 void DeviceRemoved( void *refCon,io_service_t service,natural_t messageType,void *messageArgument ) {
     MyCameraInfo* dev=(MyCameraInfo*)refCon;
     if (messageType!=kIOMessageServiceIsTerminated) return;
@@ -555,7 +558,6 @@ void DeviceRemoved( void *refCon,io_service_t service,natural_t messageType,void
     }
     //Release the usb stuff
     ret = IOObjectRelease([dev notification]);		//we don't need the usb notification any more
-    ret = IOObjectRelease([dev usbDeviceRef]);		//we don't need the device reference any more
 //Initiate the driver shutdown.
     if ([dev driver]!=NULL) {
         [[dev driver] shutdown];	//We don't release it here - it is done in the cameraHasShutDown notification
@@ -576,6 +578,8 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
     MyCameraInfo*	dev;
     io_object_t		notification;
     while (usbDeviceRef = IOIteratorNext(iterator)) {
+        UInt32 locID;
+        
         //Setup our data object we use to track the device while it is plugged
         dev=[type copy];
         if (!dev) {
@@ -584,7 +588,6 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
 #endif
             continue;
         }
-        [dev setUsbDeviceRef:usbDeviceRef];
 
         //Request notification if the device is unplugged
         ret = IOServiceAddInterestNotification(notifyPort,
@@ -600,8 +603,17 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
             [dev release];
             continue;
         }
+        //Try to find our USB location ID
+        if ([self locationIdOfUSBDeviceRef:usbDeviceRef to:&locID]!=CameraErrorOK) {
+#ifdef VERBOSE
+            NSLog(@"failed to get location id");
+#endif
+            [dev release];
+            continue;
+        }
         //Remember the notification (we have to release it later)
         [dev setNotification:notification];
+        [dev setLocationID:locID];
 
         //Put the new entry to the list of available cameras
         [cameras addObject:dev];
@@ -687,5 +699,53 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
     }
 }
 
+- (CameraError) locationIdOfUSBDeviceRef:(io_service_t)usbDeviceRef to:(UInt32*)outVal {
+    UInt32 locID=0;
+    kern_return_t kernelErr;
+    SInt32 score;
+    IOCFPlugInInterface **plugin=NULL;
+    CameraError err=CameraErrorOK;
+    HRESULT res;
+    IOUSBDeviceInterface** dev=NULL;
+
+    kernelErr = IOCreatePlugInInterfaceForService(usbDeviceRef, kIOUSBDeviceUserClientTypeID, kIOCFPlugInInterfaceID, &plugin, &score);
+
+    if ((kernelErr!=kIOReturnSuccess)||(!plugin)) {
+#ifdef VERBOSE
+        NSLog(@"MyCameraCentral: IOCreatePlugInInterfaceForService; Could not get plugin");
+#endif
+        return CameraErrorUSBProblem;
+    }
+    if (!err) {
+        res=(*plugin)->QueryInterface(plugin,CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID),(LPVOID*)(&dev));
+        (*plugin)->Release(plugin);
+        plugin=NULL;
+        if ((res)||(!dev)) {
+#ifdef VERBOSE
+            NSLog(@"MyCameraCentral: IOCreatePlugInInterfaceForService; Could not get device interface");
+#endif
+            err=CameraErrorUSBProblem;
+        }
+    }
+    if (!err) {
+        kernelErr = (*dev)->GetLocationID(dev,&locID);
+        (*dev)->Release(dev);
+        if (kernelErr!=KERN_SUCCESS) {
+#ifdef VERBOSE
+            NSLog(@"MyCameraCentral: IOCreatePlugInInterfaceForService; Could not get Location ID");
+#endif
+            err=CameraErrorUSBProblem;
+        }
+    }
+    if (outVal) {
+        if (!err) *outVal=locID;
+        else *outVal=0;
+    }
+    return err;
+}
+
+
+    
+    
 
 @end
