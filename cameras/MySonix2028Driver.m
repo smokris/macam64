@@ -86,6 +86,15 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
 #define VENDOR_AEL	0x0c45
 #define PRODUCT_DC31UC	0x8000
 
+
+typedef enum SonixSensorType {
+    SonixSensorHynixHV7131DorE_VGA=0,
+    SonixSensorPixartPAS106B_CIF=1,
+    SonixSensorTASC5130D_VGA=4,
+    SonixSensorOV7620_VGA=6,
+    SonixSensorPixartPAS202B_VGA=8,
+} SonixSensorType;
+
 @interface MySonix2028Driver (Private)
 
 - (BOOL) setupGrabContext;				//Sets up the grabContext structure for the usb async callbacks
@@ -97,8 +106,35 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
 - (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb;
 //Decodes SONIX-compressed data into a pixmap. No checks, all assumed ready and fine. Just the internal decode.
 
-- (CameraError) writeRegisterBlind:(UInt16)reg value:(UInt16)val;
-- (CameraError) writeRegister:(UInt16)reg value:(UInt16)val result:(UInt32*)wanted;
+- (CameraError) sonixGenericCommand:(UInt8*)paramBuf expectResponse:(BOOL)resp to:(UInt8*)retBuf;
+
+- (CameraError) sonixBulkWrite:(UInt8)type length:(UInt32)len;		//DSC mode only
+- (CameraError) sonixEraseAllPictures;
+- (CameraError) sonixEraseLastPicture;
+- (CameraError) sonixSetModeToDSC;
+- (CameraError) sonixSetModeToPCCam;
+- (CameraError) sonixCaptureOneImage;					//DCS mode only, will return noMem if cam is full
+- (CameraError) sonixIICSensorReadByte:(UInt8)reg to:(UInt8*)ret;	//PC Cam mode only
+- (CameraError) sonixIICSensorWriteByte:(UInt8)reg to:(UInt8)val;	//PC Cam mode only
+- (CameraError) sonixAsicRamReadByte:(UInt16)reg to:(UInt8*)ret;
+- (CameraError) sonixAsicRamWriteByte:(UInt16)reg to:(UInt8)val;
+- (CameraError) sonixQuitAP;
+- (CameraError) sonixGetSensorType:(SonixSensorType*)type;
+- (CameraError) sonixSetSubsampling:(int)subsample forDSCMode:(BOOL)dsc;//Allowed: 1/NO, 2/NO, 4/NO, 1/YES, 2/YES - not checked
+- (CameraError) sonixGetNumberOfStoredImages:(short*)numPics;
+- (CameraError) sonixIsFull:(BOOL*)full;
+- (CameraError) sonixGetPictureType:(short)picIdx flash:(BOOL*)flash resolution:(CameraResolution*)res;
+- (CameraError) sonixGetPicture:(short)picIdx length:(UInt32*)len;	//DSC mode only, follow bulk read, round up to n*64
+- (CameraError) sonixSensorWrite1:(UInt8)addr byte1:(UInt8)b1;	//PC Cam mode only
+- (CameraError) sonixSensorWrite2:(UInt8)addr byte1:(UInt8)b1 byte2:(UInt8)b2;	//PC Cam mode only
+- (CameraError) sonixSensorWrite3:(UInt8)addr byte1:(UInt8)b1 byte2:(UInt8)b2 byte3:(UInt8)b3;	//PC Cam mode only
+- (CameraError) sonixSensorWrite4:(UInt8)addr byte1:(UInt8)b1 byte2:(UInt8)b2 byte3:(UInt8)b3 byte4:(UInt8)b4;//PC Cam mode only
+- (CameraError) sonixAsicWrite1:(UInt16)addr byte1:(UInt8)b1;
+- (CameraError) sonixAsicWrite2:(UInt16)addr byte1:(UInt8)b1 byte2:(UInt8)b2;
+- (CameraError) sonixAsicWrite3:(UInt16)addr byte1:(UInt8)b1 byte2:(UInt8)b2 byte3:(UInt8)b3;
+- (CameraError) sonixAsicWrite4:(UInt16)addr byte1:(UInt8)b1 byte2:(UInt8)b2 byte3:(UInt8)b3 byte4:(UInt8)b4;
+
+
 
 @end
 
@@ -219,18 +255,20 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
 - (void) setGain:(float)val {
     [super setGain:val];
     if (isGrabbing) {
-        int v=gain*50.0f;
-        [self writeRegisterBlind:0x1b32 value:v<<8];
-        [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
+        UInt8 v=gain*50.0f;
+        [self sonixSensorWrite1:0x32 byte1:v];
+        [self sonixAsicRamReadByte:0x0127 to:NULL];
+        //win driver returns 0x20
     }
 }
 
 - (void) setShutter:(float)val {
     [super setShutter:val];
     if (isGrabbing) {
-        int v=(1.0f-shutter)*2560.0f;
-        [self writeRegisterBlind:0x1d25 value:v];
-        [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
+        UInt32 v=(1.0f-shutter)*25600.0f;
+        [self sonixSensorWrite3:0x25 byte1:(v>>16)&0xff byte2:(v>>8)&0xff byte3:(v)&0xff];
+        [self sonixAsicRamReadByte:0x0127 to:NULL];
+        //win driver returns 0x20
     }
 }
 
@@ -443,8 +481,6 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     unsigned char* frameBase;
 
     //Ignore data underruns - timeouts will be detected by framesSinceLastChunk
-//    NSLog(@"isocComplete: %i",result);
-
     if (result==kIOReturnUnderrun) result=0;
     
     if (result) {						//USB error handling
@@ -742,12 +778,12 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
                         if (grabContext.autoExposure>1.0f) grabContext.autoExposure=1.0f;
                     }
                     if (grabContext.autoExposure!=oldAutoExposure) {	//Did something change?
-                        int v=grabContext.autoExposure*50.0f;
-                        [self writeRegisterBlind:0x1b32 value:v<<8];
-                        [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
-                        v=(1.0f-grabContext.autoExposure)*2560.0f;
-                        [self writeRegisterBlind:0x1d25 value:v];
-                        [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
+                        UInt32 aGain=grabContext.autoExposure*50.0f;
+                        UInt32 aExp=(1.0f-grabContext.autoExposure)*2560.0f;
+                        [self sonixSensorWrite1:0x32 byte1:aGain];
+                        [self sonixSensorWrite3:0x25 byte1:aExp&0xff byte2:(aExp>>8)&0xff byte3:(aExp>>16)&0xff];
+                        [self sonixAsicRamReadByte:0x0127 to:NULL];
+                        //win driver returns 0x20
                     }
                 }
             }
@@ -769,167 +805,126 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     return grabContext.err;				//notify delegate
 }
 
-
-
 - (BOOL) startupGrabStream {
     //Don't ask me why - it's just a reproduction of what the windows driver does...
-    UInt16 dividerReg, reg1328val, reg1329val, reg1121val, reg1123val, reg1c20val;
-    switch (resolution) {
-        case ResolutionVGA:
-            dividerReg=0x1601;
-            reg1328val=0x010e;
-            reg1329val=0x0162;
-            reg1121val=0x2a00;
-            reg1123val=0x2800;
-            reg1c20val=0x002a;
-            break;
-        case ResolutionSIF:
-            dividerReg=0x1602;
-            reg1328val=0x011e;
-            reg1329val=0x0122;
-            reg1121val=0xc100;
-            reg1123val=0x1000;
-            reg1c20val=0x00c1;
-            break;
-        default: // ResolutionQSIF:
-            dividerReg=0x1604;
-            reg1328val=0x012e;
-            reg1329val=0x0122;
-            reg1121val=0xc100;
-            reg1123val=0x1000;
-            reg1c20val=0x00c1;
-            break;
-    }
+    UInt8 retBuf[1];
+    CameraError err=CameraErrorOK;
     
-    //Unless otherwise commented, they all should return 0,0,0 for byte 2,3 and 4 (Hi byte of register+0x80 at byte 1)
-    if ([self writeRegister:0x0c01 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:dividerReg value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1000 value:0x0000 result:NULL]) return NO;	//Should return 0x9001
-    if ([self writeRegister:0x1325 value:0x0116 result:NULL]) return NO;
-    if ([self writeRegister:0x1326 value:0x0112 result:NULL]) return NO;
-    if ([self writeRegister:0x1328 value:0x010e result:NULL]) return NO;
-    if ([self writeRegister:0x1327 value:0x0120 result:NULL]) return NO;
-    if ([self writeRegister:0x1329 value:0x0122 result:NULL]) return NO;
-    if ([self writeRegister:0x132c value:0x0102 result:NULL]) return NO;
-    if ([self writeRegister:0x132d value:0x0102 result:NULL]) return NO;
-    if ([self writeRegister:0x132e value:0x0109 result:NULL]) return NO;
-    if ([self writeRegister:0x132f value:0x0107 result:NULL]) return NO;
-    if ([self writeRegister:0x1120 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1121 value:0x2d00 result:NULL]) return NO;
-    if ([self writeRegister:0x1122 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1123 value:0x0300 result:NULL]) return NO;
-    if ([self writeRegister:0x1110 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1111 value:0x6400 result:NULL]) return NO;
-    if ([self writeRegister:0x1112 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1113 value:0x9100 result:NULL]) return NO;
-    if ([self writeRegister:0x1114 value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x1115 value:0x2000 result:NULL]) return NO;
-    if ([self writeRegister:0x1116 value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x1117 value:0x6000 result:NULL]) return NO;
-    if ([self writeRegisterBlind:0x1c20 value:0x002d]) return NO;
-    if ([self writeRegister:0x1320 value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x1321 value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x1322 value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x1323 value:0x0101 result:NULL]) return NO;
-    if ([self writeRegister:0x1324 value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x1325 value:0x0116 result:NULL]) return NO;
-    if ([self writeRegister:0x1326 value:0x0112 result:NULL]) return NO;
-    if ([self writeRegister:0x1327 value:0x0120 result:NULL]) return NO;
-    if ([self writeRegister:0x1328 value:0x010e result:NULL]) return NO;
-    if ([self writeRegister:0x1329 value:0x0122 result:NULL]) return NO;
-    if ([self writeRegister:0x132a value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x132b value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x132c value:0x0102 result:NULL]) return NO;
-    if ([self writeRegister:0x132d value:0x0102 result:NULL]) return NO;
-    if ([self writeRegister:0x132e value:0x0109 result:NULL]) return NO;
-    if ([self writeRegister:0x132f value:0x0107 result:NULL]) return NO;
-    if ([self writeRegister:0x1234 value:0x0100 result:NULL]) return NO; //Should return 0x92a1
-    if ([self writeRegister:0x1334 value:0x01a1 result:NULL]) return NO;
-    if ([self writeRegister:0x1335 value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x1101 value:0x0400 result:NULL]) return NO;
-    if ([self writeRegister:0x1102 value:0x9200 result:NULL]) return NO;
-    if ([self writeRegister:0x1110 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1111 value:0x6400 result:NULL]) return NO;
-    if ([self writeRegister:0x1112 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1113 value:0x9100 result:NULL]) return NO;
-    if ([self writeRegister:0x1114 value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x1115 value:0x2000 result:NULL]) return NO;
-    if ([self writeRegister:0x1116 value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x1117 value:0x6000 result:NULL]) return NO;
-    if ([self writeRegister:0x1120 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1121 value:0x2d00 result:NULL]) return NO;
-    if ([self writeRegister:0x1122 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1123 value:0x0300 result:NULL]) return NO;
-    if ([self writeRegister:0x1125 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1126 value:0x0200 result:NULL]) return NO;
-    if ([self writeRegister:0x1127 value:0x8800 result:NULL]) return NO;
-    if ([self writeRegister:0x1130 value:0x3800 result:NULL]) return NO;
-    if ([self writeRegister:0x1131 value:0x2a00 result:NULL]) return NO;
-    if ([self writeRegister:0x1132 value:0x2a00 result:NULL]) return NO;
-    if ([self writeRegister:0x1133 value:0x2a00 result:NULL]) return NO;
-    if ([self writeRegister:0x1134 value:0x0200 result:NULL]) return NO;
-    if ([self writeRegister:0x115b value:0x0a00 result:NULL]) return NO;
-    if ([self writeRegister:0x1325 value:0x0128 result:NULL]) return NO;
-    if ([self writeRegister:0x1326 value:0x011e result:NULL]) return NO;
-    if ([self writeRegister:0x1328 value:reg1328val result:NULL]) return NO;
-    if ([self writeRegister:0x1327 value:0x0120 result:NULL]) return NO;
-    if ([self writeRegister:0x1329 value:reg1329val result:NULL]) return NO;
-    if ([self writeRegister:0x132c value:0x0102 result:NULL]) return NO;
-    if ([self writeRegister:0x132d value:0x0103 result:NULL]) return NO;
-    if ([self writeRegister:0x132e value:0x010f result:NULL]) return NO;
-    if ([self writeRegister:0x132f value:0x010c result:NULL]) return NO;
-    if ([self writeRegister:0x1120 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1121 value:reg1121val result:NULL]) return NO;
-    if ([self writeRegister:0x1122 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1123 value:reg1123val result:NULL]) return NO;
-    if ([self writeRegister:0x1110 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1111 value:0x0400 result:NULL]) return NO;
-    if ([self writeRegister:0x1112 value:0x0000 result:NULL]) return NO;
-    if ([self writeRegister:0x1113 value:0x0300 result:NULL]) return NO;
-    if ([self writeRegister:0x1114 value:0x0100 result:NULL]) return NO;
-    if ([self writeRegister:0x1115 value:0xe000 result:NULL]) return NO;
-    if ([self writeRegister:0x1116 value:0x0200 result:NULL]) return NO;
-    if ([self writeRegister:0x1117 value:0x8000 result:NULL]) return NO;
-    if ([self writeRegisterBlind:0x1c20 value:reg1c20val]) return NO;
-    if ([self writeRegisterBlind:0x1c20 value:reg1c20val]) return NO;
-    if ([self writeRegisterBlind:0x2034 value:0xa100]) return NO;
-    [self setGain:[self gain]];
-    [self setShutter:[self shutter]];
+    if (!err) err=[self sonixSetModeToPCCam];
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixSetSubsampling:1 forDSCMode:NO]; break;
+        case ResolutionSIF: if (!err) err=[self sonixSetSubsampling:2 forDSCMode:NO]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixSetSubsampling:4 forDSCMode:NO]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    //Some setup from the windows driver is omitted here - I think it's useless
+    if (!err) err=[self sonixIICSensorReadByte:0x00 to:retBuf];	//Get sensor identity - here model 0 (7131), rev. 1
+    if (!err) err=[self sonixAsicRamWriteByte:0x0120 to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0121 to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0122 to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0123 to:0x01];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0124 to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0125 to:0x16];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0126 to:0x12];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0127 to:0x20];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0128 to:0x0e];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0129 to:0x22];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012a to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012b to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012c to:0x02];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012d to:0x02];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012e to:0x09];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012f to:0x07];
+    if (!err) err=[self sonixAsicRamReadByte:0x0134 to:retBuf];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0134 to:0xa1];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0135 to:0x00];
+    if (!err) err=[self sonixIICSensorWriteByte:0x01 to:0x04];	//Window mode, exposure line timing
+    if (!err) err=[self sonixIICSensorWriteByte:0x02 to:0x92];	//some rev. 1 stuff
+    if (!err) err=[self sonixIICSensorWriteByte:0x10 to:0x00];	//row start high
+    if (!err) err=[self sonixIICSensorWriteByte:0x11 to:0x64];	//row start low
+    if (!err) err=[self sonixIICSensorWriteByte:0x12 to:0x00];	//col start high
+    if (!err) err=[self sonixIICSensorWriteByte:0x13 to:0x91];	//col start low
+    if (!err) err=[self sonixIICSensorWriteByte:0x14 to:0x01];	//win width high
+    if (!err) err=[self sonixIICSensorWriteByte:0x15 to:0x20];	//win width low
+    if (!err) err=[self sonixIICSensorWriteByte:0x16 to:0x01];	//win height high
+    if (!err) err=[self sonixIICSensorWriteByte:0x17 to:0x60];	//win height low
+    if (!err) err=[self sonixIICSensorWriteByte:0x20 to:0x00];	//hsync high
+    if (!err) err=[self sonixIICSensorWriteByte:0x21 to:0x2d];	//hsync low
+    if (!err) err=[self sonixIICSensorWriteByte:0x22 to:0x00];	//vsync high
+    if (!err) err=[self sonixIICSensorWriteByte:0x23 to:0x03];	//vsync low
+    if (!err) err=[self sonixIICSensorWriteByte:0x25 to:0x00];	//intg hi
+    if (!err) err=[self sonixIICSensorWriteByte:0x26 to:0x02];	//intg mid
+    if (!err) err=[self sonixIICSensorWriteByte:0x27 to:0x88];	//intg low
+    if (!err) err=[self sonixIICSensorWriteByte:0x30 to:0x38];	//reset level
+    if (!err) err=[self sonixIICSensorWriteByte:0x31 to:0x2a];	//gain red
+    if (!err) err=[self sonixIICSensorWriteByte:0x32 to:0x2a];	//gain green
+    if (!err) err=[self sonixIICSensorWriteByte:0x33 to:0x2a];	//intg blue
+    if (!err) err=[self sonixIICSensorWriteByte:0x34 to:0x02];	//pixel bias
+    if (!err) err=[self sonixIICSensorWriteByte:0x5b to:0x0a];	//some rev. 1 suff
+    if (!err) err=[self sonixAsicRamWriteByte:0x0125 to:0x28];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0126 to:0x1e];
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixAsicRamWriteByte:0x0128 to:0x0e]; break;
+        case ResolutionSIF: if (!err) err=[self sonixAsicRamWriteByte:0x0128 to:0x1e]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixAsicRamWriteByte:0x0128 to:0x2e]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    if (!err) err=[self sonixAsicRamWriteByte:0x0127 to:0x20];
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixAsicRamWriteByte:0x0129 to:0x62]; break;
+        case ResolutionSIF: if (!err) err=[self sonixAsicRamWriteByte:0x0129 to:0x22]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixAsicRamWriteByte:0x0129 to:0x22]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    if (!err) err=[self sonixAsicRamWriteByte:0x012c to:0x02];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012d to:0x03];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012e to:0x0f];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012f to:0x0c];
+    if (!err) err=[self sonixIICSensorWriteByte:0x20 to:0x00];
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixIICSensorWriteByte:0x21 to:0x2a]; break;
+        case ResolutionSIF: if (!err) err=[self sonixIICSensorWriteByte:0x21 to:0xc1]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixIICSensorWriteByte:0x21 to:0xc1]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    if (!err) err=[self sonixIICSensorWriteByte:0x22 to:0x00];
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixIICSensorWriteByte:0x23 to:0x28]; break;
+        case ResolutionSIF: if (!err) err=[self sonixIICSensorWriteByte:0x23 to:0x10]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixIICSensorWriteByte:0x23 to:0x10]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    if (!err) err=[self sonixIICSensorWriteByte:0x10 to:0x00];
+    if (!err) err=[self sonixIICSensorWriteByte:0x11 to:0x04];
+    if (!err) err=[self sonixIICSensorWriteByte:0x12 to:0x00];
+    if (!err) err=[self sonixIICSensorWriteByte:0x13 to:0x03];
+    if (!err) err=[self sonixIICSensorWriteByte:0x14 to:0x01];
+    if (!err) err=[self sonixIICSensorWriteByte:0x15 to:0xe0];
+    if (!err) err=[self sonixIICSensorWriteByte:0x16 to:0x02];
+    if (!err) err=[self sonixIICSensorWriteByte:0x17 to:0x80];
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0x2a]; break;
+        case ResolutionSIF: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0x2a]; break;
+        case ResolutionSIF: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    if (!err) err=[self sonixAsicWrite1:0x0134 byte1:0xa1];
+
+    if (!err) [self setGain:[self gain]];
+    if (!err) [self setShutter:[self shutter]];
     return YES;
 }
 
 - (BOOL) shutdownGrabStream {
-    if ([self writeRegisterBlind:0x1400 value:0x0000]) return NO;
-    return YES;
-}
-
-- (CameraError) writeRegisterBlind:(UInt16)reg value:(UInt16)val {
-    UInt8 buf[6];
-    buf[0]=(reg&0xff00)>>8;
-    buf[1]=reg&0x00ff;
-    buf[2]=(val&0xff00)>>8;
-    buf[3]=val&0x00ff;
-    buf[4]=0;
-    buf[5]=0;
-    if ([self usbWriteVICmdWithBRequest:8 wValue:2 wIndex:0 buf:buf len:6]) return CameraErrorOK;
-    else return CameraErrorUSBProblem;
-}
-
-- (CameraError) writeRegister:(UInt16)reg value:(UInt16)val result:(UInt32*)ret {
-    CameraError err;
-
-    //Send write command
-    UInt8 buf[4];
-    err=[self writeRegisterBlind:reg value:val];	
-    //Wait for completion (?)
-    do {
-        if (![self usbReadVICmdWithBRequest:0 wValue:1 wIndex:0 buf:buf len:1]) return CameraErrorUSBProblem;
-    } while (buf[0]!=2);
-    //Check result
-    if (![self usbReadVICmdWithBRequest:0 wValue:4 wIndex:0 buf:buf len:4]) return CameraErrorUSBProblem;
-    if ((((reg&0xff00)>>8)+0x80)!=buf[0]) NSLog(@"writeRegister:%04x value:%04x bad result %04x",reg,val,buf[0]);
-    if (ret) *ret=*((UInt32*)buf);
-    return CameraErrorOK;
+    BOOL ok=YES;
+    if ([self sonixQuitAP]!=CameraErrorOK) ok=NO;
+    return ok;
 }
 
 //DSC Image download
@@ -938,89 +933,291 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 }
 
 - (long) numberOfStoredMediaObjects {
-    UInt32 result;
-    if ([self writeRegister:0x0c00 value:0x0000 result:&result]) return 0;
-    if ([self writeRegister:0x1600 value:0x0000 result:&result]) return 0;
-    if ([self writeRegister:0x1800 value:0x0000 result:&result]) return 0;
-    result=(result&0x00ff0000)>>16;
-    return result;
+    short num;
+    SonixSensorType sensorType;
+    if ([self sonixSetModeToDSC]!=CameraErrorOK) return 0;
+    if ([self sonixGetSensorType:&sensorType]!=CameraErrorOK) return 0;
+    if ([self sonixGetNumberOfStoredImages:&num]!=CameraErrorOK) return 0;
+    return num;
 }
 
 - (NSDictionary*) getStoredMediaObject:(long)idx {
-    NSMutableData* rawBuffer;
-    UInt32 result;
+    NSMutableData* rawBuffer=NULL;
     UInt32 rawLength;
     UInt32 readLength;
-    IOReturn err;
-    NSBitmapImageRep* imageRep;
-    int width;
-    int height;
+    CameraError err=CameraErrorOK;
+    IOReturn ioErr;
+    CameraResolution res=ResolutionInvalid;
+    int width=1;
+    int height=1;
+    BOOL flash=NO;
+    NSBitmapImageRep* imageRep=NULL;
 
     //Neutralize bayer converter
-    [bayerConverter setBrightness:0.0f];
-    [bayerConverter setContrast:1.0f];
-    [bayerConverter setSaturation:1.0f];
-    [bayerConverter setGamma:1.0f];
-    [bayerConverter setSharpness:0.5f];
-    [bayerConverter setGainsDynamic:NO];
-    [bayerConverter setGainsRed:1.0f green:1.0f blue:1.0f];
-
-    //Get dimensions of image
-    if ([self writeRegister:0x1900+((idx+1)&0xff) value:((idx+1)&0xff00) result:&result]) return NULL;
-    if (result&0x00010000) {
-        width=320;
-        height=240;
+    if (!bayerConverter) err=CameraErrorInternal;
+    if (err==CameraErrorOK) {
+        [bayerConverter setBrightness:0.0f];						//Reset bayer decoder
+        [bayerConverter setContrast:1.0f];
+        [bayerConverter setSaturation:1.0f];
+        [bayerConverter setGamma:1.0f];
+        [bayerConverter setSharpness:0.5f];
+        [bayerConverter setGainsDynamic:NO];
+        [bayerConverter setGainsRed:1.0f green:1.0f blue:1.0f];
+        err=[self sonixGetPictureType:idx+1 flash:&flash resolution:&resolution];	//Get image info
     }
-    else {
-        width=640;
-        height=480;
+    if (err==CameraErrorOK) {
+        width=WidthOfResolution(res);
+        height=HeightOfResolution(res);
+        err=[self sonixGetPicture:idx+1 length:&rawLength];     //Get data size of image and prepare download
     }
-
-    //Get data size of image
-    if ([self writeRegister:0x1a00+((idx+1)&0xff) value:((idx+1)&0xff00) result:&result]) return NULL;
-    rawLength=((((result&0xff)<<16)+(result&0xff00)+((result&0xff0000)>>16))+0x3f)&0xffffc0;
-
-    //Get raw data buffer
-    //Add some safety to prevent the decoder from running into the desert
-    rawBuffer=[NSMutableData dataWithLength:rawLength+12+height*2+width*height/8+100];
-    if (!rawBuffer) return NULL;
-
-    //Read raw image data
-    readLength=rawLength;
-    err=(*intf)->ReadPipe(intf,2, [rawBuffer mutableBytes]+12, &readLength);	//Read one chunk
-    CheckError(err,"getStoredMediaObject-ReadBulkPipe");
-    if (rawLength!=readLength) {
-        NSLog(@"getStoredMediaObject: problem: wanted %i bytes, got %i, trying to continue...",rawLength,readLength);
+    if (err==CameraErrorOK) {
+        //Get raw data buffer - Add some safety to prevent the decoder from running into the desert
+        rawBuffer=[NSMutableData dataWithLength:rawLength+12+height*2+width*height/8+100];
+        if (!rawBuffer) err=CameraErrorNoMem;
     }
-
-    //Get an imageRep to hold the image
-    imageRep=[[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
-                                                      pixelsWide:width
-                                                      pixelsHigh:height
-                                                   bitsPerSample:8
-                                                 samplesPerPixel:3
-                                                        hasAlpha:NO
-                                                        isPlanar:NO
-                                                  colorSpaceName:NSCalibratedRGBColorSpace
-                                                     bytesPerRow:0
-                                                    bitsPerPixel:0] autorelease];
-
-    //Decode the image
-    [bayerConverter setSourceWidth:width height:height];
-    [bayerConverter setDestinationWidth:width height:height];
-    [self decode:[rawBuffer mutableBytes]
-              to:[imageRep bitmapData]
-           width:width
-          height:height
-             bpp:[imageRep bitsPerPixel]/8
-        rowBytes:[imageRep bytesPerRow]];
+    if (err==CameraErrorOK) {
+        //Read raw image data
+        rawLength=(rawLength+63)&0xffffffc0;	//Round up to n*64
+        readLength=rawLength;
+        ioErr=(*intf)->ReadPipe(intf,2, [rawBuffer mutableBytes]+12, &readLength);	//Read image data
+        CheckError(ioErr,"getStoredMediaObject-ReadBulkPipe");
+        if (rawLength!=readLength) {
+            NSLog(@"getStoredMediaObject: problem: wanted %i bytes, got %i, trying to continue...",rawLength,readLength);
+        }
+        if (ioErr) err=CameraErrorUSBProblem;
+    }
+    if (err==CameraErrorOK) {
+        //Get an imageRep to hold the image
+        imageRep=[[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+                                                          pixelsWide:width
+                                                          pixelsHigh:height
+                                                       bitsPerSample:8
+                                                     samplesPerPixel:3
+                                                            hasAlpha:NO
+                                                            isPlanar:NO
+                                                      colorSpaceName:NSCalibratedRGBColorSpace
+                                                         bytesPerRow:0
+                                                        bitsPerPixel:0] autorelease];
+        if (!imageRep) err=CameraErrorNoMem;
+    }
+    if (err==CameraErrorOK) {
+        //Decode the image
+        [bayerConverter setSourceWidth:width height:height];
+        [bayerConverter setDestinationWidth:width height:height];
+        [self decode:[rawBuffer mutableBytes]
+                  to:[imageRep bitmapData]
+               width:width
+              height:height
+                 bpp:[imageRep bitsPerPixel]/8
+            rowBytes:[imageRep bytesPerRow]];
+    }
 
     //Clean up
-    [[rawBuffer retain] release];	//Explicitly release buffer (be nice when there are many pics)
+    if (rawBuffer) [[rawBuffer retain] release];	//Explicitly release buffer (be nice when there are many pics)
+    if ((imageRep)&&(err!=CameraErrorOK)) {		//If an error occurred, explicitly release the imageRep
+        [[imageRep retain] release];
+        imageRep=NULL;
+    }
 
     //Return result
-    return [NSMutableDictionary dictionaryWithObjectsAndKeys:@"bitmap",@"type",imageRep,@"data",NULL];
+    if (err!=CameraErrorOK) return NULL;
+    else return [NSMutableDictionary dictionaryWithObjectsAndKeys:@"bitmap",@"type",imageRep,@"data",NULL];
 }
+
+- (CameraError) sonixGenericCommand:(UInt8*)paramBuf expectResponse:(BOOL)resp to:(UInt8*)retBuf {
+    UInt8 junkBuf[4];
+    
+    //Send write command
+    if (![self usbWriteVICmdWithBRequest:8 wValue:2 wIndex:0 buf:paramBuf len:6]) return CameraErrorOK;
+
+    if (!resp) {
+        usleep(100000);			//I don't know if this is needed - just for safety: Let the camera work a bit
+        return CameraErrorOK;
+    }
+    if (!retBuf) retBuf=junkBuf;	//We expect a response, but we throw it away
+    
+    //Wait for completion (?)
+    do {
+        if (![self usbReadVICmdWithBRequest:0 wValue:1 wIndex:0 buf:retBuf len:1]) return CameraErrorUSBProblem;
+    } while (retBuf[0]!=2);
+
+    //Check result
+    if (![self usbReadVICmdWithBRequest:0 wValue:4 wIndex:0 buf:retBuf len:4]) return CameraErrorUSBProblem;
+    if ((paramBuf[0]+0x80)!=retBuf[0]) {
+        NSLog(@"sendSonixCommand: Warning: bad return code");
+    }
+    
+    return CameraErrorOK;
+}
+
+//These methods do specific Sonix 2028 commands
+
+- (CameraError) sonixEraseAllPictures {
+    UInt8 paramBuf[]={0x05,0x00,0x00,0x00,0x00,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:YES to:NULL];
+}
+
+- (CameraError) sonixEraseLastPicture {
+    UInt8 paramBuf[]={0x05,0x01,0x00,0x00,0x00,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:YES to:NULL];
+}
+
+- (CameraError) sonixBulkWrite:(UInt8)type length:(UInt32)len {		//DSC mode only
+    UInt8 paramBuf[]={0x01,type,len&0xff,(len>>8)&0xff,(len>>16)&0xff,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:YES to:NULL];
+}
+
+- (CameraError) sonixSetModeToDSC {
+    UInt8 paramBuf[]={0x0c,0x00,0x00,0x00,0x00,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:YES to:NULL];
+}
+
+- (CameraError) sonixSetModeToPCCam {
+    UInt8 paramBuf[]={0x0c,0x01,0x00,0x00,0x00,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:YES to:NULL];
+}
+
+- (CameraError) sonixCaptureOneImage {	//DSC mode only, will return noMem if cam is full
+    UInt8 paramBuf[]={0x0e,0x00,0x00,0x00,0x00,0x00};
+    UInt8 buf[4];
+    CameraError err=[self sonixGenericCommand:paramBuf expectResponse:YES to:buf];
+    if ((!err)&&(buf[1])) err=CameraErrorNoMem;
+    return err;
+}
+
+- (CameraError) sonixIICSensorReadByte:(UInt8)reg to:(UInt8*)ret {	//PC Cam mode only
+    UInt8 paramBuf[]={0x10,reg,0x00,0x00,0x00,0x00};
+    UInt8 retBuf[4];
+    CameraError err=[self sonixGenericCommand:paramBuf expectResponse:YES to:retBuf];
+    if (ret) *ret=retBuf[1];
+    return err;
+}
+
+- (CameraError) sonixIICSensorWriteByte:(UInt8)reg to:(UInt8)val {	//PC Cam mode only
+    UInt8 paramBuf[]={0x11,reg,val,0x00,0x00,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:YES to:NULL];
+}
+
+- (CameraError) sonixAsicRamReadByte:(UInt16)reg to:(UInt8*)ret {
+    UInt8 paramBuf[]={0x12,reg&0xff,(reg>>8)&0xff,0x00,0x00,0x00};
+    UInt8 retBuf[4];
+    CameraError err=[self sonixGenericCommand:paramBuf expectResponse:YES to:retBuf];
+    if (ret) *ret=retBuf[1];
+    return err;
+}
+
+- (CameraError) sonixAsicRamWriteByte:(UInt16)reg to:(UInt8)val {
+    UInt8 paramBuf[]={0x13,reg&0xff,(reg>>8)&0xff,val,0x00,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:YES to:NULL];
+}
+
+- (CameraError) sonixQuitAP {
+    UInt8 paramBuf[]={0x14,0x00,0x00,0x00,0x00,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:NO to:NULL];
+}
+
+- (CameraError) sonixGetSensorType:(SonixSensorType*)type {
+    UInt8 paramBuf[]={0x16,0x00,0x00,0x00,0x00,0x00};
+    UInt8 buf[4];
+    CameraError err=[self sonixGenericCommand:paramBuf expectResponse:YES to:buf];
+    if (type) *type=(SonixSensorType)(buf[1]);
+    return err;
+}
+
+- (CameraError) sonixSetSubsampling:(int)subsample forDSCMode:(BOOL)dsc {
+    //Allowed: 1/NO, 2/NO, 4/NO, 1/YES, 2/YES - not checked
+    UInt8 paramBuf[]={0x16,subsample*((dsc)?0x10:1),0x00,0x00,0x00,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:YES to:NULL];
+}
+
+- (CameraError) sonixGetNumberOfStoredImages:(short*)numPics {
+    UInt8 paramBuf[]={0x18,0x00,0x00,0x00,0x00,0x00};
+    UInt8 buf[4];
+    CameraError err=[self sonixGenericCommand:paramBuf expectResponse:YES to:buf];
+    if (numPics) *numPics=buf[1]+buf[2]*256;
+    return err;
+}
+
+- (CameraError) sonixIsFull:(BOOL*)full {
+    UInt8 paramBuf[]={0x18,0x00,0x00,0x00,0x00,0x00};
+    UInt8 buf[4];
+    CameraError err=[self sonixGenericCommand:paramBuf expectResponse:YES to:buf];
+    if (full) *full=(buf[3])?YES:NO;
+    return err;
+}
+
+- (CameraError) sonixGetPictureType:(short)picIdx flash:(BOOL*)flash resolution:(CameraResolution*)res {
+    UInt8 paramBuf[]={0x19,picIdx&0xff,(picIdx>>8)&0xff,0x00,0x00,0x00};
+    UInt8 buf[4];
+    CameraError err=[self sonixGenericCommand:paramBuf expectResponse:YES to:buf];
+    if (flash) *flash=(buf[1]&0x80)?YES:NO;
+    if (res) {
+        switch (buf[1]&0x07) {
+            case 0: *res=ResolutionCIF; break;
+            case 1: *res=ResolutionQCIF; break;
+            case 2: *res=ResolutionVGA; break;
+            case 3: *res=ResolutionSIF; break;
+            case 4: *res=ResolutionInvalid; break;	//QQCIF
+            case 5: *res=ResolutionQSIF; break;	
+            case 6: *res=ResolutionInvalid; break;	//Audio
+            default: *res=ResolutionInvalid; break;
+        }
+    }
+    return err;
+}
+
+- (CameraError) sonixGetPicture:(short)picIdx length:(UInt32*)len {	//DSC mode only, follow bulk read, round up to n*64
+    UInt8 paramBuf[]={0x1A,picIdx&0xff,(picIdx>>8)&0xff,0x00,0x00,0x00};
+    UInt8 buf[4];
+    CameraError err=[self sonixGenericCommand:paramBuf expectResponse:YES to:buf];
+    if (len) *len=buf[1]+buf[2]*256+buf[3]*65536;
+    return err;
+}
+
+- (CameraError) sonixSensorWrite1:(UInt8)addr byte1:(UInt8)b1 {	//PC Cam mode only
+    UInt8 paramBuf[]={0x1B,addr,b1,0x00,0x00,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:NO to:NULL];
+}
+
+- (CameraError) sonixSensorWrite2:(UInt8)addr byte1:(UInt8)b1 byte2:(UInt8)b2 {	//PC Cam mode only
+    UInt8 paramBuf[]={0x1C,addr,b1,b2,0x00,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:NO to:NULL];
+}
+
+- (CameraError) sonixSensorWrite3:(UInt8)addr byte1:(UInt8)b1 byte2:(UInt8)b2 byte3:(UInt8)b3 {	//PC Cam mode only
+    UInt8 paramBuf[]={0x1D,addr,b1,b2,b3,0x00};
+    return [self sonixGenericCommand:paramBuf expectResponse:NO to:NULL];
+}
+
+- (CameraError) sonixSensorWrite4:(UInt8)addr byte1:(UInt8)b1 byte2:(UInt8)b2 byte3:(UInt8)b3 byte4:(UInt8)b4 {//PC Cam mode only
+    UInt8 paramBuf[]={0x1E,addr,b1,b2,b3,b4};
+    return [self sonixGenericCommand:paramBuf expectResponse:NO to:NULL];
+}
+
+- (CameraError) sonixAsicWrite1:(UInt16)addr byte1:(UInt8)b1 {
+    UInt8 paramBuf[]={0x20,addr-0x100,b1,0x00,0x00,0x00};
+    if ((addr<0x100)||(addr>0x1ff)) return CameraErrorInternal;
+    return [self sonixGenericCommand:paramBuf expectResponse:NO to:NULL];
+}
+
+- (CameraError) sonixAsicWrite2:(UInt16)addr byte1:(UInt8)b1 byte2:(UInt8)b2 {
+    UInt8 paramBuf[]={0x21,addr-0x100,b1,b2,0x00,0x00};
+    if ((addr<0x100)||(addr>0x1ff)) return CameraErrorInternal;
+    return [self sonixGenericCommand:paramBuf expectResponse:NO to:NULL];
+}
+
+- (CameraError) sonixAsicWrite3:(UInt16)addr byte1:(UInt8)b1 byte2:(UInt8)b2 byte3:(UInt8)b3 {
+    UInt8 paramBuf[]={0x22,addr-0x100,b1,b2,b3,0x00};
+    if ((addr<0x100)||(addr>0x1ff)) return CameraErrorInternal;
+    return [self sonixGenericCommand:paramBuf expectResponse:NO to:NULL];
+}
+
+- (CameraError) sonixAsicWrite4:(UInt16)addr byte1:(UInt8)b1 byte2:(UInt8)b2 byte3:(UInt8)b3 byte4:(UInt8)b4 {
+    UInt8 paramBuf[]={0x23,addr-0x100,b1,b2,b3,b4};
+    if ((addr<0x100)||(addr>0x1ff)) return CameraErrorInternal;
+    return [self sonixGenericCommand:paramBuf expectResponse:NO to:NULL];
+}
+
 
 
 @end
