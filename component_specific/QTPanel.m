@@ -57,7 +57,7 @@ pascal ComponentResult sgpnMainEntry (ComponentParameters *params, Handle storag
 #ifdef LOG_QT_CALLS
     char selectorName[200];
     if(ResolveVDSelector(params->what, selectorName)) {
-        printf("QT call to %s\n",selectorName);
+        printf("QT call to sgpn:%s\n",selectorName);
     } else {
         printf("QT call unknown selector %d\n",params->what);
     }
@@ -127,10 +127,20 @@ pascal ComponentResult sgpnRegister(sgpnGlobals storage) {
     short num,i;
     unsigned long cid;
     Component comp;
-    MyCameraCentral* central=[[MyCameraCentral alloc] init];
+    
+    //Bail if the camera central has already been loaded (might register-loop infinitely...)
+    if ([MyCameraCentral isCameraCentralExisting]) {
+#ifdef VERBOSE
+        NSLog(@"Camera central already inited - probably duplicate register. Skipping...");
+#endif
+        return 1;
+    }
+    
+    MyCameraCentral* central;
     MyBridge* bridge;
     char cname[256];
     Str255 pname;
+    central=[MyCameraCentral sharedCameraCentral];
     if (!central) return 0;
     if (![central startupWithNotificationsOnMainThread:NO recognizeLaterPlugins:NO]) return 0;
     num=[central numCameras];

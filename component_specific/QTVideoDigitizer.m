@@ -37,7 +37,7 @@ pascal ComponentResult vdigMainEntry (ComponentParameters *params, Handle storag
     if (params->what!=kVDCompressDoneSelect) {
 #endif
         if(ResolveVDSelector(params->what, selectorName)) {
-            NSLog(@"QT call to %s\n",selectorName);
+            NSLog(@"QT call to vdig: %s\n",selectorName);
         } else {
             NSLog(@"QT call unknown selector %d\n",params->what);
         }
