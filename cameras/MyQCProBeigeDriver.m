@@ -496,9 +496,9 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
                     else if (error<-corridor) error+=corridor;
                     else error=0.0f;
                     if (error!=0.0f) {
-                        float correction;
-                        if (error>0) correction=-(error*error);
-                        if (error<0) correction=(error*error);
+                        float correction=0.0f;
+                        if (error>0.0f) correction=-(error*error);
+                        else correction=(error*error);
                         correction*=0.2f;
                         if (correction<-0.1f) correction=-0.1f;
                         if (correction> 0.1f) correction= 0.1f;
