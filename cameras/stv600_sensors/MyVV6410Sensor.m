@@ -1,5 +1,6 @@
 /*
-macam - webcam app and QuickTime driver component
+ MyVV6410Sensor.m - Sensor driver for QuickCams
+ 
  Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
 
  This program is free software; you can redistribute it and/or modify
@@ -26,10 +27,21 @@ macam - webcam app and QuickTime driver component
 #define VV6410_REG0A 		0x0a
 #define VV6410_REG0C 		0x0c
 #define VV6410_REG0E 		0x0e
-#define VV6410_CONTROL 		0x10
+#define VV6410_SETUP_0 		0x10
+#define VV6410_SETUP_1 		0x11
 #define VV6410_ADC_BITS		0x12
+#define VV6410_FG_MODES		0x14
+#define VV6410_PIN_MAPPING	0x15
+#define VV6410_DATA_FORMAT	0x16
+#define VV6410_OP_FORMAT	0x17
+#define VV6410_MODE_SELECT	0x18
 #define VV6410_INTEGRATE	0x1c
+#define VV6410_FEXP_H		0x20	//fine exposure value
+#define VV6410_FEXP_L		0x21
+#define VV6410_CEXP_H		0x22	//Coarse exposure value
+#define VV6410_CEXP_L		0x23
 #define VV6410_GAIN  		0x24
+#define VV6410_CLK_DIV 		0x25
 #define VV6410_SHUTTERL 	0x26
 #define VV6410_SHUTTERH 	0x28
 #define VV6410_REG2A  		0x2a
@@ -39,11 +51,17 @@ macam - webcam app and QuickTime driver component
 #define VV6410_REG34  		0x34
 #define VV6410_REG36  		0x36
 #define VV6410_REG38  		0x38
-#define VV6410_STARTX		0x57
-#define VV6410_STARTY	 	0x59
-#define VV6410_WIDTH  		0x52
-#define VV6410_HEIGHT 		0x61
-
+#define VV6410_STARTX_H		0x57
+#define VV6410_STARTX_L		0x58
+#define VV6410_STARTY_H	 	0x59
+#define VV6410_STARTY_L	 	0x5a
+#define VV6410_WIDTH_H 		0x52	//Line length in pixel clocks
+#define VV6410_WIDTH_L 		0x53
+#define VV6410_HEIGHT_H		0x61
+#define VV6410_HEIGHT_L		0x62
+#define VV6410_AS0		0x77
+#define VV6410_AT0		0x78
+#define VV6410_AT1		0x79
 
 #import "MyVV6410Sensor.h"
 #import "MyQCExpressADriver.h"
@@ -65,30 +83,24 @@ macam - webcam app and QuickTime driver component
     BOOL ok=YES;
     if (ok) ok=[camera writeSTVRegister:0x0423 value:0x05];
 
-/*
-    if (!isaweb(dev)) {
-        if (usb_quickcam_set1(dev, 0x1446, 1) < 0) goto error;
-    }	
-*/
-
     if (ok) ok=[camera writeSTVRegister:0x1423 value:0x04];
     if (ok) ok=[camera writeSTVRegister:0x1500 value:0x1b];
 
     if (ok) {
         [self resetI2CSequence];
-        [self addI2CRegister:VV6410_CONTROL value:0x04];
+        [self addI2CRegister:VV6410_SETUP_0 	value:0x04];
         ok=[self writeI2CSequence];
     }
     //Control: Web CIF: 0x02, Web QCIF: 0xa2, Express CIF:0x02, Express QCIF 0xc2
     if (ok) {
         [self resetI2CSequence];
-        [self addI2CRegister:VV6410_CONTROL value:0x02];
+        [self addI2CRegister:VV6410_SETUP_0	value:0x02];
         ok=[self writeI2CSequence];
     }
 
     if (ok) {
         [self resetI2CSequence];
-        [self addI2CRegister:VV6410_GAIN value:0xfb];
+        [self addI2CRegister:VV6410_GAIN	value:0xfb];
         ok=[self writeI2CSequence];
     }
 
@@ -96,21 +108,33 @@ macam - webcam app and QuickTime driver component
 
     if (ok) ok=[camera writeSTVRegister:0x1503 value:0x45];
 
-    /* set window size
-    if (vv6410_set_window(dev,0,0,48,64,sensor_ctrl) < 0) {
-        printk(KERN_ERR "vv6410_set_window failed");
-        goto error;
+    if (ok) {
+        //Setup sensor rect
+        int x=1;
+        int y=1;
+        int width=415;//356
+        int height=351;//320
+        [self resetI2CSequence];
+        [self addI2CRegister:VV6410_STARTX_H	value:(x>>8)&0xff];
+        [self addI2CRegister:VV6410_STARTX_L	value:x%0xff];
+        [self addI2CRegister:VV6410_STARTY_H	value:(y>>8)&0xff];
+        [self addI2CRegister:VV6410_STARTY_L	value:y%0xff];
+        [self addI2CRegister:VV6410_WIDTH_H	value:(width>>8)&0xff];
+        [self addI2CRegister:VV6410_WIDTH_L	value:width%0xff];
+        [self addI2CRegister:VV6410_HEIGHT_H	value:(height>>8)&0xff];
+        [self addI2CRegister:VV6410_HEIGHT_L	value:height%0xff];
+        ok=[self writeI2CSequence];
     }
- */
 
     if (ok) {
+        //Gain, exposure and timing
         [self resetI2CSequence];
-        [self addI2CRegister:0x20 value:0x01];	//0x00 for QCIF
-        [self addI2CRegister:0x21 value:0x89];	//0xe3 for QCIF
-        [self addI2CRegister:0x22 value:0x01];	//0x00 for QCIF
-        [self addI2CRegister:0x23 value:0x3e];	//0x9e for QCIF
-        [self addI2CRegister:0x24 value:0xfa];
-        [self addI2CRegister:0x25 value:0x01];
+        [self addI2CRegister:VV6410_FEXP_H	value:0x01];
+        [self addI2CRegister:VV6410_FEXP_L	value:0x80];
+        [self addI2CRegister:VV6410_CEXP_H	value:0x00];
+        [self addI2CRegister:VV6410_CEXP_L	value:0xc0];
+        [self addI2CRegister:VV6410_GAIN	value:0x7a];
+        [self addI2CRegister:VV6410_CLK_DIV	value:0x01];
         ok=[self writeI2CSequence];
     }
 
@@ -118,16 +142,17 @@ macam - webcam app and QuickTime driver component
     if (ok) ok=[camera writeSTVRegister:0x1502 value:0xa7];	//???
 
     if (ok) {
+        //Various settings
         [self resetI2CSequence];
-        [self addI2CRegister:0x11 value:0x18];
-        [self addI2CRegister:0x14 value:0x55];
-        [self addI2CRegister:0x15 value:0x10];
-        [self addI2CRegister:0x16 value:0x81];
-        [self addI2CRegister:0x17 value:0x18];
-        [self addI2CRegister:0x18 value:0x00];
-        [self addI2CRegister:0x77 value:0x5e];
-        [self addI2CRegister:0x78 value:0x04];
-        [self addI2CRegister:0x79 value:0x11];	//Audio! Only for QC web!
+        [self addI2CRegister:VV6410_SETUP_1	value:0x18];
+        [self addI2CRegister:VV6410_FG_MODES	value:0x55];
+        [self addI2CRegister:VV6410_PIN_MAPPING	value:0x10];
+        [self addI2CRegister:VV6410_DATA_FORMAT	value:0x81];
+        [self addI2CRegister:VV6410_OP_FORMAT	value:0x18];
+        [self addI2CRegister:VV6410_MODE_SELECT	value:0x00];
+        [self addI2CRegister:VV6410_AS0		value:0x5e];
+        [self addI2CRegister:VV6410_AT0		value:0x04];
+        [self addI2CRegister:VV6410_AT1		value:0x11];	//Audio! Only for QC web!
         ok=[self writeI2CSequence];
     }
 
@@ -137,9 +162,9 @@ macam - webcam app and QuickTime driver component
 - (BOOL) startStream {
     BOOL ok=YES;
 
-    //        if (usb_quickcam_set1(dev, 0x1445, 1) < 0) //led
+
     [self resetI2CSequence];
-    [self addI2CRegister:VV6410_CONTROL value:0x00];	//0xc0 for QCIF
+    [self addI2CRegister:VV6410_SETUP_0	value:0x00];	//0xc0 for QCIF
     if (ok) ok=[self writeI2CSequence];
     return ok;
 }
@@ -148,7 +173,7 @@ macam - webcam app and QuickTime driver component
     BOOL ok=YES;
     
     [self resetI2CSequence];
-    [self addI2CRegister:VV6410_CONTROL value:0x02];	//0xc2 for QCIF
+    [self addI2CRegister:VV6410_SETUP_0	value:0x02];	//0xc2 for QCIF
     if (ok) ok=[self writeI2CSequence];
     return ok;
 }

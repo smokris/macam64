@@ -1,5 +1,6 @@
 /*
-macam - webcam app and QuickTime driver component
+ MyVV6410Sensor.h - Sensor driver for QuickCams
+
  Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
 
  This program is free software; you can redistribute it and/or modify
