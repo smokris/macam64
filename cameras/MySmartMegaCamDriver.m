@@ -24,8 +24,10 @@
 @implementation MySmartMegaCamDriver
 
 #define PRODUCT_SPCA504B 0x504b
+#define VENDOR_SUNPLUS 0x4fc
 
 + (unsigned short) cameraUsbProductID { return PRODUCT_SPCA504B; }
++ (unsigned short) cameraUsbVendorID { return VENDOR_SUNPLUS; }
 + (NSString*) cameraName { return @"Aiptek Smart MegaCam";}
 
 
