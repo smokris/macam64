@@ -168,13 +168,13 @@ static NSMutableDictionary* prefsDict=NULL;
     [self registerCameraDriver:[MyQCWebDriver class]];
     [self registerCameraDriver:[MyVicamDriver class]];
     [self registerCameraDriver:[MySPCA504Driver class]];
-    [self registerCameraDriver:[MyIntelPCCameraPro class]];
-    [self registerCameraDriver:[MyIntelPCCamera class]];
-    [self registerCameraDriver:[MyGrandtecVcap class]];
-    [self registerCameraDriver:[MyViewQuestM318B class]];
-    [self registerCameraDriver:[MyViewQuestVQ110 class]];
-    [self registerCameraDriver:[MyDVC325 class]];
-    [self registerCameraDriver:[MySmartMegaCamDriver class]];
+//    [self registerCameraDriver:[MyIntelPCCameraPro class]];
+//    [self registerCameraDriver:[MyIntelPCCamera class]];
+//    [self registerCameraDriver:[MyGrandtecVcap class]];
+//    [self registerCameraDriver:[MyViewQuestM318B class]];
+//    [self registerCameraDriver:[MyViewQuestVQ110 class]];
+//    [self registerCameraDriver:[MyDVC325 class]];
+//    [self registerCameraDriver:[MySmartMegaCamDriver class]];
 
     doNotificationsOnMainThread=nomt;	//Remember this!
     if (doNotificationsOnMainThread) {	//The client wants merged threads: Build a connection to the new thread
@@ -618,7 +618,7 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
         matchingDict = IOServiceMatching(kIOUSBDeviceClassName);
         if (!matchingDict) {
             NSLog(@"MyCameraCentral:wiringThread:Can't create a USB matching dictionary");
-            mach_port_deallocate(mach_task_self(), masterPort);
+//            mach_port_deallocate(mach_task_self(), masterPort);
             return;
         }
         // Add our vendor and product IDs to the matching criteria
@@ -638,7 +638,7 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
                                               &gAddedIter);
         DeviceAdded(info, gAddedIter);
     }
-    mach_port_deallocate(mach_task_self(), masterPort); masterPort = NULL;
+//    mach_port_deallocate(mach_task_self(), masterPort); masterPort = NULL;
     if (startupLock) [startupLock unlock];	//First cams have been collected. Let startup return.
     // Start the run loop. Now we'll receive notifications.
     CFRunLoopRun();
