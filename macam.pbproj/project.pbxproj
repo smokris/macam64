@@ -286,6 +286,7 @@
 				F53F6639039ACC3F01C3DF00,
 				F5A5077603BBC69501A78977,
 				39185ABC03C8B5570066DE75,
+				3973A6F503CDF44E0066D062,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -376,6 +377,7 @@
 				F5A5077503BBC69501A78977,
 				39185ABD03C8B5570066DE75,
 				39186EC903C8FF7B0066DE75,
+				3973A6F403CDF44E0066D062,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -439,6 +441,42 @@
 		};
 		39186EC903C8FF7B0066DE75 = {
 			fileRef = F5F79A970212038E01E152CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3973A6F203CDF44E0066D062 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MySPCA500Driver.m;
+			refType = 4;
+		};
+		3973A6F303CDF44E0066D062 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MySPCA500Driver.h;
+			refType = 4;
+		};
+		3973A6F403CDF44E0066D062 = {
+			fileRef = 3973A6F203CDF44E0066D062;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3973A6F503CDF44E0066D062 = {
+			fileRef = 3973A6F303CDF44E0066D062;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3973A6F603CDF44E0066D062 = {
+			fileRef = 3973A6F203CDF44E0066D062;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		3973A6F703CDF44E0066D062 = {
+			fileRef = 3973A6F303CDF44E0066D062;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -1039,6 +1077,7 @@
 				F53F663B039ACC3F01C3DF00,
 				F5A5077803BBC69501A78977,
 				39185ABE03C8B5570066DE75,
+				3973A6F703CDF44E0066D062,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1098,6 +1137,7 @@
 				F53F663A039ACC3F01C3DF00,
 				F5A5077703BBC69501A78977,
 				39185ABF03C8B5570066DE75,
+				3973A6F603CDF44E0066D062,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2675,6 +2715,8 @@
 		};
 		F5F79A800212038E01E152CA = {
 			children = (
+				3973A6F303CDF44E0066D062,
+				3973A6F203CDF44E0066D062,
 				39185ABA03C8B5570066DE75,
 				39185ABB03C8B5570066DE75,
 				F5A5077403BBC69501A78977,
