@@ -43,6 +43,7 @@
                 formatChanged = id; 
                 gainChanged = id; 
                 gammaChanged = id; 
+                horizontalFlipChanged = id; 
                 manGainChanged = id; 
                 saturationChanged = id; 
                 sharpnessChanged = id; 
@@ -61,6 +62,7 @@
                 fpsPopup = NSPopUpButton; 
                 gainSlider = NSSlider; 
                 gammaSlider = NSSlider; 
+                horizontalFlipCheckbox = NSButton; 
                 inspectorDrawer = NSDrawer; 
                 manGainCheckbox = NSButton; 
                 previewView = NSImageView; 
