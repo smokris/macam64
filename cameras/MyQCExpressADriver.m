@@ -539,7 +539,6 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
 - (CameraError) decodingThread
 {
     STV600ChunkBuffer  currChunk;
-    long               i;
     CameraError        err = CameraErrorOK;
 
     grabbingThreadRunning = NO;
@@ -605,27 +604,28 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
 
 - (void) decodeChunk:(STV600ChunkBuffer*) chunkBuffer
 {
-	if (!nextImageBufferSet)
-		return;			//No need to decode
+    if (!nextImageBufferSet)
+        return;			//No need to decode
 
     [imageBufferLock lock];				//lock image buffer access
     if (!nextImageBuffer)
-	{
-		[imageBufferLock unlock];				//release lock
-		return;
-	}
-	
-	[bayerConverter convertFromSrc:chunkBuffer->buffer
-							toDest:nextImageBuffer
-						srcRowBytes:[self width]+extraBytesInLine
-						dstRowBytes:nextImageBufferRowBytes
-							dstBPP:nextImageBufferBPP];
-	lastImageBuffer=nextImageBuffer;			//Copy nextBuffer info into lastBuffer
-	lastImageBufferBPP=nextImageBufferBPP;
-	lastImageBufferRowBytes=nextImageBufferRowBytes;
-	nextImageBufferSet=NO;				//nextBuffer has been eaten up
+    {
+        [imageBufferLock unlock];				//release lock
+        return;
+    }
 
-	[imageBufferLock unlock];				//release lock
+    [bayerConverter convertFromSrc:chunkBuffer->buffer
+                            toDest:nextImageBuffer
+                       srcRowBytes:[self width]+extraBytesInLine
+                       dstRowBytes:nextImageBufferRowBytes
+                            dstBPP:nextImageBufferBPP
+                              flip:NO];
+    lastImageBuffer=nextImageBuffer;			//Copy nextBuffer info into lastBuffer
+    lastImageBufferBPP=nextImageBufferBPP;
+    lastImageBufferRowBytes=nextImageBufferRowBytes;
+    nextImageBufferSet=NO;				//nextBuffer has been eaten up
+
+    [imageBufferLock unlock];				//release lock
 
     [self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer
     if (autoGain) {
