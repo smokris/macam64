@@ -66,6 +66,7 @@
 				4A9504CCFFE6A4B311CA0CBA,
 				4A9504CDFFE6A4B311CA0CBA,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 29B97314FDCFA39411CA2CEA;
 			projectDirPath = "";
@@ -112,12 +113,11 @@
 				29B9732DFDCFA39411CA2CEA,
 			);
 			buildSettings = {
-				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O0";
+				OPTIMIZATION_CFLAGS = "-O2";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = macam;
@@ -230,7 +230,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 1;
 		};
 		29B97327FDCFA39411CA2CEA = {
 			buildActionMask = 2147483647;
@@ -284,6 +283,7 @@
 				F589770403758BEE01159FE2,
 				F5A6652E037B256401C96C8F,
 				F53F6639039ACC3F01C3DF00,
+				F5A5077603BBC69501A78977,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -372,6 +372,7 @@
 				F589770303758BEE01159FE2,
 				F5A6652D037B256401C96C8F,
 				F53F6638039ACC3F01C3DF00,
+				F5A5077503BBC69501A78977,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -528,11 +529,13 @@
 			};
 		};
 		F511081D0241794801599652 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MySPCA504Driver.m;
 			refType = 4;
 		};
 		F511081E0241794801599652 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MySPCA504Driver.h;
 			refType = 4;
@@ -562,11 +565,13 @@
 			};
 		};
 		F51EEE570284B73A01B888F7 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyCameraInspector.h;
 			refType = 4;
 		};
 		F51EEE580284B73A01B888F7 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyCameraInspector.m;
 			refType = 4;
@@ -606,6 +611,7 @@
 			refType = 4;
 		};
 		F5285DAB0248103E01AEB99D = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = English;
 			path = English.lproj/DriverLocalizable.strings;
@@ -624,6 +630,7 @@
 			};
 		};
 		F5285DAE0248104601AEB99D = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = German;
 			path = German.lproj/DriverLocalizable.strings;
@@ -683,11 +690,13 @@
 			};
 		};
 		F533EEB70271ACF80166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyQCExpressBDriver.h;
 			refType = 4;
 		};
 		F533EEB90271ACF80166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyQCExpressBDriver.m;
 			refType = 4;
@@ -717,11 +726,13 @@
 			};
 		};
 		F533EEC20271B72D0166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyHDCS1000Sensor.h;
 			refType = 4;
 		};
 		F533EEC30271B72D0166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyHDCS1000Sensor.m;
 			refType = 4;
@@ -751,11 +762,13 @@
 			};
 		};
 		F53480CC027240FB013AF9AD = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyHDCS1020Sensor.h;
 			refType = 4;
 		};
 		F53480CD027240FB013AF9AD = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyHDCS1020Sensor.m;
 			refType = 4;
@@ -785,11 +798,13 @@
 			};
 		};
 		F5376F35026C66D30166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyQX3Driver.h;
 			refType = 4;
 		};
 		F5376F36026C66D30166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyQX3Driver.m;
 			refType = 4;
@@ -892,7 +907,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 0;
 		};
 		F538BD2401E5D23F0166DE0F = {
 			buildActionMask = 2147483647;
@@ -940,6 +954,7 @@
 				F5BB38800342871601E62307,
 				F5EDFADA036876210166D062,
 				F53F663B039ACC3F01C3DF00,
+				F5A5077803BBC69501A78977,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -997,6 +1012,7 @@
 				F5EDFAD9036876210166D062,
 				F5CBE0D003807F2301260355,
 				F53F663A039ACC3F01C3DF00,
+				F5A5077703BBC69501A78977,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1075,11 +1091,13 @@
 			};
 		};
 		F53B90580240CE2B0166DE75 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyImageDocument.h;
 			refType = 4;
 		};
 		F53B90590240CE2B0166DE75 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyImageDocument.m;
 			refType = 4;
@@ -1097,11 +1115,13 @@
 			};
 		};
 		F53F6636039ACC3F01C3DF00 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MySonix2028Driver.m;
 			refType = 4;
 		};
 		F53F6637039ACC3F01C3DF00 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MySonix2028Driver.h;
 			refType = 4;
@@ -1138,6 +1158,7 @@
 			refType = 4;
 		};
 		F55855D402EEF4BF0166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = French;
 			path = French.lproj/DriverLocalizable.strings;
@@ -1161,21 +1182,25 @@
 			refType = 4;
 		};
 		F55A58C102572BFE014CA2B1 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyPB0100Sensor.h;
 			refType = 4;
 		};
 		F55A58C202572BFE014CA2B1 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyPB0100Sensor.m;
 			refType = 4;
 		};
 		F55A58C302572BFE014CA2B1 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MySTV600Sensor.h;
 			refType = 4;
 		};
 		F55A58C402572BFE014CA2B1 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MySTV600Sensor.m;
 			refType = 4;
@@ -1245,36 +1270,43 @@
 			refType = 4;
 		};
 		F55DD8210213113F0166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyCameraCentral.h;
 			refType = 4;
 		};
 		F55DD8230213113F0166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyCameraDriver.h;
 			refType = 4;
 		};
 		F55DD8240213113F0166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyCameraDriver.m;
 			refType = 4;
 		};
 		F55DD8250213113F0166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyCameraInfo.h;
 			refType = 4;
 		};
 		F55DD8260213113F0166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyCameraInfo.m;
 			refType = 4;
 		};
 		F55DD8270213113F0166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyDummyCameraDriver.h;
 			refType = 4;
 		};
 		F55DD8280213113F0166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyDummyCameraDriver.m;
 			refType = 4;
@@ -1419,16 +1451,19 @@
 			refType = 4;
 		};
 		F55DD83C021311680166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = main.m;
 			refType = 4;
 		};
 		F55DD83D021311680166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyController.h;
 			refType = 4;
 		};
 		F55DD83E021311680166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyController.m;
 			refType = 4;
@@ -1448,36 +1483,43 @@
 			refType = 4;
 		};
 		F55DD840021311680166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyBridge.h;
 			refType = 4;
 		};
 		F55DD841021311680166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyBridge.m;
 			refType = 4;
 		};
 		F55DD842021311680166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = QTComponent.r;
 			refType = 4;
 		};
 		F55DD843021311680166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = QTPanel.h;
 			refType = 4;
 		};
 		F55DD844021311680166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = QTPanel.m;
 			refType = 4;
 		};
 		F55DD845021311680166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = QTVideoDigitizer.h;
 			refType = 4;
 		};
 		F55DD846021311680166DE0F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = QTVideoDigitizer.m;
 			refType = 4;
@@ -1622,11 +1664,13 @@
 			};
 		};
 		F57D11AFC5B26FF6010B00CC = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyQX3CameraInspector.h;
 			refType = 4;
 		};
 		F57D11B0C5B26FF6010B00CC = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyQX3CameraInspector.m;
 			refType = 4;
@@ -1710,11 +1754,13 @@
 			};
 		};
 		F58530E10229AAB601479C37 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = BayerConverter.h;
 			refType = 4;
 		};
 		F58530E20229AAB601479C37 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = BayerConverter.m;
 			refType = 4;
@@ -1755,31 +1801,37 @@
 			};
 		};
 		F58976F903758BEE01159FE2 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyMovieRecorder.m;
 			refType = 4;
 		};
 		F58976FA03758BEE01159FE2 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyMovieRecorder.h;
 			refType = 4;
 		};
 		F58976FB03758BEE01159FE2 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyMovieWindowController.m;
 			refType = 4;
 		};
 		F58976FC03758BEE01159FE2 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyMovieWindowController.h;
 			refType = 4;
 		};
 		F58976FD03758BEE01159FE2 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyNSMovieExtensions.m;
 			refType = 4;
 		};
 		F58976FE03758BEE01159FE2 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyNSMovieExtensions.h;
 			refType = 4;
@@ -1821,11 +1873,13 @@
 			};
 		};
 		F589EB0E02268A6901D99A1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MySTV680Driver.h;
 			refType = 4;
 		};
 		F589EB0F02268A6901D99A1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MySTV680Driver.m;
 			refType = 4;
@@ -1849,11 +1903,13 @@
 			};
 		};
 		F58DB238024E9803019A97FC = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyImageWindowController.h;
 			refType = 4;
 		};
 		F58DB239024E9803019A97FC = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyImageWindowController.m;
 			refType = 4;
@@ -1871,17 +1927,20 @@
 			};
 		};
 		F5995F30029B5BB80126DA0B = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = TODO.txt;
 			path = texts/TODO.txt;
 			refType = 4;
 		};
 		F59E4B7A0264A7910166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = RGB888Scaler.m;
 			refType = 4;
 		};
 		F59E4B7B0264A7910166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = RGB888Scaler.h;
 			refType = 4;
@@ -1899,11 +1958,13 @@
 			};
 		};
 		F5A153160274D3D501C56AC3 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyQCExpressADriver.h;
 			refType = 4;
 		};
 		F5A153170274D3D501C56AC3 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyQCExpressADriver.m;
 			refType = 4;
@@ -1956,12 +2017,50 @@
 			settings = {
 			};
 		};
+		F5A5077303BBC69501A78977 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MySE401Driver.m;
+			refType = 4;
+		};
+		F5A5077403BBC69501A78977 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MySE401Driver.h;
+			refType = 4;
+		};
+		F5A5077503BBC69501A78977 = {
+			fileRef = F5A5077303BBC69501A78977;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A5077603BBC69501A78977 = {
+			fileRef = F5A5077403BBC69501A78977;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A5077703BBC69501A78977 = {
+			fileRef = F5A5077303BBC69501A78977;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A5077803BBC69501A78977 = {
+			fileRef = F5A5077403BBC69501A78977;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5A6652B037B256401C96C8F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyPrefsWindowController.m;
 			refType = 4;
 		};
 		F5A6652C037B256401C96C8F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyPrefsWindowController.h;
 			refType = 4;
@@ -2014,31 +2113,37 @@
 			};
 		};
 		F5B40F5A024BB1D90166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyLogi3000Driver.h;
 			refType = 4;
 		};
 		F5B40F5B024BB1D90166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyLogi3000Driver.m;
 			refType = 4;
 		};
 		F5B40F5C024BB1D90166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyToUCamPro3DDriver.h;
 			refType = 4;
 		};
 		F5B40F5D024BB1D90166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyToUCamPro3DDriver.m;
 			refType = 4;
 		};
 		F5B40F5E024BB1D90166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyVestaScanDriver.h;
 			refType = 4;
 		};
 		F5B40F5F024BB1D90166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyVestaScanDriver.m;
 			refType = 4;
@@ -2116,6 +2221,7 @@
 			};
 		};
 		F5B9568C0250D31A0166DE1F = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyCameraCentral.m;
 			refType = 4;
@@ -2133,6 +2239,7 @@
 			};
 		};
 		F5BB387E0342871601E62307 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = JFIFHeaderTemplate.h;
 			refType = 4;
@@ -2165,41 +2272,48 @@
 			refType = 4;
 		};
 		F5BFF536029B59BD01B6CBC8 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = inspector.txt;
 			path = texts/inspector.txt;
 			refType = 4;
 		};
 		F5BFF537029B59BD01B6CBC8 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = QCE.txt;
 			path = texts/QCE.txt;
 			refType = 4;
 		};
 		F5BFF538029B59BD01B6CBC8 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = QT_architecture.txt;
 			path = texts/QT_architecture.txt;
 			refType = 4;
 		};
 		F5BFF539029B59BD01B6CBC8 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = source_documentation.txt;
 			path = texts/source_documentation.txt;
 			refType = 4;
 		};
 		F5BFF53A029B59BD01B6CBC8 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = STV680.txt;
 			path = texts/STV680.txt;
 			refType = 4;
 		};
 		F5BFF540029B59CB01B6CBC8 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = COPYING.txt;
 			refType = 4;
 		};
 		F5BFF542029B59D601B6CBC8 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = README;
 			refType = 4;
@@ -2211,17 +2325,20 @@
 			};
 		};
 		F5BFF548029B5A8801B6CBC8 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			name = Supported_Cameras.html;
 			path = texts/Supported_Cameras.html;
 			refType = 4;
 		};
 		F5C5790603049095010B006D = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyIntelPCCameraPro.h;
 			refType = 4;
 		};
 		F5C5790703049095010B006D = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyIntelPCCameraPro.m;
 			refType = 4;
@@ -2233,11 +2350,13 @@
 			};
 		};
 		F5C80D8D02417A800166DE75 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyScrollView.h;
 			refType = 4;
 		};
 		F5C80D8E02417A800166DE75 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyScrollView.m;
 			refType = 4;
@@ -2302,11 +2421,13 @@
 			refType = 4;
 		};
 		F5E78BEF0371F3990166D062 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyMovieDocument.m;
 			refType = 4;
 		};
 		F5E78BF20371F3990166D062 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyMovieDocument.h;
 			refType = 4;
@@ -2330,16 +2451,19 @@
 			};
 		};
 		F5EDFAD2036875F00166D062 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = yuv2rgbOV420.c;
 			refType = 4;
 		};
 		F5EDFAD5036876210166D062 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyOV511Driver.m;
 			refType = 4;
 		};
 		F5EDFAD6036876210166D062 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyOV511Driver.h;
 			refType = 4;
@@ -2369,21 +2493,25 @@
 			};
 		};
 		F5EF7FFB0364C3BD01E9B502 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = JFIFHeaderTemplate.c;
 			refType = 4;
 		};
 		F5F4373C02D278D6018D4F8C = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyVicamDriver.m;
 			refType = 4;
 		};
 		F5F4373D02D278D6018D4F8C = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = vicamurbs.h;
 			refType = 4;
 		};
 		F5F4373E02D278D6018D4F8C = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyVicamDriver.h;
 			refType = 4;
@@ -2413,16 +2541,19 @@
 			};
 		};
 		F5F4374C02D52947018D4F8C = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = RGBScaler.m;
 			refType = 4;
 		};
 		F5F4374D02D52947018D4F8C = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = RGBScalerIncluded.h;
 			refType = 4;
 		};
 		F5F4374E02D52947018D4F8C = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = RGBScaler.h;
 			refType = 4;
@@ -2459,6 +2590,8 @@
 		};
 		F5F79A800212038E01E152CA = {
 			children = (
+				F5A5077403BBC69501A78977,
+				F5A5077303BBC69501A78977,
 				F53F6637039ACC3F01C3DF00,
 				F53F6636039ACC3F01C3DF00,
 				F5EDFAD6036876210166D062,
@@ -2511,81 +2644,97 @@
 			refType = 4;
 		};
 		F5F79A810212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyCPIACameraDriver.h;
 			refType = 4;
 		};
 		F5F79A820212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyCPIACameraDriver.m;
 			refType = 4;
 		};
 		F5F79A830212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyKiaraFamilyDriver.h;
 			refType = 4;
 		};
 		F5F79A840212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyKiaraFamilyDriver.m;
 			refType = 4;
 		};
 		F5F79A850212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyPhilipsCameraDriver.h;
 			refType = 4;
 		};
 		F5F79A860212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyPhilipsCameraDriver.m;
 			refType = 4;
 		};
 		F5F79A870212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyTimonFamilyDriver.h;
 			refType = 4;
 		};
 		F5F79A880212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyTimonFamilyDriver.m;
 			refType = 4;
 		};
 		F5F79A890212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyToUCamFunDriver.h;
 			refType = 4;
 		};
 		F5F79A8A0212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyToUCamFunDriver.m;
 			refType = 4;
 		};
 		F5F79A8B0212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyToUCamProDriver.h;
 			refType = 4;
 		};
 		F5F79A8C0212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyToUCamProDriver.m;
 			refType = 4;
 		};
 		F5F79A8D0212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyVestaDriver.h;
 			refType = 4;
 		};
 		F5F79A8E0212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyVestaDriver.m;
 			refType = 4;
 		};
 		F5F79A8F0212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyVestaProDriver.h;
 			refType = 4;
 		};
 		F5F79A900212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyVestaProDriver.m;
 			refType = 4;
@@ -2618,61 +2767,73 @@
 			refType = 4;
 		};
 		F5F79A920212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = GlobalDefs.h;
 			refType = 4;
 		};
 		F5F79A930212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MiniGraphicsTools.c;
 			refType = 4;
 		};
 		F5F79A940212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MiniGraphicsTools.h;
 			refType = 4;
 		};
 		F5F79A950212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MiscTools.c;
 			refType = 4;
 		};
 		F5F79A960212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MiscTools.h;
 			refType = 4;
 		};
 		F5F79A970212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Resolvers.c;
 			refType = 4;
 		};
 		F5F79A980212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = Resolvers.h;
 			refType = 4;
 		};
 		F5F79A990212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = yuv2rgb.c;
 			refType = 4;
 		};
 		F5F79A9A0212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = yuv2rgb.h;
 			refType = 4;
 		};
 		F5F79A9B0212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = yuv2rgbCPIA420.c;
 			refType = 4;
 		};
 		F5F79A9C0212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = yuv2rgbCPIA422.c;
 			refType = 4;
 		};
 		F5F79A9D0212038E01E152CA = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = yuv2rgbPhilips.c;
 			refType = 4;
@@ -2978,11 +3139,13 @@
 			};
 		};
 		F5FC0F1D02834E82015925D2 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyQCWebDriver.h;
 			refType = 4;
 		};
 		F5FC0F1E02834E82015925D2 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyQCWebDriver.m;
 			refType = 4;
@@ -3012,11 +3175,13 @@
 			};
 		};
 		F5FC0F23028351A7015925D2 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyVV6410Sensor.h;
 			refType = 4;
 		};
 		F5FC0F24028351A7015925D2 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = MyVV6410Sensor.m;
 			refType = 4;
