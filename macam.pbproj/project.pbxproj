@@ -527,6 +527,7 @@
 			children = (
 				F5285DAB0248103E01AEB99D,
 				F5285DAE0248104601AEB99D,
+				F55855D402EEF4BF0166DE1F,
 			);
 			isa = PBXVariantGroup;
 			name = DriverLocalizable.strings;
@@ -967,6 +968,7 @@
 			children = (
 				F53B90550240CDFF0166DE75,
 				F563AB4B0247FDC601BF65F7,
+				F55855D202EEF4A20166DE1F,
 			);
 			isa = PBXVariantGroup;
 			name = MyImageDocument.nib;
@@ -1006,6 +1008,30 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
+		};
+		F55855D102EEF4990166DE1F = {
+			isa = PBXFileReference;
+			name = French;
+			path = French.lproj/MainMenu.nib;
+			refType = 4;
+		};
+		F55855D202EEF4A20166DE1F = {
+			isa = PBXFileReference;
+			name = French;
+			path = French.lproj/MyImageDocument.nib;
+			refType = 4;
+		};
+		F55855D302EEF4A70166DE1F = {
+			isa = PBXFileReference;
+			name = French;
+			path = French.lproj/Localizable.strings;
+			refType = 4;
+		};
+		F55855D402EEF4BF0166DE1F = {
+			isa = PBXFileReference;
+			name = French;
+			path = French.lproj/DriverLocalizable.strings;
+			refType = 4;
 		};
 		F55A58C002572BFE014CA2B1 = {
 			children = (
@@ -1258,6 +1284,7 @@
 			children = (
 				F55DD83B021311680166DE0F,
 				F563AB4C0247FDC601BF65F7,
+				F55855D102EEF4990166DE1F,
 			);
 			isa = PBXVariantGroup;
 			name = MainMenu.nib;
@@ -1404,6 +1431,7 @@
 			children = (
 				F563AB490247FDC601BF65F7,
 				F563AB4A0247FDC601BF65F7,
+				F55855D302EEF4A70166DE1F,
 			);
 			isa = PBXVariantGroup;
 			name = Localizable.strings;
