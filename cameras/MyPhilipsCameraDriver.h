@@ -48,7 +48,8 @@ Next: Camera constants and conversions. This information has partly been obtaine
 Doing these amounts of defines is often called bad style. We should find a better way.
 */
 
-#define VENDOR_PHILIPS 1137
+#define VENDOR_PHILIPS 0x0471
+#define VENDOR_LOGITECH 0x046d
 
 //Conversions into the values of the camera
 
