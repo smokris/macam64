@@ -508,7 +508,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     return num;
 }
 
-- (id) getStoredMediaObject:(long)idx {
+- (NSDictionary*) getStoredMediaObject:(long)idx {
     UInt8 buf[16];
     long rawWidth=1;
     long rawHeight=1;
@@ -581,7 +581,8 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     if (rawBuffer) [rawBuffer release]; rawBuffer=NULL;
     if ((imageRep)&&(!ok)) { [imageRep release]; imageRep=NULL; }
     [stateLock unlock];
-    return imageRep;
+    return [NSDictionary dictionaryWithObjectsAndKeys:
+        imageRep,@"data",@"bitmap",@"type",NULL];
 }
 
 - (void) eraseStoredMedia {

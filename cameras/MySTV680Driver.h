@@ -89,7 +89,7 @@
 //Image storage
 - (BOOL) canStoreMedia;
 - (long) numberOfStoredMediaObjects;
-- (id) getStoredMediaObject:(long)idx;
+- (NSDictionary*) getStoredMediaObject:(long)idx;
 - (void) eraseStoredMedia;
 
 @end
