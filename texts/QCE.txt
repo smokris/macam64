@@ -135,3 +135,5 @@ There seems to be some other data chunk id's (0x4200, 0xc200 etc), which can be 
 Resolutions
 -----------
 The camera supports CIF (352 x 288) and QCIF (176 x 144) - QCIF is done by subsampling the image data. It's done by the STV600, not by the image sensor (although some of them also have this feature). Theoretically, horizontal and vertical subsampling can be separately set, but who wants a distorted image? Remember to keep your ROI window of the image sensor at 352 x 288 (this may be wrong - horizontally, this is correct, but vertically?)
+
+$Id$

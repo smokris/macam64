@@ -133,6 +133,7 @@ o Intel Play QX3 Microscope@2100000  <class IOUSBDevice>
     }
 
     // port 2 bit 6 - cradle
+    //
     if ((v & 0x400000) == 0) {
         if (lastCradle != 0) {	
             NSLog(@"Placed in the cradle (top light off; bottom light on).");
@@ -140,7 +141,6 @@ o Intel Play QX3 Microscope@2100000  <class IOUSBDevice>
             [self setTopLight:FALSE ];
             [self setBottomLight:TRUE ];
             [self setWhiteBalanceMode:[self whiteBalanceMode]];
-            [self changedSomething ];
             }               
         lastCradle = 0;
     } else {

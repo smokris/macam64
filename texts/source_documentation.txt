@@ -28,3 +28,4 @@ The driver consists of four parts: The driver, the video digitizer, the panel an
 
 There are a couple of tool and utility files: yuv2rgb is (nomen est omen) a yuv to rgb converter that handles yuv to rgb, 24bit or 32bit, horizontally flipped and unflipped image decoding. Resolvers offers a couple of utility functions which check and output system errors (most of them found in the USB and IOKit functions) in clear text as well as QuickTime video grabber component function selector lookup to their names. I found this useful during development. GlobalDefs has just come common macros (and I used it to specify build settings and similar things). MiscTools includes - ta ta! - misc tools. Functions that didn't fit in anywhere else. MiniGraphicsTools implements a simple and fast method to write text into images without using a system graphics API. RGB888Scaler scales RGB888 Pixmaps.
 
+$Id$

@@ -266,3 +266,6 @@ Return buffer (known):
 0x0c: Original gain
 0x0d: CLKDIV (???)
 0x0c: Average Pixel value
+
+$Id$
+

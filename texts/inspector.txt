@@ -1,27 +1,7 @@
+I've attached a version with an inspector. Currently, it's a quick hack, but you will probably get the idea: The camera driver class (model layer) may specify the name of an inspector controller class (via the "CameraFeature" thing).
 
-the last thing I heard was a mail from April 24th stating that they are 
-working on it and it should be fixed within the next days. Do you know 
-people there who could speed that up? The delay is surprising to me 
-because it's just a matter of copying a single file...
+The inspector has to be subclass of "MyCameraInspector" (the base class does the generic inspector). MyController (controller of the main window) can instantiate the class, and assign the inspector's view to a window. Creation and disposal of the window is handled by MyController, the interaction in the view is controlled by your InspectorConroller (I would have preferred of having them completely separated, but then, the InspectorController would have to provide a NSWindow. Providing an NSView is probably more versatile because it can be incorporated into panes, subviews and whatever).
 
-I've attached a version with an inspector. Currently, it's a quick hack, 
-but you will probably get the idea: The camera driver class (model 
-layer) may specify the name of an inspector controller class (via the 
-"CameraFeature" thing). 
+The default Inspector controller loads a nib file (with itself as the owner) and displays the camera name. I thought you might be interested in this preliminary implementation so we can change things if you think that this is no good idea.
 
-The inspector has to be subclass of 
-"MyCameraInspector" (the base class does the generic inspector). 
-MyController (controller of the main window) can instantiate the class, 
-and assign the inspector's view to a window. Creation and disposal of 
-the window is handled by MyController, the interaction in the view is 
-controlled by your InspectorConroller (I would have preferred of having 
-them completely separated, but then, the InspectorController would have 
-to provide a NSWindow. Providing an NSView is probably more versatile 
-because it can be incorporated into panes, subviews and whatever). 
-
-The 
-default Inspector controller loads a nib file (with itself as the owner) 
-and displays the camera name. I thought you might be interested in this 
-preliminary implementation so we can change things if you think that 
-this is no good idea.
-
+$Id$

@@ -34,7 +34,7 @@
 // Nothing clever - we simply look around for now and
 // update what needs updating. So we do not shortcut
 // any UI action - we simply wait for the driver to
-// notify us of any change - then figure out wha tthe
+// notify us of any change - then figure out what the
 // driver has done - and update accordingly,
 //
 - (void) notifyChange:(NSNotification *)note
@@ -84,8 +84,9 @@
         else 
             [QX3state setImage: [NSImage imageNamed: I_NO_CRADLE ]];
     }
-    } else 
-            [QX3state setImage: [NSImage imageNamed: I_OFF ]];
+    } else
+        // Neither
+        [QX3state setImage: [NSImage imageNamed: I_OFF ]];
 
 }
 
