@@ -112,6 +112,7 @@
 				29B9732DFDCFA39411CA2CEA,
 			);
 			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -201,7 +202,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.7b2 © 2002 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.7b3 © 2002 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>WebcamHelp</string>
 	<key>CFBundleHelpBookName</key>
@@ -217,11 +218,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.7b2</string>
+	<string>0.7b3</string>
 	<key>CFBundleSignature</key>
 	<string>wC?!</string>
 	<key>CFBundleVersion</key>
-	<string>0.7b2</string>
+	<string>0.7b3</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -282,6 +283,7 @@
 				F589770203758BEE01159FE2,
 				F589770403758BEE01159FE2,
 				F5A6652E037B256401C96C8F,
+				F53F6639039ACC3F01C3DF00,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -369,6 +371,7 @@
 				F589770103758BEE01159FE2,
 				F589770303758BEE01159FE2,
 				F5A6652D037B256401C96C8F,
+				F53F6638039ACC3F01C3DF00,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -869,7 +872,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.7b2 © 2002 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.7b3 © 2002 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -881,11 +884,11 @@
 	<key>CFBundlePackageType</key>
 	<string>thng</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.7b2</string>
+	<string>0.7b3</string>
 	<key>CFBundleSignature</key>
 	<string>wCam</string>
 	<key>CFBundleVersion</key>
-	<string>0.7b2</string>
+	<string>0.7b3</string>
 </dict>
 </plist>
 ";
@@ -936,6 +939,7 @@
 				F5A4FBC9031E34E70166D062,
 				F5BB38800342871601E62307,
 				F5EDFADA036876210166D062,
+				F53F663B039ACC3F01C3DF00,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -992,6 +996,7 @@
 				F5A4FBC8031E34E50166D062,
 				F5EDFAD9036876210166D062,
 				F5CBE0D003807F2301260355,
+				F53F663A039ACC3F01C3DF00,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1087,6 +1092,40 @@
 		};
 		F53B905B0240CE2B0166DE75 = {
 			fileRef = F53B90590240CE2B0166DE75;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53F6636039ACC3F01C3DF00 = {
+			isa = PBXFileReference;
+			path = MySonix2028Driver.m;
+			refType = 4;
+		};
+		F53F6637039ACC3F01C3DF00 = {
+			isa = PBXFileReference;
+			path = MySonix2028Driver.h;
+			refType = 4;
+		};
+		F53F6638039ACC3F01C3DF00 = {
+			fileRef = F53F6636039ACC3F01C3DF00;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53F6639039ACC3F01C3DF00 = {
+			fileRef = F53F6637039ACC3F01C3DF00;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53F663A039ACC3F01C3DF00 = {
+			fileRef = F53F6636039ACC3F01C3DF00;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53F663B039ACC3F01C3DF00 = {
+			fileRef = F53F6637039ACC3F01C3DF00;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2420,8 +2459,10 @@
 		};
 		F5F79A800212038E01E152CA = {
 			children = (
-				F5EDFAD5036876210166D062,
+				F53F6637039ACC3F01C3DF00,
+				F53F6636039ACC3F01C3DF00,
 				F5EDFAD6036876210166D062,
+				F5EDFAD5036876210166D062,
 				F511081E0241794801599652,
 				F511081D0241794801599652,
 				F5BB387E0342871601E62307,
