@@ -44,7 +44,6 @@
 #import "MyQCWebDriver.h"
 #import "MyVicamDriver.h"
 #import "MySPCA504Driver.h"
-#import "MySmartMegaCamDriver.h"
 
 static NSString* driverBundleName=@"de.matthias-krauss.webcam";
 static NSMutableDictionary* prefsDict=NULL;
@@ -174,7 +173,6 @@ static NSMutableDictionary* prefsDict=NULL;
 //    [self registerCameraDriver:[MyViewQuestM318B class]];
 //    [self registerCameraDriver:[MyViewQuestVQ110 class]];
 //    [self registerCameraDriver:[MyDVC325 class]];
-//    [self registerCameraDriver:[MySmartMegaCamDriver class]];
 
     doNotificationsOnMainThread=nomt;	//Remember this!
     if (doNotificationsOnMainThread) {	//The client wants merged threads: Build a connection to the new thread
@@ -338,28 +336,40 @@ static NSMutableDictionary* prefsDict=NULL;
     return driver;
 }
 
-- (BOOL) getName:(char*)name forID:(unsigned long)cid {
+- (NSString*) nameForID:(unsigned long)cid {
     long l=0;
     while (l<[cameras count]) {
         if ([[cameras objectAtIndex:l] cid]==cid) {
-            [[[cameras objectAtIndex:l] cameraName] getCString:name];
-            return YES;
+            return [[cameras objectAtIndex:l] cameraName];
         } else {
             l++;
         }
     }
-    return NO;
+    return NULL;
 }
 
-- (BOOL) getName:(char*)name forDriver:(MyCameraDriver*)driver {
+- (NSString*) nameForDriver:(MyCameraDriver*)driver {
     long l=0;
     while (l<[cameras count]) {
         if ([[cameras objectAtIndex:l] driver]==driver) {
-            [[[cameras objectAtIndex:l] cameraName] getCString:name];
-            return YES;
+            return [[cameras objectAtIndex:l] cameraName];
         } else l++;
     }
-    return NO;
+    return NULL;
+}
+
+- (BOOL) getName:(char*)name forID:(unsigned long)cid {
+    NSString* camName=[self nameForID:cid];
+    if (!camName) return NO;
+    [camName getCString:name];
+    return YES;
+}
+
+- (BOOL) getName:(char*)name forDriver:(MyCameraDriver*)driver {
+    NSString* camName=[self nameForDriver:driver];
+    if (!camName) return NO;
+    [camName getCString:name];
+    return YES;
 }
 
 /*These functions read and write the camera settings. We cannot use the direct user defaults mechanism because we're sometimes a client in another app and we don't want to mess up the app's preferences. So we use the lower-level persistentDomainForName mechanism. */
@@ -710,14 +720,19 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
 }
 
 - (void) registerCameraDriver:(Class)driver {
-    MyCameraInfo* info=[[MyCameraInfo alloc] init];
-    if (info!=NULL) {
-        [info setCameraName:[driver cameraName]];
-        [info setVendorID:[driver cameraUsbVendorID]];
-        [info setProductID:[driver cameraUsbProductID]];
-        [info setDriverClass:driver];
-        [info setCentral: self];
-        [cameraTypes addObject:info];
+    NSArray* arr=[driver cameraUsbDescriptions];
+    int i;
+    for (i=0;i<[arr count];i++) {
+        NSDictionary* dict=[arr objectAtIndex:i];
+        MyCameraInfo* info=[[MyCameraInfo alloc] init];
+        if (info!=NULL) {
+            [info setCameraName:[dict objectForKey:@"name"]];
+            [info setVendorID:[[dict objectForKey:@"idVendor"] unsignedShortValue]];
+            [info setProductID:[[dict objectForKey:@"idProduct"] unsignedShortValue]];
+            [info setDriverClass:driver];
+            [info setCentral: self];
+            [cameraTypes addObject:info];
+        }
     }
 }
 

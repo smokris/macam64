@@ -33,7 +33,7 @@ static unsigned long cidCount=1;
     driverClass=NULL;
     cid=cidCount++;
     central=NULL;
-    name=[[@"(invalid)" autorelease] copy];
+    name=NULL;
     pid=0;
     vid=0;
     return self;

@@ -27,17 +27,17 @@
 @implementation MyCameraDriver
 
 + (unsigned short) cameraUsbProductID {
-    NSAssert(0,@"You have to override cameraUsbProductID");
+    NSAssert(0,@"You must override cameraUsbProductID or cameraUsbDescriptions");
     return 0;
 }
 
 + (unsigned short) cameraUsbVendorID {
-    NSAssert(0,@"You have to override cameraUsbVendorID");
+    NSAssert(0,@"You must override cameraUsbVendorID or cameraUsbDescriptions");
     return 0;
 }
 
 + (NSString*) cameraName {
-    NSAssert(0,@"You have to override cameraName");
+    NSAssert(0,@"You must override cameraName or cameraUsbDescriptions");
     return @"";
 }
 
@@ -45,7 +45,7 @@
     NSDictionary* dict=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:[self cameraUsbProductID]],@"idProduct",
         [NSNumber numberWithUnsignedShort:[self cameraUsbVendorID]],@"idVendor",
-        [self cameraName],@"idVendor",NULL];
+        [self cameraName],@"name",NULL];
     return [NSArray arrayWithObject:dict];
 }
 
@@ -156,6 +156,10 @@
 
 - (void) setCentral:(id)c {
     central=c;
+}
+
+- (id) central {
+    return central;
 }
 
 - (BOOL) realCamera {	//Returns if the camera is a real image grabber or a dummy
@@ -489,7 +493,7 @@
     return 0;
 }
 
-- (id) getStoredMediaObject:(long)idx {
+- (NSDictionary*) getStoredMediaObject:(long)idx {
     return NULL;
 }
 
@@ -787,12 +791,13 @@
 - (BOOL) usbGetSoon:(UInt64*)to {			//Get a bus frame number in the near future
     AbsoluteTime at;
     IOReturn err;
-
+    UInt64 frame;
+    
     if ((!to)||(!intf)||(!isUSBOK)) return NO;
-    err=(*intf)->GetBusFrameNumber(intf, to, &at);
+    err=(*intf)->GetBusFrameNumber(intf, &frame, &at);
     CheckError(err,"usbGetSoon");
     if (err) return NO;
-    (*to)+=50;						//give it a little time to start
+    *to=frame+100;					//give it a little time to start
     return YES;
 }
 

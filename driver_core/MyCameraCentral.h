@@ -84,8 +84,10 @@
 - (unsigned long) idOfCameraWithIndex:(short)idx;
 - (CameraError) useCameraWithID:(unsigned long)cid to:(MyCameraDriver**)outCam acceptDummy:(BOOL)acceptDummy;
 - (MyCameraDriver*) useDummyForError:(CameraError)err;
-- (BOOL) getName:(char*)name forDriver:(MyCameraDriver*)driver;
+- (NSString*) nameForID:(unsigned long)cid;
+- (NSString*) nameForDriver:(MyCameraDriver*)driver;
 - (BOOL) getName:(char*)name forID:(unsigned long)cid;
+- (BOOL) getName:(char*)name forDriver:(MyCameraDriver*)driver;
 
 //Camera defaults managements
 - (BOOL) setCameraToDefaults:(MyCameraDriver*) camera;
