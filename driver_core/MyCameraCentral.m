@@ -42,6 +42,7 @@
 #import "MyQCExpressADriver.h"
 #import "MyQCExpressBDriver.h"
 #import "MyQCWebDriver.h"
+#import "MyVicamDriver.h"
 
 static NSString* driverBundleName=@"de.matthias-krauss.webcam";
 static NSMutableDictionary* prefsDict=NULL;
@@ -164,6 +165,7 @@ static NSMutableDictionary* prefsDict=NULL;
     [self registerCameraDriver:[MyQCExpressADriver class]];
     [self registerCameraDriver:[MyQCExpressBDriver class]];
     [self registerCameraDriver:[MyQCWebDriver class]];
+    [self registerCameraDriver:[MyVicamDriver class]];
 
     doNotificationsOnMainThread=nomt;	//Remember this!
     if (doNotificationsOnMainThread) {	//The client wants merged threads: Build a connection to the new thread
