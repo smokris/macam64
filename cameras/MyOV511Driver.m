@@ -30,7 +30,7 @@
 #include "unistd.h"
 
 //#define OV511_DEBUG
-//#define USE_COMPRESS
+#define USE_COMPRESS
 
 #ifdef USE_COMPRESS
 //int Decompress420(unsigned char *pIn, unsigned char *pOut,int w,int h,int inSize);
@@ -130,7 +130,7 @@ static unsigned char yQuanTable511[] = OV511_YQUANTABLE;
 static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
-    UInt8 buf[16];
+    UInt8 buf[16], cid;
     long i;
     CameraError err=[self usbConnectToCam:usbDeviceRef];
 //setup connection to camera
@@ -169,7 +169,8 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         return CameraErrorUSBProblem;
     }
 
-    switch(buf[0]) {
+    cid = buf[0];
+    switch(cid) {
         case 6:
             sensorType = SENS_SAA7111A_WITH_FI1236MK2;
             sensorWrite = SAA7111A_I2C_WRITE_ID;
@@ -190,7 +191,7 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
             break;
         case 0:
         default:
-            // ditect i2c id
+            // detect i2c id
             for(i = 0; i <= 7; ++i) {
                 buf[0] = OV7610_I2C_WRITE_ID + i * 4;
                 [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
@@ -206,12 +207,12 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
                 if(([self i2cRead:0x29] & 0x03) == 0x03) {
                     sensorType = SENS_OV7610;
 #ifdef OV511_DEBUG
-                    NSLog(@"macam: OV511 Custom ID %d with OV7610", buf[0]);
+                    NSLog(@"macam: OV511 Custom ID %d with OV7610", cid);
 #endif
                 } else {
                     sensorType = SENS_OV7620;
 #ifdef OV511_DEBUG
-                    NSLog(@"macam: OV511 Custom ID %d with OV7620", buf[0]);
+                    NSLog(@"macam: OV511 Custom ID %d with OV7620", cid);
 #endif
                 }
             } else {
@@ -353,6 +354,11 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         case ResolutionSIF:
             if (rate>10) return NO;
             return YES;
+            break;
+        case ResolutionVGA:
+            if ((sensorType == SENS_OV7610 || sensorType == SENS_OV7620) &&
+                rate<=10) return YES;
+            return NO;
             break;
         default: return NO;
     }
@@ -625,6 +631,15 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         buf[0] = ([self height] >> 3) - 1;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_LNCNT buf:buf len:1];
 
+        if(resolution == ResolutionVGA &&
+            (sensorType == SENS_OV7610 || sensorType == SENS_OV7620)) {
+            [self i2cWrite:OV7610_REG_SYN_CLK val:0x06];
+            [self i2cWrite:OV7610_REG_HE val:0x3a + ([self width]>>2)];
+            [self i2cWrite:OV7610_REG_VE val:5 + ([self height]>>1)];
+            [self i2cWrite:OV7610_REG_COMA val:0x24];
+            [self i2cWrite:OV7610_REG_COMC val:0x04];
+            [self i2cWrite:OV7610_REG_COML val:0x1e];
+        }
 
         buf[0] = 0x00;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PXDV buf:buf len:1];
@@ -941,10 +956,11 @@ if(currChunk.start >= 0) {
                         for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end-grabContext.bytesPerFrame; ++i)
                             tmpcopy32(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
                                 grabContext.tmpBuffer, &grabContext.tmpLength);
-
+#ifdef OV511_DEBUG
 NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i+9)+1)<<3,
     (*(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i+10)+1)<<3,
     *(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i+11));
+#endif
 // EOF packet
 //                        tmpcopy32(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
 //                            grabContext.tmpBuffer, &grabContext.tmpLength);
@@ -955,10 +971,11 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start+grabContext.bytes
                                 tmpcopy32(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
                                     grabContext.tmpBuffer, &grabContext.tmpLength);
 
+#ifdef OV511_DEBUG
 NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i+9)+1)<<3,
     (*(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i+10)+1)<<3,
     *(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i+11));
-
+#endif
 // EOF packet
 //                            tmpcopy32(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
 //                                grabContext.tmpBuffer, &grabContext.tmpLength);
