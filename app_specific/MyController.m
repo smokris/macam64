@@ -22,15 +22,42 @@
 #import "MyController.h"
 #import "MyCameraInspector.h"
 #import "MiscTools.h"
+#import "MyMovieRecorder.h"
+#import "MyImageDocument.h"
 
 
 static NSString* 	ControllerToolbarIdentifier	= @"Controller Toolbar Identifier";
 static NSString* 	PlayToolbarItemIdentifier	= @"Play Video Item Identifier";
-static NSString*	PauseToolbarItemIdentifier 	= @"Pause Video Item Identifier";
 static NSString*	SettingsToolbarItemIdentifier 	= @"Camera Settings Item Identifier";
 static NSString*	DownloadToolbarItemIdentifier 	= @"Download Media Item Identifier";
 static NSString*	SaveImageToolbarItemIdentifier 	= @"Save Image Item Identifier";
 static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
+static NSString*	RecordMovieToolbarItemIdentifier= @"Record Movie Item Identifier";
+
+extern NSString* MovieSampleDurationPrefsKey;
+extern NSString* MoviePlaybackFactorPrefsKey;
+extern NSString* MovieTimeTypePrefsKey;
+extern NSString* MovieSavePathPrefsKey;
+extern NSString* MovieCompressionPrefsKey;
+extern NSString* MovieQualityPrefsKey;
+extern NSString* SnapshotFormatPrefsKey;
+extern NSString* SnapshotQualityPrefsKey;
+
+@interface MyController (Private)
+
+- (void) startMovieRecording;
+- (void) stopMovieRecording;
+
+- (BOOL) canDoGrab;
+- (BOOL) canToggleSettings;
+- (BOOL) canDoDownloadMedia;
+- (BOOL) canDoSaveImage;
+- (BOOL) canDoNextCam;
+- (BOOL) canDoSavePrefs;
+- (BOOL) canDoRecordMovie;
+- (void) updateCameraMediaCount;
+
+@end
 
 @implementation MyController
 
@@ -45,31 +72,7 @@ static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
     }
 }	
 
-- (void) compressTest {
-    GWorldPtr gw;
-    PixMapHandle pm;
-    UInt8* buf=malloc(640*480*4);
-    UInt8* buf2;
-    Rect r;
-    long maxSize;
-    OSErr err=0;
-    ImageDescriptionHandle idesc=(ImageDescriptionHandle)NewHandle(4);
-    SetRect(&r,0,0,640,480);
-    err=NewGWorldFromPtr(&gw,k32ARGBPixelFormat,&r,NULL,NULL,0,buf,640*4);
-    pm=GetGWorldPixMap(gw);
-    LockPixels(pm);
-    err=GetMaxCompressionSize(pm,&r,24,codecNormalQuality,kJPEGCodecType,bestSpeedCodec,&maxSize);
-    buf2=malloc(maxSize);
-    err=CompressImage(pm,&r,codecNormalQuality,kJPEGCodecType,idesc,buf2);
-    UnlockPixels(pm);
-    DisposeGWorld(gw);
-    free(buf);
-    DisposeHandle((Handle)idesc);
-    free(buf2);
-}
-
 - (void) startup {
-    [self compressTest];
     terminating=NO;
     imageGrabbed=NO;
     cameraGrabbing=NO;
@@ -230,38 +233,125 @@ static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
     [driver setHFlip:flip];
 }
 
+- (void) setImageOfToolbarItem:(NSString*)ident to:(NSString*)img {
+    NSToolbar* toolbar=[window toolbar];
+    if (toolbar) {
+        NSArray* items=[toolbar items];
+        if (items) {
+            int i;
+            for (i=0;i<[items count];i++) {
+                NSToolbarItem* item=[items objectAtIndex:i];
+                if (item) {
+                    if ([[item itemIdentifier] isEqualToString:ident]) {
+                        [item setImage:[NSImage imageNamed:img]];
+                    }
+                }
+            }
+        }
+    }
+}
+
+- (void) startMovieRecording {
+    NSString* parentPath;
+    NSString* path=NULL;
+    int i=1;
+    BOOL found=NO;
+    NSUserDefaults* settings=[NSUserDefaults standardUserDefaults];
+    NSString* movieCompressionType;
+    float movieCompressionQuality;
+    if (movieRecorder) return;
+    if (!driver) return;
+    parentPath=[settings objectForKey:MovieSavePathPrefsKey];
+    parentPath=[parentPath stringByExpandingTildeInPath];
+    while (!found) {
+        path=[NSString stringWithFormat:@"macam movie %i.mov",i];
+        path=[parentPath stringByAppendingPathComponent:path];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:path isDirectory:NULL]) i++;
+        else found=YES;
+        if (i>9999) return;	//avoid infinite loops - more than 10000 movies in one directory is unlikely... 
+    }
+    [self setImageOfToolbarItem:RecordMovieToolbarItemIdentifier to:@"RecordMovieActiveToolbarItem"];
+    movieRecordStart=0.0;	//0.0 = Mark as unset, first imageReady will set this
+    movieLastCapturedImage=0.0;	//no image captured yet
+    movieMinCaptureInterval=[settings floatForKey:MovieSampleDurationPrefsKey];
+    movieRecordingTimeFactor=[settings floatForKey:MoviePlaybackFactorPrefsKey];
+    if (movieRecordingTimeFactor<=0.0) movieRecordingTimeFactor=1.0;
+    movieCompressionType=[settings objectForKey:MovieCompressionPrefsKey];
+    if (!movieCompressionType) movieCompressionType=@"JPEG";
+    movieCompressionQuality=[settings floatForKey:MovieQualityPrefsKey];
+    if ((movieCompressionQuality<0.0)||(movieCompressionQuality>1.0)) movieCompressionQuality=0.5;
+    movieRecorder=[[MyMovieRecorder alloc] initWithSize:NSMakeSize([driver width],[driver height])
+                                            compression:movieCompressionType
+                                                quality:movieCompressionQuality
+                                                   path:path];
+}
+
+- (void) stopMovieRecording {
+    if (movieRecorder) {
+        NSString* tempMoviePath;
+        double time=(movieRecordStart>0.0)?(CFAbsoluteTimeGetCurrent()-movieRecordStart):1.0f;
+        [self setImageOfToolbarItem:RecordMovieToolbarItemIdentifier to:@"RecordMovieToolbarItem"];   
+        [movieRecorder finishRecordingAt:time];
+        tempMoviePath=[movieRecorder moviePath];
+        [movieRecorder keepMovieFile];
+        [movieRecorder release];
+        movieRecorder=NULL;
+        [[NSDocumentController sharedDocumentController] openDocumentWithContentsOfFile:tempMoviePath
+                                                                                display:YES];
+    }
+
+}
+
+- (IBAction)doRecordMovie:(id)sender {
+    if (movieRecorder) [self stopMovieRecording];
+    else [self startMovieRecording];
+}
+
 - (IBAction)doGrab:(id)sender {
-    cameraGrabbing=[driver startGrabbing];
     if (cameraGrabbing) {
-        [statusText setStringValue:LStr(@"Status: Playing")];
-        [fpsPopup setEnabled:NO];
-        [sizePopup setEnabled:NO];
-        [compressionSlider setEnabled:NO];
-        [driver setImageBuffer:[imageRep bitmapData] bpp:3 rowBytes:[driver width]*3];
+        cameraGrabbing=[driver stopGrabbing];
+        if (!cameraGrabbing) {
+            [statusText setStringValue:LStr(@"Status: Pausing")];
+        }
+    } else {
+        cameraGrabbing=[driver startGrabbing];
+        if (cameraGrabbing) {
+            [self setImageOfToolbarItem:PlayToolbarItemIdentifier to:@"PauseToolbarItem"];
+            [statusText setStringValue:LStr(@"Status: Playing")];
+            [fpsPopup setEnabled:NO];
+            [sizePopup setEnabled:NO];
+            [compressionSlider setEnabled:NO];
+            [driver setImageBuffer:[imageRep bitmapData] bpp:3 rowBytes:[driver width]*3];
+        }
     }
 }
-
-- (IBAction)doStopGrab:(id)sender {
-    cameraGrabbing=[driver stopGrabbing];
-    if (!cameraGrabbing) {
-        [statusText setStringValue:LStr(@"Status: Pausing")];
-    }
-}
-
 
 - (void) doSaveImage:(id)sender {
     NSArray* controllers;
     int i;
-    NSDocument* doc=[[NSDocumentController sharedDocumentController] openUntitledDocumentOfType:LStr(@"Image") display:NO];
-    NSData* imageData=[imageRep TIFFRepresentation];
-    [doc loadDataRepresentation:imageData ofType:@"Image"];
-//Show image window behind control window
+    NSString* imageType;
+    MyImageDocument* doc;
+    NSData* imageData;
+
+    imageType=[[NSUserDefaults standardUserDefaults] objectForKey:SnapshotFormatPrefsKey];
+    if ([imageType isEqualToString:@"JPEG"]) {
+        imageType=@"JPEG Image";
+    } else {
+        imageType=@"TIFF Image";
+    }
+        
+    doc=[[NSDocumentController sharedDocumentController] openUntitledDocumentOfType:imageType display:NO];
+    imageData=[imageRep TIFFRepresentation];
+    [doc loadDataRepresentation:imageData ofType:@"TIFF Image"];
+    [doc setQuality:[[NSUserDefaults standardUserDefaults] floatForKey:SnapshotQualityPrefsKey]];
+    //Show image window behind control window
     controllers=[doc windowControllers];
     if (controllers) {
         for (i=0;i<[controllers count];i++) {
             [[[controllers objectAtIndex:i] window] orderWindow:NSWindowBelow relativeTo:[window windowNumber]];
         }
     }
+    [doc setFileType:imageType];
     [doc updateChangeCount:NSChangeDone];
 }
 
@@ -514,10 +604,20 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
     if (cam!=driver) return;	//probably an old one
     [previewView display];
     imageGrabbed=YES;
+    if (movieRecorder) {	//Movie recording
+        double time=CFAbsoluteTimeGetCurrent();				//What time is it?
+        if (movieRecordStart<=0.0) movieRecordStart=time;		//First image?
+        if ((time-movieLastCapturedImage)>=movieMinCaptureInterval) {	//Minimum capture interval satisfied?
+            [movieRecorder addFrame:imageRep at:(time-movieRecordStart)/movieRecordingTimeFactor];
+            movieLastCapturedImage=time;
+        }
+    }
     [driver setImageBuffer:[driver imageBuffer] bpp:[driver imageBufferBPP] rowBytes:[driver imageBufferRowBytes]];
 }
 
 - (void)grabFinished:(id)cam withError:(CameraError)err {
+    [self stopMovieRecording];	//Make sure movie recording is stopped
+    [self setImageOfToolbarItem:PlayToolbarItemIdentifier to:@"PlayToolbarItem"];
     if (cam!=driver) return;	//probably an old one
     cameraGrabbing=NO;
     if (err==CameraErrorOK) [statusText setStringValue:LStr(@"Status: Paused")];
@@ -590,7 +690,6 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
         else return [driver canSetWhiteBalanceModeTo:wb];
     }
     if ([item action]==@selector(doGrab:)) return [self canDoGrab];
-    if ([item action]==@selector(doStopGrab:)) return [self canDoStopGrab];
     if ([item action]==@selector(toggleSettings:)) return [self canToggleSettings];
     if ([item action]==@selector(doSaveImage:)) return [self canDoSaveImage];
     if ([item action]==@selector(doSavePrefs:)) return [self canDoSavePrefs];
@@ -621,13 +720,6 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
         [toolbarItem setImage: [NSImage imageNamed: @"PlayToolbarItem"]];
         [toolbarItem setTarget: self];
         [toolbarItem setAction: @selector(doGrab:)];
-    } else if([itemIdent isEqual: PauseToolbarItemIdentifier]) {
-        [toolbarItem setLabel: LStr(@"Pause")];
-        [toolbarItem setPaletteLabel: LStr(@"Pause")];
-        [toolbarItem setToolTip: LStr(@"Pause camera video")];
-        [toolbarItem setImage: [NSImage imageNamed: @"PauseToolbarItem"]];
-        [toolbarItem setTarget: self];
-        [toolbarItem setAction: @selector(doStopGrab:)];
     } else if([itemIdent isEqual: SettingsToolbarItemIdentifier]) {
         [toolbarItem setLabel: LStr(@"Settings")];
         [toolbarItem setPaletteLabel: LStr(@"Settings")];
@@ -656,6 +748,13 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
         [toolbarItem setImage: [NSImage imageNamed: @"NextCamToolbarItem"]];
         [toolbarItem setTarget: self];
         [toolbarItem setAction: @selector(doNextCam:)];
+    } else if([itemIdent isEqual: RecordMovieToolbarItemIdentifier]) {
+        [toolbarItem setLabel: LStr(@"Record movie")];
+        [toolbarItem setPaletteLabel: LStr(@"Record movie")];
+        [toolbarItem setToolTip: LStr(@"Record live video to a QuickTime movie")];
+        [toolbarItem setImage: [NSImage imageNamed: @"RecordMovieToolbarItem"]];
+        [toolbarItem setTarget: self];
+        [toolbarItem setAction: @selector(doRecordMovie:)];
     } else {
         toolbarItem = NULL;
     }
@@ -665,9 +764,9 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
 - (NSArray *) toolbarDefaultItemIdentifiers: (NSToolbar *) toolbar {
     return [NSArray arrayWithObjects:
         PlayToolbarItemIdentifier,
-        PauseToolbarItemIdentifier,
         NSToolbarSpaceItemIdentifier,
         SaveImageToolbarItemIdentifier,
+        RecordMovieToolbarItemIdentifier,
         NSToolbarSpaceItemIdentifier,
         SettingsToolbarItemIdentifier,
         NULL];
@@ -676,11 +775,11 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
 - (NSArray *) toolbarAllowedItemIdentifiers: (NSToolbar *) toolbar {
     return [NSArray arrayWithObjects:
         PlayToolbarItemIdentifier,
-        PauseToolbarItemIdentifier,
         SettingsToolbarItemIdentifier,
         DownloadToolbarItemIdentifier,
         SaveImageToolbarItemIdentifier,
         NextCamToolbarItemIdentifier,
+        RecordMovieToolbarItemIdentifier,
         NSToolbarSpaceItemIdentifier,
         NSToolbarFlexibleSpaceItemIdentifier,
         NSToolbarSeparatorItemIdentifier,
@@ -690,26 +789,16 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
 - (BOOL) validateToolbarItem: (NSToolbarItem *) toolbarItem {
     BOOL enable = NO;
     if ([[toolbarItem itemIdentifier] isEqual: PlayToolbarItemIdentifier]) return [self canDoGrab];
-    else if ([[toolbarItem itemIdentifier] isEqual: PauseToolbarItemIdentifier]) return [self canDoStopGrab];
     else if ([[toolbarItem itemIdentifier] isEqual: SettingsToolbarItemIdentifier]) return [self canToggleSettings];
     else if ([[toolbarItem itemIdentifier] isEqual: DownloadToolbarItemIdentifier]) return [self canDoDownloadMedia];
     else if ([[toolbarItem itemIdentifier] isEqual: SaveImageToolbarItemIdentifier]) return [self canDoSaveImage];
     else if ([[toolbarItem itemIdentifier] isEqual: NextCamToolbarItemIdentifier]) return [self canDoNextCam];
+    else if ([[toolbarItem itemIdentifier] isEqual: RecordMovieToolbarItemIdentifier]) return [self canDoRecordMovie];
     return enable;
 }
 
 - (BOOL) canDoGrab {
-    if (driver) {
-        return (!cameraGrabbing);
-    }
-    return NO;
-}
-
-- (BOOL) canDoStopGrab {
-    if (driver) {
-        return cameraGrabbing;
-    }
-    return NO;
+    return (driver)?YES:NO;
 }
 
 - (BOOL) canToggleSettings {
@@ -737,6 +826,13 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
 
 - (BOOL) canDoSavePrefs {
     return (driver!=NULL);
+}
+
+- (BOOL) canDoRecordMovie {
+    if (driver) {
+        return cameraGrabbing;
+    }
+    return NO;
 }
 
 - (void) updateCameraMediaCount {

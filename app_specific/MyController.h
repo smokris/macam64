@@ -24,7 +24,7 @@
 #import "MyCameraCentral.h"
 #import "MyCameraDriver.h"
 
-@class MyCameraInspector;
+@class MyCameraInspector,MyMovieRecorder;
 
 
 @interface MyController : NSObject
@@ -56,8 +56,15 @@
 
     BOOL imageGrabbed;			//If there ever has been a grabbed image
     BOOL cameraGrabbing;		//If camera is currently grabbing
-    long cameraMediaCount;		//The number of images (etc.) stored on the camera
+    long cameraMediaCount;		//The (cached) number of images (etc.) stored on the camera
     BOOL terminating;			//For deferred shutting down (shutdown the driver properly)
+
+    //Attributes for movie recording
+    MyMovieRecorder* movieRecorder;	//The movie recorder object if we're recording
+    double movieRecordStart;		//The start time of the recorded movie
+    double movieLastCapturedImage;	//The time the last image was captured
+    double movieMinCaptureInterval;	//The minimum interval between captured images
+    double movieRecordingTimeFactor;	//The time scaling factor for recording the movie
 }
 - (void) dealloc;
 - (void) awakeFromNib;			//Initiates the disclaimer or startup
@@ -83,7 +90,6 @@
 
 //UI: Actions to do
 - (IBAction)doGrab:(id)sender;
-- (IBAction)doStopGrab:(id)sender;
 - (IBAction)doNextCam:(id)sender;
 - (IBAction)doDownloadMedia:(id)sender;
 - (IBAction)doSaveImage:(id)sender;
@@ -111,15 +117,6 @@
 - (NSArray*) toolbarDefaultItemIdentifiers:(NSToolbar*)toolbar;
 - (NSArray*) toolbarAllowedItemIdentifiers:(NSToolbar*)toolbar;
 - (BOOL) validateToolbarItem:(NSToolbarItem*)toolbarItem;
-//Common tools - could also be private
-- (BOOL) canDoGrab;
-- (BOOL) canDoStopGrab;
-- (BOOL) canToggleSettings;
-- (BOOL) canDoDownloadMedia;
-- (BOOL) canDoSaveImage;
-- (BOOL) canDoNextCam;
-- (BOOL) canDoSavePrefs;
-- (void) updateCameraMediaCount;
 //Delegates from the application
 - (BOOL) applicationOpenUntitledFile:(NSApplication*)theApplication;
 
