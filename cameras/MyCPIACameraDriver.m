@@ -453,6 +453,9 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     long currFrameLength;
     unsigned char* frameBase;
 
+    //Ignore data underruns - timeouts will be detected by framesSinceLastChunk
+    if (result==kIOReturnUnderrun) result=0;
+    
     if (result) {						//USB error handling
         *(gCtx->shouldBeGrabbing)=NO;				//We'll stop no matter what happened
         if (!gCtx->err) {
