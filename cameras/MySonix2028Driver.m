@@ -18,6 +18,61 @@
  $Id$
 */
 
+/* Here's what I know (or guess) about the chipset so far:
+
+The native Resolution is VGA (it might also be CIF, but my camera is VGA and therefore I assume it right now). Based on the wanted resolution, there's a subsampling factor (by 1,2 or 4). The divider is chosen by setting either register 0x1601,0x1602 or 0x1604 to zero (seems to be a trigger).
+
+Registers 0x1b23, 0x1d25 and 0x2036 seem to be shutter/gain settings.
+Registers 0x1328, 0x1329, 1121, 1123 and 1c20 seem to be resolution- (or compression-)dependent.
+
+Registers accessed repeatedly:
+0x1227
+0x1b32 : Gain / Shutter ???
+0x1d25
+0x2027
+0x2029
+0x2036 : Band filter 50/60 Hz ???
+0x1d25
+
+There seems to be a procedure to set the registers. It is implemented in [writeRegister:].
+
+The video in the data stream is a GRBG-Bayer pattern (compressed by some sort of run-length encoding and Huffman compression). The data stream format is as follows:
+
+<frame 1 header>
+<line 1 header>
+<pixel 1 bitcode>
+<pixel 2 bitcode>
+...
+<pixel x bitcode>
+<line 2 header>
+...
+<line y header>
+<padding bits>
+<frame 2 header>
+...
+
+The frame header is 12 bytes long (0xff 0xff 0x00 0xc4 0xc4 0x96 0x00 0x<*1> 0x<*2> 0x<*3> 0x<*4> 0x<*5>). <*1> seems to be a frame counter (bits 6 and 7) and a size indicator (bits 1 and 2: 00=VGA, 01=SIF, 10=QSIF) Bit 0 seems to be always 1, 4 and 5 seem to be always 0. Bit 3 is often 0 (but not always).<*2> to <*5>'s meanings are probably some sort of brightness summary/averavge.
+
+After that, the video lines follow. Each line starts with a 16-bit line header with two 8-bit starting values - since it's a Bayer pattern, there are two color components alternating in each line. Both components are tracked individually and independently (just alternating).
+
+After the line header, the actual pixels follow. Th line lengths don't match exactly their named formats - for example, VGA mode seems to have only 638 Pixels in a row. For each pixel, there's a code in the stream that describes the next component value. It can either be described as a change from the last value of that component or as a direct value. These codes are not bound to bytes - it's a pure bitstream. Codes have different lengths, according to their likeliness. The algorithm is similar to Huffman compression, the main differences are a) the two modes, b) the bit codes seem to be handmade, c) there's some redundancy because of the two description modes and d) not all possible values exist - therefore, the values had to be quantized (i.e. this compression algorithm is lossy). The codes are as follows (they are not completely correct, I have to figure out a better way to decipher this, but they basically work):
+
+0 		: 0 (leave as is)
+1000		: +8
+1001		: -8
+101 		: +3
+110 		: -3
+11100		: +18
+11101xxxxx 	: =8*(xxxxx)+4 (these values seem to be unprecise - especially for low values)
+1111		: -18
+
+
+
+
+
+
+*/
+
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOCFPlugIn.h>
 #include <IOKit/usb/IOUSBLib.h>
@@ -38,11 +93,11 @@
 - (CameraError) decodingThread;				//Entry method for the chunk to image decoding thread
 - (BOOL) startupGrabStream;				//Initiates camera streaming
 - (BOOL) shutdownGrabStream;				//stops camera streaming
-- (void) decodeChunk:(SONIXChunkBuffer*)chunk to:(UInt8*)pixmap bpp:(short)bpp rowBytes:(long)rb;
-//Decodes a chunk into a pixmap. No checks, all assumed locked and ready. Just the internal decode.
+- (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb;
+//Decodes SONIX-compressed data into a pixmap. No checks, all assumed ready and fine. Just the internal decode.
 
 - (CameraError) writeRegisterBlind:(UInt16)reg value:(UInt16)val;
-- (CameraError) writeRegister:(UInt16)reg value:(UInt16)val wantedResult:(UInt8)wanted;
+- (CameraError) writeRegister:(UInt16)reg value:(UInt16)val result:(UInt32*)wanted;
 
 @end
 
@@ -56,7 +111,12 @@
     CameraError err=[self usbConnectToCam:usbDeviceRef];
 //setup connection to camera
     if (err!=CameraErrorOK) return err;
-//Set brightness, contrast and saturation
+    memset(&grabContext,0,sizeof(SONIXGrabContext));
+    bayerConverter=[[BayerConverter alloc] init];
+    if (!bayerConverter) return CameraErrorNoMem;
+    [bayerConverter setSourceFormat:2];
+    MALLOC(bayerBuffer,UInt8*,(642)*(382),"Temp Bayer buffer");
+    //Set brightness, contrast, saturation etc
     [super setContrast:0.5f];
     [super setSaturation:0.5f];
     [self setBrightness:0.5f];
@@ -64,12 +124,15 @@
     [super setShutter:0.5f];
     [self setGain:0.5f];
     [self setCompression:0];
-    memset(&grabContext,0,sizeof(SONIXGrabContext));
+    [self setSharpness:0.5f];
+    if (!bayerBuffer) return CameraErrorNoMem;
     return [super startupWithUsbDeviceRef:usbDeviceRef];
 }
 
 - (void) dealloc {
     [self usbCloseConnection];
+    if (bayerBuffer) FREE(bayerBuffer,"Temp Bayer buffer");
+    if (bayerConverter) [bayerConverter release];
     [super dealloc];
 }
 
@@ -78,15 +141,55 @@
     return ((fr==5)&&((r==ResolutionQSIF)||(r==ResolutionSIF)||(r==ResolutionVGA)));
 }
 
-- (void) setResolution:(CameraResolution)r fps:(short)fr {
-    [super setResolution:r fps:fr];	//Update instance variables if state is ok and format is supported
-    //***
-}
 
 - (CameraResolution) defaultResolutionAndRate:(short*)dFps {	//This is a start
     if (dFps) *dFps=5;
     return ResolutionSIF;
 }
+
+- (BOOL) canSetGain {
+    return YES;
+}
+
+- (BOOL) canSetShutter {
+    return YES;
+}
+
+- (BOOL) canSetAutoGain {
+    return NO;
+}
+
+- (BOOL) isAutoGain {
+    return NO;
+}
+
+- (void) setGain:(float)val {
+    [super setGain:val];
+    if (isGrabbing) {
+        int v=gain*50.0f;
+        [self writeRegisterBlind:0x1b32 value:v<<8];
+        [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
+    }
+}
+
+- (void) setShutter:(float)val {
+    [super setShutter:val];
+    if (isGrabbing) {
+        int v=(1.0f-shutter)*2560.0f;
+        [self writeRegisterBlind:0x1d25 value:v];
+        [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
+    }
+}
+
+- (BOOL) canSetSharpness {
+    return YES;
+}
+
+- (void) setSharpness:(float)v {
+    [super setSharpness:v];
+    [bayerConverter setSharpness:sharpness];
+}
+
 
 - (BOOL) setupGrabContext {
     long i;
@@ -226,9 +329,17 @@ inline static void startNewChunk(SONIXGrabContext* gCtx) {
     gCtx->fillingChunkBuffer.numBytes=0;
 }
 
-
-FILE* logFile=NULL;
-
+//if there's a filling chunk, tries top add data to the filling chunk or discards the chunk if there's an overflow
+inline static void appendToChunk(SONIXGrabContext* gCtx,UInt8* buf, long len) {
+    if (len<=0) return;
+    if (!gCtx->fillingChunk) return;
+    if ((gCtx->fillingChunkBuffer.numBytes+len)>=gCtx->chunkBufferLength) {
+        discardCurrentChunk(gCtx);
+    } else {
+        memcpy(gCtx->fillingChunkBuffer.buffer+gCtx->fillingChunkBuffer.numBytes,buf,len);
+        gCtx->fillingChunkBuffer.numBytes+=len;
+    }
+}
 
 static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     int i;
@@ -268,55 +379,36 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
 
     if (*(gCtx->shouldBeGrabbing)) {
         for (i=0;i<SONIX_FRAMES_PER_TRANSFER;i++) {			//let's have a look into the usb frames we got
+            int sof=-1;
+            int j;
             currFrameLength=myFrameList[i].frActCount;			//Cache this - it won't change and we need it several times
             frameBase=gCtx->transferContexts[transferIdx].buffer+gCtx->bytesPerFrame*i;
             
-            //DO DATA PARSING HERE ****
-            if (logFile==NULL) logFile=fopen("/Users/matthias/Desktop/log","w");
-            fwrite(frameBase,1,currFrameLength,logFile);
+            //Step one: Find Start-of-frame id's in the frame
+            for (j=0;j<currFrameLength-5;j++) {
+                if (frameBase[j]==0xff) {
+                    if (frameBase[j+1]==0xff) {
+                        if (frameBase[j+2]==0x00) {
+                            if (frameBase[j+3]==0xc4) {
+                                if (frameBase[j+4]==0xc4) {
+                                    if (frameBase[j+5]==0x96) {
+                                        sof=j;
+                                        j=currFrameLength;
+                                    }}}}}}
+            }
 
-            if (!(gCtx->fillingChunk)) startNewChunk(gCtx);
-            if (!gCtx->fillingChunk) {
-                UInt8* src=frameBase;
-                long i=currFrameLength;
-                for (i=0;i<currFrameLength-5;i++) {
-                    if ((src[i]==0xff)&&(src[i+1]==0xff)&&(src[i+2]==0x00)
-                            &&(src[i+3]==0xc4)&&(src[i+4]==0xc4)&&(src[i+5]==0x96)) {
-                        startNewChunk(gCtx);
-                        currFrameLength-=i+1;
-                        frameBase+=i+1;
-                        i=currFrameLength+1;	//Break from loop
-                    }
-                }
+            //Step 2: Do the copying
+            if (sof>-1) {//There's a chunk start, so we can finish the current one (if there's one...)
+                appendToChunk(gCtx,frameBase,sof);
+                passCurrentChunk(gCtx);
+                startNewChunk(gCtx);	//Any case we have to start a new chunk here
             }
-            if (gCtx->fillingChunk) {
-                //Prevent buffer overflows. The chunk buffers have enough extra space to hold a whole chunk in every case.
-                if (gCtx->fillingChunkBuffer.numBytes+currFrameLength>=gCtx->chunkBufferLength) discardCurrentChunk(gCtx);
-                else {
-                    UInt8* src=frameBase;
-                    UInt8* dst=gCtx->fillingChunkBuffer.buffer+gCtx->fillingChunkBuffer.numBytes;
-                    UInt8 val;
-                    long i=currFrameLength;
-                    for (i=0;i<currFrameLength;i++) {
-                        val=*(src++);
-                        *(dst++)=val;
-                        if (val==0xff) {
-                            //Chunk end detection
-                            if ((src[0]==0xff)&&(src[1]==0x00)&&(src[2]==0xc4)&&(src[3]==0xc4)&&(src[4]==0x96)) {
-                                gCtx->fillingChunkBuffer.numBytes+=i;
-                                passCurrentChunk(gCtx);
-                                startNewChunk(gCtx);
-                                dst=gCtx->fillingChunkBuffer.buffer;
-                                gCtx->fillingChunkBuffer.numBytes-=i;	//Warning! Might temporarily be negative!
-                            }
-                        }
-                    }
-                    gCtx->fillingChunkBuffer.numBytes+=currFrameLength;
-                }
-            }
+            if (sof<0) sof=0;
+            appendToChunk(gCtx,frameBase+sof,currFrameLength-sof);
         }
+
         gCtx->framesSinceLastChunk+=SONIX_FRAMES_PER_TRANSFER;	//Count frames (not necessary to be too precise here...)
-        if ((gCtx->framesSinceLastChunk)>1000) {		//One second without a frame?
+        if ((gCtx->framesSinceLastChunk)>10000) {		//One second without a frame?
 #ifdef VERBOSE
             NSLog(@"SONIX grab aborted because of invalid data stream");
 #endif
@@ -331,8 +423,6 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
         gCtx->finishedTransfers++;
         if ((gCtx->finishedTransfers)>=(SONIX_NUM_TRANSFERS)) {
             discardCurrentChunk(gCtx);
-            fclose(logFile);
-            logFile=NULL;
             CFRunLoopStop(CFRunLoopGetCurrent());
         }
     }
@@ -417,131 +507,67 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 }
 
 
-#define REFILL_BIT_BUF {if (bitBufCount<24) { bitBuf=(bitBuf<<8)|(*(src++)); bitBufCount+=8;}}
-#define GET_ONE_FROM_BIT_BUF { bits=(bitBuf>>(bitBufCount-1))&0x01; bitBufCount--; }
-#define GET_TWO_FROM_BIT_BUF { bits=(bitBuf>>(bitBufCount-2))&0x03; bitBufCount-=2; }
-#define GET_FOUR_FROM_BIT_BUF { bits=(bitBuf>>(bitBufCount-4))&0x0f; bitBufCount-=4; }
-#define GET_FIVE_FROM_BIT_BUF { bits=(bitBuf>>(bitBufCount-5))&0x1f; bitBufCount-=5; }
-#define GET_SIX_FROM_BIT_BUF { bits=(bitBuf>>(bitBufCount-6))&0x3f; bitBufCount-=6; }
-#define GET_SEVEN_FROM_BIT_BUF { bits=(bitBuf>>(bitBufCount-7))&0x7f; bitBufCount-=7; }
-#define GET_EIGHT_FROM_BIT_BUF { bits=(bitBuf>>(bitBufCount-8))&0xff; bitBufCount-=8; }
-
-/* Here's the format of the data stream format (AFAIK)
-
-The strem
 
 
-*/
+
 
 //This is the "netto" decoder - maybe some work left to do :)
 
-- (void) decodeChunk:(SONIXChunkBuffer*)chunk to:(UInt8*)pixmap bpp:(short)bpp rowBytes:(long)rb {
-    UInt8* src=chunk->buffer;
-    UInt8* dst=pixmap;
-    UInt8 bits;
-    UInt8 c1val,c2val,val;
+#define PEEK_BITS(num,to) {\
+    if (bitBufCount<num) {do {bitBuf=(bitBuf<<8)|(*(src++)); bitBufCount+=8;} while (bitBufCount<24);}\
+    to=bitBuf>>(bitBufCount-num);}
+//PEEK_BITS puts the next <num> bits into the low bits of <to>. when the buffer is empty, it is completely refilled. This strategy tries to reduce memory access. Note that the high bits are NOT set to zero!
+
+#define EAT_BITS(num) { bitBufCount-=num; }
+//EAT_BITS consumes <num> bits (PEEK_BITS does not consume anything, it just peeks)
+
+
+#define PARSE_PIXEL(val) {\
+    PEEK_BITS(10,bits);\
+    if ((bits&0x00000200)==0) { EAT_BITS(1); }\
+    else if ((bits&0x00000380)==0x00000280) { EAT_BITS(3); val+=3; }\
+    else if ((bits&0x00000380)==0x00000300) { EAT_BITS(3); val-=3; }\
+    else if ((bits&0x000003c0)==0x00000200) { EAT_BITS(4); val+=8; }\
+    else if ((bits&0x000003c0)==0x00000240) { EAT_BITS(4); val-=8; }\
+    else if ((bits&0x000003c0)==0x000003c0) { EAT_BITS(4); val-=18; }\
+    else if ((bits&0x000003e0)==0x00000380) { EAT_BITS(5); val+=18; }\
+    else { EAT_BITS(10); val=8*(bits&0x0000001f)+4; }}
+
+#define PUT_PIXEL(val) {\
+    UInt8 ch;\
+    ch=CLAMP(val,0,255);\
+    *(dst++)=ch; }
+    
+- (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb {
+    UInt8* dst=bayerBuffer+[self width];
+    UInt16 bits;
+    SInt16 c1val,c2val;
     int x,y;
-    int width=[self width];
-    int height=[self height];
-    int dstRowSkip=rb-(width*bpp);
-    UInt32 bitBuf;
+    UInt32 bitBuf=0;
     UInt32 bitBufCount=0;
-    BOOL marker;
-    src+=11;
-    REFILL_BIT_BUF;
-    GET_ONE_FROM_BIT_BUF;
-    GET_ONE_FROM_BIT_BUF;
+    src+=12;
+    width-=2;		//The camera's data is actually 2 columns smaller
+
     for (y=0;y<height;y++) {
-        //Line 0
-        REFILL_BIT_BUF;
-        GET_SIX_FROM_BIT_BUF;
-        c1val=bits;
-        REFILL_BIT_BUF;
-        GET_EIGHT_FROM_BIT_BUF;
-        c2val=bits;
-        NSLog(@"six: %02x eight:%02x",c1val,c2val);
-        c1val=c2val=0;
-        for (x=0;x<width;x++) {
-            marker=NO;
-            val=(x&1)?c2val:c1val;
-            REFILL_BIT_BUF;
-            GET_ONE_FROM_BIT_BUF;			//bit 1
-            if (bits) {
-                GET_TWO_FROM_BIT_BUF;			//Bit 2 & 3
-                switch (bits) {
-                    case 1:
-                        val++;
-                        break;
-                    case 2:
-                        val--;
-                        break;
-                    case 0:
-                        GET_ONE_FROM_BIT_BUF;		//bit 4
-                        if (bits) val+=2;
-                        else val-=2;
-                        break;
-                    case 3:
-                        GET_ONE_FROM_BIT_BUF;		//bit 4
-                        if (bits==0) {
-                            GET_ONE_FROM_BIT_BUF;	//bit 5
-                            if (bits==0) {//0
-                                val+=4;
-                            } else {
-                                REFILL_BIT_BUF;
-                                GET_FIVE_FROM_BIT_BUF;	//bit 6-10
-                                val=bits*8;
-                                marker=YES;
-                            }
-                        } else {
-                            val-=4;
-                        }
-                        break;
-                    default:
-                        break;
-                }
-            }
-            if (x&1) {
-                c2val=val;
-            } else {
-                c1val=val;
-            }
-            if (bpp==4) *(dst++)=255;
-            if (marker) {
-                *(dst++)=255;
-                *(dst++)=0;
-                *(dst++)=0;
-            } else {
-                *(dst++)=val*10;
-                *(dst++)=val*10;
-                *(dst++)=val*10;
-            }
+        PEEK_BITS(8,bits);
+        EAT_BITS(8);
+        c1val=bits&0x000000ff;
+        PEEK_BITS(8,bits);
+        EAT_BITS(8);
+        c2val=bits&0x000000ff;
+        for (x=0;x<width;x+=2) {
+            PARSE_PIXEL(c1val);
+            PUT_PIXEL(c1val);
+            PARSE_PIXEL(c2val);
+            PUT_PIXEL(c2val);
         }
-        dst+=dstRowSkip;
+        dst+=2;
     }
-}
-
-- (BOOL) canSetBrightness { return YES; }
-- (BOOL) canSetContrast { return YES; }
-
-- (void) dummyDecodeChunk:(SONIXChunkBuffer*)chunk to:(UInt8*)pixmap bpp:(short)bpp rowBytes:(long)rb {
-    UInt8* dst=pixmap;
-    UInt8* src=chunk->buffer;
-    UInt8 val;
-    int x,y;
-    int width=[self width];
-    int height=[self height];
-    int dstRowSkip=rb-(width*bpp);
-    memset(chunk->buffer+chunk->numBytes,0,grabContext.chunkBufferLength-chunk->numBytes);
-    for (y=height;y>0;y--) {
-        for (x=width;x>0;x--) {
-            val=*(src++);
-            *(dst++)=val;
-            *(dst++)=val;
-            *(dst++)=val;
-            if (bpp==4) *(dst++)=val;
-        }
-        dst+=dstRowSkip;
-    }
+    [bayerConverter convertFromSrc:bayerBuffer
+                            toDest:pixmap
+                       srcRowBytes:[self width]
+                       dstRowBytes:rb
+                            dstBPP:bpp];
 }
 
 - (CameraError) decodingThread {
@@ -549,6 +575,11 @@ The strem
     long i;
     CameraError err=CameraErrorOK;
     grabbingThreadRunning=NO;
+    int width=[self width];	//Width and height are constant during a grab session, so ...
+    int height=[self height];	//... they can safely be cached (to reduce Obj-C calls)
+    //Setup the stuff for the decoder.
+    [bayerConverter setSourceWidth:width height:height];
+    [bayerConverter setDestinationWidth:width height:height];
     
     if (![self setupGrabContext]) {
         err=CameraErrorNoMem;
@@ -574,17 +605,16 @@ The strem
             }
             grabContext.numFullBuffers--;				//we have taken one from the list
             [grabContext.chunkListLock unlock];				//we're done accessing the chunk list.
-            frameCounter++;
-
-            //Data is in currChunk. Here's the place to decode... *******
 
             if (nextImageBufferSet) {
                 [imageBufferLock lock];				//lock image buffer access
                 if (nextImageBuffer!=NULL) {
-                    [self decodeChunk:&currChunk
-                                   to:nextImageBuffer
-                                  bpp:nextImageBufferBPP
-                             rowBytes:nextImageBufferRowBytes];
+                    [self decode:currChunk.buffer
+                              to:nextImageBuffer
+                           width:width
+                          height:height
+                             bpp:nextImageBufferBPP
+                        rowBytes:nextImageBufferRowBytes];
                 }
                 lastImageBuffer=nextImageBuffer;		//Copy nextBuffer info into lastBuffer
                 lastImageBufferBPP=nextImageBufferBPP;
@@ -605,61 +635,15 @@ The strem
     while (grabbingThreadRunning) {}			//Active wait for grabbingThread finish
     
     [self cleanupGrabContext];				//grabbingThread doesn't need the context any more since it's done
-    if (mergeBuffer) {
-        FREE(mergeBuffer,"mergeBuffer");		//don't need the merge buffer any more
-        mergeBuffer=NULL;
-    }
+    
     if (!err) err=grabContext.err;			//Forward decoding thread error
     return grabContext.err;				//notify delegate
 }
 
-/* Here's what I know (or guess) about the registers so far:
-
-The native Resolution is VGA (it might also be CIF, but my camera is VGA and therefore I assume it right now). Based on the wanted resolution, there's a subsampling factor (by 1,2 or 4). The divider is chosen by setting either register 0x1601,0x1602 or 0x1604 to zero (seems to be a trigger).
-
-Registers 0x1d25 and 0x2036 seem to be shutter/gain settings.
-
-Registers 0x1328, 0x1329, 1121, 1123 and 1c20 seem to be resolution- (or compression-)dependent.
-
-There seems to be a procedure to set the registers. It is implemented in [writeRegister:].
-
-The video in the data stream is a GRBG-Bayer pattern (compressed by some sort of run-length encoding and Huffman compression). The data stream format is as follows:
-
-<frame 1 header>
-   <line 1 header>
-      <pixel 1 bitcode>
-      <pixel 2 bitcode>
-      ...
-      <pixel x bitcode>
-   <line 2 header>
-   ...
-   <line y header>
-<padding bits>
-<frame 2 header>
-...
-
-The frame header is 12 bytes long (0xff 0xff 0x00 0xc4 0xc4 0x96 0x00 0x<*1> 0x<*2> 0x<*3> 0x<*4> 0x<*5>). <*1> seems to be a frame counter (bits 6 and 7) and a size indicator (bits 1 and 2: 00=VGA, 01=SIF, 10=QSIF) Bit 0 seems to be always 1 (validity?), 4 and 5 seem to be always 0. Bit 3 is often 0 (but not always).<*2> to <*5>'s meanings are unknown (maybe some sort of brightness summary).
-
-After that, the video lines follow. Each line starts with a 14-bit line header with two 7-bit starting values - since it's a Bayer pattern, there are two color components alternating in each line. Both components are tracked individually and independently (just alternating).
-
-For each pixel, there's a code in the stream that describes how the component value changes. These codes are not bound to bytes - it's a pure bitstream. Codes have different lengths, according to their likeliness (similar to Huffman compression). The codes are as follows:
-
-0 		: 0 (leave as is)
-1000		: ???
-1001		: ???
-101 		: +1
-110 		: -1
-11100		: ???
-11101xxxxx 	: ???
-1111		: ???
-
-After the line header, the actual pixels follow.
-
-
-*/
 
 
 - (BOOL) startupGrabStream {
+    //Don't ask me why - it's just a reproduction of what the windows driver does...
     UInt16 dividerReg, reg1328val, reg1329val, reg1121val, reg1123val, reg1c20val;
     switch (resolution) {
         case ResolutionVGA:
@@ -687,97 +671,101 @@ After the line header, the actual pixels follow.
             reg1c20val=0x00c1;
             break;
     }
-    if ([self writeRegister:0x0c01 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:dividerReg value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1000 value:0x0000 wantedResult:0x01]) return NO;
-    if ([self writeRegister:0x1325 value:0x0116 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1326 value:0x0112 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1328 value:0x010e wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1327 value:0x0120 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1329 value:0x0122 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132c value:0x0102 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132d value:0x0102 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132e value:0x0109 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132f value:0x0107 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1120 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1121 value:0x2d00 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1122 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1123 value:0x0300 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1110 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1111 value:0x6400 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1112 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1113 value:0x9100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1114 value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1115 value:0x2000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1116 value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1117 value:0x6000 wantedResult:0x00]) return NO;
+    
+    //Unless otherwise commented, they all should return 0,0,0 for byte 2,3 and 4 (Hi byte of register+0x80 at byte 1)
+    if ([self writeRegister:0x0c01 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:dividerReg value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1000 value:0x0000 result:NULL]) return NO;	//Should return 0x9001
+    if ([self writeRegister:0x1325 value:0x0116 result:NULL]) return NO;
+    if ([self writeRegister:0x1326 value:0x0112 result:NULL]) return NO;
+    if ([self writeRegister:0x1328 value:0x010e result:NULL]) return NO;
+    if ([self writeRegister:0x1327 value:0x0120 result:NULL]) return NO;
+    if ([self writeRegister:0x1329 value:0x0122 result:NULL]) return NO;
+    if ([self writeRegister:0x132c value:0x0102 result:NULL]) return NO;
+    if ([self writeRegister:0x132d value:0x0102 result:NULL]) return NO;
+    if ([self writeRegister:0x132e value:0x0109 result:NULL]) return NO;
+    if ([self writeRegister:0x132f value:0x0107 result:NULL]) return NO;
+    if ([self writeRegister:0x1120 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1121 value:0x2d00 result:NULL]) return NO;
+    if ([self writeRegister:0x1122 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1123 value:0x0300 result:NULL]) return NO;
+    if ([self writeRegister:0x1110 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1111 value:0x6400 result:NULL]) return NO;
+    if ([self writeRegister:0x1112 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1113 value:0x9100 result:NULL]) return NO;
+    if ([self writeRegister:0x1114 value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x1115 value:0x2000 result:NULL]) return NO;
+    if ([self writeRegister:0x1116 value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x1117 value:0x6000 result:NULL]) return NO;
     if ([self writeRegisterBlind:0x1c20 value:0x002d]) return NO;
-    if ([self writeRegister:0x1320 value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1321 value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1322 value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1323 value:0x0101 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1324 value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1325 value:0x0116 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1326 value:0x0112 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1327 value:0x0120 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1328 value:0x010e wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1329 value:0x0122 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132a value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132b value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132c value:0x0102 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132d value:0x0102 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132e value:0x0109 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132f value:0x0107 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1234 value:0x0100 wantedResult:0xa1]) return NO;
-    if ([self writeRegister:0x1334 value:0x01a1 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1335 value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1101 value:0x0400 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1102 value:0x9200 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1110 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1111 value:0x6400 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1112 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1113 value:0x9100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1114 value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1115 value:0x2000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1116 value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1117 value:0x6000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1120 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1121 value:0x2d00 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1122 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1123 value:0x0300 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1125 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1126 value:0x0200 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1127 value:0x8800 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1130 value:0x3800 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1131 value:0x2a00 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1132 value:0x2a00 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1133 value:0x2a00 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1134 value:0x0200 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x115b value:0x0a00 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1325 value:0x0128 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1326 value:0x011e wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1328 value:reg1328val wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1327 value:0x0120 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1329 value:reg1329val wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132c value:0x0102 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132d value:0x0103 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132e value:0x010f wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x132f value:0x010c wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1120 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1121 value:reg1121val wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1122 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1123 value:reg1123val wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1110 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1111 value:0x0400 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1112 value:0x0000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1113 value:0x0300 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1114 value:0x0100 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1115 value:0xe000 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1116 value:0x0200 wantedResult:0x00]) return NO;
-    if ([self writeRegister:0x1117 value:0x8000 wantedResult:0x00]) return NO;
+    if ([self writeRegister:0x1320 value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x1321 value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x1322 value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x1323 value:0x0101 result:NULL]) return NO;
+    if ([self writeRegister:0x1324 value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x1325 value:0x0116 result:NULL]) return NO;
+    if ([self writeRegister:0x1326 value:0x0112 result:NULL]) return NO;
+    if ([self writeRegister:0x1327 value:0x0120 result:NULL]) return NO;
+    if ([self writeRegister:0x1328 value:0x010e result:NULL]) return NO;
+    if ([self writeRegister:0x1329 value:0x0122 result:NULL]) return NO;
+    if ([self writeRegister:0x132a value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x132b value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x132c value:0x0102 result:NULL]) return NO;
+    if ([self writeRegister:0x132d value:0x0102 result:NULL]) return NO;
+    if ([self writeRegister:0x132e value:0x0109 result:NULL]) return NO;
+    if ([self writeRegister:0x132f value:0x0107 result:NULL]) return NO;
+    if ([self writeRegister:0x1234 value:0x0100 result:NULL]) return NO; //Should return 0x92a1
+    if ([self writeRegister:0x1334 value:0x01a1 result:NULL]) return NO;
+    if ([self writeRegister:0x1335 value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x1101 value:0x0400 result:NULL]) return NO;
+    if ([self writeRegister:0x1102 value:0x9200 result:NULL]) return NO;
+    if ([self writeRegister:0x1110 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1111 value:0x6400 result:NULL]) return NO;
+    if ([self writeRegister:0x1112 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1113 value:0x9100 result:NULL]) return NO;
+    if ([self writeRegister:0x1114 value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x1115 value:0x2000 result:NULL]) return NO;
+    if ([self writeRegister:0x1116 value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x1117 value:0x6000 result:NULL]) return NO;
+    if ([self writeRegister:0x1120 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1121 value:0x2d00 result:NULL]) return NO;
+    if ([self writeRegister:0x1122 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1123 value:0x0300 result:NULL]) return NO;
+    if ([self writeRegister:0x1125 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1126 value:0x0200 result:NULL]) return NO;
+    if ([self writeRegister:0x1127 value:0x8800 result:NULL]) return NO;
+    if ([self writeRegister:0x1130 value:0x3800 result:NULL]) return NO;
+    if ([self writeRegister:0x1131 value:0x2a00 result:NULL]) return NO;
+    if ([self writeRegister:0x1132 value:0x2a00 result:NULL]) return NO;
+    if ([self writeRegister:0x1133 value:0x2a00 result:NULL]) return NO;
+    if ([self writeRegister:0x1134 value:0x0200 result:NULL]) return NO;
+    if ([self writeRegister:0x115b value:0x0a00 result:NULL]) return NO;
+    if ([self writeRegister:0x1325 value:0x0128 result:NULL]) return NO;
+    if ([self writeRegister:0x1326 value:0x011e result:NULL]) return NO;
+    if ([self writeRegister:0x1328 value:reg1328val result:NULL]) return NO;
+    if ([self writeRegister:0x1327 value:0x0120 result:NULL]) return NO;
+    if ([self writeRegister:0x1329 value:reg1329val result:NULL]) return NO;
+    if ([self writeRegister:0x132c value:0x0102 result:NULL]) return NO;
+    if ([self writeRegister:0x132d value:0x0103 result:NULL]) return NO;
+    if ([self writeRegister:0x132e value:0x010f result:NULL]) return NO;
+    if ([self writeRegister:0x132f value:0x010c result:NULL]) return NO;
+    if ([self writeRegister:0x1120 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1121 value:reg1121val result:NULL]) return NO;
+    if ([self writeRegister:0x1122 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1123 value:reg1123val result:NULL]) return NO;
+    if ([self writeRegister:0x1110 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1111 value:0x0400 result:NULL]) return NO;
+    if ([self writeRegister:0x1112 value:0x0000 result:NULL]) return NO;
+    if ([self writeRegister:0x1113 value:0x0300 result:NULL]) return NO;
+    if ([self writeRegister:0x1114 value:0x0100 result:NULL]) return NO;
+    if ([self writeRegister:0x1115 value:0xe000 result:NULL]) return NO;
+    if ([self writeRegister:0x1116 value:0x0200 result:NULL]) return NO;
+    if ([self writeRegister:0x1117 value:0x8000 result:NULL]) return NO;
     if ([self writeRegisterBlind:0x1c20 value:reg1c20val]) return NO;
     if ([self writeRegisterBlind:0x1c20 value:reg1c20val]) return NO;
     if ([self writeRegisterBlind:0x2034 value:0xa100]) return NO;
+    [self setGain:[self gain]];
+    [self setShutter:[self shutter]];
     return YES;
 }
 
@@ -798,7 +786,7 @@ After the line header, the actual pixels follow.
     else return CameraErrorUSBProblem;
 }
 
-- (CameraError) writeRegister:(UInt16)reg value:(UInt16)val wantedResult:(UInt8)wanted {
+- (CameraError) writeRegister:(UInt16)reg value:(UInt16)val result:(UInt32*)ret {
     CameraError err;
 
     //Send write command
@@ -810,9 +798,91 @@ After the line header, the actual pixels follow.
     } while (buf[0]!=2);
     //Check result
     if (![self usbReadVICmdWithBRequest:0 wValue:4 wIndex:0 buf:buf len:4]) return CameraErrorUSBProblem;
-    if (wanted!=buf[1]) NSLog(@"writeRegister:%i value:%i wanted:%i received:%i",reg,val,wanted,buf[1]);
-    if ((((reg&0xff00)>>8)+0x80)!=buf[0]) NSLog(@"writeRegister:%i value:%i bad result %i",reg,val,buf[0]);
+    if ((((reg&0xff00)>>8)+0x80)!=buf[0]) NSLog(@"writeRegister:%04x value:%04x bad result %04x",reg,val,buf[0]);
+    if (ret) *ret=*((UInt32*)buf);
     return CameraErrorOK;
 }
+
+//DSC Image download
+- (BOOL) canStoreMedia {
+    return YES;
+}
+
+- (long) numberOfStoredMediaObjects {
+    UInt32 result;
+    if ([self writeRegister:0x0c00 value:0x0000 result:&result]) return 0;
+    if ([self writeRegister:0x1600 value:0x0000 result:&result]) return 0;
+    if ([self writeRegister:0x1800 value:0x0000 result:&result]) return 0;
+    result=(result&0x00ff0000)>>16;
+    return result;
+}
+
+- (NSDictionary*) getStoredMediaObject:(long)idx {
+    NSMutableData* rawBuffer;
+    UInt32 result;
+    UInt32 rawLength;
+    UInt32 readLength;
+    IOReturn err;
+    NSBitmapImageRep* imageRep;
+    int width;
+    int height;
+    
+    //Get dimensions of image
+    if ([self writeRegister:0x1900+((idx+1)&0xff) value:((idx+1)&0xff00) result:&result]) return NULL;
+    if (result&0x00010000) {
+        width=320;
+        height=240;
+    }
+    else {
+        width=640;
+        height=480;
+    }
+
+    //Get data size of image
+    if ([self writeRegister:0x1a00+((idx+1)&0xff) value:((idx+1)&0xff00) result:&result]) return NULL;
+    rawLength=((((result&0xff)<<16)+(result&0xff00)+((result&0xff0000)>>16))+0x3f)&0xffffc0;
+
+    //Get raw data buffer
+    //Add some safety to prevent the decoder from running into the desert
+    rawBuffer=[NSMutableData dataWithLength:rawLength+12+height*2+width*height/8+100];
+    if (!rawBuffer) return NULL;
+
+    //Read raw image data
+    readLength=rawLength;
+    err=(*intf)->ReadPipe(intf,2, [rawBuffer mutableBytes]+12, &readLength);	//Read one chunk
+    CheckError(err,"getStoredMediaObject-ReadBulkPipe");
+    if (rawLength!=readLength) {
+        NSLog(@"getStoredMediaObject: problem: wanted %i bytes, got %i, trying to continue...",rawLength,readLength);
+    }
+
+    //Get an imageRep to hold the image
+    imageRep=[[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+                                                      pixelsWide:width
+                                                      pixelsHigh:height
+                                                   bitsPerSample:8
+                                                 samplesPerPixel:3
+                                                        hasAlpha:NO
+                                                        isPlanar:NO
+                                                  colorSpaceName:NSCalibratedRGBColorSpace
+                                                     bytesPerRow:0
+                                                    bitsPerPixel:0] autorelease];
+
+    //Decode the image
+    [bayerConverter setSourceWidth:width height:height];
+    [bayerConverter setDestinationWidth:width height:height];
+    [self decode:[rawBuffer mutableBytes]
+              to:[imageRep bitmapData]
+           width:width
+          height:height
+             bpp:[imageRep bitsPerPixel]/8
+        rowBytes:[imageRep bytesPerRow]];
+
+    //Clean up
+    [[rawBuffer retain] release];	//Explicitly release buffer (be nice when there are many pics)
+
+    //Return result
+    return [NSMutableDictionary dictionaryWithObjectsAndKeys:@"bitmap",@"type",imageRep,@"data",NULL];
+}
+
 
 @end

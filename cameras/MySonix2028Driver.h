@@ -22,11 +22,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "MyCameraDriver.h"
-#include <Carbon/Carbon.h>
-#include <QuickTime/QuickTime.h>
-#include <IOKit/IOKitLib.h>
-#include <IOKit/IOCFPlugIn.h>
-#include <IOKit/usb/IOUSBLib.h>
+#import "BayerConverter.h"
 #include "GlobalDefs.h"
 
 
@@ -73,9 +69,10 @@ typedef struct SONIXGrabContext {
     short 	camSkipFrames;
 //The context for grabbingThread
    SONIXGrabContext grabContext;		//the grab context (everything the async usb read callbacks need)
-   unsigned char *mergeBuffer;		//a SONIX-style 422 yuv buffer to merge compressed images
    BOOL grabbingThreadRunning;		//For active wait for grabbingThread finish
-   long frameCounter;			//The first frame of a sequence will always be sent uncompressed to avoid old pixels
+
+   BayerConverter* bayerConverter;
+   UInt8* bayerBuffer;
 }
 
 + (unsigned short) cameraUsbProductID;
@@ -86,7 +83,15 @@ typedef struct SONIXGrabContext {
 - (void) dealloc;
 
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;
-- (void) setResolution:(CameraResolution)r fps:(short)fr;
 - (CameraResolution) defaultResolutionAndRate:(short*)dFps;
+
+- (BOOL) canSetSharpness;
+- (void) setSharpness:(float)v;
+
+//DSC Image download
+- (BOOL) canStoreMedia;
+- (long) numberOfStoredMediaObjects;
+- (NSDictionary*) getStoredMediaObject:(long)idx;
+
 
 @end
