@@ -206,10 +206,6 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
     return YES;
 }
 
-- (BOOL) canSetHFlip {
-    return YES;
-}
-
 - (void) setAutoGain:(BOOL)v{
     [super setAutoGain:v];
     if (autoGain) {
@@ -236,6 +232,44 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
         [self writeRegisterBlind:0x1d25 value:v];
         [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
     }
+}
+
+- (BOOL) canSetWhiteBalanceMode {
+    return YES;
+}
+
+- (BOOL) canSetWhiteBalanceModeTo:(WhiteBalanceMode)newMode {
+    return ((newMode==WhiteBalanceLinear)||
+            (newMode==WhiteBalanceIndoor)||
+            (newMode==WhiteBalanceOutdoor)||
+            (newMode==WhiteBalanceAutomatic));
+}
+
+- (void) setWhiteBalanceMode:(WhiteBalanceMode)newMode {
+    [super setWhiteBalanceMode:newMode];
+    switch (newMode) {
+        case WhiteBalanceLinear:
+            [bayerConverter setGainsDynamic:NO];
+            [bayerConverter setGainsRed:1.0f green:1.0f blue:1.0f];
+            break;
+        case WhiteBalanceIndoor:
+            [bayerConverter setGainsDynamic:NO];
+            [bayerConverter setGainsRed:0.7f green:1.1f blue:1.15f];
+            break;
+        case WhiteBalanceOutdoor:
+            [bayerConverter setGainsDynamic:NO];
+            [bayerConverter setGainsRed:1.1f green:1.0f blue:0.9f];
+            break;
+        case WhiteBalanceAutomatic:
+            [bayerConverter setGainsDynamic:YES];
+            break;
+        default:
+            break;
+    }
+}
+
+- (BOOL) canSetHFlip {
+    return YES;
 }
 
 - (BOOL) setupGrabContext {
@@ -606,6 +640,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     UInt32 bitBufCount=0;
     src+=12;
     width-=2;		//The camera's data is actually 2 columns smaller
+    height-=1;		//We start at the second line!
     for (y=0;y<height;y++) {
         PEEK_BITS(8,bits);
         EAT_BITS(8);
@@ -620,6 +655,13 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
         }
         PUT_PIXEL_PAIR;	//repeat the missing two pixels
     }
+    //Copy third to first line (repeat to prevent an empty one)
+    dst=bayerBuffer;
+    for (x=width+2;x>0;x--) {
+        *dst=dst[2*width+4];
+        dst++;
+    }
+    //Decode Bayer
     [bayerConverter convertFromSrc:bayerBuffer
                             toDest:pixmap
                        srcRowBytes:width+2
@@ -638,12 +680,14 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     //Setup the stuff for the decoder.
     [bayerConverter setSourceWidth:width height:height];
     [bayerConverter setDestinationWidth:width height:height];
+
     //Set the decoder to current settings (might be set to neutral by [getStoredMediaObject:])
     [self setBrightness:brightness];
     [self setContrast:contrast];
     [self setSaturation:saturation];
     [self setGamma:gamma];
     [self setSharpness:sharpness];
+    [self setWhiteBalanceMode:whiteBalanceMode];
     
     if (![self setupGrabContext]) {
         err=CameraErrorNoMem;
@@ -918,6 +962,8 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     [bayerConverter setSaturation:1.0f];
     [bayerConverter setGamma:1.0f];
     [bayerConverter setSharpness:0.5f];
+    [bayerConverter setGainsDynamic:NO];
+    [bayerConverter setGainsRed:1.0f green:1.0f blue:1.0f];
 
     //Get dimensions of image
     if ([self writeRegister:0x1900+((idx+1)&0xff) value:((idx+1)&0xff00) result:&result]) return NULL;
