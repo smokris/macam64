@@ -19,31 +19,31 @@
  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  $Id$
 
- Traduit en français par Damien Persohn <damien@persohn.net>.
+ Traduit en fran√ßais par Damien Persohn <damien@persohn.net>.
 
 -->
 <plist version="0.9">
 <dict>
 	<key>Camera video settings</key>
-	<string>Réglages de la caméra</string>
+	<string>R√©glages de la cam√©ra</string>
 	<key>Change camera</key>
-	<string>Changer de caméra</string>
+	<string>Changer de cam√©ra</string>
 	<key>Download</key>
-	<string>Télécharger</string>
+	<string>T√©l√©charger</string>
 	<key>Download Media?</key>
-	<string>Ouvrir le flux vidéo ?</string>
+	<string>Ouvrir le flux vid√©o ?</string>
 	<key>Download media</key>
-	<string>Ouverture du flux vidéo</string>
+	<string>Ouverture du flux vid√©o</string>
 	<key>No</key>
 	<string>Non</string>
 	<key>Pause</key>
 	<string>Pause</string>
 	<key>Pause camera video</key>
-	<string>Mettre la caméra en pause</string>
+	<string>Mettre la cam√©ra en pause</string>
 	<key>Play</key>
 	<string>Lire</string>
 	<key>Play camera video</key>
-	<string>Lecture du flux vidéo</string>
+	<string>Lecture du flux vid√©o</string>
 	<key>Save current image</key>
 	<string>Enregistrer l'image en cours</string>
 	<key>Save image</key>
@@ -51,55 +51,55 @@
 	<key>Save like this</key>
 	<string>Enregistrer tel quel</string>
 	<key>Settings</key>
-	<string>Paramètres</string>
+	<string>Param√®tres</string>
 	<key>Status: A problem occurred - please check files</key>
-	<string>État: Un problème est survenu, merci de vérifier les fichiers</string>
+	<string>√âtat: Un probl√®me est survenu, merci de v√©rifier les fichiers</string>
 	<key>Status: CPU too busy</key>
-	<string>État: La charge processeur est trop élevée</string>
+	<string>√âtat: La charge processeur est trop √©lev√©e</string>
 	<key>Status: Camera not found (this shouldn't happen)</key>
-	<string>État: Caméra introuvable (ceci ne devrait pas arriver)</string>
+	<string>√âtat: Cam√©ra introuvable (ceci ne devrait pas arriver)</string>
 	<key>Status: Camera switch failed</key>
-	<string>État: Le changement de caméra a échoué</string>
+	<string>√âtat: Le changement de cam√©ra a √©chou√©</string>
 	<key>Status: Camera unplugged</key>
-	<string>État: Caméra débranchée</string>
+	<string>√âtat: Cam√©ra d√©branch√©e</string>
 	<key>Status: Camera used by another app</key>
-	<string>État: La caméra est utilisée par une autre application</string>
+	<string>√âtat: La cam√©ra est utilis√©e par une autre application</string>
 	<key>Status: Conntected to </key>
-	<string>État: Connecté à </string>
+	<string>√âtat: Connect√© √† </string>
 	<key>Status: Downloading number %i</key>
-	<string>État: téléchargement du numéro %i</string>
+	<string>√âtat: t√©l√©chargement du num√©ro %i</string>
 	<key>Status: Internal error (this shouldn't happen)</key>
-	<string>État: Erreur interne (ceci ne devrait pas se produire)</string>
+	<string>√âtat: Erreur interne (ceci ne devrait pas se produire)</string>
 	<key>Status: Media downloaded from camera</key>
-	<string>État: flux enregistré depuis la caméra</string>
+	<string>√âtat: flux enregistr√© depuis la cam√©ra</string>
 	<key>Status: Media not downloaded</key>
-	<string>État: Aucun flux enregistré</string>
+	<string>√âtat: Aucun flux enregistr√©</string>
 	<key>Status: No Camera</key>
-	<string>État: Pas de caméra</string>
+	<string>√âtat: Pas de cam√©ra</string>
 	<key>Status: Not enough USB bus power</key>
-	<string>État: Pas assez de puissance sur le bus USB</string>
+	<string>√âtat: Pas assez de puissance sur le bus USB</string>
 	<key>Status: Not enough bandwidth</key>
-	<string>État: Bande passante trop faible</string>
+	<string>√âtat: Bande passante trop faible</string>
 	<key>Status: Out of memory</key>
-	<string>État: Pas assez de mémoire</string>
+	<string>√âtat: Pas assez de m√©moire</string>
 	<key>Status: Unsupported</key>
-	<string>État: Non supporté</string>
+	<string>√âtat: Non support√©</string>
 	<key>Status: Paused</key>
-	<string>État: En pause</string>
+	<string>√âtat: En pause</string>
 	<key>Status: Pausing</key>
-	<string>État: mise en pause...</string>
+	<string>√âtat: mise en pause...</string>
 	<key>Status: Playing</key>
-	<string>État: Lecture</string>
+	<string>√âtat: Lecture</string>
 	<key>Status: USB communication problem</key>
-	<string>État: problème de communication sur USB</string>
+	<string>√âtat: probl√®me de communication sur USB</string>
 	<key>Status: Unknown error (this shouldn't happen)</key>
-	<string>État: Erreur inconnue (ceci ne devrait pas se produire)</string>
+	<string>√âtat: Erreur inconnue (ceci ne devrait pas se produire)</string>
 	<key>Switch to next camera</key>
-	<string>Bascule vers la caméra suivante</string>
+	<string>Bascule vers la cam√©ra suivante</string>
 	<key>The camera you just plugged in contains %i stored images. Do you want to download them to your computer?</key>
-	<string>La caméra que vous venez de brancher contient %i images. Souhaitez-vous les enregistrer sur votre ordinateur ?</string>
+	<string>La cam√©ra que vous venez de brancher contient %i images. Souhaitez-vous les enregistrer sur votre ordinateur ?</string>
 	<key>The camera you just plugged in contains one stored image. Do you want to download them to your computer?</key>
-	<string>La caméra que vous venez de brancher contient une image. Souhaitez-vous l'enregistrer sur votre ordinateur ?</string>
+	<string>La cam√©ra que vous venez de brancher contient une image. Souhaitez-vous l'enregistrer sur votre ordinateur ?</string>
 	<key>Yes</key>
 	<string>Oui</string>
 </dict>
