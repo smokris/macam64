@@ -20,6 +20,7 @@
 
 #import "MyCameraInspector.h"
 #import "MyCameraDriver.h"
+#import "MyCameraCentral.h"
 
 
 @implementation MyCameraInspector
@@ -29,7 +30,7 @@
     if (!self) return NULL;
     camera=c;
     if (![NSBundle loadNibNamed:@"DefaultCameraInspector" owner:self]) return NULL;
-    [camName setStringValue:[[camera class] cameraName]];
+    [camName setStringValue:[[camera central] nameForDriver:c]];
     return self;
 }
 
