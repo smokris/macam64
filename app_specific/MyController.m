@@ -62,15 +62,47 @@ extern NSString* SnapshotQualityPrefsKey;
 @implementation MyController
 
 - (void) awakeFromNib {
-    NSDictionary* dict=[NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:@"disclaimerOK"];
+    NSString* disclaimerOKVersion;
+
+    //Get our short version string
+    NSString* shortVersion=[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+
+    //Create a fallback preference if no version was ever used
+    NSDictionary* dict=[NSDictionary dictionaryWithObject:[NSNumber numberWithFloat:0.0f] forKey:@"DisclaimerOKVersion"];
     [[NSUserDefaults standardUserDefaults] registerDefaults:dict];
-    if ([[[NSUserDefaults standardUserDefaults] objectForKey:@"disclaimerOK"] boolValue]) {
+
+    //Get the latest version the user has agreed to
+    disclaimerOKVersion=[[NSUserDefaults standardUserDefaults] objectForKey:@"DisclaimerOKVersion"];
+
+    //If the user already agreed to this version, proceed. Otherwise display disclaimer.
+    if ([shortVersion isEqual:disclaimerOKVersion]) {
         [self startup];
     } else {
         [disclaimerWindow setLevel:NSNormalWindowLevel];
         [disclaimerWindow makeKeyAndOrderFront:self];
     }
 }	
+
+- (void) disclaimerOK:(id) sender {
+
+    //Get our short version string
+    NSString* shortVersion=[[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+
+    //Remove disclaimer window
+    [disclaimerWindow orderOut:self];
+    disclaimerWindow=NULL;
+
+    //Remember the user said ok for this version
+    [[NSUserDefaults standardUserDefaults] setObject:shortVersion forKey:@"DisclaimerOKVersion"];
+    [[NSUserDefaults standardUserDefaults] synchronize];
+
+    //Go on with the startup
+    [self startup];
+}
+
+- (void) disclaimerQuit:(id) sender {
+    [[NSApplication sharedApplication] terminate:self];
+}
 
 - (void) startup {
     terminating=NO;
@@ -99,18 +131,6 @@ extern NSString* SnapshotQualityPrefsKey;
     [window makeKeyAndOrderFront:self];
     [window display];
     [central startupWithNotificationsOnMainThread:YES];
-}
-
-- (void) disclaimerOK:(id) sender {
-    [disclaimerWindow orderOut:self];
-    disclaimerWindow=NULL;
-    [[NSUserDefaults standardUserDefaults] setBool:YES forKey:@"disclaimerOK"];
-    [[NSUserDefaults standardUserDefaults] synchronize];
-    [self startup];
-}
-
-- (void) disclaimerQuit:(id) sender {
-    [[NSApplication sharedApplication] terminate:self];
 }
 
 - (void) dealloc {
