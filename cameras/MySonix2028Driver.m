@@ -116,16 +116,17 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
     if (!bayerConverter) return CameraErrorNoMem;
     [bayerConverter setSourceFormat:2];
     MALLOC(bayerBuffer,UInt8*,(642)*(382),"Temp Bayer buffer");
-    //Set brightness, contrast, saturation etc
-    [super setContrast:0.5f];
-    [super setSaturation:0.5f];
-    [self setBrightness:0.5f];
-    [super setAutoGain:YES];
-    [super setShutter:0.5f];
-    [self setGain:0.5f];
-    [self setCompression:0];
-    [self setSharpness:0.5f];
     if (!bayerBuffer) return CameraErrorNoMem;
+    //Set brightness, contrast, saturation etc
+    [self setContrast:0.5f];
+    [self setSaturation:0.5f];
+    [self setBrightness:0.5f];
+    [self setGamma:0.5f];
+    [self setSharpness:0.5f];
+    [self setAutoGain:YES];
+    [super setShutter:0.5f];
+    [super setGain:0.5f];
+    [self setCompression:0];
     return [super startupWithUsbDeviceRef:usbDeviceRef];
 }
 
@@ -147,6 +148,51 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
     return ResolutionSIF;
 }
 
+- (BOOL) canSetSharpness {
+    return YES;
+}
+
+- (void) setSharpness:(float)v {
+    [super setSharpness:v];
+    [bayerConverter setSharpness:sharpness];
+}
+
+- (BOOL) canSetBrightness {
+    return YES;
+}
+
+- (void) setBrightness:(float)v {
+    [super setBrightness:v];
+    [bayerConverter setBrightness:brightness-0.5f];
+}
+
+- (BOOL) canSetContrast {
+    return YES;
+}
+
+- (void) setContrast:(float)v {
+    [super setContrast:v];
+    [bayerConverter setContrast:contrast+0.5f];
+}
+
+- (BOOL) canSetSaturation {
+    return YES;
+}
+
+- (void) setSaturation:(float)v {
+    [super setSaturation:v];
+    [bayerConverter setSaturation:saturation*2.0f];
+}
+
+- (BOOL) canSetGamma  {
+    return YES;
+}
+
+- (void) setGamma:(float)v {
+    [super setGamma:v];
+    [bayerConverter setGamma:gamma+0.5f];
+}
+
 - (BOOL) canSetGain {
     return YES;
 }
@@ -156,11 +202,17 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
 }
 
 - (BOOL) canSetAutoGain {
-    return NO;
+    return YES;
 }
 
-- (BOOL) isAutoGain {
-    return NO;
+- (void) setAutoGain:(BOOL)v{
+    [super setAutoGain:v];
+    if (autoGain) {
+        grabContext.autoExposure=0.5f;
+    } else {
+        [self setGain:gain];
+        [self setShutter:shutter];
+    }
 }
 
 - (void) setGain:(float)val {
@@ -181,16 +233,6 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
     }
 }
 
-- (BOOL) canSetSharpness {
-    return YES;
-}
-
-- (void) setSharpness:(float)v {
-    [super setSharpness:v];
-    [bayerConverter setSharpness:sharpness];
-}
-
-
 - (BOOL) setupGrabContext {
     long i;
 
@@ -208,6 +250,9 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
     grabContext.shouldBeGrabbing=&shouldBeGrabbing;
     grabContext.err=CameraErrorOK;
     grabContext.framesSinceLastChunk=0;
+    grabContext.underexposuredFrames=0;
+    grabContext.overexposuredFrames=0;
+    grabContext.autoExposure=0.5f;
 //Note: There's no danger of random memory pointers in the structs since we call [cleanupGrabContext] before
     
 //Allocate the locks
@@ -295,8 +340,20 @@ inline static void discardCurrentChunk(SONIXGrabContext* gCtx) {
 }
 
 //Puts the current chunk to the full chunk list and notifies the decoder. Afterwards, there's no current chunk
+//This is probably not the best place for auto exposure calculations, but it is efficient because every valid chunk passes this point. And these calculations don't need much time. So it is done here. The real adjustment commands are sent in the decoding thread.
 inline static void passCurrentChunk(SONIXGrabContext* gCtx) {
     if (!(gCtx->fillingChunk)) return;		//Nothing to pass
+    {	//Do auto exposure calculations here
+        int lightness=gCtx->fillingChunkBuffer.buffer[10]+256*gCtx->fillingChunkBuffer.buffer[11];
+        if (lightness<SONIX_AE_WANTED_BRIGHTNESS-SONIX_AE_ACCEPTED_TOLERANCE) gCtx->underexposuredFrames++;
+        else gCtx->underexposuredFrames=0;
+        if (lightness>SONIX_AE_WANTED_BRIGHTNESS+SONIX_AE_ACCEPTED_TOLERANCE) gCtx->overexposuredFrames++;
+        else gCtx->overexposuredFrames=0;
+        if (gCtx->underexposuredFrames>=SONIX_AE_ADJUST_LATENCY) gCtx->autoExposure-=SONIX_AE_ADJUST_STEP;
+        else if (gCtx->overexposuredFrames>=SONIX_AE_ADJUST_LATENCY) gCtx->autoExposure+=SONIX_AE_ADJUST_STEP;
+        if (gCtx->autoExposure>1.0f) gCtx->autoExposure=1.0f;
+        if (gCtx->autoExposure<0.0f) gCtx->autoExposure=0.0f;
+    }
     [gCtx->chunkListLock lock];			//Get permission to manipulate chunk lists
     gCtx->fullChunkBuffers[gCtx->numFullBuffers]=gCtx->fillingChunkBuffer;
     gCtx->numFullBuffers++;			//our fresh chunk has been added to the full ones
@@ -538,9 +595,9 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     SInt32 pp=(c1val<<8)+c2val;\
     *((UInt16*)dst)=pp;\
     dst+=2; }
-    
+
 - (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb {
-    UInt8* dst=bayerBuffer+[self width];
+    UInt8* dst=bayerBuffer+width;
     UInt16 bits;
     SInt16 c1val,c2val;
     int x,y;
@@ -560,11 +617,11 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
             PARSE_PIXEL(c2val);
             PUT_PIXEL_PAIR;
         }
-        dst+=2;
+        PUT_PIXEL_PAIR;	//repeat the missing two pixels
     }
     [bayerConverter convertFromSrc:bayerBuffer
                             toDest:pixmap
-                       srcRowBytes:[self width]
+                       srcRowBytes:width+2
                        dstRowBytes:rb
                             dstBPP:bpp];
 }
@@ -579,6 +636,12 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     //Setup the stuff for the decoder.
     [bayerConverter setSourceWidth:width height:height];
     [bayerConverter setDestinationWidth:width height:height];
+    //Set the decoder to current settings (might be set to neutral by [getStoredMediaObject:])
+    [self setBrightness:brightness];
+    [self setContrast:contrast];
+    [self setSaturation:saturation];
+    [self setGamma:gamma];
+    [self setSharpness:sharpness];
     
     if (![self setupGrabContext]) {
         err=CameraErrorNoMem;
@@ -621,6 +684,14 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
                 nextImageBufferSet=NO;				//nextBuffer has been eaten up
                 [imageBufferLock unlock];			//release lock
                 [self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer
+                if (autoGain) {
+                    int v=grabContext.autoExposure*50.0f;
+                    [self writeRegisterBlind:0x1b32 value:v<<8];
+                    [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
+                    v=(1.0f-grabContext.autoExposure)*2560.0f;
+                    [self writeRegisterBlind:0x1d25 value:v];
+                    [self writeRegister:0x1227 value:0x0100 result:NULL]; //should return 0x9220;
+                }
             }
             
 /*Now it's time to give back the chunk buffer we used - no matter if we used it or not. In case it was discarded this is somehow not the most elegant solution because we have to lock chunkListLock twice, but that should be not too much of a problem since we obviously have plenty of image data to waste... */
@@ -825,7 +896,14 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     NSBitmapImageRep* imageRep;
     int width;
     int height;
-    
+
+    //Neutralize bayer converter
+    [bayerConverter setBrightness:0.0f];
+    [bayerConverter setContrast:1.0f];
+    [bayerConverter setSaturation:1.0f];
+    [bayerConverter setGamma:1.0f];
+    [bayerConverter setSharpness:0.5f];
+
     //Get dimensions of image
     if ([self writeRegister:0x1900+((idx+1)&0xff) value:((idx+1)&0xff00) result:&result]) return NULL;
     if (result&0x00010000) {
