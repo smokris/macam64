@@ -379,8 +379,8 @@
 
     BOOL leftBorder=(destinationWidth>width);		//Find which borders we need to blit (without sharpening)
     BOOL rightBorder=(destinationWidth>(width+1));	//Note that when rightBorder is YES, we can also expect leftBorder
-    BOOL topBorder=(destinationHeight>=height);
-    BOOL bottomBorder=(destinationHeight>=(height+1));	//Note that when bottomBorder is YES, we can also expect topBorder
+    BOOL topBorder=(destinationHeight>height);
+    BOOL bottomBorder=(destinationHeight>(height+1));	//Note that when bottomBorder is YES, we can also expect topBorder
 
     unsigned char* dst1Run=dst+((leftBorder)?3:0)+((topBorder)?dstRB:0);
     unsigned char* dst2Run=dst1Run+dstRB;
