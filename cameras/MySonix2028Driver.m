@@ -20,20 +20,6 @@
 
 /* Here's what I know (or guess) about the chipset so far:
 
-The native Resolution is VGA (it might also be CIF, but my camera is VGA and therefore I assume it right now). Based on the wanted resolution, there's a subsampling factor (by 1,2 or 4). The divider is chosen by setting either register 0x1601,0x1602 or 0x1604 to zero (seems to be a trigger).
-
-Registers 0x1b23, 0x1d25 and 0x2036 seem to be shutter/gain settings.
-Registers 0x1328, 0x1329, 1121, 1123 and 1c20 seem to be resolution- (or compression-)dependent.
-
-Registers accessed repeatedly:
-0x1227
-0x1b32 : Gain / Shutter ???
-0x1d25
-0x2027
-0x2029
-0x2036 : Band filter 50/60 Hz ???
-0x1d25
-
 There seems to be a procedure to set the registers. It is implemented in [writeRegister:].
 
 The video in the data stream is a GRBG-Bayer pattern (compressed by some sort of run-length encoding and Huffman compression). The data stream format is as follows:
@@ -86,6 +72,7 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
 #define VENDOR_AEL	0x0c45
 #define PRODUCT_DC31UC	0x8000
 
+#define MAX_SHUTTER 2560000.0f
 
 typedef enum SonixSensorType {
     SonixSensorHynixHV7131DorE_VGA=0,
@@ -152,7 +139,7 @@ typedef enum SonixSensorType {
     bayerConverter=[[BayerConverter alloc] init];
     if (!bayerConverter) return CameraErrorNoMem;
     [bayerConverter setSourceFormat:2];
-    MALLOC(bayerBuffer,UInt8*,(642)*(382),"Temp Bayer buffer");
+    MALLOC(bayerBuffer,UInt8*,(642)*(482),"Temp Bayer buffer");
     if (!bayerBuffer) return CameraErrorNoMem;
     //Set brightness, contrast, saturation etc
     [self setContrast:0.5f];
@@ -230,12 +217,18 @@ typedef enum SonixSensorType {
     [bayerConverter setGamma:gamma+0.5f];
 }
 
-- (BOOL) canSetGain {
+- (BOOL) canSetShutter {
     return YES;
 }
 
-- (BOOL) canSetShutter {
-    return YES;
+- (void) setShutter:(float)val {
+    [super setShutter:val];
+    if (isGrabbing) {
+        UInt32 v=(1.0f-shutter)*MAX_SHUTTER;
+        [self sonixSensorWrite3:0x25 byte1:(v>>16)&0xff byte2:(v>>8)&0xff byte3:(v)&0xff];
+        [self sonixAsicRamReadByte:0x0127 to:NULL];
+        //win driver returns 0x20
+    }
 }
 
 - (BOOL) canSetAutoGain {
@@ -247,28 +240,7 @@ typedef enum SonixSensorType {
     if (autoGain) {
         grabContext.autoExposure=0.5f;
     } else {
-        [self setGain:gain];
         [self setShutter:shutter];
-    }
-}
-
-- (void) setGain:(float)val {
-    [super setGain:val];
-    if (isGrabbing) {
-        UInt8 v=gain*50.0f;
-        [self sonixSensorWrite1:0x32 byte1:v];
-        [self sonixAsicRamReadByte:0x0127 to:NULL];
-        //win driver returns 0x20
-    }
-}
-
-- (void) setShutter:(float)val {
-    [super setShutter:val];
-    if (isGrabbing) {
-        UInt32 v=(1.0f-shutter)*25600.0f;
-        [self sonixSensorWrite3:0x25 byte1:(v>>16)&0xff byte2:(v>>8)&0xff byte3:(v)&0xff];
-        [self sonixAsicRamReadByte:0x0127 to:NULL];
-        //win driver returns 0x20
     }
 }
 
@@ -653,7 +625,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 #define PARSE_PIXEL(val) {\
     PEEK_BITS(10,bits);\
     if ((bits&0x00000200)==0) { EAT_BITS(1); }\
-    else if ((bits&0x00000380)==0x00000280) { EAT_BITS(3); val+=3; if (val>255) val=255; }\
+        else if ((bits&0x00000380)==0x00000280) { EAT_BITS(3); val+=3; if (val>255) val=255;}\
     else if ((bits&0x00000380)==0x00000300) { EAT_BITS(3); val-=3; if (val<0) val=0;}\
     else if ((bits&0x000003c0)==0x00000200) { EAT_BITS(4); val+=8; if (val>255) val=255;}\
     else if ((bits&0x000003c0)==0x00000240) { EAT_BITS(4); val-=8; if (val<0) val=0;}\
@@ -663,7 +635,8 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 
 
 #define PUT_PIXEL_PAIR {\
-    SInt32 pp=(c1val<<8)+c2val;\
+    SInt32 pp;\
+    pp=(c1val<<8)+c2val;\
     *((UInt16*)dst)=pp;\
     dst+=2; }
 
@@ -709,6 +682,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 - (CameraError) decodingThread {
     SONIXChunkBuffer currChunk;
     long i;
+    unsigned long imageCounter;
     CameraError err=CameraErrorOK;
     int width=[self width];	//Width and height are constant during a grab session, so ...
     int height=[self height];	//... they can safely be cached (to reduce Obj-C calls)
@@ -749,7 +723,6 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
             }
             grabContext.numFullBuffers--;				//we have taken one from the list
             [grabContext.chunkListLock unlock];				//we're done accessing the chunk list.
-
             if (nextImageBufferSet) {
                 [imageBufferLock lock];				//lock image buffer access
                 if (nextImageBuffer!=NULL) {
@@ -766,6 +739,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
                 nextImageBufferSet=NO;				//nextBuffer has been eaten up
                 [imageBufferLock unlock];			//release lock
                 [self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer
+                imageCounter++;					//Count images we have decoded so far
                 if (autoGain) {
                     float oldAutoExposure=grabContext.autoExposure;	//Remember old value
                     float correction=oldAutoExposure*SONIX_AE_MIN_ADJUST_STEP+
@@ -778,15 +752,21 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
                         if (grabContext.autoExposure>1.0f) grabContext.autoExposure=1.0f;
                     }
                     if (grabContext.autoExposure!=oldAutoExposure) {	//Did something change?
-                        UInt32 aGain=grabContext.autoExposure*50.0f;
-                        UInt32 aExp=(1.0f-grabContext.autoExposure)*2560.0f;
-                        [self sonixSensorWrite1:0x32 byte1:aGain];
-                        [self sonixSensorWrite3:0x25 byte1:aExp&0xff byte2:(aExp>>8)&0xff byte3:(aExp>>16)&0xff];
+                        UInt32 aExp=(1.0f-grabContext.autoExposure)*MAX_SHUTTER;
+                        [self sonixSensorWrite3:0x25 byte1:(aExp>>16)&0xff byte2:(aExp>>8)&0xff byte3:aExp&0xff];
                         [self sonixAsicRamReadByte:0x0127 to:NULL];
                         //win driver returns 0x20
                     }
                 }
+                if ((imageCounter%2)==0) {	//HV7131 Reset level correction
+                    
+                }
             }
+/*
+ UInt8 v=gain*50.0f;
+ [self sonixSensorWrite1:0x32 byte1:v];		//Bias Offset
+ [self sonixAsicRamReadByte:0x0127 to:NULL];
+*/
             
 /*Now it's time to give back the chunk buffer we used - no matter if we used it or not. In case it was discarded this is somehow not the most elegant solution because we have to lock chunkListLock twice, but that should be not too much of a problem since we obviously have plenty of image data to waste... */
             [grabContext.chunkListLock lock];			//lock for access to chunk list
@@ -856,9 +836,9 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     if (!err) err=[self sonixIICSensorWriteByte:0x26 to:0x02];	//intg mid
     if (!err) err=[self sonixIICSensorWriteByte:0x27 to:0x88];	//intg low
     if (!err) err=[self sonixIICSensorWriteByte:0x30 to:0x38];	//reset level
-    if (!err) err=[self sonixIICSensorWriteByte:0x31 to:0x2a];	//gain red
-    if (!err) err=[self sonixIICSensorWriteByte:0x32 to:0x2a];	//gain green
-    if (!err) err=[self sonixIICSensorWriteByte:0x33 to:0x2a];	//intg blue
+    if (!err) err=[self sonixIICSensorWriteByte:0x31 to:0x1e];	//gain red
+    if (!err) err=[self sonixIICSensorWriteByte:0x32 to:0x1e];	//gain green
+    if (!err) err=[self sonixIICSensorWriteByte:0x33 to:0x1e];	//intg blue
     if (!err) err=[self sonixIICSensorWriteByte:0x34 to:0x02];	//pixel bias
     if (!err) err=[self sonixIICSensorWriteByte:0x5b to:0x0a];	//some rev. 1 suff
     if (!err) err=[self sonixAsicRamWriteByte:0x0125 to:0x28];
@@ -950,7 +930,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     UInt32 readLength;
     CameraError err=CameraErrorOK;
     IOReturn ioErr;
-    CameraResolution res=ResolutionInvalid;
+    CameraResolution picRes=ResolutionInvalid;
     int width=1;
     int height=1;
     BOOL flash=NO;
@@ -966,11 +946,11 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
         [bayerConverter setSharpness:0.5f];
         [bayerConverter setGainsDynamic:NO];
         [bayerConverter setGainsRed:1.0f green:1.0f blue:1.0f];
-        err=[self sonixGetPictureType:idx+1 flash:&flash resolution:&resolution];	//Get image info
+        err=[self sonixGetPictureType:idx+1 flash:&flash resolution:&picRes];	//Get image info
     }
     if (err==CameraErrorOK) {
-        width=WidthOfResolution(res);
-        height=HeightOfResolution(res);
+        width=WidthOfResolution(picRes);
+        height=HeightOfResolution(picRes);
         err=[self sonixGetPicture:idx+1 length:&rawLength];     //Get data size of image and prepare download
     }
     if (err==CameraErrorOK) {
@@ -980,13 +960,14 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     }
     if (err==CameraErrorOK) {
         //Read raw image data
-        rawLength=(rawLength+63)&0xffffffc0;	//Round up to n*64
+        rawLength=((rawLength+63)/64)*64;	//Round up to n*64
         readLength=rawLength;
         ioErr=(*intf)->ReadPipe(intf,2, [rawBuffer mutableBytes]+12, &readLength);	//Read image data
         CheckError(ioErr,"getStoredMediaObject-ReadBulkPipe");
         if (rawLength!=readLength) {
             NSLog(@"getStoredMediaObject: problem: wanted %i bytes, got %i, trying to continue...",rawLength,readLength);
         }
+        if (ioErr==kIOReturnOverrun) ioErr=0;
         if (ioErr) err=CameraErrorUSBProblem;
     }
     if (err==CameraErrorOK) {
