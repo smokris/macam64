@@ -114,7 +114,6 @@
 				29B9732DFDCFA39411CA2CEA,
 			);
 			buildSettings = {
-				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -212,7 +211,7 @@
 	<key>CFBundleIconFile</key>
 	<string>app.icns</string>
 	<key>CFBundleIdentifier</key>
-	<string>de.matthias-krauss.macam</string>
+	<string>net.sourceforge.webcam-osx.application</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -1056,7 +1055,7 @@
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
-	<string>de.matthias-krauss.webcam</string>
+	<string>net.sourceforge.webcam-osx.common</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -1124,7 +1123,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F5285DAD0248103E01AEB99D,
-				F5BFF545029B59E601B6CBC8,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2367,12 +2365,6 @@
 			isa = PBXFileReference;
 			path = README;
 			refType = 4;
-		};
-		F5BFF545029B59E601B6CBC8 = {
-			fileRef = F5BFF540029B59CB01B6CBC8;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F5BFF548029B5A8801B6CBC8 = {
 			fileEncoding = 30;
