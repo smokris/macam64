@@ -138,20 +138,19 @@
 }
 
 - (void) setMakeImageStats:(BOOL)on {
+    //lastMeanStats should return a negative value to indicate an invalid average
+    if ((!produceColorStats)||(!on)) {
+        meanRed=meanGreen=meanBlue=-1.0f;
+    }
     produceColorStats=on;
+
 }
 
 - (float) lastMeanBrightness {
     return ((float)(meanRed+meanGreen+meanBlue))/768.0f;
 }
 
-//This is the same as the next function with no flipping - it's kept here for backwards compatibility reasons
-- (BOOL) convertFromSrc:(unsigned char*)src toDest:(unsigned char*)dst
-            srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP {
-    [self convertFromSrc:src toDest:dst srcRowBytes:srcRB dstRowBytes:dstRB dstBPP:dstBPP flip:NO];
-}
-
-    //Do the whole decoding
+//Do the whole decoding
 - (BOOL) convertFromSrc:(unsigned char*)src toDest:(unsigned char*)dst
             srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP flip:(BOOL)flip {
     if (!rgbBuffer) return NO;
@@ -402,8 +401,8 @@
     if (flip) {
         writeMode+=256;
         dstSkip+=2*dstBPP*width;
-        dst1Run+=width*dstBPP;
-        dst2Run+=width*dstBPP;
+        dst1Run=dst+((rightBorder)?3:0)+((topBorder)?dstRB:0)+width*dstBPP;
+        dst2Run=dst1Run+dstRB;
     }
     
 //The following two nested loops do the postprocessing for all non-border pixels. Borders follow afterwards
@@ -529,7 +528,7 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
     //All inner pixels are done now. If we need to use borders as well, do it now. Some sensors give us additional borders to interpolate, others do not...
     if (topBorder) {
         int topBorderWidth=width+((leftBorder)?1:0);
-        src1Run=rgbBuffer+((leftBorder)?0:3);
+        src1Run=rgbBuffer;
         dst1Run=dst;
         if (flip) dst1Run+=topBorderWidth*dstBPP;
         for (x=topBorderWidth;x>0;x--) {
@@ -623,7 +622,7 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
     if (rightBorder) {
         src1Run=rgbBuffer+(sourceWidth-1)*3;			//Last column in rgbBuffer
         dst1Run=dst+(sourceWidth-1)*dstBPP;			//Last column in dset buffer
-        if (flip) dst-=(sourceWidth-1)*dstBPP;			//Flip? -> move right to left border
+        if (flip) dst1Run-=(sourceWidth-1)*dstBPP;		//Flip? -> move right to left border
         for (y=height+((topBorder)?1:0)+((bottomBorder)?1:0);y>0;y--) {
             r1=src1Run[0];
             g1=src1Run[1];
