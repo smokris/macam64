@@ -28,6 +28,7 @@
 #define SPCA_WAIT_RETRY 500000
 
 extern UInt8 JFIFHeaderTemplate[];
+extern UInt8 ZigZagLookup[];
 
 @interface MySPCA504Driver (Private)
 
@@ -86,11 +87,11 @@ extern UInt8 JFIFHeaderTemplate[];
     NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:PRODUCT_SPCA504],@"idProduct",
         [NSNumber numberWithUnsignedShort:VENDOR_SUNPLUS],@"idVendor",
-        @"Aiptek MegaCam",@"name",NULL];
+        @"Megapixel Camera ",@"name",NULL];
     NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:PRODUCT_SPCA504B],@"idProduct",
         [NSNumber numberWithUnsignedShort:VENDOR_SUNPLUS],@"idVendor",
-        @"Aiptek Smart MegaCam",@"name",NULL];
+        @"Megapixel Camera (B)",@"name",NULL];
     NSDictionary* dict3=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:PRODUCT_GSMART_MINI2],@"idProduct",
         [NSNumber numberWithUnsignedShort:VENDOR_MUSTEK],@"idVendor",
@@ -295,7 +296,8 @@ extern UInt8 JFIFHeaderTemplate[];
 
 - (BOOL) startupGrabStream {
     UInt8 buf[256];
-
+    int i;
+    
     if (firmwareVersion>=512) {
         buf[0]=0;
         if (![self usbWriteCmdWithBRequest:0x24 wValue:0x0000 wIndex:0x0000 buf:buf len:1]) return NO;	//Set AE/AWB to auto
@@ -366,6 +368,22 @@ extern UInt8 JFIFHeaderTemplate[];
         if (![self usbWriteCmdWithBRequest:0x00 wValue:0x0001 wIndex:0x21ac buf:buf len:0]) return NO;	//sat/hue
         if (![self pccamSetQTable]) return NO;
     }
+    //COMING NEXT: Get and set quantizing tables
+    //Get the matrix data
+    for (i=0;i<128;i++) {
+        if (![self usbReadCmdWithBRequest:0 wValue:0 wIndex:0x2800+i buf:buf+i len:1]) return NO;
+    }
+    //Place the values into the JFIF header
+    for (i=0;i<64;i++) {
+        pccamJfifHeader[JFIF_QTABLE0_OFFSET+i]=buf[ZigZagLookup[i]];
+        pccamJfifHeader[JFIF_QTABLE1_OFFSET+i]=buf[64+ZigZagLookup[i]];
+    }
+    //Copy the JFIF header into the chunk buffers
+    for (i=0;i<grabContext.numEmptyBuffers;i++) {
+        memcpy(grabContext.emptyChunkBuffers[i].buffer,pccamJfifHeader,JFIF_HEADER_LENGTH);	//Copy header ...
+        grabContext.emptyChunkBuffers[i].buffer+=JFIF_HEADER_LENGTH;		//... and point past it
+    }
+    //DONE: Get and set quantizing tables
     return YES;
 }
 
@@ -411,10 +429,15 @@ extern UInt8 JFIFHeaderTemplate[];
     pccamJfifHeader[JFIF_HEIGHT_WIDTH_OFFSET+2]=640/256;
     pccamJfifHeader[JFIF_HEIGHT_WIDTH_OFFSET+3]=640%256;
     pccamJfifHeader[JFIF_YUVTYPE_OFFSET]=0x22;
+
+/* Set quantizing tables. to be honest, this is unnecessary since we copy other quantizing tables later on (in startupGrabStream). The reason for this is that different cameras have different built-in quantizing table sets
+(for some really strange reason). Think of this as a fallback - having a wrong quantizing table is better than
+having none at all...) */
+
     for (i=0;i<64;i++) {
         pccamJfifHeader[JFIF_QTABLE0_OFFSET+i]=ZigZagY(pccamQTabIdx,i);
         pccamJfifHeader[JFIF_QTABLE1_OFFSET+i]=ZigZagUV(pccamQTabIdx,i);
-    }    
+    }
     //Setup things that have to be set back if init fails
     if (ok) {
         grabContext.chunkReadyLock=[[NSLock alloc] init];
@@ -441,13 +464,12 @@ extern UInt8 JFIFHeaderTemplate[];
     for (i=0;(i<SPCA504_NUM_CHUNK_BUFFERS)&&ok;i++) {
         MALLOC(grabContext.emptyChunkBuffers[i].buffer,UInt8*,grabContext.chunkBufferLength+JFIF_HEADER_LENGTH,"Chunk buffer");
         if (grabContext.emptyChunkBuffers[i].buffer==NULL) ok=NO;
-        else {
-            memcpy(grabContext.emptyChunkBuffers[i].buffer,pccamJfifHeader,JFIF_HEADER_LENGTH);	//Copy header ...
-            grabContext.emptyChunkBuffers[i].buffer+=JFIF_HEADER_LENGTH;				//... and point past it
-            grabContext.numEmptyBuffers=i+1;
-            
-        }
+        else grabContext.numEmptyBuffers=i+1;
     }
+/* The chunk buffers will later be prefilled with the JPEG header. We cannot do this here since we don't
+have the exact JPEG header yet. We obtain the correct quantizing tables at the end of [startupGrabStream].
+But we can make sure that nothing bad can happen then...
+*/
     if (!ok) {
         NSLog(@"setupGrabContext failed");
         [self cleanupGrabContext];
