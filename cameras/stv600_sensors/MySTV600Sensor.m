@@ -22,6 +22,7 @@ macam - webcam app and QuickTime driver component
 
 #import "MySTV600Sensor.h"
 #import "MyQCExpressADriver.h"
+#import "MyQCWebDriver.h"
 
 
 @implementation MySTV600Sensor
@@ -100,6 +101,10 @@ macam - webcam app and QuickTime driver component
         ok=[camera usbWriteCmdWithBRequest:4 wValue:0x0400 wIndex:0 buf:i2cBuf len:35];
     }
     i2cBuf[0x21]=0;
+    //The QuickCam Web needs to send a message to propagate the i2c registers
+    if ([camera isKindOfClass:[MyQCWebDriver class]]) {
+        ok=ok&&[camera writeSTVRegister:0x1704 value:1];
+    }
     return ok;
 }
 
@@ -123,8 +128,6 @@ macam - webcam app and QuickTime driver component
     *val=*val&0xff;
     return ok;
 }
-
-/* This *should* be zero for all sensors. But at least the HDCS1020 shows distorted colors. This could be because of a different Bayer Matrix, but the data sheet says it's the same. This fixes it (preliminarily) */
 
 
 @end
