@@ -1,5 +1,6 @@
 /*
-    macam - webcam app and QuickTime driver component
+ MyController.m - Controller for camera window
+ 
     Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
 
     This program is free software; you can redistribute it and/or modify
@@ -240,7 +241,16 @@ static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
 }
 
 - (void) toggleSettingsDrawer:(id) sender {
-    [settingsDrawer toggle:sender];
+    NSDrawerState state=[settingsDrawer state];
+    if ((state==NSDrawerOpeningState)||(state==NSDrawerOpenState)) {
+        [settingsDrawer close];
+        [inspectorDrawer close];
+    } else {
+        [settingsDrawer openOnEdge:NSMaxXEdge];
+        if (inspector) {
+            [inspectorDrawer openOnEdge:NSMinXEdge];
+        }
+    }
 }
 
 - (IBAction)doQuit:(id)sender {
@@ -405,13 +415,18 @@ static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
             if ([driver supportsCameraFeature:CameraFeatureInspectorClassName]) {
                 NSString* inspectorName=[driver valueOfCameraFeature:CameraFeatureInspectorClassName];
                 if (inspectorName) {
-                    Class c=NSClassFromString(inspectorName);
-                    inspector=[(MyCameraInspector*)[c alloc] initWithCamera:driver];
-                    // XXX change XXXX dirkx Resize to make sure things fit needed
-                    // NSView
-                    // [[inspector contentView] setContentSize:[[inspector contentView] maxSize]];
-                    [inspectorWindow setContentView:[inspector contentView]];
-                    [inspectorWindow orderFront:self];
+                    if (![@"MyCameraInspector" isEqualToString:inspectorName]) {
+                        Class c=NSClassFromString(inspectorName);
+                        inspector=[(MyCameraInspector*)[c alloc] initWithCamera:driver];
+                        if (inspector) {
+                            NSDrawerState state;
+                            [inspectorDrawer setContentView:[inspector contentView]];
+                            state=[settingsDrawer state];
+                            if ((state==NSDrawerOpeningState)||(state==NSDrawerOpenState)) {
+                                [inspectorDrawer openOnEdge:NSMinXEdge];
+                            }
+                        }
+                    }
                 }
             }
         } else {
@@ -498,9 +513,9 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
     [whiteBalancePopup setEnabled:NO];
     [compressionSlider setEnabled:NO];
     [self updateCameraMediaCount];
-    [inspectorWindow close];
+    [inspectorDrawer close];
     if (inspector) {
-        [[inspector contentView] removeFromSuperview];
+        [inspectorDrawer setContentView:NULL];
         [inspector release];
         inspector=NULL;
     }

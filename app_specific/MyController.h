@@ -1,5 +1,6 @@
 /*
-    macam - webcam app and QuickTime driver component
+    MyController.h - Controller for camera window
+ 
     Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
 
     This program is free software; you can redistribute it and/or modify
@@ -28,25 +29,25 @@
 
 @interface MyController : NSObject
 {
-    IBOutlet id window;
-    IBOutlet id brightnessSlider;
-    IBOutlet id contrastSlider;
-    IBOutlet id gammaSlider;
-    IBOutlet id sharpnessSlider;
-    IBOutlet id saturationSlider;
-    IBOutlet id manGainCheckbox;
-    IBOutlet id gainSlider;
-    IBOutlet id shutterSlider;
-    IBOutlet id compressionSlider;
-    IBOutlet id previewView;
-    IBOutlet id statusText;
-    IBOutlet id whiteBalancePopup;
-    IBOutlet id sizePopup;
-    IBOutlet id fpsPopup;
+    IBOutlet NSWindow* window;
+    IBOutlet NSSlider* brightnessSlider;
+    IBOutlet NSSlider* contrastSlider;
+    IBOutlet NSSlider* gammaSlider;
+    IBOutlet NSSlider* sharpnessSlider;
+    IBOutlet NSSlider* saturationSlider;
+    IBOutlet NSButton* manGainCheckbox;
+    IBOutlet NSSlider* gainSlider;
+    IBOutlet NSSlider* shutterSlider;
+    IBOutlet NSSlider* compressionSlider;
+    IBOutlet NSImageView* previewView;
+    IBOutlet NSTextField* statusText;
+    IBOutlet NSPopUpButton* whiteBalancePopup;
+    IBOutlet NSPopUpButton* sizePopup;
+    IBOutlet NSPopUpButton* fpsPopup;
     IBOutlet MyCameraCentral* central;
-    IBOutlet id disclaimerWindow;
-    IBOutlet id settingsDrawer;
-    IBOutlet NSWindow* inspectorWindow;
+    IBOutlet NSWindow* disclaimerWindow;
+    IBOutlet NSDrawer* settingsDrawer;
+    IBOutlet NSDrawer* inspectorDrawer;
     MyCameraInspector* inspector;
     MyCameraDriver* driver;
     NSBitmapImageRep* imageRep;
