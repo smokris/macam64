@@ -29,7 +29,40 @@
 #import "MiscTools.h"
 
 //#define OV511_DEBUG
+//#define USE_COMPRESS
 
+#ifdef USE_COMPRESS
+//int Decompress420(unsigned char *pIn, unsigned char *pOut,int w,int h,int inSize);
+int Decompress420(unsigned char *pIn, unsigned char *pOut, unsigned char *pTmp, int w, int h, int inSize);
+#endif
+
+#define OV511_QUANTABLESIZE	64
+#define OV518_QUANTABLESIZE	32
+
+#define OV511_YQUANTABLE { \
+	0, 1, 1, 2, 2, 3, 3, 4, \
+	1, 1, 1, 2, 2, 3, 4, 4, \
+	1, 1, 2, 2, 3, 4, 4, 4, \
+	2, 2, 2, 3, 4, 4, 4, 4, \
+	2, 2, 3, 4, 4, 5, 5, 5, \
+	3, 3, 4, 4, 5, 5, 5, 5, \
+	3, 4, 4, 4, 5, 5, 5, 5, \
+	4, 4, 4, 4, 5, 5, 5, 5  \
+}
+
+#define OV511_UVQUANTABLE { \
+	0, 2, 2, 3, 4, 4, 4, 4, \
+	2, 2, 2, 4, 4, 4, 4, 4, \
+	2, 2, 3, 4, 4, 4, 4, 4, \
+	3, 4, 4, 4, 4, 4, 4, 4, \
+	4, 4, 4, 4, 4, 4, 4, 4, \
+	4, 4, 4, 4, 4, 4, 4, 4, \
+	4, 4, 4, 4, 4, 4, 4, 4, \
+	4, 4, 4, 4, 4, 4, 4, 4  \
+}
+
+#define ENABLE_Y_QUANTABLE 1
+#define ENABLE_UV_QUANTABLE 1
 
 @implementation MyOV511PlusDriver
 
@@ -87,20 +120,114 @@
 //Class methods needed
 + (unsigned short) cameraUsbProductID { return PRODUCT_OV511; }
 + (unsigned short) cameraUsbVendorID { return VENDOR_OVT; }
-+ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"OV511-based camera"]; }
++ (NSString*) cameraName {return [MyCameraCentral localizedStringFor:@"OV511-based camera"];}
 
 void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int width, int height);
+void tmpcopy32(u_char *buffer, int offset, int size, u_char *tmpbuf, long *tmpsize);
+
+static unsigned char yQuanTable511[] = OV511_YQUANTABLE;
+static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
+    UInt8 buf[16];
+    long i;
     CameraError err=[self usbConnectToCam:usbDeviceRef];
 //setup connection to camera
      if (err!=CameraErrorOK) return err;
+
+    /* reset the OV511 */
+    buf[0] = 0x7f;
+    if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1]) {
+#ifdef VERBOSE
+        NSLog(@"OV511:startupGrabbing: error : OV511_REG_RST");
+#endif
+        return CameraErrorUSBProblem;
+    }
+
+    buf[0] = 0x00;
+    if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1]) {
+#ifdef VERBOSE
+        NSLog(@"OV511:startupGrabbing: error : OV511_REG_RST");
+#endif
+        return CameraErrorUSBProblem;
+    }
+
+    /* initialize system */
+    buf[0] = 0x01;
+    if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_EN_SYS buf:buf len:1]) {
+#ifdef VERBOSE
+        NSLog(@"OV511:startupGrabbing: error : OV511_REG_EN_SYS");
+#endif
+        return CameraErrorUSBProblem;
+    }
+
+    if (![self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_CID buf:buf len:1]) {
+#ifdef VERBOSE
+        NSLog(@"OV511:startupGrabbing: error : OV511_REG_CID");
+#endif
+        return CameraErrorUSBProblem;
+    }
+
+    switch(buf[0]) {
+        case 6:
+            sensorType = SENS_SAA7111A_WITH_FI1236MK2;
+            sensorWrite = SAA7111A_I2C_WRITE_ID;
+            sensorRead = SAA7111A_I2C_READ_ID;
+            [self seti2cid];
+#ifdef OV511_DEBUG
+            NSLog(@"macam: Lifeview USB Life TV (NTSC)");
+#endif
+            break;
+        case 102:
+            sensorType = SENS_SAA7111A;
+            sensorWrite = SAA7111A_I2C_WRITE_ID;
+            sensorRead = SAA7111A_I2C_READ_ID;
+            [self seti2cid];
+#ifdef OV511_DEBUG
+            NSLog(@"macam: Lifeview USB CapView");
+#endif
+            break;
+        case 0:
+        default:
+            // ditect i2c id
+            for(i = 0; i <= 7; ++i) {
+                buf[0] = OV7610_I2C_WRITE_ID + i * 4;
+                [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
+                if([self i2cRead2] != 0xff)
+                    break;
+            }
+            if(i <= 7) {
+                sensorWrite = OV7610_I2C_WRITE_ID + i * 4;
+                sensorRead = OV7610_I2C_READ_ID + i * 4;
+                [self seti2cid];
+
+                // check Common I version ID
+                if(([self i2cRead:0x29] & 0x03) == 0x03) {
+                    sensorType = SENS_OV7610;
+#ifdef OV511_DEBUG
+                    NSLog(@"macam: OV511 Custom ID %d with OV7610", buf[0]);
+#endif
+                } else {
+                    sensorType = SENS_OV7620;
+#ifdef OV511_DEBUG
+                    NSLog(@"macam: OV511 Custom ID %d with OV7620", buf[0]);
+#endif
+                }
+            } else {
+                return CameraErrorInternal;
+            }
+            break;
+    }
+
 //set internals
     camHFlip=NO;			//Some defaults that can be changed during startup
     chunkHeader=0;
     chunkFooter=0;
 //set camera video defaults
-//    [self setBrightness:0.584f];
+    if(sensorType == SENS_SAA7111A_WITH_FI1236MK2 || sensorType == SENS_SAA7111A)
+        [self setBrightness:0.584f];
+    else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620)
+        [self setBrightness:0.0f];
 //    [self setContrast:0.567f];
 //    [self setGamma:0.5f];
 //    [self setSaturation:0.630f];
@@ -116,13 +243,19 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
     [super dealloc];
 }
 
-- (BOOL) canSetBrightness { return NO; }
+- (BOOL) canSetBrightness { return YES; }
 - (void) setBrightness:(float)v{
     UInt8 b;
     if (![self canSetBrightness]) return;
-    b=SAA7111A_BRIGHTNESS(CLAMP_UNIT(v));
-    if ((b!=SAA7111A_BRIGHTNESS(brightness)))
-        [self i2cWrite:OV7610_REG_BRT val:b];
+    if(sensorType == SENS_SAA7111A_WITH_FI1236MK2 || sensorType == SENS_SAA7111A) {
+        b=SAA7111A_BRIGHTNESS(CLAMP_UNIT(v));
+        if ((b!=SAA7111A_BRIGHTNESS(brightness)))
+            [self i2cWrite:OV7610_REG_BRT val:b];
+    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620) {
+        b=OV7610_BRIGHTNESS(CLAMP_UNIT(v));
+        if ((b!=OV7610_BRIGHTNESS(brightness)))
+            [self i2cWrite:0 val:b];
+    }
     [super setBrightness:v];
 }
 
@@ -206,6 +339,14 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
     [super setImageBuffer:buffer bpp:bpp rowBytes:rb];
 }
 
+- (short) maxCompression {
+#ifdef USE_COMPRESS
+    return 1;
+#else
+    return 0;
+#endif
+}
+
 - (BOOL) supportsResolution:(CameraResolution)res fps:(short)rate {
     switch (res) {
         case ResolutionSIF:
@@ -265,7 +406,14 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
     usbFrameBytes = [self packetSize:usbAltInterface];
 
     grabContext.bytesPerFrame=usbFrameBytes;
+#ifdef USE_COMPRESS
+    if(compression)
+        grabContext.framesPerTransfer=256;
+    else
+        grabContext.framesPerTransfer=192;
+#else
     grabContext.framesPerTransfer=192;
+#endif
     grabContext.framesInRing=grabContext.framesPerTransfer*16;
     grabContext.concurrentTransfers=3;
     grabContext.finishedTransfers=0;
@@ -309,6 +457,11 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
         MALLOC(grabContext.chunkBuffer,void*,[self height]*[self width]*12/8,"setupGrabContext-fbuffer");
         if ((grabContext.chunkBuffer)==NULL) ok=NO;
     }
+//Setup compress buffer
+    if (ok) {
+        MALLOC(grabContext.tmpBuffer,void*,[self height]*[self width]*12/8,"setupGrabContext-tbuffer");
+        if ((grabContext.tmpBuffer)==NULL) ok=NO;
+    }
 //Setup transfer contexts
     if (ok) {
         MALLOC(grabContext.transferContexts,OV511TransferContext*,sizeof(OV511TransferContext)*grabContext.concurrentTransfers,"setupGrabContext-OV511TransferContext");
@@ -347,96 +500,7 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
 
     if(ok) {
         UInt8 buf[16];
-        CameraError ret=CameraErrorOK;
-
-        /* reset the OV511 */
-        buf[0] = 0x7f;
-        if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1]) {
-#ifdef VERBOSE
-            NSLog(@"OV511:startupGrabbing: error : OV511_REG_RST");
-#endif
-            ret=CameraErrorUSBProblem;
-        }
-
-        buf[0] = 0x00;
-        if (!ret) {
-            if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1]) {
-#ifdef VERBOSE
-                NSLog(@"OV511:startupGrabbing: error : OV511_REG_RST");
-#endif
-                ret=CameraErrorUSBProblem;
-            }
-        }
-
-        /* initialize system */
-        buf[0] = 0x01;
-        if (!ret) {
-            if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_EN_SYS buf:buf len:1]) {
-#ifdef VERBOSE
-                NSLog(@"OV511:startupGrabbing: error : OV511_REG_EN_SYS");
-#endif
-                ret=CameraErrorUSBProblem;
-            }
-        }
-
-        if (!ret) {
-            if (![self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_CID buf:buf len:1]) {
-#ifdef VERBOSE
-                NSLog(@"OV511:startupGrabbing: error : OV511_REG_CID");
-#endif
-                ret=CameraErrorUSBProblem;
-            }
-            customId = buf[0];
-            switch(customId) {
-                case 0:
-                    for(i = 0; i <= 7; ++i) {
-                        buf[0] = OV7610_I2C_WRITE_ID + i * 4;
-                        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
-                        if([self i2cRead2] != 0xff)
-                            break;
-                    }
-                    sensorWrite = OV7610_I2C_WRITE_ID + i * 4;
-                    sensorRead = OV7610_I2C_READ_ID + i * 4;
-                    buf[0] = sensorRead;
-                    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SRA buf:buf len:1];
-                    if(([self i2cRead:0x1f] | 0x03) == 0x03) {
-                        sensorType = SENS_OV7610;
-#ifdef OV511_DEBUG
-                        NSLog(@"macam: OV511 Non Custom ID with OV7610");
-#endif
-                    } else {
-                        sensorType = SENS_OV7620;
-#ifdef OV511_DEBUG
-                        NSLog(@"macam: OV511 Non Custom ID with OV7620");
-#endif
-                    }
-                    break;
-                case 6:
-                    sensorType = SENS_SAA7111A;
-                    sensorWrite = SAA7111A_I2C_WRITE_ID;
-                    sensorRead = SAA7111A_I2C_READ_ID;
-#ifdef OV511_DEBUG
-                    NSLog(@"macam: Lifeview USB Life TV (NTSC)");
-#endif
-                    break;
-                default:
-                    sensorType = SENS_OV7610;
-                    sensorWrite = OV7610_I2C_WRITE_ID;
-                    sensorRead = OV7610_I2C_READ_ID;
-#ifdef OV511_DEBUG
-                    NSLog(@"macam: Camera custom ID %d not recognized", buf[0]);
-#endif
-                    break;
-            }
-        }
-
-        /* set I2C write slave ID */
-        buf[0] = sensorWrite;
-        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
-
-        /* set I2C read slave ID */
-        buf[0] = sensorRead;
-        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SRA buf:buf len:1];
+ //       CameraError ret=CameraErrorOK;
 
         buf[0] = 0x01;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PKSZ buf:buf len:1];
@@ -475,7 +539,7 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
             [self i2cWrite:OV7610_REG_ECW val:0x2e];
             [self i2cWrite:OV7610_REG_ECB val:0x7c];
             [self i2cWrite:OV7610_REG_COMH val:0x24];
-            [self i2cWrite:OV7610_REG_EHSH val:0x04];
+            [self i2cWrite:OV7610_REG_EHSH val:0x04|0x80];
             [self i2cWrite:OV7610_REG_EHSL val:0xac];
             [self i2cWrite:OV7610_REG_EXBK val:0xfe];
             // Auto brightness enabled
@@ -534,6 +598,17 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
             NSLog(@"SAA7111A status = %02x\n",  [self i2cRead:0x1f]);
 #endif
         }
+
+#ifdef USE_COMPRESS
+        if(compression) {
+            /* enable compression */
+            [self ov511_upload_quan_tables];
+            buf[0] = 0x07;
+            [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_CE_EN buf:buf len:1];
+            buf[0] = 0x03;
+            [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_LT_EN buf:buf len:1];
+        }
+#endif
 
         if(sensorType == SENS_SAA7111A) {
             buf[0] = 0x00;
@@ -839,7 +914,7 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
 //            if(currChunk.end < currChunk.start)
 //            NSLog(@"decodingThread: %d %d %d %d %d %d",
 //                currChunk.start, currChunk.end, cursize, currChunk.isSeparate, currChunk.start2, currChunk.end2); 
-//if(currChunk.start > 0) {
+if(currChunk.start >= 0) {
             if (nextImageBufferSet) {				//do we have a target to decode into?
                 [imageBufferLock lock];				//lock image buffer access
                 if (nextImageBuffer!=NULL) {
@@ -850,22 +925,66 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
                                currChunk.end);		//Copy the second part at the end of the first part (into the Q-buffer appendix)
                     }
 #endif
+#ifdef USE_COMPRESS
+                    if(compression) {
+                        grabContext.tmpLength = 0;
+                        // first block
+                        tmpcopy32(grabContext.buffer+currChunk.start, 9, grabContext.bytesPerFrame, grabContext.tmpBuffer, &grabContext.tmpLength);
+                        if(currChunk.isSeparate) {
+                        for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end; ++i)
+                            tmpcopy32(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
+                                grabContext.tmpBuffer, &grabContext.tmpLength);
+                        } else {
+                        for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end-grabContext.bytesPerFrame; ++i)
+                            tmpcopy32(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
+                                grabContext.tmpBuffer, &grabContext.tmpLength);
+
+NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i+9)+1)<<3,
+    (*(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i+10)+1)<<3,
+    *(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i+11));
+// EOF packet
+//                        tmpcopy32(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
+//                            grabContext.tmpBuffer, &grabContext.tmpLength);
+                        }
+                        // second block
+                        if(currChunk.isSeparate) {
+                           for(i=0;currChunk.start2 + grabContext.bytesPerFrame*i < currChunk.end2-grabContext.bytesPerFrame; ++i)
+                                tmpcopy32(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
+                                    grabContext.tmpBuffer, &grabContext.tmpLength);
+
+NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i+9)+1)<<3,
+    (*(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i+10)+1)<<3,
+    *(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i+11));
+
+// EOF packet
+//                            tmpcopy32(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
+//                                grabContext.tmpBuffer, &grabContext.tmpLength);
+                        }
+{
+                        int size = Decompress420(grabContext.tmpBuffer, grabContext.chunkBuffer, NULL, width, height, grabContext.tmpLength);
+//NSLog(@"OV511:org size %d decomp size = %d", grabContext.tmpLength,size);
+}
+                    } else {
+#endif
 //                    chunkBuffer=grabContext.buffer+currChunk.start+chunkHeader;	//Our chunk starts here
-                    cursize = 0;
-                    blockCopy(grabContext.bytesPerFrame-9-1, &cursize, grabContext.buffer+currChunk.start+9, grabContext.chunkBuffer,
-                        width, height);
-                    for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end; ++i)
-                        blockCopy(grabContext.bytesPerFrame-1, &cursize, grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i, grabContext.chunkBuffer,
+                        cursize = 0;
+                        blockCopy(grabContext.bytesPerFrame-9-1, &cursize, grabContext.buffer+currChunk.start+9, grabContext.chunkBuffer,
                             width, height);
-                    if(currChunk.isSeparate)
-                        for(i=0;currChunk.start2 + grabContext.bytesPerFrame*i < currChunk.end2; ++i)
-                            blockCopy(grabContext.bytesPerFrame-1, &cursize, grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i, grabContext.chunkBuffer,
-                                width, height);
+                        for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end; ++i)
+                            blockCopy(grabContext.bytesPerFrame-1, &cursize, grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i,
+                                grabContext.chunkBuffer, width, height);
+                        if(currChunk.isSeparate)
+                            for(i=0;currChunk.start2 + grabContext.bytesPerFrame*i < currChunk.end2; ++i)
+                                blockCopy(grabContext.bytesPerFrame-1, &cursize, grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i,
+                                    grabContext.chunkBuffer, width, height);
 //                    lineExtra=nextImageBufferRowBytes-width*nextImageBufferBPP;	//bytes to skip after each line in target buffer
+                    }
                     lineExtra = 0;
                     yuv2rgb (width,height,YUVOV420Style,grabContext.chunkBuffer,nextImageBuffer,
                              nextImageBufferBPP,0,lineExtra,hFlip!=camHFlip);	//decode
+#ifdef USE_COMPRESS
                 }
+#endif
                 lastImageBuffer=nextImageBuffer;			//Copy nextBuffer info into lastBuffer
                 lastImageBufferBPP=nextImageBufferBPP;
                 lastImageBufferRowBytes=nextImageBufferRowBytes;
@@ -873,7 +992,9 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
                 [imageBufferLock unlock];				//release lock
                 [self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer
             }
-//}
+} else {
+    NSLog(@"OV511:error chunk s = %d e =%d s2 = %d e2 = %d", currChunk.start,currChunk.end,currChunk.start2,currChunk.end2);
+}
         }
     }
     while (grabbingThreadRunning) {}
@@ -1035,6 +1156,54 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
     return val;
 }
 
+- (void) seti2cid {
+    UInt8 buf[16];
+    /* set I2C write slave ID */
+    buf[0] = sensorWrite;
+    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
+
+    /* set I2C read slave ID */
+    buf[0] = sensorRead;
+    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SRA buf:buf len:1];
+}
+
+- (int) ov511_upload_quan_tables{
+	unsigned char *pYTable = yQuanTable511;
+	unsigned char *pUVTable = uvQuanTable511;
+	unsigned char val0, val1;
+        UInt8 buf[16];
+	int i, reg = OV511_REG_LT_V;
+
+	for (i = 0; i < OV511_QUANTABLESIZE / 2; i++)
+	{
+		if (ENABLE_Y_QUANTABLE)
+		{
+			val0 = *pYTable++;
+			val1 = *pYTable++;
+			val0 &= 0x0f;
+			val1 &= 0x0f;
+			val0 |= val1 << 4;
+                        buf[0] = val0;
+                        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:reg buf:buf len:1];
+		}
+
+		if (ENABLE_UV_QUANTABLE)
+		{
+			val0 = *pUVTable++;
+			val1 = *pUVTable++;
+			val0 &= 0x0f;
+			val1 &= 0x0f;
+			val0 |= val1 << 4;
+                        buf[0] = val0;
+                        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:reg+OV511_QUANTABLESIZE/2 buf:buf len:1];
+		}
+
+		reg++;
+	}
+
+	return 0;
+}
+
 void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int width, int height)
 {
 char *ubase, *vbase, *ybase;
@@ -1105,6 +1274,38 @@ long i;
 			} while(nextsize > 0 && buffsize > 0);
 			break;
 		}
+	}
+}
+
+void tmpcopy32(u_char *buffer, int offset, int size, u_char *tmpbuf, long *tmpsize)
+{
+int b, in = 0, allzero;
+
+	if (offset) {
+		memmove(tmpbuf + *tmpsize,
+			buffer + offset, 32 - offset);
+		*tmpsize += 32 - offset;	// Bytes out
+		in = 32;
+	}
+
+	while (in < size - 1) {
+		allzero = 1;
+		for (b = 0; b < 32; b++) {
+			if (buffer[in + b]) {
+				allzero = 0;
+				break;
+			}
+		}
+
+		if (allzero) {
+			/* Don't copy it */
+		} else {
+			memmove(tmpbuf + *tmpsize,
+				&buffer[in], 32);
+			*tmpsize += 32;
+		}
+
+		in += 32;
 	}
 }
 

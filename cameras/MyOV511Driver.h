@@ -65,6 +65,7 @@ Doing these amounts of defines is often called bad style. We should find a bette
 #define SAA7111A_POWERSAVE(a) ((a)?0x0:0xff)
 #define CLAMP_UNIT(a) (CLAMP((a),0.0f,1.0f))
 
+#define OV7610_BRIGHTNESS(a) ((UInt8)(a*63.0f))
 
 #define OV511_REG_DLYM		0x10
 #define OV511_REG_PEM		0x11
@@ -176,9 +177,10 @@ Doing these amounts of defines is often called bad style. We should find a bette
 #define FI1236MK2_I2C_WRITE_ID	0xC2
 #define FI1236MK2_I2C_READ_ID	0xC3
 
-#define SENS_OV7610		1
-#define SENS_SAA7111A		2		
-#define SENS_OV7620		3
+#define SENS_OV7610			1
+#define SENS_SAA7111A			2
+#define SENS_OV7620			3
+#define SENS_SAA7111A_WITH_FI1236MK2	4
 
 typedef struct OV511CompleteChunk {	//The description of a ready-to-decode chunk
     long start;			//start offset in grabBuffer
@@ -204,7 +206,9 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
     long nextReadOffset;	//offset to buffer position for the next transfer to be initiated
     unsigned char* buffer;	//our buffer!
     unsigned char* chunkBuffer;	//our buffer!
+    unsigned char* tmpBuffer;	//our buffer!
     long bufferLength;		//complete length of buffer in bytes (including appendix)
+    long tmpLength;		//
     OV511TransferContext* transferContexts;// A context for every transfer <concurrent_transfers> Arrays a <frames_per_transfer> IOUSBIsocFrames
     long droppedFrames;		//A counter of frames dropped due to usb transfer problems
     long currentChunkStart;	//offset to the chunk currently examined. -1 if there is no current chunk 
@@ -272,6 +276,10 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
 - (int) i2cWrite:(UInt8) reg val:(UInt8) val;
 - (int) i2cRead:(UInt8) reg;
 - (int) i2cRead2;
+- (void) seti2cid;
+
+//Compress
+- (int) ov511_upload_quan_tables;
 
 @end
 
