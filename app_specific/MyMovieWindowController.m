@@ -146,12 +146,13 @@
     if (mov) {
         NSSize natural=[mov naturalSize];
         float factor=0.0f;
+        NSRect innerRect;
         if ((natural.width>0)&&(natural.height>0)) {
             float factor1=outerRect.size.width/natural.width;
             float factor2=outerRect.size.height/natural.height;
             factor=MIN(factor1,factor2);
         }
-        NSRect innerRect=NSMakeRect((outerRect.size.width-(factor*natural.width))/2.0,
+        innerRect=NSMakeRect((outerRect.size.width-(factor*natural.width))/2.0,
                    (outerRect.size.height-(factor*natural.height))/2.0,
                    factor*natural.width,
                    factor*natural.height);
