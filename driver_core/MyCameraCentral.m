@@ -44,6 +44,7 @@
 #import "MyQCWebDriver.h"
 #import "MyVicamDriver.h"
 #import "MySPCA504Driver.h"
+#import "MyOV511Driver.h"
 
 static NSString* driverBundleName=@"de.matthias-krauss.webcam";
 static NSMutableDictionary* prefsDict=NULL;
@@ -167,6 +168,7 @@ static NSMutableDictionary* prefsDict=NULL;
     [self registerCameraDriver:[MyQCWebDriver class]];
     [self registerCameraDriver:[MyVicamDriver class]];
     [self registerCameraDriver:[MySPCA504Driver class]];
+    [self registerCameraDriver:[MyOV511Driver class]];
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];
 //    [self registerCameraDriver:[MyIntelPCCamera class]];
 //    [self registerCameraDriver:[MyGrandtecVcap class]];
