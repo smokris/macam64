@@ -23,6 +23,9 @@
 
 @interface MySPCA504Driver : MyCameraDriver {
     IOUSBInterfaceInterface** dscIntf;
+
+    long storedMediaCount;
+    NSMutableData* toc;
 }
 
 + (unsigned short) cameraUsbProductID;
