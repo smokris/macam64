@@ -216,7 +216,25 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 #endif
                 }
             } else {
-                return CameraErrorInternal;
+                // detect i2c id
+                for(i = 0; i <= 7; ++i) {
+                    buf[0] = OV6620_I2C_WRITE_ID + i * 4;
+                    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
+                    if([self i2cRead2] != 0xff)
+                        break;
+                }
+                if(i <= 7) {
+                    sensorWrite = OV6620_I2C_WRITE_ID + i * 4;
+                    sensorRead = OV6620_I2C_READ_ID + i * 4;
+                    [self seti2cid];
+
+                    sensorType = SENS_OV6620;
+#ifdef OV511_DEBUG
+                    NSLog(@"macam: OV511 Custom ID %d with OV6620", cid);
+#endif
+                } else {
+                    return CameraErrorInternal;
+                }
             }
             break;
     }
@@ -230,7 +248,8 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         [self setBrightness:0.584f];
         [self setContrast:0.567f];
         [self setSaturation:0.630f];
-    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620) {
+    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620 ||
+        SENS_OV6620) {
         [self setBrightness:0.5f];
         [self setContrast:0.5f];
         [self setSaturation:0.5f];
@@ -256,7 +275,8 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         b=SAA7111A_BRIGHTNESS(CLAMP_UNIT(v));
         if ((b!=SAA7111A_BRIGHTNESS(brightness)))
             [self i2cWrite:OV7610_REG_BRT val:b];
-    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620) {
+    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620 ||
+        SENS_OV6620) {
         b=OV7610_BRIGHTNESS(CLAMP_UNIT(v));
         if ((b!=OV7610_BRIGHTNESS(brightness)))
             [self i2cWrite:0x06 val:b];
@@ -272,7 +292,8 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         b=SAA7111A_CONTRAST(CLAMP_UNIT(v));
         if (b!=SAA7111A_CONTRAST(contrast))
             [self i2cWrite:0x0b val:b];
-    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620) {
+    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620 ||
+        SENS_OV6620) {
         b=OV7610_CONTRAST(CLAMP_UNIT(v));
         if (b!=OV7610_CONTRAST(contrast))
             [self i2cWrite:0x05 val:b];
@@ -288,7 +309,8 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         b=SAA7111A_SATURATION(CLAMP_UNIT(v));
         if (b!=SAA7111A_SATURATION(saturation))
             [self i2cWrite:OV7610_REG_SAT val:b];
-    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620) {
+    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620 ||
+        SENS_OV6620) {
         b=OV7610_SATURATION(CLAMP_UNIT(v));
         if (b!=OV7610_SATURATION(saturation))
             [self i2cWrite:0x03 val:b];
@@ -367,8 +389,14 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 - (BOOL) supportsResolution:(CameraResolution)res fps:(short)rate {
     switch (res) {
         case ResolutionSIF:
-            if (rate>10) return NO;
+            if ((sensorType == SENS_OV7610 || sensorType == SENS_OV7620 ||
+                sensorType == SENS_SAA7111A || sensorType == SENS_SAA7111A_WITH_FI1236MK2) &&
+                rate<=10) return YES; 
             return YES;
+            break;
+        case ResolutionCIF:
+            if (sensorType == SENS_OV6620 && rate<=10) return YES;
+            return NO;
             break;
         case ResolutionVGA:
             if ((sensorType == SENS_OV7610 || sensorType == SENS_OV7620) &&
@@ -587,7 +615,49 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
             [self i2cWrite:OV7610_REG_COMC val:0x24];
             [self i2cWrite:OV7610_REG_COML val:0x9e];
 
-        } else {	// SAA7111A
+         } else if(sensorType == SENS_OV6620) {
+
+            // This code from Linux driver
+            [self i2cWrite:0x12 val:0x80]; /* reset */
+            [self i2cWrite:0x11 val:0x01];
+            [self i2cWrite:0x03 val:0x60];
+            [self i2cWrite:0x05 val:0x7f]; /* For when autoadjust is off */
+            [self i2cWrite:0x07 val:0xa8];
+            /* The ratio of 0x0c and 0x0d  controls the white point */
+            [self i2cWrite:0x0c val:0x24];
+            [self i2cWrite:0x0d val:0x24];
+            [self i2cWrite:0x0f val:0x15]; /* COMS */
+            [self i2cWrite:0x10 val:0x75]; /* AEC Exposure time */
+            [self i2cWrite:0x12 val:0x24]; /* Enable AGC */
+            [self i2cWrite:0x14 val:0x04];
+            /* 0x16: 0x06 helps frame stability with moving objects */
+            [self i2cWrite:0x16 val:0x06];
+//		[self i2cWrite:0x20 val:0x30]; /* Aperture correction enable */
+            [self i2cWrite:0x26 val:0xb2]; /* BLC enable */
+		/* 0x28: 0x05 Selects RGB format if RGB on */
+            [self i2cWrite:0x28 val:0x05];
+            [self i2cWrite:0x2a val:0x04]; /* Disable framerate adjust */
+//		[self i2cWrite:0x2b val:0xac]; /* Framerate; Set 2a[7] first */
+            [self i2cWrite:0x2d val:0x99];
+            [self i2cWrite:0x33 val:0xa0]; /* Color Procesing Parameter */
+            [self i2cWrite:0x34 val:0xd2]; /* Max A/D range */
+            [self i2cWrite:0x38 val:0x8b];
+            [self i2cWrite:0x39 val:0x40];
+
+            [self i2cWrite:0x3c val:0x39]; /* Enable AEC mode changing */
+            [self i2cWrite:0x3c val:0x3c]; /* Change AEC mode */
+            [self i2cWrite:0x3c val:0x24]; /* Disable AEC mode changing */
+
+            [self i2cWrite:0x3d val:0x80];
+		/* These next two registers (0x4a, 0x4b) are undocumented. They
+		 * control the color balance */
+            [self i2cWrite:0x4a val:0x80];
+            [self i2cWrite:0x4b val:0x80];
+            [self i2cWrite:0x4d val:0xd2]; /* This reduces noise a bit */
+            [self i2cWrite:0x4e val:0xc1];
+            [self i2cWrite:0x4f val:0x04];
+
+       } else {	// SAA7111A
 
             [self i2cWrite:0x06 val:0xce];
             [self i2cWrite:0x07 val:0x00];

@@ -179,10 +179,14 @@ Doing these amounts of defines is often called bad style. We should find a bette
 #define FI1236MK2_I2C_WRITE_ID	0xC2
 #define FI1236MK2_I2C_READ_ID	0xC3
 
+#define OV6620_I2C_WRITE_ID	0xc0
+#define OV6620_I2C_READ_ID	0xc1
+
 #define SENS_OV7610			1
 #define SENS_SAA7111A			2
 #define SENS_OV7620			3
 #define SENS_SAA7111A_WITH_FI1236MK2	4
+#define SENS_OV6620			5
 
 typedef struct OV511CompleteChunk {	//The description of a ready-to-decode chunk
     long start;			//start offset in grabBuffer
