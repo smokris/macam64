@@ -90,6 +90,8 @@
                 case 17:	//Button up
                     [self mergeCameraEventHappened:CameraEventSnapshotButtonUp];
                     break;
+				case   0:
+					// with CIF happening on grab start/stopon my QCE w/o button [added by mark.asbach]
                 case 194:	//sometimes sent on grab start / stop
                     break;
                 default:

@@ -117,8 +117,11 @@ typedef struct STV600GrabContext {
 
 - (CameraError) decodingThread;				//Entry method for the chunk to image decoding thread
 
-- (BOOL) writeSTVRegister:(long)reg value:(unsigned char)val; //Sets a controller chip register. Public for the sensors.
 
-- (BOOL) writeWideSTVRegister:(long)reg value:(unsigned short int)val; //Sets two controller chip registers with hi- and lo-word. Public for the sensors.
+/// Set a controller chip register. Public for the sensors.
+- (BOOL) writeSTVRegister:    (long)reg   value:(unsigned char)val; 
+
+/// Set two controller chip registers with hi- and lo-word. Public for the sensors.
+- (BOOL) writeWideSTVRegister:(long)reg   value:(unsigned short int)val; 
 
 @end

@@ -289,18 +289,27 @@
     return YES;
 }
 
-void GetFillingChunk(STV600GrabContext* gCtx) {	//Make sure there is a filling buffer
-    if (gCtx->fillingChunk) {
+void GetFillingChunk(STV600GrabContext* gCtx)
+{
+	//Make sure there is a filling buffer
+    if (gCtx->fillingChunk)
+	{
         gCtx->fillingChunkBuffer.numBytes=0;
-    } else {
+    }
+	else
+	{
         [gCtx->chunkListLock lock];			//Get permission to manipulate buffer lists
-        if (gCtx->numEmptyBuffers>0) {			//We can take an empty chunk
+        if (gCtx->numEmptyBuffers>0)
+		{			//We can take an empty chunk
             gCtx->numEmptyBuffers--;
             gCtx->fillingChunkBuffer=gCtx->emptyChunkBuffers[gCtx->numEmptyBuffers];
-        } else {					//No empty chunk - take the oldest full one
+        }
+		else
+		{					//No empty chunk - take the oldest full one
             long j;
             gCtx->fillingChunkBuffer=gCtx->fullChunkBuffers[0];
-            for (j=1;j<gCtx->numFullBuffers;j++) {	//all other full ones go one up in the list
+            for (j=1;j<gCtx->numFullBuffers;j++)
+			{	//all other full ones go one up in the list
                 gCtx->fullChunkBuffers[j-1]=gCtx->fullChunkBuffers[j];
             }
             gCtx->numFullBuffers--;
@@ -342,35 +351,57 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     IOUSBIsocFrame* myFrameList=(IOUSBIsocFrame*)arg0;
     short transferIdx=0;
     bool frameListFound=false;
-    long currFrameLength;
     unsigned char* frameBase;
     long frameRun;
     long dataRunCode;
     long dataRunLength;
-    if (result == kIOReturnUnderrun) result=0;			//Data underrun is not too bad (Jaguar fix)
 
-	if (result == kIOUSBNotSent2Err)
-		result = 0;
-
-	if (result == kIOReturnIsoTooOld)
-		result = 0;
 
 	gCtx->framesSinceLastChunk+=STV600_FRAMES_PER_TRANSFER;
-    if (result) {						//USB error handling
-        *(gCtx->shouldBeGrabbing)=NO;				//We'll stop no matter what happened
-        if (!gCtx->err) {
-            if (result==kIOReturnOverrun) gCtx->err=CameraErrorTimeout;		//We didn't setup the transfer in time
-            else gCtx->err=CameraErrorUSBProblem;				//Something else...
-        }
-        if (result!=kIOReturnOverrun) CheckError(result,"isocComplete");	//Other error than timeout: log to console
-    }
 
-    if (*(gCtx->shouldBeGrabbing)) {						//look up which transfer we are
-        while ((!frameListFound)&&(transferIdx<STV600_NUM_TRANSFERS)) {
-            if ((gCtx->transferContexts[transferIdx].frameList)==myFrameList) frameListFound=true;
-            else transferIdx++;
+	// USB error handling
+	switch (result)
+	{
+		case 0:
+			// no error is fine with us :-)
+			break;
+
+		case kIOReturnUnderrun:
+		case kIOUSBNotSent2Err:
+		case kIOReturnIsoTooOld:
+			// ignore these errors
+			result = 0;
+			break;
+
+		case kIOReturnOverrun:
+			// we didn't setup the transfer in time
+			*(gCtx->shouldBeGrabbing) = NO;
+			if (! gCtx->err)
+				gCtx->err=CameraErrorTimeout;		
+			break;
+
+		default:
+			*(gCtx->shouldBeGrabbing) = NO;
+			if (!gCtx->err)
+				gCtx->err=CameraErrorUSBProblem;
+
+			// log to console
+			CheckError(result,"isocComplete");
+	}
+
+    if (*(gCtx->shouldBeGrabbing))
+	{
+		//look up which transfer we are
+		while ((!frameListFound)&&(transferIdx<STV600_NUM_TRANSFERS))
+		{
+            if ((gCtx->transferContexts[transferIdx].frameList)==myFrameList)
+				frameListFound=true;
+            else
+				transferIdx++;
         }
-        if (!frameListFound) {
+
+        if (!frameListFound)
+		{
 #ifdef VERBOSE
             NSLog(@"isocComplete: Didn't find my frameList");
 #endif
@@ -378,39 +409,61 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
         }
     }
 
-    if (*(gCtx->shouldBeGrabbing)) {
-        for (i=0;i<STV600_FRAMES_PER_TRANSFER;i++) {			//let's have a look into the usb frames we got
-            currFrameLength=myFrameList[i].frActCount;			//Cache this - it won't change and we need it several times
-            
+    if (*(gCtx->shouldBeGrabbing))
+	{
+		//let's have a look into the usb frames we got
+		for (i=0;i<STV600_FRAMES_PER_TRANSFER;i++)
+		{
+			// cache this - it won't change and we need it several times
+			const long currFrameLength = myFrameList[i].frActCount;
+
             frameRun=0;
             frameBase=gCtx->transferContexts[transferIdx].buffer+gCtx->bytesPerFrame*i;
  
-            while (frameRun<currFrameLength) {
-                dataRunCode=(frameBase[frameRun]<<8)+frameBase[frameRun+1];
-                dataRunLength=(frameBase[frameRun+2]<<8)+frameBase[frameRun+3];
-                frameRun+=4;
-                switch (dataRunCode) {
-                    case 0x8001:	//Start of image chunk
+            while (frameRun<currFrameLength)
+			{
+                dataRunCode    = (frameBase[frameRun]  <<8)+frameBase[frameRun+1];
+                dataRunLength  = (frameBase[frameRun+2]<<8)+frameBase[frameRun+3];
+                frameRun      += 4;
+
+                switch (dataRunCode)
+				{
                     case 0x8005:	//Start of image chunk - sensor change pending (???)
                     case 0xc001:	//Start of image chunk - some exposure error (???)
                     case 0xc005:	//Start of image chunk - some exposure error (???)
+//						NSLog (@"flagged start chunk");
+                    case 0x8001:	//Start of image chunk
                         GetFillingChunk(gCtx);
                         break;
-                    case 0x8002:	//End of image chunk
                     case 0x8006:	//End of image chunk - sensor change pending (???)
                     case 0xc002:	//End of image chunk - some exposure error (???)
                     case 0xc006:	//End of image chunk - some exposure error (???)
+//						NSLog (@"flagged end chunk");
+                    case 0x8002:	//End of image chunk
                         gCtx->framesSinceLastChunk=0;
                         FinishFillingChunk(gCtx);
                         break;
-                    case 0x0200:	//Data run
                     case 0x4200:	//Data run with some flag set (lighting? timing?)
-                        if (gCtx->fillingChunk) {
-                            if (gCtx->fillingChunkBuffer.numBytes+dataRunLength<=gCtx->chunkBufferLength) {
-                                memcpy(gCtx->fillingChunkBuffer.buffer+gCtx->fillingChunkBuffer.numBytes,
-                                       frameBase+frameRun,dataRunLength);	//Copy the data run to our chunk
-                                gCtx->fillingChunkBuffer.numBytes+=dataRunLength;
-                            } else DiscardFillingChunk(gCtx);	//Buffer Overflow                                
+//						NSLog (@"flagged data chunk");
+                    case 0x0200:	//Data run
+                        if (gCtx->fillingChunk)
+						{
+                            if (gCtx->fillingChunkBuffer.numBytes+dataRunLength<=gCtx->chunkBufferLength)
+							{
+								// copy the data run to our chunk
+                                memcpy (gCtx->fillingChunkBuffer.buffer
+									+ gCtx->fillingChunkBuffer.numBytes,
+									frameBase+frameRun,
+									dataRunLength);
+
+								gCtx->fillingChunkBuffer.numBytes+=dataRunLength;
+                            }
+							else
+							{
+								//Buffer Overflow
+								NSLog (@"buffer overflow");
+								DiscardFillingChunk(gCtx);
+							}
                         }
                         break;
                     default:
@@ -423,17 +476,27 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
         }
     }
     
-    if (gCtx->framesSinceLastChunk>1000) {	//More than a second without data?
+    if (gCtx->framesSinceLastChunk>1000)
+	{
+		// more than a second without data?
         *(gCtx->shouldBeGrabbing)=NO;
-        if (!gCtx->err) gCtx->err=CameraErrorUSBProblem;
+        if (!gCtx->err)
+			gCtx->err=CameraErrorUSBProblem;
     }
-    
-    if (*(gCtx->shouldBeGrabbing)) {	//initiate next transfer
-        if (!StartNextIsochRead(gCtx,transferIdx)) *(gCtx->shouldBeGrabbing)=NO;
+
+    if (*(gCtx->shouldBeGrabbing))
+	{
+		// initiate next transfer
+        if (!StartNextIsochRead(gCtx,transferIdx))
+			*(gCtx->shouldBeGrabbing)=NO;
     }
-    if (!(*(gCtx->shouldBeGrabbing))) {	//on error: collect finished transfers and exit if all transfers have ended
+
+    if (!(*(gCtx->shouldBeGrabbing)))
+	{
+		// on error: collect finished transfers and exit if all transfers have ended
         gCtx->finishedTransfers++;
-        if ((gCtx->finishedTransfers)>=(STV600_NUM_TRANSFERS)) {
+        if ((gCtx->finishedTransfers)>=(STV600_NUM_TRANSFERS))
+		{
             CFRunLoopStop(CFRunLoopGetCurrent());
         }
     }
@@ -454,45 +517,55 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
             grabContext->initiatedUntil+=STV600_FRAMES_PER_TRANSFER;	//update frames
             break;
         case 0x1000003:
-            if (!grabContext->err) grabContext->err=CameraErrorNoCam;
+            if (!grabContext->err)
+				grabContext->err=CameraErrorNoCam;
             break;
         default:
             CheckError(err,"StartNextIsochRead-ReadIsochPipeAsync");
-            if (!grabContext->err) grabContext->err=CameraErrorUSBProblem;
+            if (!grabContext->err)
+				grabContext->err=CameraErrorUSBProblem;
             break;
     }
     return !err;
 }
 
-- (void) grabbingThread:(id)data {
-    NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
-    long i;
-    IOReturn err;
-    CFRunLoopSourceRef cfSource;
-    BOOL ok=YES;
+- (void) grabbingThread:(id)data
+{
+    NSAutoreleasePool   * pool=[[NSAutoreleasePool alloc] init];
+    long                  i;
+    IOReturn              err;
+    CFRunLoopSourceRef    cfSource;
+    BOOL                  ok=YES;
 
     ChangeMyThreadPriority(10);	//We need to update the isoch read in time, so timing is important for us
 
-    if (ok) {
-        if (![self usbSetAltInterfaceTo:1 testPipe:1]) {	//*** Check this for QuickCam Express! was alt 3!
-            if (!grabContext.err) grabContext.err=CameraErrorNoBandwidth;
+    if (ok)
+	{
+        if (![self usbSetAltInterfaceTo:1 testPipe:1])
+		{	//*** Check this for QuickCam Express! was alt 3!
+            if (!grabContext.err)
+				grabContext.err=CameraErrorNoBandwidth;
             ok=NO;
         }
     }
-    if (ok) {
-        if (![self camInit]) {
+    if (ok)
+	{
+        if (![self camInit])
+		{
             if (!grabContext.err) grabContext.err=CameraErrorUSBProblem;
             ok=NO;
         }
     }
     if (ok) {
         [sensor adjustExposure];
-        if (![sensor startStream]) {
+        if (![sensor startStream])
+		{
             if (!grabContext.err) grabContext.err=CameraErrorUSBProblem;
             ok=NO;
         }
     }
-    if (ok) {
+    if (ok)
+	{
         if (![self writeSTVRegister:0x1440 value:1]) {
             if (!grabContext.err) grabContext.err=CameraErrorUSBProblem;
             ok=NO;
@@ -507,25 +580,28 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
             ok=StartNextIsochRead(&grabContext,i);
         }
     }
-    if (ok) {
+    if (ok)
+	{
         CFRunLoopRun();					//Do our run loop
         CFRunLoopRemoveSource(CFRunLoopGetCurrent(), cfSource, kCFRunLoopDefaultMode);	//remove the event source
     }
-    
+
     shouldBeGrabbing=NO;	//error in grabbingThread or abort? initiate shutdown of everything else
-    
+
     //Stopping doesn't check for ok any more - clean up what we can
     if (![self writeSTVRegister:0x1440 value:0]) {
         if (!grabContext.err) grabContext.err=CameraErrorUSBProblem;
         ok=NO;
     }
 
-    if (![sensor stopStream]) {
+    if (![sensor stopStream])
+	{
         if (!grabContext.err) grabContext.err=CameraErrorUSBProblem;
         ok=NO;
     }
 
-    if (![self usbSetAltInterfaceTo:0 testPipe:0]) {
+    if (![self usbSetAltInterfaceTo:0 testPipe:0])
+	{
         if (!grabContext.err) grabContext.err=CameraErrorUSBProblem;
         ok=NO;
     }
@@ -604,33 +680,60 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
 
 - (void) decodeChunk:(STV600ChunkBuffer*) chunkBuffer
 {
+	unsigned char  * bayerData = 0;
+
+	// no need to decode
     if (!nextImageBufferSet)
-        return;			//No need to decode
-
-    [imageBufferLock lock];				//lock image buffer access
-    if (!nextImageBuffer)
-    {
-        [imageBufferLock unlock];				//release lock
+	{
+		NSLog (@"no next image buffer set");
         return;
-    }
+	}
 
-    [bayerConverter convertFromSrc:chunkBuffer->buffer
-                            toDest:nextImageBuffer
-                       srcRowBytes:[self width]+extraBytesInLine
-                       dstRowBytes:nextImageBufferRowBytes
-                            dstBPP:nextImageBufferBPP
-                              flip:NO];
-    lastImageBuffer=nextImageBuffer;			//Copy nextBuffer info into lastBuffer
-    lastImageBufferBPP=nextImageBufferBPP;
-    lastImageBufferRowBytes=nextImageBufferRowBytes;
-    nextImageBufferSet=NO;				//nextBuffer has been eaten up
+	// lock image buffer access
+	[imageBufferLock lock];
 
-    [imageBufferLock unlock];				//release lock
+	// check if an output buffer is available
+    if (!nextImageBuffer)
+	{
+		// release lock
+		[imageBufferLock unlock];
+		NSLog (@"no next image buffer");
+		return;
+	}
 
-    [self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer
-    if (autoGain) {
-        [sensor setLastMeanBrightness:[bayerConverter lastMeanBrightness]];
-        [sensor adjustExposure];
+	// quick-hack fix by Mark.Asbach
+	if (resolution==ResolutionCIF)
+		bayerData = chunkBuffer->buffer + 3;
+	else
+		bayerData = chunkBuffer->buffer + 2;
+
+	// convert the data
+	[bayerConverter convertFromSrc: bayerData
+	                        toDest: nextImageBuffer
+	                   srcRowBytes: [self width] + extraBytesInLine
+	                   dstRowBytes: nextImageBufferRowBytes
+	                        dstBPP: nextImageBufferBPP
+	                          flip: hFlip];
+
+	// advance buffer
+	lastImageBuffer         = nextImageBuffer;
+	lastImageBufferBPP      = nextImageBufferBPP;
+	lastImageBufferRowBytes = nextImageBufferRowBytes;
+
+	// nextBuffer has been eaten up
+	nextImageBufferSet      = NO;				
+
+	// release lock
+	[imageBufferLock unlock];				
+
+	// notify delegate about the image. perhaps get a new buffer
+    [self mergeImageReady];
+
+	// adapt gain if necessary
+	if (autoGain)
+	{
+		[sensor setLastMeanBrightness: [bayerConverter lastMeanBrightness]];
+		[sensor adjustExposure];
     }
 }
 
@@ -673,7 +776,7 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
     IOReturn err;
     
     ok=[self writeSTVRegister:0x1500 value:1];
-    if (ok) ok=[self writeSTVRegister:0x1443 value:0];
+    if (ok) ok=[self writeSTVRegister:0x1443 value:0]; // scan rate
 
     if (ok) ok=[sensor resetSensor];
 
@@ -683,17 +786,17 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
             if (err) ok=NO;
         } else ok=NO;
     }
-    if (ok) ok=[self writeSTVRegister:0x15c1 value:(maxPacketSize&0xff)];		//isoch frame size lo
-    if (ok) ok=[self writeSTVRegister:0x15c2 value:((maxPacketSize>>8)&0xff)];		//isoch frame size hi
+
+    if (ok) ok=[self writeWideSTVRegister:0x15c1 value:maxPacketSize];		//isoch frame size
 
     if (resolution==ResolutionCIF) {
         if (ok) ok=[self writeSTVRegister:0x1443 value:0x20];		//timing
-        if (ok) ok=[self writeSTVRegister:0x15c3 value:1];		//y subsampling
         if (ok) ok=[self writeSTVRegister:0x1680 value:10];		//x subsampling
+        if (ok) ok=[self writeSTVRegister:0x15c3 value:1];		//y subsampling
     } else {	//QCIF
         if (ok) ok=[self writeSTVRegister:0x1443 value:0x10];		//timing
-        if (ok) ok=[self writeSTVRegister:0x15c3 value:2];		//y subsampling
         if (ok) ok=[self writeSTVRegister:0x1680 value:6];		//x subsampling
+        if (ok) ok=[self writeSTVRegister:0x15c3 value:2];		//y subsampling
     }        
     return ok;
 }
