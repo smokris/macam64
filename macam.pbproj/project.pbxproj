@@ -234,7 +234,8 @@
 				F57D11B1C5B26FF6010B00CC,
 				F5F4374202D27B4B018D4F8C,
 				F5F4375402D5299C018D4F8C,
-				F5C5790503049028010B006D,
+				F5A4FBC2031E34DC0166D062,
+				F5A4FBC6031E34E00166D062,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -312,6 +313,7 @@
 				F5F4374302D27B4C018D4F8C,
 				F5F4375202D5294A018D4F8C,
 				F5C5790903049095010B006D,
+				F5A4FBC3031E34DC0166D062,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -866,10 +868,12 @@
 				F5A1531A0274D3D501C56AC3,
 				F5FC0F2102834E83015925D2,
 				F5FC0F27028351A7015925D2,
-				F5F4374002D278D6018D4F8C,
 				F5F4374102D278D6018D4F8C,
 				F5F4375002D52947018D4F8C,
 				F5F4375102D52947018D4F8C,
+				F5A4FBC4031E34DC0166D062,
+				F5A4FBC7031E34E50166D062,
+				F5A4FBC9031E34E70166D062,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -923,6 +927,8 @@
 				F5FC0F28028351A7015925D2,
 				F5F4373F02D278D6018D4F8C,
 				F5F4374F02D52947018D4F8C,
+				F5A4FBC5031E34DC0166D062,
+				F5A4FBC8031E34E50166D062,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1712,6 +1718,64 @@
 			settings = {
 			};
 		};
+		F5A4FBC0031E34DC0166D062 = {
+			isa = PBXFileReference;
+			path = MySmartMegaCamDriver.h;
+			refType = 4;
+		};
+		F5A4FBC1031E34DC0166D062 = {
+			isa = PBXFileReference;
+			path = MySmartMegaCamDriver.m;
+			refType = 4;
+		};
+		F5A4FBC2031E34DC0166D062 = {
+			fileRef = F5A4FBC0031E34DC0166D062;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A4FBC3031E34DC0166D062 = {
+			fileRef = F5A4FBC1031E34DC0166D062;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A4FBC4031E34DC0166D062 = {
+			fileRef = F5A4FBC0031E34DC0166D062;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A4FBC5031E34DC0166D062 = {
+			fileRef = F5A4FBC1031E34DC0166D062;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A4FBC6031E34E00166D062 = {
+			fileRef = F5C5790603049095010B006D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A4FBC7031E34E50166D062 = {
+			fileRef = F5C5790603049095010B006D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A4FBC8031E34E50166D062 = {
+			fileRef = F5C5790703049095010B006D;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A4FBC9031E34E70166D062 = {
+			fileRef = F589EB0E02268A6901D99A1F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5AA417601DA8EF70157C38C = {
 			isa = PBXFrameworkReference;
 			name = CoreFoundation.framework;
@@ -1922,18 +1986,6 @@
 			path = texts/Supported_Cameras.html;
 			refType = 4;
 		};
-		F5C5790403049028010B006D = {
-			isa = PBXFileReference;
-			name = MyIntelPCCameraPro.h;
-			path = /Users/dirkx/QX3/macam/cameras/MyIntelPCCameraPro.h;
-			refType = 0;
-		};
-		F5C5790503049028010B006D = {
-			fileRef = F5C5790403049028010B006D;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F5C5790603049095010B006D = {
 			isa = PBXFileReference;
 			path = MyIntelPCCameraPro.h;
@@ -1989,12 +2041,6 @@
 		};
 		F5F4373F02D278D6018D4F8C = {
 			fileRef = F5F4373C02D278D6018D4F8C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5F4374002D278D6018D4F8C = {
-			fileRef = F5F4373D02D278D6018D4F8C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2104,6 +2150,8 @@
 				F5B40F5F024BB1D90166DE1F,
 				F5C5790603049095010B006D,
 				F5C5790703049095010B006D,
+				F5A4FBC0031E34DC0166D062,
+				F5A4FBC1031E34DC0166D062,
 			);
 			isa = PBXGroup;
 			path = cameras;
