@@ -54,7 +54,27 @@ static VestaFormatEntry formats[]={
 
 static long numFormats=19;
 
+#define PRODUCT_VESTA 0x0307
+#define PRODUCT_VESTA_PRO 0x0308
+#define PRODUCT_VESTA_SCAN 0x030c
+
 @implementation MyTimonFamilyDriver
+
++ (NSArray*) cameraUsbDescriptions {
+    NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_VESTA],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
+        @"Philips Vesta",@"name",NULL];
+    NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_VESTA_PRO],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
+        @"Philips Vesta Pro",@"name",NULL];
+    NSDictionary* dict3=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_VESTA_SCAN],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
+        @"Philips Vesta Scan",@"name",NULL];
+    return [NSArray arrayWithObjects:dict1,dict2,dict3,NULL];
+}
 
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
     return [super startupWithUsbDeviceRef:usbDeviceRef];

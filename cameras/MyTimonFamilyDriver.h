@@ -30,6 +30,7 @@
 @interface MyTimonFamilyDriver : MyPhilipsCameraDriver {
 
 }
++ (NSArray*) cameraUsbDescriptions;
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
 - (BOOL) canSetSaturation;					//Override to disable
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;	//Returns if this combination is supported
