@@ -30,7 +30,7 @@
 + (NSString*) cameraName;
 
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
-- (void) dealloc;
+- (void) shutdown;
 
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;
 - (void) setResolution:(CameraResolution)r fps:(short)fr;

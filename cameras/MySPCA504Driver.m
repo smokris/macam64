@@ -22,57 +22,35 @@
 #import "MyCameraCentral.h"
 #include "Resolvers.h"
 #include "MiscTools.h"
+#include "unistd.h"	//usleep
 
 #define VENDOR_SUNPLUS 0x4fc
 #define PRODUCT_SPCA504 0x504a
 
-static unsigned char spcaJpegHeader[]={0x04,0x04,0x04,0x05,0x05,0x05,0x06,0x07,0x0c,0x08,0x07,0x07,0x07,0x07,0x0f,0x0b,
-    0x0b,0x09,0x0c,0x11,0x0f,0x12,0x12,0x11,0x0f,0x11,0x11,0x13,0x16,0x1c,0x17,0x13,
-    0x14,0x1a,0x15,0x11,0x11,0x18,0x21,0x18,0x1a,0x1d,0x1d,0x1f,0x1f,0x1f,0x13,0x17,
-    0x22,0x24,0x22,0x1e,0x24,0x1c,0x1e,0x1f,0x1e,0xff,0xdb,0x00,0x43,0x01,0x05,0x05,
-    0x05,0x07,0x06,0x07,0x0e,0x08,0x08,0x0e,0x1e,0x14,0x11,0x14,0x1e,0x1e,0x1e,0x1e,
-    0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,
-    0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,
-    0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0x1e,0xff,0xc0,
-    0x00,0x11,0x08,0x03,0xc0,0x04,0xe0,0x03,0x01,0x21,0x00,0x02,0x11,0x01,0x03,0x11,
-    0x01,0xff,0xc4,0x00,0x1f,0x00,0x00,0x01,0x05,0x01,0x01,0x01,0x01,0x01,0x01,0x00,
-    0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,
-    0x0a,0x0b,0xff,0xc4,0x00,0xb5,0x10,0x00,0x02,0x01,0x03,0x03,0x02,0x04,0x03,0x05,
-    0x05,0x04,0x04,0x00,0x00,0x01,0x7d,0x01,0x02,0x03,0x00,0x04,0x11,0x05,0x12,0x21,
-    0x31,0x41,0x06,0x13,0x51,0x61,0x07,0x22,0x71,0x14,0x32,0x81,0x91,0xa1,0x08,0x23,
-    0x42,0xb1,0xc1,0x15,0x52,0xd1,0xf0,0x24,0x33,0x62,0x72,0x82,0x09,0x0a,0x16,0x17,
-    0x18,0x19,0x1a,0x25,0x26,0x27,0x28,0x29,0x2a,0x34,0x35,0x36,0x37,0x38,0x39,0x3a,
-    0x43,0x44,0x45,0x46,0x47,0x48,0x49,0x4a,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5a,
-    0x63,0x64,0x65,0x66,0x67,0x68,0x69,0x6a,0x73,0x74,0x75,0x76,0x77,0x78,0x79,0x7a,
-    0x83,0x84,0x85,0x86,0x87,0x88,0x89,0x8a,0x92,0x93,0x94,0x95,0x96,0x97,0x98,0x99,
-    0x9a,0xa2,0xa3,0xa4,0xa5,0xa6,0xa7,0xa8,0xa9,0xaa,0xb2,0xb3,0xb4,0xb5,0xb6,0xb7,
-    0xb8,0xb9,0xba,0xc2,0xc3,0xc4,0xc5,0xc6,0xc7,0xc8,0xc9,0xca,0xd2,0xd3,0xd4,0xd5,
-    0xd6,0xd7,0xd8,0xd9,0xda,0xe1,0xe2,0xe3,0xe4,0xe5,0xe6,0xe7,0xe8,0xe9,0xea,0xf1,
-    0xf2,0xf3,0xf4,0xf5,0xf6,0xf7,0xf8,0xf9,0xfa,0xff,0xc4,0x00,0x1f,0x01,0x00,0x03,
-    0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x01,0x00,0x00,0x00,0x00,0x00,0x00,0x01,
-    0x02,0x03,0x04,0x05,0x06,0x07,0x08,0x09,0x0a,0x0b,0xff,0xc4,0x00,0xb5,0x11,0x00,
-    0x02,0x01,0x02,0x04,0x04,0x03,0x04,0x07,0x05,0x04,0x04,0x00,0x01,0x02,0x77,0x00,
-    0x01,0x02,0x03,0x11,0x04,0x05,0x21,0x31,0x06,0x12,0x41,0x51,0x07,0x61,0x71,0x13,
-    0x22,0x32,0x81,0x08,0x14,0x42,0x91,0xa1,0xb1,0xc1,0x09,0x23,0x33,0x52,0xf0,0x15,
-    0x62,0x72,0xd1,0x0a,0x16,0x24,0x34,0xe1,0x25,0xf1,0x17,0x18,0x19,0x1a,0x26,0x27,
-    0x28,0x29,0x2a,0x35,0x36,0x37,0x38,0x39,0x3a,0x43,0x44,0x45,0x46,0x47,0x48,0x49,
-    0x4a,0x53,0x54,0x55,0x56,0x57,0x58,0x59,0x5a,0x63,0x64,0x65,0x66,0x67,0x68,0x69,
-    0x6a,0x73,0x74,0x75,0x76,0x77,0x78,0x79,0x7a,0x82,0x83,0x84,0x85,0x86,0x87,0x88,
-    0x89,0x8a,0x92,0x93,0x94,0x95,0x96,0x97,0x98,0x99,0x9a,0xa2,0xa3,0xa4,0xa5,0xa6,
-    0xa7,0xa8,0xa9,0xaa,0xb2,0xb3,0xb4,0xb5,0xb6,0xb7,0xb8,0xb9,0xba,0xc2,0xc3,0xc4,
-    0xc5,0xc6,0xc7,0xc8,0xc9,0xca,0xd2,0xd3,0xd4,0xd5,0xd6,0xd7,0xd8,0xd9,0xda,0xe2,
-    0xe3,0xe4,0xe5,0xe6,0xe7,0xe8,0xe9,0xea,0xf2,0xf3,0xf4,0xf5,0xf6,0xf7,0xf8,0xf9,
-    0xfa,0xff,0xda,0x00,0x0c,0x03,0x01,0x00,0x02,0x11,0x03,0x11,0x00,0x3f,0x00};
-
-static unsigned char spcaJpegFooter[]={0xff,0xd9};
 
 @interface MySPCA504Driver (Private)
 
-- (void) openDSCInterface;
+//"High" level DSC access
+- (CameraError) openDSCInterface;
 - (void) closeDSCInterface;
+
+//Medium level DSC access
+
+- (BOOL) dscInit;
+- (void) dscShutdown;
+- (long) dscCountObjects;				//May also be consdered as high level
+- (BOOL) dscGetTocEntry:(int)idx to:(unsigned char*)entry;
+- (NSData*) dscGetThumb:(int)idx;
+- (NSData*) dscGetImage:(int)idx;
+
+- (BOOL) dscWaitForPipeReady;
+
+
+//Low level DSC access
+
 - (BOOL) dscReadCmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len;
 - (BOOL) dscWriteCmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len;
-
+- (BOOL) dscReadBulkTo:(unsigned char*)buf from:(int)offset length:(int)len;
 @end 
 
 @implementation MySPCA504Driver
@@ -83,14 +61,16 @@ static unsigned char spcaJpegFooter[]={0xff,0xd9};
 
 
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
+    CameraError err = [self usbConnectToCam:usbDeviceRef];
     fps=5;
     resolution=ResolutionVGA;
-    return [self usbConnectToCam:usbDeviceRef];
+    if (err==CameraErrorOK) [self openDSCInterface];
+    return err;
 }
 
-- (void) dealloc {
-    [self usbCloseConnection];
-    [super dealloc];
+- (void) shutdown {
+    [self closeDSCInterface];
+    [super shutdown];
 }
 
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr {
@@ -111,132 +91,16 @@ static unsigned char spcaJpegFooter[]={0xff,0xd9};
     return YES;
 }
 
+
+
+
 - (long) numberOfStoredMediaObjects {
-    unsigned char num;
-    [self usbReadCmdWithBRequest:0x01 wValue:0x0002 wIndex:0x0005 buf:&num len:1];
-    return num;
-}
+    return [self dscCountObjects]/2;
+ }
 
 - (id) getStoredMediaObject:(long)idx {
-    unsigned char* toc=NULL;
-    id result=NULL;
-    NSData* data=NULL;
-    BOOL ok=YES;
-    unsigned char save2713;	//Save the toc location
-    unsigned char save2714;
-    unsigned char save2715;
-    UInt32 bulkLen;
-    IOReturn err;
-    unsigned char* myTocEntry;
-    unsigned char* imgData;
-    UInt32 myOffset;
-    UInt32 myLength;
-    UInt32 arg;
-    unsigned char readChar;
-    int i;
-    
-    long totalImageCount=[self numberOfStoredMediaObjects];
-    if (totalImageCount<=idx) return NULL;
-    
-    [self openDSCInterface];
-    if (!dscIntf) ok=NO;
-    if (ok) {
-        MALLOC(toc,unsigned char*,256*totalImageCount,"MySPCA504Driver:getStoredMediaObject toc buffer");
-        if (!toc) ok=NO;
-    }
-    if (ok) {
-
-        [self dscWriteCmdWithBRequest:0x01 wValue:0x0001 wIndex:0x2000 buf:NULL len:0];	//change mode (???)
-
-//Do what you gotta do...
-        [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2000 buf:&readChar len:1];
-        NSLog(@"read 0x2000: %02x",readChar);
-
-        [self dscWriteCmdWithBRequest:0x00 wValue:0x0001 wIndex:0x2306 buf:NULL len:0];		//Write something
-
-//Set read length
-        [self dscWriteCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2710 buf:NULL len:0];		//Write read length
-        [self dscWriteCmdWithBRequest:0x00 wValue:totalImageCount wIndex:0x2711 buf:NULL len:0];//Write read length
-        [self dscWriteCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2712 buf:NULL len:0];		//Write read length
-//Save the TOC location
-        [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2713 buf:&save2713 len:1];	//Save the location of the toc
-        [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2714 buf:&save2714 len:1];
-        [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2715 buf:&save2715 len:1];
-        NSLog(@"toc offset: %02x %02x %02x",save2713,save2714,save2715);
-//Set read offset
-        [self dscWriteCmdWithBRequest:0x00 wValue:save2713 wIndex:0x2713 buf:NULL len:0];	//Write read offset
-        [self dscWriteCmdWithBRequest:0x00 wValue:save2714 wIndex:0x2714 buf:NULL len:0];	//Write read offset
-        [self dscWriteCmdWithBRequest:0x00 wValue:save2715 wIndex:0x2715 buf:NULL len:0];	//Write read offset0
-
-//Do what you gotta do...
-        [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2301 buf:&readChar len:1];
-        NSLog(@"read 0x2301: %02x",readChar);
-
-//Read TOC via bulk pipe
-        [self dscWriteCmdWithBRequest:0x00 wValue:0x0002 wIndex:0x27a1 buf:NULL len:0];	//Initiate bulk read
-        for (i=0;i<totalImageCount;i++) {
-            bulkLen=256;
-            NSLog(@"going to read toc %i: %i bytes expected",i,bulkLen);
-            err=(*dscIntf)->ReadPipe(dscIntf, 1, toc+i*256,&bulkLen);
-            ShowError(err,"MySPCA504Driver:getStoredMediaObject bulk 1");
-            NSLog(@"toc read: %i bytes",bulkLen);
-            DumpMem(toc+i*256,bulkLen);
-        }
-//Do what you gotta do...
-        [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x27b0 buf:&readChar len:1];
-        NSLog(@"read 0x27b0: %02x",readChar);
-
-        //Extract the needed info from our entry
-        myTocEntry=toc+256*idx;
-        myOffset=(((UInt32)myTocEntry[0x01])<<7)+(((UInt32)myTocEntry[0x02])<<15);
-        myLength=((UInt32)myTocEntry[0x0b])+(((UInt32)myTocEntry[0x0c])<<8)+(((UInt32)myTocEntry[0x0d])<<16);
-        NSLog(@"My Image: offset %i, length: %i",myOffset,myLength);
-//Allocate a buffer to hold the JPEG image (623 bytes header + data + 2 bytes footer)
-        MALLOC(imgData,unsigned char*,625+myLength,"MySPCA504Driver:getStoredMediaObject imgData");
-        if (!imgData) ok=NO;
-    }
-    if (ok) {
-//Configure the camera's Pseudo-DMA to transfer the image
-        arg=myLength&0xff;
-        [self dscWriteCmdWithBRequest:0x00 wValue:arg wIndex:0x2710 buf:NULL len:0];	//Write read length
-        arg=(myLength&0xff00)>>8;
-        [self dscWriteCmdWithBRequest:0x00 wValue:arg wIndex:0x2711 buf:NULL len:0];	//Write read length
-        arg=(myLength&0xff0000)>>16;
-        [self dscWriteCmdWithBRequest:0x00 wValue:arg wIndex:0x2712 buf:NULL len:0];	//Write read length
-        arg=myOffset&0xff;
-        [self dscWriteCmdWithBRequest:0x00 wValue:arg wIndex:0x2713 buf:NULL len:0];	//Write read offset
-        arg=(myOffset&0xff00)>>8;
-        [self dscWriteCmdWithBRequest:0x00 wValue:arg wIndex:0x2714 buf:NULL len:0];	//Write read offset
-        arg=(myOffset&0xff0000)>>16;
-        [self dscWriteCmdWithBRequest:0x00 wValue:arg wIndex:0x2715 buf:NULL len:0];	//Write read offset
-
-        [self dscWriteCmdWithBRequest:0x00 wValue:0x0002 wIndex:0x27a1 buf:NULL len:0];	//Initiate bulk read
-        bulkLen=myLength;
-        NSLog(@"going to read %i bytes of image data",bulkLen);
-        err=(*dscIntf)->ReadPipe(dscIntf, 1, imgData+623,&myLength);
-        ShowError(err,"MySPCA504Driver:getStoredMediaObject bulk 2");
-        NSLog(@"Read %i bytes of image data",bulkLen);
-        memcpy(imgData,spcaJpegHeader,623);
-        memcpy(imgData+623+myLength,spcaJpegFooter,2);	//I know, two bytes are ridiculous to memcpy...
-
-        [self dscWriteCmdWithBRequest:0x00 wValue:save2713 wIndex:0x2713 buf:NULL len:0];	//restore read offset
-        [self dscWriteCmdWithBRequest:0x00 wValue:save2714 wIndex:0x2714 buf:NULL len:0];	//restore read offset
-        [self dscWriteCmdWithBRequest:0x00 wValue:save2715 wIndex:0x2715 buf:NULL len:0];	//restore read offset
-
-        data=[[NSData alloc] initWithBytes:imgData length:myLength+625];
-        if (!data) ok=NO;
-    }
-    if (ok) {
-        result=[[[NSBitmapImageRep alloc] initWithData:data] autorelease];
-        if (!result) ok=NO;
-    }
-    
-    [self closeDSCInterface];
-    if (data) [data release]; data=NULL;
-    if (imgData) FREE(toc,"MySPCA504Driver:getStoredMediaObject img data"); toc=NULL;
-    if (toc) FREE(toc,"MySPCA504Driver:getStoredMediaObject toc buffer"); toc=NULL;
-
-    return result;
+    NSBitmapImageRep* rep=[NSBitmapImageRep imageRepWithData:[self dscGetImage:idx]];
+    return rep;	//Currently, macam only accepts NSBitmapImageRep - we should change that...
 }
 
 - (void) eraseStoredMedia {
@@ -245,7 +109,7 @@ static unsigned char spcaJpegFooter[]={0xff,0xd9};
 #endif
 }
 
-- (void) openDSCInterface {
+- (CameraError) openDSCInterface {
     IOUSBFindInterfaceRequest		interfaceRequest;
     io_iterator_t			iterator;
     IOReturn 				err;
@@ -290,11 +154,15 @@ static unsigned char spcaJpegFooter[]={0xff,0xd9};
     //set alternate interface
     err = (*dscIntf)->SetAlternateInterface(dscIntf,0);
     CheckError(err,"openDSCInterface-SetAlternateInterface");
+    if (err) return CameraErrorUSBProblem;
+    if (![self dscInit]) return CameraErrorUSBProblem;
+    return CameraErrorOK;
 }
 
 - (void) closeDSCInterface {
     IOReturn err;
     if (dscIntf) {						//close our interface interface
+        [self dscShutdown];
         if (isUSBOK) {
             err = (*dscIntf)->USBInterfaceClose(dscIntf);
         }
@@ -302,6 +170,387 @@ static unsigned char spcaJpegFooter[]={0xff,0xd9};
         CheckError(err,"closeDSCInterface-Release Interface");
         dscIntf=NULL;
     }
+}
+
+
+- (BOOL) dscInit {
+    unsigned char buf[256];
+    unsigned short numEntries;
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2000 buf:buf len:0];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0013 wIndex:0x2301 buf:buf len:0];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0001 wIndex:0x2883 buf:buf len:0];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0005 wIndex:0x2800 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2800 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0005 wIndex:0x2840 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2840 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0003 wIndex:0x2801 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2801 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0005 wIndex:0x2841 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2841 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0003 wIndex:0x2802 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2802 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0007 wIndex:0x2842 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2842 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0005 wIndex:0x2803 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2803 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x000e wIndex:0x2843 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2843 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0007 wIndex:0x2804 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2804 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2844 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2844 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x000c wIndex:0x2805 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2805 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2845 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2845 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x000f wIndex:0x2806 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2806 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2846 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2846 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0012 wIndex:0x2807 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2807 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2847 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2847 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0004 wIndex:0x2808 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2808 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0005 wIndex:0x2848 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2848 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0004 wIndex:0x2809 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2809 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0006 wIndex:0x2849 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2849 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0004 wIndex:0x280a buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x280a buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0008 wIndex:0x284a buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x284a buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0006 wIndex:0x280b buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x280b buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0014 wIndex:0x284b buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x284b buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0008 wIndex:0x280c buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x280c buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x284c buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x284c buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0011 wIndex:0x280d buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x280d buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x284d buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x284d buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0012 wIndex:0x280e buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x280e buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x284e buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x284e buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0011 wIndex:0x280f buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x280f buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x284f buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x284f buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0004 wIndex:0x2810 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2810 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0007 wIndex:0x2850 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2850 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0004 wIndex:0x2811 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2811 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0008 wIndex:0x2851 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2851 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0005 wIndex:0x2812 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2812 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0011 wIndex:0x2852 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2852 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0007 wIndex:0x2813 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2813 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2853 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2853 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x000c wIndex:0x2814 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2814 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2854 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2854 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0011 wIndex:0x2815 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2815 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2855 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2855 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0015 wIndex:0x2816 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2816 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2856 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2856 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0011 wIndex:0x2817 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2817 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2857 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2857 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0004 wIndex:0x2818 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2818 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x000e wIndex:0x2858 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2858 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0005 wIndex:0x2819 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2819 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0014 wIndex:0x2859 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2859 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0007 wIndex:0x281a buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x281a buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x285a buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x285a buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0009 wIndex:0x281b buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x281b buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x285b buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x285b buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x000f wIndex:0x281c buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x281c buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x285c buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x285c buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001a wIndex:0x281d buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x281d buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x285d buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x285d buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0018 wIndex:0x281e buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x281e buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x285e buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x285e buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0013 wIndex:0x281f buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x281f buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x285f buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x285f buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0005 wIndex:0x2820 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2820 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2860 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2860 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0007 wIndex:0x2821 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2821 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2861 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2861 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x000b wIndex:0x2822 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2822 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2862 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2862 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0011 wIndex:0x2823 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2823 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2863 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2863 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0014 wIndex:0x2824 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2824 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2864 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2864 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0021 wIndex:0x2825 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2825 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2865 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2865 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001f wIndex:0x2826 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2826 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2866 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2866 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0017 wIndex:0x2827 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2827 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2867 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2867 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0007 wIndex:0x2828 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2828 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2868 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2868 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x000b wIndex:0x2829 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2829 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2869 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2869 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0011 wIndex:0x282a buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x282a buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x286a buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x286a buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0013 wIndex:0x282b buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x282b buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x286b buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x286b buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0018 wIndex:0x282c buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x282c buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x286c buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x286c buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001f wIndex:0x282d buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x282d buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x286d buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x286d buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0022 wIndex:0x282e buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x282e buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x286e buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x286e buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001c wIndex:0x282f buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x282f buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x286f buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x286f buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x000f wIndex:0x2830 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2830 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2870 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2870 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0013 wIndex:0x2831 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2831 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2871 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2871 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0017 wIndex:0x2832 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2832 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2872 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2872 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001a wIndex:0x2833 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2833 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2873 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2873 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001f wIndex:0x2834 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2834 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2874 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2874 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0024 wIndex:0x2835 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2835 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2875 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2875 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0024 wIndex:0x2836 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2836 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2876 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2876 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2837 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2837 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2877 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2877 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0016 wIndex:0x2838 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2838 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2878 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2878 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001c wIndex:0x2839 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2839 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x2879 buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2879 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001d wIndex:0x283a buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x283a buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x287a buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x287a buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001d wIndex:0x283b buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x283b buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x287b buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x287b buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0022 wIndex:0x283c buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x283c buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x287c buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x287c buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x283d buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x283d buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x287d buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x287d buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001f wIndex:0x283e buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x283e buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x287e buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x287e buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x283f buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x283f buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x001e wIndex:0x287f buf:buf len:0];
+    [self dscReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x287f buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0001 wIndex:0x2501 buf:buf len:0];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2306 buf:buf len:0];
+
+    [self dscWriteCmdWithBRequest:0x08 wValue:0x0000 wIndex:0x0006 buf:buf len:0];
+    {
+        BOOL done=NO;
+        int tries=30;
+        while (!done) {
+            [self dscReadCmdWithBRequest:0x01 wValue:0x0000 wIndex:0x0001 buf:buf len:1];
+            if (buf[0]==0x86) {
+                done=YES;
+            } else {
+                usleep(500000);
+                tries--;
+                if (tries<=0) done=YES; 
+            }
+            NSAssert(tries>=0,@"initial check timed out"); 
+        }
+        //it's read additional 2 times (why?)
+        [self dscReadCmdWithBRequest:0x01 wValue:0x0000 wIndex:0x0001 buf:buf len:1];
+        [self dscReadCmdWithBRequest:0x01 wValue:0x0000 wIndex:0x0001 buf:buf len:1];
+    }
+    [self dscWriteCmdWithBRequest:0x01 wValue:0x0000 wIndex:0x000f buf:buf len:0];
+
+    //Do a stupid toc read - just because the win driver also daes that
+    [self dscReadCmdWithBRequest:0x0b wValue:0x0000 wIndex:0x0000 buf:buf len:2];
+    numEntries=buf[0]+(buf[1]<<8);
+    [self dscWriteCmdWithBRequest:0x0a wValue:numEntries wIndex:0x000c buf:buf len:0];
+
+    [self dscWaitForPipeReady];
+
+    [self dscReadBulkTo:buf from:0 length:32*numEntries];
+
+    [self dscReadCmdWithBRequest:0x01 wValue:0x0000 wIndex:0x0005 buf:buf len:1];
+    [self dscReadCmdWithBRequest:0x01 wValue:0x0001 wIndex:0x0005 buf:buf len:1];
+    [self dscReadCmdWithBRequest:0x01 wValue:0x0002 wIndex:0x0005 buf:buf len:1];
+    [self dscReadCmdWithBRequest:0x01 wValue:0x0003 wIndex:0x0005 buf:buf len:1];
+    [self dscReadCmdWithBRequest:0x01 wValue:0x0000 wIndex:0x0005 buf:buf len:1];
+    [self dscReadCmdWithBRequest:0x01 wValue:0x0001 wIndex:0x0005 buf:buf len:1];
+    return YES;
+}
+
+- (void) dscShutdown {
+    unsigned char buf[2];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0001 wIndex:0x2306 buf:buf len:0];
+    [self dscWriteCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x0d04 buf:buf len:0];
+}
+
+- (long) dscCountObjects {					//Returns number of objects on cam or -1 if err
+    unsigned char buf[2];
+    [self dscReadCmdWithBRequest:0x0b wValue:0x0000 wIndex:0x0000 buf:buf len:2];
+    return buf[0]+(buf[1]<<8);
+}
+
+- (BOOL) dscGetTocEntry:(int)idx to:(unsigned char*)entry {	//Returns success
+    unsigned char buf[256];
+    unsigned short numObjects=[self dscCountObjects];
+    
+    [self dscWriteCmdWithBRequest:0x0a wValue:numObjects wIndex:0x000c buf:buf len:0];
+    [self dscWaitForPipeReady];
+    [self dscReadBulkTo:entry from:32*idx length:32];
+
+    return YES;
+}
+
+- (NSData*) dscGetThumb:(int)idx {
+    return NULL;
+}
+
+- (NSData*) dscGetImage:(int)idx {
+    unsigned char buf[2];
+    unsigned char tocEntry[32];
+    unsigned long length;
+    NSMutableData* imageData;
+    unsigned char* imageBuf;
+
+    if (![self dscGetTocEntry:idx*2 to:tocEntry]) return NULL;	//Not sure if this is always the image
+    length=tocEntry[28]+(tocEntry[29]<<8)+(tocEntry[30]<<16);
+    if (tocEntry[31]!=0) {
+#ifdef VERBOSE
+        NSLog(@"invalid image length, toc entry =");
+        DumpMem(tocEntry,32);
+#endif
+        return NULL;
+    }
+    imageData=[NSMutableData dataWithLength:length];
+    imageBuf=[imageData mutableBytes];
+    [self dscReadCmdWithBRequest:0x0b wValue:0x0000 wIndex:0x0005 buf:buf len:1];
+    [self dscReadCmdWithBRequest:0x01 wValue:0x0040 wIndex:0x0005 buf:buf len:1];
+    [self dscWriteCmdWithBRequest:0x0a wValue:idx+1 wIndex:0x000d buf:buf len:0];
+
+    [self dscWaitForPipeReady];
+
+    [self dscReadBulkTo:imageBuf from:0 length:length];
+    return imageData;
+}
+
+
+- (BOOL) dscWaitForPipeReady {
+    unsigned char c;
+    int retries=10;
+    BOOL done=NO;
+    
+    while (!done) {	//wait until bulk is ready
+        [self dscReadCmdWithBRequest:0x0b wValue:0x0000 wIndex:0x0004 buf:&c len:1];
+        if (c) done=YES;
+        else {
+            usleep(500000);
+            retries--;
+            if (retries<=0) {
+                done=YES;
+                NSLog(@"wait for bulk ready timed out");
+            }
+        }
+    }
+    return (retries>0);
 }
 
 - (BOOL) dscReadCmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len {
@@ -316,6 +565,10 @@ static unsigned char spcaJpegFooter[]={0xff,0xd9};
     req.wLength=len;
     req.pData=buf;
     err=(*dscIntf)->ControlRequest(dscIntf,0,&req);
+//    NSLog(@"in req:%02x val:%04x idx:%04x len:%i",bReq,wVal,wIdx,len);
+//    if (len==1) NSLog(@"result:%02x",*((unsigned char*)buf));
+//    else if (len==2) NSLog(@"result:%04x",*((unsigned short*)buf));
+//    else NSLog(@"result:%08x",*((unsigned long*)buf));
     CheckError(err,"usbReadCmdWithBRequest");
     if (err=kIOUSBPipeStalled) (*dscIntf)->ClearPipeStall(dscIntf,0);
     return (!err);
@@ -333,9 +586,39 @@ static unsigned char spcaJpegFooter[]={0xff,0xd9};
     req.wLength=len;
     req.pData=buf;
     err=(*dscIntf)->ControlRequest(dscIntf,0,&req);
+//    NSLog(@"out req:%02x val:%04x idx:%04x",bReq,wVal,wIdx);
     CheckError(err,"usbWriteCmdWithBRequest");
     if (err=kIOUSBPipeStalled) (*dscIntf)->ClearPipeStall(dscIntf,0);
     return (!err);
 }
+
+
+- (BOOL) dscReadBulkTo:(unsigned char*)dest from:(int)startOffset length:(int)length {
+#define BULK_BLOCK_LENGTH 256
+    unsigned char buf[BULK_BLOCK_LENGTH];
+    unsigned long currBlockOffset=0;
+    unsigned long endOffset=startOffset+length;
+    unsigned long copied=0;
+    UInt32 readLength=BULK_BLOCK_LENGTH;
+    IOReturn err=0;
+    while (!err) {
+        err=((IOUSBInterfaceInterface182*)(*dscIntf))->ReadPipeTO(dscIntf,1,buf,&readLength,100,300);
+        if (!err) {		//Read was ok
+            long from=MAX(startOffset,currBlockOffset);
+            long to=MIN(endOffset,currBlockOffset+BULK_BLOCK_LENGTH);
+            long len=to-from;
+            if (len>0) {	//Does the block have data we want?
+                long copySrcOffset=(startOffset>currBlockOffset)?startOffset:0;
+                memcpy(dest+copied,buf+copySrcOffset,len);
+                copied+=len;
+            }
+            currBlockOffset+=BULK_BLOCK_LENGTH;
+        }
+    }
+    return (copied==length);
+}
+
+
+
 
 @end
