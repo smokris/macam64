@@ -169,6 +169,7 @@ static NSMutableDictionary* prefsDict=NULL;
     [self registerCameraDriver:[MyVicamDriver class]];
     [self registerCameraDriver:[MySPCA504Driver class]];
     [self registerCameraDriver:[MyOV511Driver class]];
+    [self registerCameraDriver:[MyOV511PlusDriver class]];
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];
 //    [self registerCameraDriver:[MyIntelPCCamera class]];
 //    [self registerCameraDriver:[MyGrandtecVcap class]];
