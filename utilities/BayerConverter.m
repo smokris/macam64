@@ -377,8 +377,6 @@
     long x,y;
     long r1,g1,b1,r2,g2,b2,r3,g3,b3,r4,g4,b4;
     unsigned long r1c1,r1c2,r1c3,r2c1,r2c2,r2c3,r3c1,r3c2,r3c3,r4c1,r4c2,r4c3; //Row, column
-    unsigned long dstUL1,dstUL2,dstUL3,dstUL4;
-    unsigned short dstUS1,dstUS2;
 
     long width=MIN(sourceWidth-2,destinationWidth);	//Find out the real (inner) blit size
     long height=MIN(sourceHeight-2,destinationHeight);
@@ -472,25 +470,17 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
             }                
             //Step 4: Assemble values and write to destination, update destination pointers
             if (dstBPP==4) {
-                dstUL1=0xff000000+(r1<<16)+(g1<<8)+(b1);
-                dstUL2=0xff000000+(r2<<16)+(g2<<8)+(b2);
-                dstUL3=0xff000000+(r3<<16)+(g3<<8)+(b3);
-                dstUL4=0xff000000+(r4<<16)+(g4<<8)+(b4);
-                *((unsigned long*)(dst1Run))=dstUL1;
-                *((unsigned long*)(dst1Run+4))=dstUL2;
-                *((unsigned long*)(dst2Run))=dstUL3;
-                *((unsigned long*)(dst2Run+4))=dstUL4;
+                *((unsigned long*)(dst1Run))=0xff000000+(r1<<16)+(g1<<8)+(b1);
+                *((unsigned long*)(dst1Run+4))=0xff000000+(r2<<16)+(g2<<8)+(b2);
+                *((unsigned long*)(dst2Run))=0xff000000+(r3<<16)+(g3<<8)+(b3);
+                *((unsigned long*)(dst2Run+4))=0xff000000+(r4<<16)+(g4<<8)+(b4);
                 dst1Run+=8;
                 dst2Run+=8;
             } else {
-                dstUL1=(r1<<24)+(g1<<16)+(b1<<8)+r2;
-                dstUS1=(g2<<8)+b2;
-                dstUL2=(r3<<24)+(g3<<16)+(b3<<8)+r4;
-                dstUS2=(g4<<8)+b4;
-                *((unsigned long*)(dst1Run))=dstUL1;
-                *((unsigned short*)(dst1Run+4))=dstUS1;
-                *((unsigned long*)(dst2Run))=dstUL2;
-                *((unsigned short*)(dst2Run+4))=dstUS2;
+                *((unsigned long*)(dst1Run))=(r1<<24)+(g1<<16)+(b1<<8)+r2;
+                *((unsigned short*)(dst1Run+4))=(g2<<8)+b2;
+                *((unsigned long*)(dst2Run))=(r3<<24)+(g3<<16)+(b3<<8)+r4;
+                *((unsigned short*)(dst2Run+4))=(g4<<8)+b4;
                 dst1Run+=6;
                 dst2Run+=6;
             }
