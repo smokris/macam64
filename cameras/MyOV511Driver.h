@@ -178,6 +178,7 @@ Doing these amounts of defines is often called bad style. We should find a bette
 
 #define SENS_OV7610		1
 #define SENS_SAA7111A		2		
+#define SENS_OV7620		3
 
 typedef struct OV511CompleteChunk {	//The description of a ready-to-decode chunk
     long start;			//start offset in grabBuffer
@@ -270,6 +271,7 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
 //I2C
 - (int) i2cWrite:(UInt8) reg val:(UInt8) val;
 - (int) i2cRead:(UInt8) reg;
+- (int) i2cRead2;
 
 @end
 

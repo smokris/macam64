@@ -389,12 +389,27 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
             customId = buf[0];
             switch(customId) {
                 case 0:
-                    sensorType = SENS_OV7610;
-                    sensorWrite = OV7610_I2C_WRITE_ID;
-                    sensorRead = OV7610_I2C_READ_ID;
+                    for(i = 0; i <= 7; ++i) {
+                        buf[0] = OV7610_I2C_WRITE_ID + i * 4;
+                        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
+                        if([self i2cRead2] != 0xff)
+                            break;
+                    }
+                    sensorWrite = OV7610_I2C_WRITE_ID + i * 4;
+                    sensorRead = OV7610_I2C_READ_ID + i * 4;
+                    buf[0] = sensorRead;
+                    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SRA buf:buf len:1];
+                    if(([self i2cRead:0x1f] | 0x03) == 0x03) {
+                        sensorType = SENS_OV7610;
 #ifdef OV511_DEBUG
-                    NSLog(@"macam: OV511 Non Custom ID"); 
+                        NSLog(@"macam: OV511 Non Custom ID with OV7610");
 #endif
+                    } else {
+                        sensorType = SENS_OV7620;
+#ifdef OV511_DEBUG
+                        NSLog(@"macam: OV511 Non Custom ID with OV7620");
+#endif
+                    }
                     break;
                 case 6:
                     sensorType = SENS_SAA7111A;
@@ -450,7 +465,7 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
         buf[0] = 0x00;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_CE_EN buf:buf len:1];
 
-        if(sensorType == SENS_OV7610) {
+        if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620) {
             [self i2cWrite:OV7610_REG_RWB val:0x05];
             [self i2cWrite:OV7610_REG_EC val:0xff];
             [self i2cWrite:OV7610_REG_COMB val:0x01];
@@ -953,6 +968,42 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
         return -1;
 
     retries = 3;
+    while(--retries >= 0) {
+        /* initiate read */
+        buf[0] = 0x05;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+
+        /* wait until bus idle */
+        do {
+            [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+        } while((buf[0] & 0x01) == 0);
+
+        if((buf[0] & 0x02) == 0)
+            break;
+
+        /* abort I2C bus before retrying */
+        buf[0] = 0x05;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+    }
+ 
+    if(retries < 0)
+        return -1;
+
+    /* retrieve data */
+    [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SDA buf:buf len:1];
+    val = buf[0];
+
+    buf[0] = 0x05;
+    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+
+    return val;
+}
+
+- (int) i2cRead2 {
+    UInt8 buf[16];
+    UInt8 val;
+    int retries = 3;
+
     while(--retries >= 0) {
         /* initiate read */
         buf[0] = 0x05;
