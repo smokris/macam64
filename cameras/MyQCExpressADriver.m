@@ -347,8 +347,15 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     long frameRun;
     long dataRunCode;
     long dataRunLength;
-    if (result==kIOReturnUnderrun) result=0;			//Data underrun is not too bad (Jaguar fix)
-    gCtx->framesSinceLastChunk+=STV600_FRAMES_PER_TRANSFER;
+    if (result == kIOReturnUnderrun) result=0;			//Data underrun is not too bad (Jaguar fix)
+
+	if (result == kIOUSBNotSent2Err)
+		result = 0;
+
+	if (result == kIOReturnIsoTooOld)
+		result = 0;
+
+	gCtx->framesSinceLastChunk+=STV600_FRAMES_PER_TRANSFER;
     if (result) {						//USB error handling
         *(gCtx->shouldBeGrabbing)=NO;				//We'll stop no matter what happened
         if (!gCtx->err) {
@@ -529,69 +536,98 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
     [NSThread exit];
 }
 
-- (CameraError) decodingThread {
-    STV600ChunkBuffer currChunk;
-    long i;
-    CameraError err=CameraErrorOK;
-    grabbingThreadRunning=NO;
-    
-    if (![self setupGrabContext]) {
-        err=CameraErrorNoMem;
+- (CameraError) decodingThread
+{
+    STV600ChunkBuffer  currChunk;
+    long               i;
+    CameraError        err = CameraErrorOK;
+
+	grabbingThreadRunning = NO;
+
+
+	if (![self setupGrabContext])
+	{
+        err = CameraErrorNoMem;
         shouldBeGrabbing=NO;
     }
 
-    if (shouldBeGrabbing) {
-        grabbingThreadRunning=YES;
-        [NSThread detachNewThreadSelector:@selector(grabbingThread:) toTarget:self withObject:NULL];    //start grabbingThread
+    if (shouldBeGrabbing)
+	{
+		grabbingThreadRunning=YES;
+		[NSThread detachNewThreadSelector:@selector(grabbingThread:) toTarget:self withObject:NULL];    //start grabbingThread
     }
-    
-//Following: The decoding loop
-    while (shouldBeGrabbing) {
-        [grabContext.chunkReadyLock lock];				//wait for ready-to-decode chunks
-        while ((grabContext.numFullBuffers>0)&&(shouldBeGrabbing)) {	//decode all chunks or skip if we have stopped grabbing
-            [grabContext.chunkListLock lock];				//lock for access to chunk list
-            currChunk=grabContext.fullChunkBuffers[0];			//take first (oldest) chunk
 
-/* Note: we may safely take out the buffer if we but it back in later since grabbingThread doesn't require to have a constant number. And if there are at least three buffers, there's always one to take. But we have to give it back before completion for a clean dealloc */
 
-            for(i=1;i<grabContext.numFullBuffers;i++) {			//all others go one down
-                grabContext.fullChunkBuffers[i-1]=grabContext.fullChunkBuffers[i];
-            }
-            grabContext.numFullBuffers--;				//we have taken one from the list
-            [grabContext.chunkListLock unlock];				//we're done accessing the chunk list.
-            [self decodeChunk:&currChunk];
-/*Now it's time to give back the chunk buffer we used - no matter if we used it or not. In case it was discarded this is somehow not the most elegant solution because we have to lock chunkListLock twice, but that should be not too much of a problem since we obviously have plenty of image data to waste... */
-            [grabContext.chunkListLock lock];			//lock for access to chunk list
-            grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers]=currChunk;	//give back chunk buffer
-            grabContext.numEmptyBuffers++;
-            [grabContext.chunkListLock unlock];			//we're done accessing the chunk list.
+    while (shouldBeGrabbing)
+	{
+		// wait for ready-to-decode chunks
+		[grabContext.chunkReadyLock lock];				
+
+		// decode new chunks or skip if we have stopped grabbing
+		if ((grabContext.numFullBuffers>0)&&(shouldBeGrabbing))
+		{
+			// lock access to chunk list
+			[grabContext.chunkListLock lock];
+
+			// discard all but the newest new chunk
+			currChunk = grabContext.fullChunkBuffers[--grabContext.numFullBuffers];
+			for (;grabContext.numFullBuffers > 0; grabContext.numFullBuffers--)
+				grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers++] = grabContext.fullChunkBuffers[grabContext.numFullBuffers-1];
+
+			// we're done accessing the chunk list.
+			[grabContext.chunkListLock unlock];
+
+			// do the work
+			[self decodeChunk:&currChunk];
+
+			// lock for access to chunk list
+			[grabContext.chunkListLock lock];			
+
+			// re-insert the used chunk buffer
+			grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers++]=currChunk;
+
+			// we're done accessing the chunk list.
+			[grabContext.chunkListLock unlock];			
         }
     }
-    while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish
-    //We need to sleep here because otherwise the compiler would optimize the loop away
-    
-    [self cleanupGrabContext];				//grabbingThread doesn't need the context any more since it's done
 
-    if (!err) err=grabContext.err;			//Forward decoding thread error
-    return grabContext.err;				//notify delegate
+	// Active wait until grabbing thread stops
+    while (grabbingThreadRunning) {}			
+
+	// grabbingThread doesn't need the context any more since it's done
+    [self cleanupGrabContext];
+
+	// Forward decoding thread error if sensible
+    if (!err)
+		return grabContext.err;
+	else
+		return err;
 }
 
-- (void) decodeChunk:(STV600ChunkBuffer*) chunkBuffer {
-    if (!nextImageBufferSet) return;			//No need to decode
+- (void) decodeChunk:(STV600ChunkBuffer*) chunkBuffer
+{
+	if (!nextImageBufferSet)
+		return;			//No need to decode
+
     [imageBufferLock lock];				//lock image buffer access
-    if (nextImageBuffer!=NULL) {
-        [bayerConverter convertFromSrc:chunkBuffer->buffer
-                                toDest:nextImageBuffer
-                           srcRowBytes:[self width]+extraBytesInLine
-                           dstRowBytes:nextImageBufferRowBytes
-                                dstBPP:nextImageBufferBPP
-                                  flip:hFlip];
-    }
-    lastImageBuffer=nextImageBuffer;			//Copy nextBuffer info into lastBuffer
-    lastImageBufferBPP=nextImageBufferBPP;
-    lastImageBufferRowBytes=nextImageBufferRowBytes;
-    nextImageBufferSet=NO;				//nextBuffer has been eaten up
-    [imageBufferLock unlock];				//release lock
+    if (!nextImageBuffer)
+	{
+		[imageBufferLock unlock];				//release lock
+		return;
+	}
+	
+	[bayerConverter convertFromSrc:chunkBuffer->buffer
+							toDest:nextImageBuffer
+						srcRowBytes:[self width]+extraBytesInLine
+						dstRowBytes:nextImageBufferRowBytes
+							dstBPP:nextImageBufferBPP];
+	lastImageBuffer=nextImageBuffer;			//Copy nextBuffer info into lastBuffer
+	lastImageBufferBPP=nextImageBufferBPP;
+	lastImageBufferRowBytes=nextImageBufferRowBytes;
+	nextImageBufferSet=NO;				//nextBuffer has been eaten up
+
+	[imageBufferLock unlock];				//release lock
+
     [self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer
     if (autoGain) {
         [sensor setLastMeanBrightness:[bayerConverter lastMeanBrightness]];
@@ -602,6 +638,13 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
 
 - (BOOL) writeSTVRegister:(long)reg value:(unsigned char)val {
     return [self usbWriteCmdWithBRequest:4 wValue:(unsigned short)reg wIndex:0 buf:&val len:1];
+}
+
+- (BOOL) writeWideSTVRegister:(long)reg value:(unsigned short int)val {
+	if ( [self writeSTVRegister:reg value:(val&0xff)] )
+		return [self writeSTVRegister:(reg+1) value:((val>>8)&0xff)];
+	else
+		return NO;
 }
 
 - (BOOL) camBoot {

@@ -27,7 +27,7 @@
 #include <IOKit/IOCFPlugIn.h>
 #include <IOKit/usb/IOUSBLib.h>
 #include "GlobalDefs.h"
-#import "MyPhilipsCameraDriver.h"
+//#import "MyPhilipsCameraDriver.h"
 #import "BayerConverter.h"
 #import "MySTV600Sensor.h"
 
@@ -118,4 +118,7 @@ typedef struct STV600GrabContext {
 - (CameraError) decodingThread;				//Entry method for the chunk to image decoding thread
 
 - (BOOL) writeSTVRegister:(long)reg value:(unsigned char)val; //Sets a controller chip register. Public for the sensors.
+
+- (BOOL) writeWideSTVRegister:(long)reg value:(unsigned short int)val; //Sets two controller chip registers with hi- and lo-word. Public for the sensors.
+
 @end
