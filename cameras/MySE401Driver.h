@@ -35,6 +35,8 @@
     BayerConverter* bayerConverter;	//Our decoder for Bayer Matrix sensors
     CameraError grabbingError;		//The error code passed back from grabbingThread
     NSMutableData* fillingChunk;	//The Chunk currently filling up
+    NSMutableData* collectingChunk;	//The Chunk collecting the depacketized data (in compressed mode)
+    long collectingChunkBytes;		//The amount of valid, collected data currently in collectingChunk
     long videoBulkReadsPending;		//The number of USB bulk reads we still expect a read from - to see when we can stop grabbingThread
     BOOL grabbingThreadRunning;		//For active wait until grabbingThread has finished
 
@@ -55,6 +57,11 @@
 
     int maxWidth;			//real camera sensor size
     int maxHeight;			//real camera sensor size
+    int resolutionSupport[ResolutionSVGA+1];	//Resolution support bit mask
+    // 1=Resolution supported natively,	2=supported (2*subsampling), 4=supported (4*subsampling)
+    BOOL streamIsCompressed;		//If the stream is JangGu-compressed or raw Bayer
+    NSMutableData* jangGuBuffer;	//Buffer to hold the JangGu-decompressed data
+    float lastMeanBrightness;		//Our average brightness (for JangGu - where no BayerConverter is used)
 }
 
 #define SE401_NUM_CHUNKS 3
@@ -69,10 +76,6 @@
 - (BOOL) supportsResolution:(CameraResolution)res fps:(short)rate;
 - (CameraResolution) defaultResolutionAndRate:(short*)rate;
 
-- (BOOL) canSetGain;
-- (void) setGain:(float)val;
-- (BOOL) canSetShutter;
-- (void) setShutter:(float)val;
 - (BOOL) canSetSharpness;
 - (void) setSharpness:(float)v;
 - (BOOL) canSetBrightness;
@@ -86,6 +89,14 @@
 - (BOOL) canSetWhiteBalanceMode;
 - (BOOL) canSetWhiteBalanceModeTo:(WhiteBalanceMode)newMode;
 - (void) setWhiteBalanceMode:(WhiteBalanceMode)newMode;
+- (BOOL) canSetGain;
+- (void) setGain:(float)val;
+- (BOOL) canSetShutter;
+- (void) setShutter:(float)val;
+- (BOOL) canSetAutoGain;
+- (void) setAutoGain:(BOOL)v;
+- (BOOL) canSetHFlip;
+- (short) maxCompression;
 
 //Grabbing
 - (CameraError) startupGrabbing;
