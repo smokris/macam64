@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>Auto gain</key>
+	<string>Lichtautomatik</string>
+	<key>Automatic</key>
+	<string>Automatisch</string>
+	<key>CPiA-based camera</key>
+	<string>Kamera (CPiA-basiert)</string>
+	<key>Camera</key>
+	<string>Kamera</string>
+	<key>CameraErrorBusy</key>
+	<string>Kamera besetzt</string>
+	<key>CameraErrorInternal</key>
+	<string>Interner Fehler</string>
+	<key>CameraErrorNoBandwidth</key>
+	<string>USB-Bandbreite
+ausgeschöpft</string>
+	<key>CameraErrorNoCam</key>
+	<string>Keine Kamera</string>
+	<key>CameraErrorNoMem</key>
+	<string>Nicht genug Speicher</string>
+	<key>CameraErrorNoPower</key>
+	<string>Nicht genug Strom
+für die Kamera</string>
+	<key>CameraErrorOK</key>
+	<string>OK</string>
+	<key>CameraErrorTimeout</key>
+	<string>Prozessor
+ausgelastet</string>
+	<key>CameraErrorUSBProblem</key>
+	<string>USB-Fehler</string>
+	<key>CameraErrorUnimplemented</key>
+	<string>Nicht unterstuetzt</string>
+	<key>Compress:</key>
+	<string>Kompr.:</string>
+	<key>Dummy camera for user feedback</key>
+	<string>Pseudokamera für Rückmeldungen</string>
+	<key>Flip</key>
+	<string>Spiegeln</string>
+	<key>Format:</key>
+	<string>Format:</string>
+	<key>Fps:</key>
+	<string>Bps:</string>
+	<key>Gain:</key>
+	<string>Verst.:</string>
+	<key>Gamma:</key>
+	<string>Gamma:</string>
+	<key>Image Data</key>
+	<string>Bilddaten</string>
+	<key>Indoor</key>
+	<string>Kunstlicht</string>
+	<key>Linear</key>
+	<string>Unkorrigiert</string>
+	<key>Outdoor</key>
+	<string>Sonnenlicht</string>
+	<key>STV680-based camera</key>
+	<string>Dual-Modus Kamera</string>
+	<key>Save as defaults</key>
+	<string>Parameter merken</string>
+	<key>Shutter:</key>
+	<string>B-Zeit:</string>
+	<key>UnknownError</key>
+	<string>Unbekannter Fehler</string>
+	<key>WB</key>
+	<string>WB</string>
+</dict>
+</plist>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>Camera video settings</key>
+	<string>Camera video settings</string>
+	<key>Change camera</key>
+	<string>Change camera</string>
+	<key>Download</key>
+	<string>Download</string>
+	<key>Download Media?</key>
+	<string>Download Media?</string>
+	<key>Download media</key>
+	<string>Download media</string>
+	<key>No</key>
+	<string>No</string>
+	<key>Pause</key>
+	<string>Pause</string>
+	<key>Pause camera video</key>
+	<string>Pause camera video</string>
+	<key>Play</key>
+	<string>Play</string>
+	<key>Play camera video</key>
+	<string>Play camera video</string>
+	<key>Save current image</key>
+	<string>Save current image</string>
+	<key>Save image</key>
+	<string>Save image</string>
+	<key>Save like this</key>
+	<string>Save like this</string>
+	<key>Settings</key>
+	<string>Settings</string>
+	<key>Status: A problem occurred - please check files</key>
+	<string>Status: A problem occurred - please check files</string>
+	<key>Status: CPU too busy</key>
+	<string>Status: CPU too busy</string>
+	<key>Status: Camera not found (this shouldn't happen)</key>
+	<string>Status: Camera not found (this shouldn't happen)</string>
+	<key>Status: Camera switch failed</key>
+	<string>Status: Camera switch failed</string>
+	<key>Status: Camera unplugged</key>
+	<string>Status: Camera unplugged</string>
+	<key>Status: Camera used by another app</key>
+	<string>Status: Camera used by another app</string>
+	<key>Status: Conntected to </key>
+	<string>Status: Conntected to </string>
+	<key>Status: Downloading number %i</key>
+	<string>Status: Downloading number %i</string>
+	<key>Status: Internal error (this shouldn't happen)</key>
+	<string>Status: Internal error (this shouldn't happen)</string>
+	<key>Status: Media downloaded from camera</key>
+	<string>Status: Media downloaded from camera</string>
+	<key>Status: Media not downloaded</key>
+	<string>Status: Media not downloaded</string>
+	<key>Status: No Camera</key>
+	<string>Status: No Camera</string>
+	<key>Status: Not enough USB bus power</key>
+	<string>Status: Not enough USB bus power</string>
+	<key>Status: Not enough bandwidth</key>
+	<string>Status: Not enough bandwidth</string>
+	<key>Status: Out of memory</key>
+	<string>Status: Out of memory</string>
+	<key>Status: Unsupported</key>
+	<string>Status: Unsupported</string>
+	<key>Status: Paused</key>
+	<string>Status: Paused</string>
+	<key>Status: Pausing</key>
+	<string>Status: Pausing</string>
+	<key>Status: Playing</key>
+	<string>Status: Playing</string>
+	<key>Status: USB communication problem</key>
+	<string>Status: USB communication problem</string>
+	<key>Status: Unknown error (this shouldn't happen)</key>
+	<string>Status: Unknown error (this shouldn't happen)</string>
+	<key>Switch to next camera</key>
+	<string>Switch to next camera</string>
+	<key>The camera you just plugged in contains %i stored images. Do you want to download them to your computer?</key>
+	<string>The camera you just plugged in contains %i stored images. Do you want to download them to your computer?</string>
+	<key>The camera you just plugged in contains one stored image. Do you want to download them to your computer?</key>
+	<string>The camera you just plugged in contains one stored image. Do you want to download them to your computer?</string>
+	<key>Yes</key>
+	<string>Yes</string>
+</dict>
+</plist>

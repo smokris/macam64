@@ -1,0 +1,268 @@
+STV680 Communication - Written 25.2.2002 by Matthias Krauss
+
+This text describes some parts of the communication protocol of the STM Microelectronics' STV680 chip. The information here is not based on official docs but a compilation of information publicly available and some very basic testing. It is mainly based on the GPL Linux driver suite (pencam2, version 0.65) by Bart Hartgers, Kevin Sisson and others (see their documentation). So this text doesn't publish any secret or proprietary information. It is intended as an aid for people who want to do something with such a camera. It assumes that you already know a bit about how the USB works. 
+
+--------------------------------------------------------------
+Part 1: General
+--------------------------------------------------------------
+
+USB Configurations
+------------------
+The camera only seems to have one USB configuration. There are no problems using it.
+
+
+USB Interfaces
+--------------
+There also seeems to be only one interface. So there's no question which one to use...
+
+
+USB Alt settings
+----------------
+The interface has at least two alternate settings: alt 0 doesn't allocate USB bandwidth so it should be used whenever there's no media transfer. For media transfer (downloading images from the camera, webcam-like video streaming etc.) there's alt setting 1 which allocates enough bandwidth to do the transfers. Switch to 1 before transferring and to 0 afterwards.
+
+
+USB Pipes
+---------
+There are two pipes: The default control pipe (0) which is used for all commands - simply speaking: everything that is no media data. The second pipe (1) is a bulk in pipe - it is only available in alt setting 1 and is used for obtaining media from the camera. Unlike other cameras, this one doesn't use isochronous pipes (which makes communication simpler by far).
+
+
+Video data
+----------
+The chipset supports two types of image sensors: CIF or VGA resolution. The camera may then send either full or half resolution (which results in cameras that support two resolutions: either VGA and SIF or CIF and QCIF - I don't know about cams that support all four).
+
+Images and video are sent in raw bayer format. This has some advantages and disadvantages: The main advantage is reduced bandwidth for image transfers (one byte per pixel). The downside is that all demosaicing and image processing has to be done in the driver. Except for the bayer format, there's no data compression. The video size is a bit larger than the standard specified so it's necessary to find out the exact dimensions before reading image data. Besides, there are sometimes headers and trailers attached to the images. Finding out where they are can be done in the following manner: When you read the image dimensions, you are also provided with a buffer length - this is the length of the video data including the trailer. So you can calculate the trailer size: trailersize=buffersize-width*height. Make your buffer a bit longer when you read from the bulk pipe (to hold the header that may be sent with it). When the number of bytes transferred than the size originally indicated, expect the additional bytes to be a header. Please don't ask me about the meaning of those data packets. The header is only sometimes sent and seeems to be 64 bytes long (its data is "0xED 0x15" repeated for 32 times - if anyone knows what that means, please tell me). I only found the trailer with SIF images. It is four bytes long and seems to hold timing info or a counter or something similar. I've found it ok to ignore header and trailer.
+
+The video data itself is planar for two rows: Red followed by green1, green2 and blue. An example: VGA. Should be 640 pixels wide, but 644 pixels are actually sent in each row. So there are 322 bytes red, 322 bytes green1, 322 bytes green2 and 322 bytes blue. After that, the sequence repeats for row 3 and 4 and so on. The Bayer matrix used in full resolution mode is:
+
+Green1    Red
+ Blue    Green2
+
+Of course, the matrix in halved resolution mode 
+How do do demosaicing and to postprocess the image is left as an exercise to the reader :)
+
+
+Camera settings and control
+---------------------------
+There are a couple of things you can do with the cam. I only know about a few of them. There are some read-only properties, some that also can be set and some commands that change the camera state (triggers). Here are some examples - the commands are described in more detail in part 2.
+
+Read-Only : Available resolutions
+Read-Only : Properties of current photo mode (bulk size, width, height,...)
+Read-Write: Current photo resolution
+Read-Write: Last error
+Trigger   : Start sending live video in a given resolution (independent of photo resolution)
+Trigger   : Start sending stored media data (taken pictures, maybe audio?)
+Trigger   : Stop all, reset camera to idle
+
+
+Video grabbing command sequence
+-------------------------------
+I don't know how to read the image properties for live video directly. But the following sequence seems to work (assuming the camera is reset, configured and ready to go):
+
+1. Read current photo resolution and save it
+2. Set photo resolution to the desired value
+3. Read bulk size length, image width and height
+4. Set photo resolution back to its original value
+5. Trigger sending live video in the desired resolution
+6. Set altInterface to 1
+7. Repeatedly read image data from the bulk pipe
+8. Set camera to idle
+9. set altInterface to 0
+
+--------------------------------------------------------------
+Part 2: Summary of commands
+--------------------------------------------------------------
+
+
+Set Last Error
+--------------
+bmRequestType : IN|VENDOR|ENDPOINT
+bRequest      : 0x80
+wValue        : 0x0000
+wIndex        : 0x00
+wLength       : 0x02
+
+Return buffer (known):
+0x00: Error: 2=busy
+0x01: offending command
+
+
+Set Camera Idle (has higher priority than other cmds)
+---------------
+bmRequestType : OUT|VENDOR|ENDPOINT
+bRequest      : 0x04
+wValue        : 0x0000
+wIndex        : 0x00
+wLength       : 0x00
+
+
+Get Camera Descriptor (0x0100 - no idea what it's doing)
+---------------------
+bmRequestType : IN|STANDARD|DEVICE
+bRequest      : 0x06
+wValue        : 0x0100
+wIndex        : 0x00
+wLength       : 0x12
+
+Result buffer (known):
+0x08: 0x53 (should be)
+0x09: 0x05 (should be)
+
+
+Get Camera Descriptor (0x0200 - no idea what it's doing)
+---------------------
+bmRequestType : IN|STANDARD|DEVICE
+bRequest      : 0x06
+wValue        : 0x0200
+wIndex        : 0x00
+wLength       : 0x09
+
+Result buffer (known):
+0x08: 0x53 (should be)
+0x09: 0x05 (should be)
+
+
+Set Camera Mode (set photo resolution)
+---------------
+bmRequestType : OUT|VENDOR|DEVICE
+bRequest      : 0x07
+wValue        : 0x0100
+wIndex        : 0x00
+wLength       : 0x08
+
+Param buffer (known):
+0x00: current mode: 0=CIF, 1=VGA, 2=QCIF(???), 3=QVGA
+(set the rest of the buffer to 0x00)
+
+
+Switch to video mode (start live streaming)
+--------------------
+bmRequestType : OUT|VENDOR|ENDPOINT
+bRequest      : 0x09
+wValue        : video mode: 0x0000=CIF, 0x0100=VGA, 0x0200=QCIF(???) ,0x0300=QVGA
+wIndex        : 0x00
+wLength       : 0x00
+
+
+Get Last Error
+--------------
+bmRequestType : IN|VENDOR|ENDPOINT
+bRequest      : 0x80
+wValue        : 0x0000
+wIndex        : 0x00
+wLength       : 0x02
+
+Return buffer (known):
+0x00: Error: 2=busy, others unknown (0 should be "OK")
+0x01: offending command
+
+
+Get Camera Info
+---------------
+bmRequestType : IN|VENDOR|DEVICE (or ENDPOINT???)
+bRequest      : 0x85
+wValue        : 0x0000
+wIndex        : 0x00
+wLength       : 0x10
+
+Return buffer (known):
+0x00: Firmware major revision
+0x01: Firmware minor revision
+0x02: ASIC major revision
+0x03: ASIC minor revision
+0x04: Sensor id msb
+0x05: Upper nibble: Sensor id, lower nibble: Sensor ID revision
+0x07: Supported video modes. Bitfield. 0x01: CIF, 0x02: VGA, 0x04: QCIF 0x08: QVGA
+
+
+Get Camera Mode
+---------------
+bmRequestType : IN|VENDOR|ENDPOINT
+bRequest      : 0x87
+wValue        : 0x0000
+wIndex        : 0x00
+wLength       : 0x08
+
+Return buffer (known):
+0x00: current mode: 0=CIF, 1=VGA, 2=QCIF(???), 3=QVGA
+
+
+Ping Camera
+-----------
+bmRequestType : IN|VENDOR|DEVICE
+bRequest      : 0x88
+wValue        : 0x<yyy><zzz>
+wIndex        : 0x00
+wLength       : 0x02
+
+Return buffer (known):
+0x00: 0x<yyy>
+0x01: 0x<zzz>
+
+
+Get Coldata size
+----------------
+bmRequestType : IN|VENDOR|DEVICE
+bRequest      : 0x8a
+wValue        : 0x0000
+wIndex        : 0x00
+wLength       : 0x02
+
+Return buffer: Nothing known
+
+
+Get Coldata
+-----------
+bmRequestType : IN|VENDOR|DEVICE
+bRequest      : 0x8b
+wValue        : 0x0000 (or 0x1000 or 0x2000 - why???)
+wIndex        : 0x00
+wLength       : 0x24
+
+Return buffer: Nothing known
+
+
+Setup Bulk Channel (for picture download)
+------------------
+bmRequestType : IN|VENDOR|DEVICE
+bRequest      : 0x83
+wValue        : picture number
+wIndex        : 0x00
+wLength       : 0x10
+
+
+Get number of pictures (Get User Info)
+----------------------
+bmRequestType : IN|VENDOR|ENDPOINT
+bRequest      : 0x8d
+wValue        : 0x0000
+wIndex        : 0x00
+wLength       : 0x08
+
+Return buffer (known):
+0x03: number of pictures
+
+
+Get Picture Header
+------------------
+bmRequestType : IN|VENDOR|DEVICE
+bRequest      : 0x8f
+wValue        : picture number
+wIndex        : 0x00
+wLength       : 0x16
+
+Return buffer (known):
+0x00: Length in bytes most significant byte
+0x01: Length in bytes byte 2
+0x02: Length in bytes byte 3
+0x03: Length in bytes least significant byte
+0x04: Picture width upper byte
+0x05: Picture width lower byte
+0x06: Picture height upper byte
+0x07: Picture height lower byte
+0x08: Fine exposure upper byte
+0x09: Fine exposure lower byte
+0x0a: Coarse exposure upper byte
+0x0b: Coarse exposure lower byte
+0x0c: Original gain
+0x0d: CLKDIV (???)
+0x0c: Average Pixel value

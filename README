@@ -1,0 +1,13 @@
+This directory contains the source code for Macam. A MacOS X
+application and quicktime driver for various types of cameras.
+
+Tested on/build with:
+	MacOS X 	10.1.x
+	Project Builder 2.0
+
+For copyright, license conditions on use and the source code; please 
+consult each source file; or the file COPYING in this directory.
+
+See http://webcam-osx.sourceforge.net/ for more inforomation.
+
+$Id$

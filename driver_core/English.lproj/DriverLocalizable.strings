@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>Auto gain</key>
+	<string>Auto gain</string>
+	<key>Automatic</key>
+	<string>Automatic</string>
+	<key>CPiA-based camera</key>
+	<string>CPiA-based camera</string>
+	<key>Camera</key>
+	<string>Camera</string>
+	<key>CameraErrorBusy</key>
+	<string>Camera used by
+another application</string>
+	<key>CameraErrorInternal</key>
+	<string>Internal error</string>
+	<key>CameraErrorNoBandwidth</key>
+	<string>Not enough
+USB bandwidth</string>
+	<key>CameraErrorNoCam</key>
+	<string>No camera</string>
+	<key>CameraErrorNoMem</key>
+	<string>Out of memory</string>
+	<key>CameraErrorNoPower</key>
+	<string>Not enough power
+to operate camera
+on USB bus</string>
+	<key>CameraErrorOK</key>
+	<string>OK</string>
+	<key>CameraErrorTimeout</key>
+	<string>CPU too busy</string>
+	<key>CameraErrorUSBProblem</key>
+	<string>USB communication problem</string>
+	<key>CameraErrorUnimplemented</key>
+	<string>Not supported</string>
+	<key>Compress:</key>
+	<string>Compress:</string>
+	<key>Dummy camera for user feedback</key>
+	<string>Dummy camera for user feedback</string>
+	<key>Flip</key>
+	<string>Flip</string>
+	<key>Format:</key>
+	<string>Format:</string>
+	<key>Fps:</key>
+	<string>Fps:</string>
+	<key>Gain:</key>
+	<string>Gain:</string>
+	<key>Gamma:</key>
+	<string>Gamma:</string>
+	<key>Image Data</key>
+	<string>Image Data</string>
+	<key>Indoor</key>
+	<string>Indoor</string>
+	<key>Linear</key>
+	<string>Uncorrected</string>
+	<key>Outdoor</key>
+	<string>Outdoor</string>
+	<key>STV680-based camera</key>
+	<string>Dual mode camera</string>
+	<key>Save as defaults</key>
+	<string>Save as defaults</string>
+	<key>Shutter:</key>
+	<string>Shutter:</string>
+	<key>UnknownError</key>
+	<string>Unknown error</string>
+	<key>WB</key>
+	<string>WB</string>
+</dict>
+</plist>

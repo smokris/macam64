@@ -1,0 +1,13 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {lightAction = id; }; 
+            CLASS = MyQX3CameraInspector; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {QX3state = id; camName = NSTextField; contentView = NSView; lightState = id; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<plist version="0.9">
+<dict>
+	<key>Camera video settings</key>
+	<string>Kamera-Einstellungen</string>
+	<key>Change camera</key>
+	<string>Kamera wechseln</string>
+	<key>Download</key>
+	<string>Herunterladen</string>
+	<key>Download Media?</key>
+	<string>Daten laden?</string>
+	<key>Download media</key>
+	<string>Daten von der Kamera laden</string>
+	<key>No</key>
+	<string>Nein</string>
+	<key>Pause</key>
+	<string>Pause</string>
+	<key>Pause camera video</key>
+	<string>Kamerabild anhalten</string>
+	<key>Play</key>
+	<string>Abspielen</string>
+	<key>Play camera video</key>
+	<string>Kamerabild abspielen</string>
+	<key>Save current image</key>
+	<string>Das aktuelle Bild speichern</string>
+	<key>Save image</key>
+	<string>Bild abspeichern</string>
+	<key>Save like this</key>
+	<string>So speichern</string>
+	<key>Settings</key>
+	<string>Einstellungen</string>
+	<key>Status: A problem occurred - please check files</key>
+	<string>Status: Fehler - Bitte Dateien ansehen</string>
+	<key>Status: CPU too busy</key>
+	<string>Status: Prozessor überlastet</string>
+	<key>Status: Camera not found (this shouldn't happen)</key>
+	<string>Status: Kamera verloren (Hoppla!)</string>
+	<key>Status: Camera switch failed</key>
+	<string>Status: Konnte nicht umschalten</string>
+	<key>Status: Camera unplugged</key>
+	<string>Status: Kamera herausgezogen</string>
+	<key>Status: Camera used by another app</key>
+	<string>Status: Kamera wird schon benutzt</string>
+	<key>Status: Conntected to </key>
+	<string>Status: Verbunden mit </string>
+	<key>Status: Downloading number %i</key>
+	<string>Status: Lade Objekt %i</string>
+	<key>Status: Internal error (this shouldn't happen)</key>
+	<string>Status: Interner Fehler (Hoppla!)</string>
+	<key>Status: Media downloaded from camera</key>
+	<string>Status: Daten von Kamera geladen</string>
+	<key>Status: Media not downloaded</key>
+	<string>Status: Nicht heruntergeladen</string>
+	<key>Status: No Camera</key>
+	<string>Status: Keine Kamera</string>
+	<key>Status: Not enough USB bus power</key>
+	<string>Status: Zu wenig Strom per USB</string>
+	<key>Status: Not enough bandwidth</key>
+	<string>Status: USB zu langsam</string>
+	<key>Status: Out of memory</key>
+	<string>Status: Zu wenig Speicher</string>
+	<key>Status: Paused</key>
+	<string>Status: Angehalten</string>
+	<key>Status: Pausing</key>
+	<string>Status: Halte an…</string>
+	<key>Status: Playing</key>
+	<string>Status: Wiedergabe</string>
+	<key>Status: USB communication problem</key>
+	<string>Status: USB-Kommunikationsfehler</string>
+	<key>Status: Unknown error (this shouldn't happen)</key>
+	<string>Status: Unbekannter Fehler (Hoppla!)</string>
+	<key>Status: Unsupported</key>
+	<string>Status: Nicht unterstützt</string>
+	<key>Switch to next camera</key>
+	<string>Zur nächsten Kamera wechseln</string>
+	<key>The camera you just plugged in contains %i stored images. Do you want to download them to your computer?</key>
+	<string>Diese Kamera enthält %i gespeicherte Bilder.Wollen Sie sie herunterladen?</string>
+	<key>The camera you just plugged in contains one stored image. Do you want to download them to your computer?</key>
+	<string>Diese Kamera enthält ein gespeichertes Bild. Wollen Sie es herunterladen?</string>
+	<key>Yes</key>
+	<string>Ja</string>
+</dict>
+</plist>

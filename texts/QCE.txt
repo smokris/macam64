@@ -1,0 +1,137 @@
+QuickCam Express Communication - Written 10.4.2002 by Matthias Krauss
+
+This text describes some parts of the communication protocol of the Logitech QuickCam Express based STM Microelectronics' STV600 chip. The information here is not based on official docs but a compilation of information publicly available and some very basic testing. It is mainly based on the GPL QCE Linux drivers (some parts are directly copied - see their project on sourceforge.net). So this text doesn't publish any secret or proprietary information. It is intended as an aid for people who want to do something with such a camera. It assumes that you already know a bit about how the USB works. 
+
+--------------------------------------------------------------
+
+The "original" QuickCam Express is based on the STV0600 chip by ST Microelectronics (idProduct=0x840, idVendor=0x46d/Logitech). There's a newer version based on the STV0602AA chip (idProduct=0x870, idVendor=0x46d/Logitech). Fortunately, it can be set to a mode compatible to the STV0600. The QuickCam Web is based on the STV0610 chip (idProduct=0x850, idVendor=0x46d/Logitech), which has even more features, data compression probably being the most important one. Its programming interface seems to be a superset of the STV0600.
+
+There's one Configuration (untested, but I guess so). There seems to be one interface with two additional pipes to the default control pipe: An isochronous in pipe for reading image data and an interrupt in pipe (poll interval 16) for the snapshot button. There are four alt settings: 0 (as usual) has no bandwidth allocation, 1-3 have bandwidth allocated. For some funny reasons, all of them show to have 1023 Bytes/frame (maybe this was supposed to provide different bandwidth settings - any clue?)
+
+There are two kinds of USB commands: The first are commands to the STV0600, the other kind are commands to the Image Sensor (via the internal I2C bus).  There seem to be more than one variant of the QCE - with different image sensors. The one I use to develop has a Photobit PB-0100 (the other known sensors are HP/Agilent HDCS1000, HP/Agilent HDCS1020 and STV VV6410). 
+
+Controller Communication
+------------------------
+Commands are pseudo-DMA (you write data to registers which form a linear memory). The command to write n bytes of data data to registers starting at i is:
+
+bRequestType=DIRECTION_OUT,TYPE_STANDARD,RECIPIENT_DEVICE
+bRequest=4
+wValue=i
+wIndex=0
+len=n
+buf=[n bytes of data you want to write]
+
+Consequently, reading n bytes of data from registers starting at i is done with:
+
+bRequestType=DIRECTION_IN,TYPE_STANDARD,RECIPIENT_DEVICE
+bRequest=4
+wValue=i
+wIndex=0
+len=n
+buf=[n bytes to receive the data]
+
+Usually, you write or read one register at a time (except for i2c transfers - see below).
+
+Some registers (taken directly from the Linux docs):
+
+0x0400	I2C write (read below)
+0x1410	I2C read value
+0x0423	sensor type (you set this, not the camera!)
+0x1440	Enable ISO-streaming (1)
+0x1443	Sort of scan rate - the smaller, the faster
+0x1445	LED (STV0610 only?)
+0x1500	
+0x1501	Value seems to be ignored, but set by Windows
+0x1502	Value seems to be ignored, but set by Windows
+0x1503	?
+0x1504	?
+0x1580 - 0x15a6 Compression Parameters on STV0610 ?
+0x15c1	Max. ISO packet size L
+0x15c2	Max. ISO packet size H
+0x15c3	Y-Control, 1: 288 lines, 2: 144 lines
+0x1680	X-Control, 0xa: 352 columns, 6: 176 columns
+0x1704  ? - Is written when 0x0400 to 0x5ff are accessed
+
+The registers 0x0400 to 0x0600 seem to be mirrored to 0x1400 to 0x1600.
+
+
+Sensor communication
+--------------------
+Accessing the image sensor via I2C is done by writing a 35-byte buffer to register 0x0400:
+
+Offset	Size	Meaning		
+0x00	16	Array of I2C registers
+0x10	16	Array of values corresponding to the registers above
+0x20	1	I2C address (see below)
+0x21	1	Number of values - 1 
+0x22	1	Command: 1 for I2C-write, 3 for I2C-read
+
+For writing, this is fine. You can set up to 16 registers (8 for two-byte registers) per transfer. Reading is a bit different: You only specify one register and send the request. Afterwards, you read the STV register 0x1410, which contains your result.
+
+
+Sensor detection
+----------------
+Sensor detection is quite funny: The sensor type is detected by setting the usb reg 0x0423 to the "stv" value in the table and then checking the i2c register ig_reg on the i2c address for the value of id - the length value tells the number bytes to transfer per i2c register for the specific sensor:
+
+HDCS1000 (stv: 0 i2c_address:0xaa id_reg:0x01 id:0x08 length:1)
+HDCS1020 (stv: 0 i2c_address:0xaa id_reg:0x01 id:0x10 length:1) 
+BP100    (stv: 1 i2c_address:0xba id_reg:0x00 id:0x64 length:2)
+VV6410   (stv: 5 i2c_address:0x20 id_reg:0x00 id:0x19 length:1)
+
+The controller chip doesn't accept all sensor modes. For example, the STV600 cannot use the full image data transfer bandwidth of the PB0100 (4MHz instead of 6MHz). There are also limitations on the horizontal and vertical blanking. In general, the STV600 seems to be quite timing-sensitive. 
+
+
+Init sequence:
+--------------
+set first config, reset, get interface, set alt 0
+disable isochronous transfer
+detect sensor type, set register 0x0423 appropriately
+(for sensor specific stuff, see their docs. It's publically available on the web.)
+
+
+Start grabbing sequence:
+------------------------
+reset sensor to reasonable values
+set interface alt setting to 1,2 or 3
+set isochronous frame length in camera (this is funny, the cam should know)
+start sensor data transfer
+start isochronous transfer
+read icochronous pipe and parse - see below
+
+
+Stop grabbing sequence:
+-----------------------
+stop isochronous transfer
+stop sensor data transfer
+
+
+Product and vendor ids:
+-----------------------
+vendor 0x046d, product 0x0840 : QuickCam Express (older model)
+vendor 0x046d, product 0x0850 : QuickCam Web, LEGO cam
+vendor 0x046d, product 0x0870 : QuickCam Express (newer model)
+
+
+Additional notes for some variants:
+-----------------------------------
+productID = 850: After writing to i2c, write 1 to usb addr 0x1704
+productID = 870: it's a stv0602 -> set stv600 emulation
+(otherwise, there will be an additional byte at the start of each image data)
+
+Image Data Format
+-----------------
+This part differs a bit from the Linux docs, but I guess I'm right here:)
+
+The data sent via isochronous pipe is packetized. Each packet contains a two-byte type (Big-Endian) followed by a two-byte content length in bytes (also Big-Endian, excluding the header) followed by the content itself. The packets don't spread over multiple usb frames. The type seems to be a combination of enumeration and flags. I haven't figured out all of them, but here are some (enough to get some images):
+
+0x0200 - Image data - content data are sequential bayer samples
+0x8001 - Start of a new image - content is empty
+0x8002 - End of the current image - content is empty
+0x8005 - Same as 0x8001, but settings changes are pending (?)
+0x8006 - Same as 0x8002, but settings changes are pending (?)
+
+There seems to be some other data chunk id's (0x4200, 0xc200 etc), which can be interpreted identical to 0x0200 - in this case, the first bits seem to indicate some special conditions (for example, shutter/exposure invalid). In short: The "type" field seems to be a mixture of id and a bit field. It might be a good idea to investigate this a bit more.
+
+Resolutions
+-----------
+The camera supports CIF (352 x 288) and QCIF (176 x 144) - QCIF is done by subsampling the image data. It's done by the STV600, not by the image sensor (although some of them also have this feature). Theoretically, horizontal and vertical subsampling can be separately set, but who wants a distorted image? Remember to keep your ROI window of the image sensor at 352 x 288 (this may be wrong - horizontally, this is correct, but vertically?)

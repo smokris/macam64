@@ -1,0 +1,129 @@
+/*
+ macam - webcam app and QuickTime driver component
+ Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
+
+ This program is free software; you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation; either version 2 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program; if not, write to the Free Software
+ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ $Id$
+ */
+
+#import "MyCameraInfo.h"
+
+static unsigned long cidCount=1;
+
+@implementation MyCameraInfo
+
+- (id) init {
+    self=[super init];
+    if (self==NULL) return NULL;
+    usbDeviceRef=NULL;
+    notification=NULL;
+    driver=NULL;
+    driverClass=NULL;
+    cid=cidCount++;
+    central=NULL;
+    name=[[@"(invalid)" autorelease] copy];
+    pid=0;
+    vid=0;
+    return self;
+}
+
+- (id) copy {
+    MyCameraInfo* c=[[MyCameraInfo alloc] init];
+    if (c==NULL) return NULL;
+    [c setUsbDeviceRef:[self usbDeviceRef]];
+    [c setNotification:[self notification]];
+    [c setDriver:[self driver]];
+    [c setDriverClass:[self driverClass]];
+    [c setCentral:[self central]];
+    [c setCameraName:[self cameraName]];
+    [c setProductID:[self productID]];
+    [c setVendorID:[self vendorID]];
+    return c;
+}
+
+- (void) dealloc {
+    if (name) [name release];
+}
+
+- (io_service_t) usbDeviceRef {
+    return usbDeviceRef;
+}
+
+- (void) setUsbDeviceRef:(io_service_t)devRef {
+    usbDeviceRef=devRef;
+}
+
+- (io_object_t) notification {
+    return notification;
+}
+
+- (void) setNotification:(io_object_t)n {
+    notification=n;
+}
+
+- (Class) driverClass {
+    return driverClass;
+}
+
+- (void) setDriverClass:(Class)c {
+    driverClass=c;
+}
+
+- (id) driver {
+    return driver;
+}
+
+- (void) setDriver:(id)d {
+    driver=d;
+}
+- (id) central {
+    return central;
+}
+
+- (void) setCentral:(id)c {
+    central=c;
+}
+
+- (unsigned long) cid {
+    return cid;
+}
+
+
+- (NSString*) cameraName {
+    return name;
+}
+
+- (void) setCameraName:(NSString*)camName {
+    if (name) [name release]; name=NULL;
+    if (camName!=NULL) name=[camName copy];
+}
+
+- (long) productID {
+    return pid;
+}
+
+- (void) setProductID:(long)prodID {
+    pid=prodID;
+}
+
+- (long) vendorID {
+    return vid;
+}
+
+- (void) setVendorID:(long)vendID {
+    vid=vendID;
+}
+
+@end

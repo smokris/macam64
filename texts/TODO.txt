@@ -1,0 +1,11 @@
+Fix all (c) and license info
+Ascii text file with supported drivers
+Write scripts to generate .dmg files and
+    automate versionnumbering based on 
+    cvs tags
+Fixup all .cvsignore files and/or collect them
+    in a CVSROOT/cvsignore file for things such
+    as .DS_Store
+
+
+$Id$

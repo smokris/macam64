@@ -1,0 +1,8 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = MyImageDocument; LANGUAGE = ObjC; SUPERCLASS = NSDocument; }, 
+        {CLASS = MyScrollView; LANGUAGE = ObjC; SUPERCLASS = NSScrollView; }
+    ); 
+    IBVersion = 1; 
+}

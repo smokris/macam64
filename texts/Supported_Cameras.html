@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<!-- $Id$ -->
+<head>
+  <title>Camera Support</title>
+  <meta name="description" content="USB webcam driver for Mac OS X">
+  <meta name="keywords" content="webcam usb camera macintosh mac os x apple osx macosx driver cpia stv680 toucam vesta pencam spycam quickcam">
+  </head>
+
+<body>
+<h2>Camera Support</h2>
+<p>Here's a list of some USB webcams and their current support situation
+(sorted alphabetically). Yes, I'd love to support all of them - and many
+more :) Before you send me an email asking me to support your camera, please
+read the notes - they are yor you. If you want your camera supported, try
+to solve the issue mentioned there. At the bottom of the page, you'll find
+a list of commonly used chipsets and the references I have about them - for
+the techies. If you know something new (wrong info in the lists, new sources
+of information, cameras not listed here), please tell me about it! Thanks!</p>
+<p>Last update: $Date$</p>
+
+<table border="1" cellpadding="5" cellspacing="0">
+
+<tbody><tr><td><b>Manufacturer</b></td><td><b>Model</b></td><td><b>Chipset</b></td><td><b>Status</b></td></tr>
+<tr><td>3Com</td><td>Home Connect</td><td>ViCAM</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Acer</td><td>Webcam</td><td>NW801</td><td>unsupported (see note 4)</td></tr>
+<tr><td>AEL</td><td>AuraCam DC-30U</td><td>STV680</td><td>supported</td></tr>
+<tr><td>AEL</td><td>AuraCam DC-31U</td><td>STV680</td><td>supported</td></tr>
+<tr><td>AEL</td><td>AuraCam DC-32U</td><td>STV680</td><td>supported</td></tr>
+<tr><td>Aiptek</td><td>Classic Cam</td><td>STV680</td><td>should work (see note 2)</td></tr>
+<tr><td>Aiptek</td><td>HyperVCam Fun</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>Aiptek</td><td>HyperVCam Mobile</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Aiptek</td><td>HyperVCam Fun</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Aiptek</td><td>Mini Cam 1.3 MPixel</td><td>SPCA504A</td><td>in progress</td></tr>
+<tr><td>Aiptek</td><td>PenCam 16 MBit</td><td>STV680</td><td>supported</td></tr>
+<tr><td>Aiptek</td><td>PenCam 64 MBit</td><td>STV680</td><td>supported</td></tr>
+<tr><td>Aiptek</td><td>PenCam 400</td><td>SPCA500A</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Aiptek</td><td>PenCam Compact</td><td>STV680</td><td>should work (see note 2)</td></tr>
+<tr><td>Aiptek</td><td>PenCam Ultra/Capsule</td><td>STV680</td><td>should work (see note 2)</td></tr>
+<tr><td>Aiptek</td><td>PenCam VGA 1</td><td>STV680</td><td>supported</td></tr>
+<tr><td>Aiptek</td><td>PenCam VGA 2</td><td>STV680</td><td>supported</td></tr>
+<tr><td>Aiptek</td><td>PenCam Voice VR2</td><td>STV680</td><td>should work (see note 3)</td></tr>
+<tr><td>Aiptek</td><td>Pocket Cam 1.3 MPixel</td><td>???</td><td>in progress</td></tr>
+<tr><td>Aiptek</td><td>Pocket DV</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Aiptek</td><td>PressCam</td><td>STV680</td><td>should work (see note 2)</td></tr>
+<tr><td>Aiptek</td><td>Qt Flash Cam</td><td>STV680</td><td>should work (see note 2)</td></tr>
+<tr><td>Alaris</td><td>weeCam</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Alaris</td><td>weeCam Pro</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Maitech</td><td>AWK-300</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Ariston</td><td>iSee</td><td>CPiA(?)</td><td>supported</td></tr>
+<tr><td>Ariston</td><td>iSee Pro</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Askey</td><td>VC010</td><td>Philips</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Avaks</td><td>AvCam USB-600</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>AverMedia</td><td>InterCam Elite</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>BestBuy</td><td>EasyCam U</td><td>OV511 or OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Creative</td><td>PC-Cam 300</td><td>SPCA500A</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Creative</td><td>PC-Cam 300</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Creative</td><td>Video Blaster Webcam 1</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Creative</td><td>Video Blaster Webcam 2</td><td>CPiA</td><td>supported</td></tr>
+<tr><td>Creative</td><td>Video Blaster Webcam 3</td><td>OV511/OV511+</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Creative</td><td>Video Blaster Webcam 5</td><td>Philips</td><td>unsupported (see note 7)</td></tr>
+<tr><td>Creative</td><td>Webcam</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Creative</td><td>Webcam GO</td><td>W9968CF</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Creative</td><td>Webcam GO ES</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Creative</td><td>Webcam GO Plus</td><td>W9967CF/W9968CF</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Creative</td><td>Webcam Plus</td><td>OV518</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Dexxa</td><td>DexxaCam</td><td>???</td><td>some work (see note 8)</td></tr>
+<tr><td>Digicom</td><td>Galileo USB</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>Digitaldream</td><td>L'esprit</td><td>STV680</td><td>supported</td></tr>
+<tr><td>Dolphin Peripherals</td><td>007 Pocket Digital Camera</td><td>STV680</td><td>supported</td></tr>
+<tr><td>D-Link</td><td>DSB-C100</td><td>CPiA or OV511</td><td>some should work (see note 2), some not (see note 4)</td></tr>
+<tr><td>D-Link</td><td>DSB-C300</td><td>OV802 or OV511</td><td>unsupported (see notes 4 and 5)</td></tr>
+<tr><td>D-Link</td><td>DU-C300</td><td>OV511 or OV511+</td><td>unsupported (see notes 4 and 5)</td></tr>
+<tr><td>Ezonics</td><td>EZCam</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>Ezonics</td><td>EZCam Plus</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Ezonics</td><td>EZCam Pro</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Ezonics</td><td>EZ USB Cam II</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Genius</td><td>VideoCam Express</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Grandtec</td><td>V.cap</td><td>SCPA506</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Hawking Tech</td><td>UC-110</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Hawking Tech</td><td>UC-300</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Hawking Tech</td><td>UC-310</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>IBM</td><td>Net Camera (white)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>IBM</td><td>Net Camera Pro (sage)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>IBM</td><td>PC Camera (beige)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>IBM</td><td>PC Camera (black)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>IBM</td><td>PC Camera Pro (black)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>IBM</td><td>PC Camera Pro (white)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>IBM</td><td>PC Camera Pro Max (black)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>IBM</td><td>PC Camera Pro max (white)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Intel</td><td>CS330</td><td>SPCA501</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Intel</td><td>CS331</td><td>SPCA501</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Intel</td><td>CS430</td><td>SPCA505</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Intel</td><td>Digital Movie Creator</td><td>SPCA551A</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Intel</td><td>Me2Cam</td><td>OV511+ (custom)</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Intel</td><td>Play QX3 Microscope</td><td>CPiA (custom)</td><td>supported (thanks to Dirk-Willem van Gulik)</td></tr>
+<tr><td>IOMagic</td><td>MagicVision DR-CMUSB1</td><td>SPCA501A(?)</td><td>unsupported (see note 4)</td></tr>
+<tr><td>IOMagic</td><td>MagicVision DR-CM200</td><td>SPCA501A(?)</td><td>unsupported (see note 4)</td></tr>
+<tr><td>iRez</td><td>Kritter USB</td><td>NW801</td><td>unsupported (see note 5)</td></tr>
+<tr><td>iRez</td><td>USB Microscope</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>I-View</td><td>NetView NV200M</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>I-View</td><td>NetView NV300M</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Fujifilm</td><td>Finepix 30i</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Fujifilm</td><td>Finepix 50i</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Kensington</td><td>VideoCAM 67014</td><td>SE401</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Kensington</td><td>VideoCAM 67015</td><td>SE401</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Kensington</td><td>VideoCAM 67016</td><td>SE401</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Kensington</td><td>VideoCAM 67017</td><td>SE401</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Kodak</td><td>DVC323</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Kodak</td><td>DVC325</td><td>SPCA501A</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Lifetek</td><td>LT 9388</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Lifeview</td><td>RoboCam</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Lifeview</td><td>USB CapView</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Logitech</td><td>ClickSmart 310</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>ClickSmart 510</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>Color QuickCam</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>Color QuickCam 2</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>QuickCam (grayscale)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>QuickCam Express</td><td>???</td><td>some work (see note 8)</td></tr>
+<tr><td>Logitech</td><td>QuickCam Home</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>QuickCam Pro (beige focus ring)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>QuickCam Pro (dark focus ring)</td><td>NW801 or NW802</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>QuickCam Pro 3000</td><td>Philips</td><td>should work (see note 2)</td></tr>
+<tr><td>Logitech</td><td>QuickCam Traveler</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>QuickCam VC</td><td>USS-720/LZ2547</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>QuickCam Web (round)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>QuickCam Web (square)</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Logitech</td><td>QuickCam Clip</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Maxell</td><td>Maxcam (MPCC-1)</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Maxxtro</td><td>CAM22U</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>MediaForte</td><td>MV300</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>MediaForte</td><td>PC Vision 300</td><td>OV511 or OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Medion</td><td>MD9388</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Microtek</td><td>EyeStar</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>Microtek</td><td>Take-it 350</td><td>STV680</td><td>should work (see note 2)</td></tr>
+<tr><td>Mustek</td><td>VC-300</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Mustek</td><td>WCam 3X</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Mustek</td><td>VC-300</td><td>NW802</td><td>unsupported (see note 5)</td></tr>
+<tr><td>MtekVision</td><td>Zeca MV402</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Nisis</td><td>QuickPix Qp1</td><td>STV680</td><td>should work (see note 2)</td></tr>
+<tr><td>Nisis</td><td>QuickPix Qp2</td><td>STV680</td><td>should work (see note 2)</td></tr>
+<tr><td>Nisis</td><td>QuickPix Qp3</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Nogatech</td><td>Video Pro II</td><td>NT1003 or NT1004</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Nogatech</td><td>USB Micro Cam</td><td>NT1003 or NT1004</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Pace</td><td>Contour Video Camera</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>Philips</td><td>PCA645VC (only looks like a Vesta)</td><td>Philips</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Philips</td><td>PCA646VC (only looks like a Vesta)</td><td>Philips</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Philips</td><td>ToUCam XS (PCVC720K)</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Philips</td><td>ToUCam Fun (PCVC730K)</td><td>Philips</td><td>supported (see note 1)</td></tr>
+<tr><td>Philips</td><td>ToUCam Pro (PCVC740K)</td><td>Philips</td><td>supported (see note 1)</td></tr>
+<tr><td>Philips</td><td>ToUCam Pro 3D (PCVC750K)</td><td>Philips</td><td>should work (see note 2)</td></tr>
+<tr><td>Philips</td><td>ToUCam XS (PCVC720K)</td><td>OV518</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Philips</td><td>Vesta (PCVC675K)</td><td>Philips</td><td>supported (see note 1)</td></tr>
+<tr><td>Philips</td><td>Vesta Fun (PCVC665K)</td><td>SE401</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Philips</td><td>Vesta Pro (PCVC680K)</td><td>Philips</td><td>supported (see note 1)</td></tr>
+<tr><td>Philips</td><td>Vesta Scan (PCVC690K)</td><td>Philips</td><td>should work (see note 2)</td></tr>
+<tr><td>Plawa</td><td>SpyPen Cleo</td><td>STV680</td><td>supported</td></tr>
+<tr><td>Prochips</td><td>PCA-3100</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Puretek</td><td>PT-6007</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Samsung</td><td>AnyCam MPC-C10</td><td>Philips</td><td>unsupported (see note 6)</td></tr>
+<tr><td>Samsung</td><td>AnyCam MPC-C30</td><td>Philips</td><td>unsupported (see note 6)</td></tr>
+<tr><td>Samsung</td><td>AnyCam MPC-M10</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Sony</td><td>CMR-PC1</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Sony</td><td>CMR-PC2</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Sony</td><td>CMR-PC3</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Sony</td><td>CMR-PC4</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>Sotec</td><td>Afina Eye</td><td>Philips</td><td>unsupported (see note 7)</td></tr>
+<tr><td>Suma</td><td>eON</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>SuperCam</td><td>WonderEye</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>TCE</td><td>Netcam 310 USB</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>TCE</td><td>Netcam 310u</td><td>OV511 or OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Terratec</td><td>Terracam USB</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>Terratec</td><td>Terracam USB Pro</td><td>OV511+</td><td>unsupported (see note 5)</td></tr>
+<tr><td>TEVion</td><td>MD 9308</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Trust</td><td>Sp@ceC@m 100</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>Trust</td><td>Sp@ceC@m 200</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Trust</td><td>Sp@ceC@m 300</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Trust</td><td>Sp@ceC@m Lite</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>Trust</td><td>Sp@ceC@m USB</td><td>OV511</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Trust</td><td>SpyC@m 100</td><td>STV680</td><td>supported</td></tr>
+<tr><td>Trust</td><td>SpyC@m 100plus</td><td>STV680</td><td>supported</td></tr>
+<tr><td>Trust</td><td>SpyC@m 300</td><td>STV680</td><td>supported</td></tr>
+<tr><td>Trust</td><td>SpyC@m 300 Voice</td><td>STV680</td><td>should work (see note 2)</td></tr>
+<tr><td>Utobia</td><td>USB Camera</td><td>CPiA</td><td>should work (see note 2)</td></tr>
+<tr><td>ViewQuest</td><td>M318B</td><td>SPCA500A</td><td>unsupported (see note 4)</td></tr>
+<tr><td>ViewQuest</td><td>VQ110</td><td>SPCA508A</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Webeye</td><td>2000B</td><td>OV511+</td><td>unsupported (see note 4)</td></tr>
+<tr><td>Xirlink</td><td>C-It PC Camera</td><td>???</td><td>unsupported (see note 5)</td></tr>
+<tr><td>ZOOM Telephonics</td><td>ZoomCam USB 1596</td><td>CPiA</td><td>supported</td></tr>
+<tr><td>ZOOM Telephonics</td><td>ZoomCam USB 1597</td><td>NW801 or NW802</td><td>unsupported (see note 4)</td></tr>
+<tr><td>ZOOM Telephonics</td><td>ZoomCam USB 1598</td><td>OV518</td><td>unsupported (see note 4)</td></tr>
+
+</tbody></table>
+
+<p>Note 1: Due to a lack of technical documentation, only low resolutions
+and frame rates are available. Please read the readme files of your copy
+of macam carefully to learn about potential risks for these cameras.</p>
+
+<p>Note 2: These models have not been tested but are similar to one that
+works. If you have tested such a camera either sucessfully or unsuccessfully,
+please tell the author(s) about it.</p>
+
+<p>Note 3: Sorry, no audio support. Everything else: see note 2.</p>
+
+<p>Note 4: There is at least some documentation for this model, but a sample
+camera is missing in order to develop support for it. If you want to donate
+one, please contact the author(s).</p>
+
+<p>Note 5: There are two things missing in order to develop support for this
+camera: Technical documantation and a sample camera. If you want to donate
+a camera and/or can provide technical documentation, please contact the author(s).</p>
+
+<p>Note 6: Support for this camera is theoretically possible, but there have
+been serious problems during testing. If you want to volunteer in testing
+(warning! it might damage your camera!) please contact the author(s).</p>
+
+<p>Note 7: Support for this camera is theoretically possible, but there has
+been no one to test and for last adoptions. If you want to volunteer in testing
+(warning! it might theoretically damage your camera!) please contact the
+author(s).</p>
+
+<p>Note 8: There are different variants of this camera. Try it out: If you're
+lucky, it works. If not, please contact me. Maybe I have a version that supports
+it.</p>
+
+
+<h2>USB webcam controller/bridge chipsets</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+<tbody><tr><td><b>Chipset</b></td><td><b>Manufacturer</b></td><td><b>Info</b></td></tr>
+<tr><td>CPiA</td><td>VLSI Vision Ltd. (now STM Microelectronics)</td><td><a href="http://http//www.vvl.co.uk/">VLSI Vision's home page</a><br><a href="http://webcam.sourceforge.net/">Linux driver project home page</a></td></tr>
+<tr><td>NT1003</td><td>Nogatech (now Zoran)</td><td><a href="http://www.emuit.com/webcam.html">USBVision Linux driver project home page</a></td></tr>
+<tr><td>NT1004</td><td>Nogatech (now Zoran)</td><td><a href="http://www.emuit.com/webcam.html">USBVision Linux driver project home page</a></td></tr>
+<tr><td>NW801</td><td>Divio</td><td><a href="http://www.divio.com/">Manufacturer's home page</a></td></tr>
+<tr><td>NW801</td><td>Divio</td><td><a href="http://www.divio.com/">Manufacturer's home page</a></td></tr>
+<tr><td>NW802</td><td>Divio</td><td><a href="http://www.divio.com/">Manufacturer's home page</a></td></tr>
+<tr><td>OV511</td><td>OmniVision</td><td><a href="http://alpha.dyndns.org/ov511/">Linux driver project home page</a></td></tr>
+<tr><td>OV511+</td><td>OmniVision</td><td><a href="http://alpha.dyndns.org/ov511/">Linux driver project home page</a></td></tr>
+<tr><td>OV518</td><td>OmniVision</td><td><a href="http://alpha.dyndns.org/ov511/">Linux driver project home page</a></td></tr>
+<tr><td>OV518+</td><td>OmniVision</td><td><a href="http://alpha.dyndns.org/ov511/">Linux driver project home page</a></td></tr>
+<tr><td>OV651</td><td>OmniVision</td><td> </td></tr>
+<tr><td>OV681</td><td>OmniVision</td><td> </td></tr>
+<tr><td>SAA8112HL<br>SAA8115HL<br>SAA8116HL<br>SAA8117HL</td><td>Philips</td><td><a href="http://webcam-osx.sourceforge.net/www.semiconductors.philips.com">Manufacturer's home page</a><br><a href="http://www.smcc.demon.nl/webcam/">Linux driver project home page</a><br></td></tr>
+<tr><td>SE401</td><td>Aox/EndPoints</td><td><a href="http://www.endpoints.com/">Manufacturer's home page</a><br><a href="http://members.brabant.chello.nl/%7Ej.vreeken/se401/">Linux driver project home page</a></td></tr>
+<tr><td>SPCA500A</td><td>Sunplus</td><td><a href="http://www.sunplus.com.tw/">Manufacturer's home page</a><br><a href="http://www.zaram.com/zaramweb_eng/images/ic/">Data sheets (also other Sunplus SPCA chips)</a><br><a href="http://spca50x.sourceforge.net/">Linux driver project home page (also other Sunplus SPCA chips)</a></td></tr>
+<tr><td>SPCA501A</td><td>Sunplus</td><td><a href="http://www.sunplus.com.tw/">Manufacturer's home page</a></td></tr>
+<tr><td>SPCA504A</td><td>Sunplus</td><td><a href="http://www.sunplus.com.tw/">Manufacturer's home page</a></td></tr>
+<tr><td>SPCA505</td><td>Sunplus</td><td><a href="http://www.sunplus.com.tw/">Manufacturer's home page</a></td></tr>
+<tr><td>SPCA506</td><td>Sunplus</td><td><a href="http://www.sunplus.com.tw/">Manufacturer's home page</a></td></tr>
+<tr><td>SPCA508A</td><td>Sunplus</td><td><a href="http://www.sunplus.com.tw/">Manufacturer's home page</a></td></tr>
+<tr><td>SPCA551A</td><td>Sunplus</td><td><a href="http://www.sunplus.com.tw/">Manufacturer's home page</a></td></tr>
+<tr><td>ViCAM</td><td>Vista Imaging</td><td><a href="http://www.vistaimaging.com/">Manufacturer's home page</a><br><a href="http://webcam-osx.sourceforge.net/homeconnectusb.sourceforge.net">Linux driver project home page</a></td></tr>
+<tr><td>STV680</td><td>VLSI Vision Ltd. (now STM Microelectronics)</td><td><a href="http://www.vvl.co.uk/">VLSI Vision's home page</a></td></tr>
+<tr><td>USS-720</td><td>Lucent</td><td><a href="http://digilander.iol.it/demarchidaniele/qcamvc/quickcam-vc.html">QuickCam VC Linux driver project home page</a></td></tr>
+<tr><td>VC3-B144-A<br>VC3-B256-A<br>ViCAM</td><td>Vista Imaging</td><td><a href="http://www.vistaimaging.com/">Manufacturer's home page</a></td></tr>
+<tr><td>W9967CF<br>W9968CF</td><td>Winbond</td><td><a href="http://winbond-webcam.sourceforge.net/">Linux driver project home page</a></td></tr>
+<tr><td>ZR36120</td><td>Zoran</td><td><a href="http://www.polyware.nl/%7Emiddelin/En/hob-v4l.html">Linux driver project home page</a></td></tr>
+<tr><td>???</td><td>IBM/Xirlink/Veo Stingray</td><td><a href="http://www.linux-usb.org/ibmcam/">Linux driver project home page</a></td></tr>
+</tbody></table>
+
+</body></html>
