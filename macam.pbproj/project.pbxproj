@@ -114,7 +114,6 @@
 				29B9732DFDCFA39411CA2CEA,
 			);
 			buildSettings = {
-				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -286,6 +285,7 @@
 				F5A6652E037B256401C96C8F,
 				F53F6639039ACC3F01C3DF00,
 				F5A5077603BBC69501A78977,
+				39185ABC03C8B5570066DE75,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -327,7 +327,6 @@
 			files = (
 				F5F79AC50212038E01E152CA,
 				F5F79AC60212038E01E152CA,
-				F5F79AC70212038E01E152CA,
 				F5F79AC80212038E01E152CA,
 				F5F79ACC0212038E01E152CA,
 				F5F79ACD0212038E01E152CA,
@@ -375,6 +374,8 @@
 				F5A6652D037B256401C96C8F,
 				F53F6638039ACC3F01C3DF00,
 				F5A5077503BBC69501A78977,
+				39185ABD03C8B5570066DE75,
+				39186EC903C8FF7B0066DE75,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -400,6 +401,48 @@
 //392
 //393
 //394
+		39185ABA03C8B5570066DE75 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MyQCProBeigeDriver.h;
+			refType = 4;
+		};
+		39185ABB03C8B5570066DE75 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			path = MyQCProBeigeDriver.m;
+			refType = 4;
+		};
+		39185ABC03C8B5570066DE75 = {
+			fileRef = 39185ABA03C8B5570066DE75;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		39185ABD03C8B5570066DE75 = {
+			fileRef = 39185ABB03C8B5570066DE75;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		39185ABE03C8B5570066DE75 = {
+			fileRef = 39185ABA03C8B5570066DE75;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		39185ABF03C8B5570066DE75 = {
+			fileRef = 39185ABB03C8B5570066DE75;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		39186EC903C8FF7B0066DE75 = {
+			fileRef = F5F79A970212038E01E152CA;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		39AE92CB03C5131B0066D062 = {
 			buildPhases = (
 			);
@@ -452,6 +495,7 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
+				OPTIMIZATION_CFLAGS = "-O2";
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -994,6 +1038,7 @@
 				F5EDFADA036876210166D062,
 				F53F663B039ACC3F01C3DF00,
 				F5A5077803BBC69501A78977,
+				39185ABE03C8B5570066DE75,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1052,6 +1097,7 @@
 				F5CBE0D003807F2301260355,
 				F53F663A039ACC3F01C3DF00,
 				F5A5077703BBC69501A78977,
+				39185ABF03C8B5570066DE75,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2629,6 +2675,8 @@
 		};
 		F5F79A800212038E01E152CA = {
 			children = (
+				39185ABA03C8B5570066DE75,
+				39185ABB03C8B5570066DE75,
 				F5A5077403BBC69501A78977,
 				F5A5077303BBC69501A78977,
 				F53F6637039ACC3F01C3DF00,
@@ -2963,12 +3011,6 @@
 		};
 		F5F79AC60212038E01E152CA = {
 			fileRef = F5F79A950212038E01E152CA;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F5F79AC70212038E01E152CA = {
-			fileRef = F5F79A970212038E01E152CA;
 			isa = PBXBuildFile;
 			settings = {
 			};
