@@ -205,6 +205,10 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
     return YES;
 }
 
+- (BOOL) canSetHFlip {
+    return YES;
+}
+
 - (void) setAutoGain:(BOOL)v{
     [super setAutoGain:v];
     if (autoGain) {
@@ -619,7 +623,8 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
                             toDest:pixmap
                        srcRowBytes:width+2
                        dstRowBytes:rb
-                            dstBPP:bpp];
+                            dstBPP:bpp
+                              flip:hFlip];
 }
 
 - (CameraError) decodingThread {

@@ -109,6 +109,8 @@ typedef struct SONIXGrabContext {
 - (void) setAutoGain:(BOOL)v;
 - (void) setGain:(float)val;
 - (void) setShutter:(float)val;
+- (BOOL) canSetHFlip;
+
     
 //DSC Image download
 - (BOOL) canStoreMedia;
