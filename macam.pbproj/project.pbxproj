@@ -158,7 +158,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.6 Copyright 2002 Matthias Krauß (Warning: non approved dirkx changes)</string>
+	<string>macam 0.6 Copyright 2002 Matthias Krauß</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>WebcamHelp</string>
 	<key>CFBundleHelpBookName</key>
@@ -174,7 +174,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.6 (dirkx changes)</string>
+	<string>0.6</string>
 	<key>CFBundleSignature</key>
 	<string>wC?!</string>
 	<key>CFBundleVersion</key>
@@ -257,8 +257,6 @@
 				F57D11BEC5B26FF6010B00CC,
 				F57D11BFC5B26FF6010B00CC,
 				F5794DE00285B922010B00CC,
-				F5BFF544029B59E001B6CBC8,
-				F5BFF549029B5A8801B6CBC8,
 			);
 			isa = PBXResourcesBuildPhase;
 		};
@@ -1888,12 +1886,6 @@
 			path = README;
 			refType = 4;
 		};
-		F5BFF544029B59E001B6CBC8 = {
-			fileRef = F5BFF540029B59CB01B6CBC8;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F5BFF545029B59E601B6CBC8 = {
 			fileRef = F5BFF540029B59CB01B6CBC8;
 			isa = PBXBuildFile;
@@ -1905,12 +1897,6 @@
 			name = Supported_Cameras.html;
 			path = texts/Supported_Cameras.html;
 			refType = 4;
-		};
-		F5BFF549029B5A8801B6CBC8 = {
-			fileRef = F5BFF548029B5A8801B6CBC8;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F5C80D8D02417A800166DE75 = {
 			isa = PBXFileReference;

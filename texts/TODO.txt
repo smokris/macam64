@@ -1,4 +1,5 @@
 Fix all (c) and license info
+Get matthias to pick a (c) and a name
 Ascii text file with supported drivers
 Write scripts to generate .dmg files and
     automate versionnumbering based on 
@@ -6,6 +7,11 @@ Write scripts to generate .dmg files and
 Fixup all .cvsignore files and/or collect them
     in a CVSROOT/cvsignore file for things such
     as .DS_Store
-
-
+Domain - would it make sense to make this a 
+    org.sourceforge.webcam-os in the application
+    settings field - or does the lattter not
+    do anything but has to be unique; in which
+    case de.matthias-krauss.macam is fine and
+    a nice historic reminder.
+     
 $Id$
