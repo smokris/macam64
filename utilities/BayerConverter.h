@@ -47,6 +47,7 @@ sourceFormat specifies serialization type. Examples show first two lines of a 6-
     short sourceFormat;
     BOOL updateGains;
     BOOL produceColorStats;
+    BOOL needsTransferLookup;
 //Individual gains for white balance correction
     float redGain;
     float greenGain;

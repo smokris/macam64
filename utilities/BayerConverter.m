@@ -355,10 +355,16 @@
 //The following macro applies saturation, brightness, contrast and gamma to a rgb triple
 #define COLORPROCESS(r,g,b) {\
     r=(((r-g)*saturation)/65536)+g;\
-    b=(((b-g)*saturation)/65536)+g;\
-    r=redTransferLookup[CLAMP(r,0,255)];\
-    g=greenTransferLookup[CLAMP(g,0,255)];\
-    b=blueTransferLookup[CLAMP(b,0,255)];\
+        b=(((b-g)*saturation)/65536)+g;\
+            r=redTransferLookup[CLAMP(r,0,255)];\
+                g=greenTransferLookup[CLAMP(g,0,255)];\
+                    b=blueTransferLookup[CLAMP(b,0,255)];\
+}
+
+#define NOCOLORPROCESS(r,g,b) {\
+            r=CLAMP(r,0,255);\
+                g=CLAMP(g,0,255);\
+                    b=CLAMP(b,0,255);\
 }
 
 - (void) postprocessGRBGTo:(unsigned char*)dst dstRowBytes:(long)dstRB dstBPP:(short)dstBPP {
@@ -453,11 +459,17 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
                 +(((_SL((r3c2&_B4)<<1)-_SL(r2c2&_B4)-_SL(r4c2&_B4))*sharpen)/65536);
 
             //Step 3: Apply color adjustments
-            COLORPROCESS(r1,g1,b1);
-            COLORPROCESS(r2,g2,b2);
-            COLORPROCESS(r3,g3,b3);
-            COLORPROCESS(r4,g4,b4);
-
+            if (needsTransferLookup) {
+                COLORPROCESS(r1,g1,b1);
+                COLORPROCESS(r2,g2,b2);
+                COLORPROCESS(r3,g3,b3);
+                COLORPROCESS(r4,g4,b4);
+            } else {
+                NOCOLORPROCESS(r1,g1,b1);
+                NOCOLORPROCESS(r2,g2,b2);
+                NOCOLORPROCESS(r3,g3,b3);
+                NOCOLORPROCESS(r4,g4,b4);
+            }                
             //Step 4: Assemble values and write to destination, update destination pointers
             if (dstBPP==4) {
                 dstUL1=0xff000000+(r1<<16)+(g1<<8)+(b1);
@@ -637,6 +649,8 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
         greenTransferLookup[i]=CLAMP(g,0.0f,255.0f);	//Clamp and set
         blueTransferLookup[i]=CLAMP(b,0.0f,255.0f);;	//Clamp and set
     }
+    needsTransferLookup=(gamma!=1.0f)||(brightness!=0.0f)||(contrast!=1.0f)
+        ||(saturation!=65536)||(redGain!=1.0f)||(greenGain!=1.0f)||(blueGain!=1.0f);
 }
 
 @end
