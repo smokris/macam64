@@ -114,6 +114,7 @@
 				29B9732DFDCFA39411CA2CEA,
 			);
 			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -203,7 +204,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.7b3 © 2002 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.8 © 2003 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>WebcamHelp</string>
 	<key>CFBundleHelpBookName</key>
@@ -219,11 +220,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.7b3</string>
+	<string>0.8</string>
 	<key>CFBundleSignature</key>
 	<string>wC?!</string>
 	<key>CFBundleVersion</key>
-	<string>0.7b3</string>
+	<string>0.8</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -1051,7 +1052,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.7b3 © 2002 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.8 © 2003 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -1063,11 +1064,11 @@
 	<key>CFBundlePackageType</key>
 	<string>thng</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.7b3</string>
+	<string>0.8</string>
 	<key>CFBundleSignature</key>
 	<string>wCam</string>
 	<key>CFBundleVersion</key>
-	<string>0.7b3</string>
+	<string>0.8</string>
 </dict>
 </plist>
 ";
