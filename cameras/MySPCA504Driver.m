@@ -46,14 +46,14 @@ extern UInt8 ZigZagLookup[];
 
 //High level DSC access (ordered from high to low level)
 
-- (CameraError) openDSCInterface;	//Opens the dsc interface, calls dscInit
+- (CameraError) openDSCInterface;	//Opens the dsc interface
 - (void) closeDSCInterface;		//calls dscShutdown, closes the dsc interface
 
 - (NSData*) dscDownloadMediaFromCard:(int)idx;	//Downloads a media object from SmartMedia card
 - (NSData*) dscDownloadMediaFromFlash:(int)idx;	//Downloads a media object from NAND Flash
 - (NSData*) dscDownloadMediaFromSDRAM:(int)idx;	//Downloads a media object from SDRAM
 
-- (BOOL) dscInit;			//Initializes the dsc, gets camera and stored data properties
+- (BOOL) dscCheckFileInfo;		//gets stored data properties
 - (void) dscShutdown;			//Un-initializes the dsc
 
 - (BOOL) dscWaitCommandReceived;	//Waits for the last command to finish, NO if error or timeout
@@ -82,6 +82,7 @@ extern UInt8 ZigZagLookup[];
 #define PRODUCT_SPCA504B 0x504b
 #define VENDOR_MUSTEK 0x055f
 #define PRODUCT_GSMART_MINI2 0xc420
+#define PRODUCT_GSMART_MINI3 0xc520
 
 + (NSArray*) cameraUsbDescriptions {
     NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
@@ -96,20 +97,17 @@ extern UInt8 ZigZagLookup[];
         [NSNumber numberWithUnsignedShort:PRODUCT_GSMART_MINI2],@"idProduct",
         [NSNumber numberWithUnsignedShort:VENDOR_MUSTEK],@"idVendor",
         @"Mustek GSmart MINI 2",@"name",NULL];
-    return [NSArray arrayWithObjects:dict1,dict2,dict3,NULL];
+    NSDictionary* dict4=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_GSMART_MINI3],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_MUSTEK],@"idVendor",
+        @"Mustek GSmart MINI 3",@"name",NULL];	//Thanks to Stefan Werner!
+    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,NULL];
 }
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
-    CameraError err = [self usbConnectToCam:usbDeviceRef];
-    fps=5;
-    resolution=ResolutionVGA;
-    [self setCompression:0];
-    [self setBrightness:0.0f];
-    [self setContrast:0.5f];
-    [self setSaturation:0.5f];
-    [self setCompression:0];
-    if (err==CameraErrorOK) err=[super startupWithUsbDeviceRef:usbDeviceRef];
-    //Init dsc values
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
+    UInt8 buf[2];
+    CameraError err;
+
     firmwareVersion=0;
     sdramSize=0;
     flashPresent=NO;
@@ -118,12 +116,30 @@ extern UInt8 ZigZagLookup[];
     sdramFileInfo=[[NSMutableArray alloc] initWithCapacity:10];
     flashFileInfo=[[NSMutableArray alloc] initWithCapacity:10];
     cardFileInfo=[[NSMutableArray alloc] initWithCapacity:10];
-    
+    fileInfoValid=NO;
+    if ((sdramFileInfo==NULL)||(flashFileInfo==NULL)||(cardFileInfo==NULL)) err=CameraErrorNoMem;
+    if (err==CameraErrorOK) {
+        err = [self usbConnectToCam:usbLocationId configIdx:-1];
+    }
+    if (err==CameraErrorOK) {
+        fps=5;
+        resolution=ResolutionVGA;
+        [self setCompression:0];
+        [self setBrightness:0.0f];
+        [self setContrast:0.5f];
+        [self setSaturation:0.5f];
+        [self setCompression:0];
+        err=[super startupWithUsbLocationId:usbLocationId];
+    }
 
     //Init PC Cam image description
-    pccamImgDesc=(ImageDescriptionHandle)NewHandle(sizeof(ImageDescription));
-    if (pccamImgDesc==NULL) err=CameraErrorNoMem;
-    else {	//Init fields
+    if (err==CameraErrorOK) {
+        pccamImgDesc=(ImageDescriptionHandle)NewHandle(sizeof(ImageDescription));
+        if (pccamImgDesc==NULL) err=CameraErrorNoMem;
+    }
+
+    //Init fields
+    if (err==CameraErrorOK) {
         (**pccamImgDesc).idSize=56;
         (**pccamImgDesc).cType='jpeg';
         (**pccamImgDesc).resvd1=0;
@@ -158,8 +174,35 @@ extern UInt8 ZigZagLookup[];
         (**pccamImgDesc).clutID=-1;
     }
 
-    if (err==CameraErrorOK) [self openDSCInterface];
-
+    //Check firmware revision
+    if (err==CameraErrorOK) {
+        if (![self usbReadCmdWithBRequest:0x20 wValue:0x0000 wIndex:0x0000 buf:buf len:1])
+            err=CameraErrorUSBProblem;
+    }
+    if (err==CameraErrorOK) {
+        firmwareVersion=buf[0]*256;
+        if (![self pccamWaitCameraIdle]) err=CameraErrorUSBProblem;
+    }
+    
+    //Enable autp pb size
+    if (err==CameraErrorOK) {
+        if (![self usbWriteCmdWithBRequest:0x00 wValue:0x0001 wIndex:0x2306 buf:NULL len:0])
+            err=CameraErrorUSBProblem;
+    }
+    //set dram -> fifo, bulk
+    if (err==CameraErrorOK) {
+        if (![self usbWriteCmdWithBRequest:0x00 wValue:0x0013 wIndex:0x2301 buf:NULL len:0])
+            err=CameraErrorUSBProblem;
+    }
+    //Wait for idle
+    if (err==CameraErrorOK) {
+        if (![self pccamWaitCameraIdle]) err=CameraErrorUSBProblem;
+    }
+    //Startup dsc interface
+    if (err==CameraErrorOK) {
+        err=[self openDSCInterface];
+    }
+    
     return err;
 }
 
@@ -280,12 +323,10 @@ extern UInt8 ZigZagLookup[];
         //Ask camera: Are you idle?
         if (firmwareVersion>=512) {
             if (![self usbReadCmdWithBRequest:0x21 wValue:0x0000 wIndex:0x0000 buf:buf len:1]) return NO;
-            buf[0]=buf[0]&0x01;
         } else {
             if (![self usbReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2000 buf:buf len:1]) return NO;
-            buf[0]=buf[0]&0x01;
         }
-        if (buf[0]) {		//Not idle?
+        if (buf[0]&0x01) {		//Not idle?
             retries--;
             if (retries<=0) return NO;	//Max retries reached -> give up
             usleep(SPCA_WAIT_RETRY);	//Wait a bit
@@ -333,9 +374,7 @@ extern UInt8 ZigZagLookup[];
         if (![self usbReadCmdWithBRequest:0x20 wValue:3 wIndex:0x0000 buf:buf+3 len:1]) return NO;
         if (![self usbReadCmdWithBRequest:0x20 wValue:4 wIndex:0x0000 buf:buf+4 len:1]) return NO;
         if (![self usbReadCmdWithBRequest:0x20 wValue:5 wIndex:0x0000 buf:buf+5 len:1]) return NO;
-//        NSLog(@"read info: %i %i %i %i %i %i (should be 1,0,2,2,0,0)",buf[0],buf[1],buf[2],buf[3],buf[4],buf[5]);
         if (![self usbReadCmdWithBRequest:0x00 wValue:0x0000 wIndex:0x2000 buf:buf len:1]) return NO;
-//        NSLog(@"startup 1: read %i (should be 0)",buf[0]);
         if (![self usbWriteCmdWithBRequest:0x24 wValue:0x0003 wIndex:0x0008 buf:buf len:0]) return NO;
         if (![self pccamWaitCommandReceived]) return NO;
         if (![self usbWriteCmdWithBRequest:0x24 wValue:0x0000 wIndex:0x0000 buf:buf len:0]) return NO;
@@ -903,35 +942,105 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
 }
 
 - (long) numberOfStoredMediaObjects {
+    if (![self dscCheckFileInfo]) return 0;
     return [sdramFileInfo count]+[flashFileInfo count]+[cardFileInfo count];
 }
 
 - (NSDictionary*) getStoredMediaObject:(long)idx {
+    long relIdx;
+    short retries;
     NSData* data=NULL;
-    if (idx<[sdramFileInfo count]) {
-        data=[self dscDownloadMediaFromSDRAM:idx];
-    } else {
-        idx-=[sdramFileInfo count];
-        if (idx<[flashFileInfo count]) {
-            data=[self dscDownloadMediaFromFlash:idx];
+    if (![self dscCheckFileInfo]) return NULL;
+    for (retries=5;(data==NULL)&&(retries>0);retries--) {	//Do up to 5 retries
+        relIdx=idx;
+        if (relIdx<[sdramFileInfo count]) {			//Get images from SDRAM
+            data=[self dscDownloadMediaFromSDRAM:relIdx];
         } else {
-            idx-=[flashFileInfo count];
-            if (idx<[cardFileInfo count]) {
-                data=[self dscDownloadMediaFromCard:idx];
+            relIdx-=[sdramFileInfo count];
+            if (relIdx<[flashFileInfo count]) {			//Get images from Flash
+                data=[self dscDownloadMediaFromFlash:relIdx];
+            } else {
+                relIdx-=[flashFileInfo count];
+                if (relIdx<[cardFileInfo count]) {		//Get images from card
+                    data=[self dscDownloadMediaFromCard:relIdx];
+                }
             }
         }
     }
+    
     if (data!=NULL) {
-        return [NSDictionary dictionaryWithObjectsAndKeys:
+        return [NSDictionary dictionaryWithObjectsAndKeys:	//Build return dictionary
             data,@"data",@"jpeg",@"type",NULL];
     } else return NULL;
 }
 
-- (void) eraseStoredMedia {
-#ifdef VERBOSE
-    NSLog(@"MySPCA504Driver: eraseStoredMedia not implemented");
-#endif
+- (BOOL) canGetStoredMediaObjectInfo {
+    return YES;
 }
+
+- (NSDictionary*) getStoredMediaObjectInfo:(long)idx {
+    long width=0;
+    long height=0;
+    long size=0;
+
+    if (![self dscCheckFileInfo]) return NULL;
+    if (idx<[sdramFileInfo count]) {
+        NSDictionary* srcInfo=[sdramFileInfo objectAtIndex:idx];
+        if (srcInfo) {
+            size=[[srcInfo objectForKey:@"Size"] longValue]*2+1000;
+            width=[[srcInfo objectForKey:@"Width"] longValue];
+            height=[[srcInfo objectForKey:@"Height"] longValue];
+        }
+    } else {
+        idx-=[sdramFileInfo count];
+        if (idx<[flashFileInfo count]) {
+            NSDictionary* srcInfo=[flashFileInfo objectAtIndex:idx];
+            if (srcInfo) {
+                size=[[srcInfo objectForKey:@"Size"] longValue]*2+1000;
+                width=1280;	//Do this better***
+                height=960;	//Do this better***
+            }
+        } else {
+            idx-=[flashFileInfo count];
+            if (idx<[cardFileInfo count]) {
+                NSDictionary* srcInfo=[cardFileInfo objectAtIndex:idx];
+                if (srcInfo) {
+                    size=[[srcInfo objectForKey:@"Size"] longValue]*2+1000;
+                    width=1280;	//Do this better***
+                    height=960;	//Do this better***
+                }
+            }
+        }
+    }
+    if (size>0) {
+        return [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithLong:width],@"width",
+            [NSNumber numberWithLong:height],@"height",
+            [NSNumber numberWithLong:size],@"size",
+            NULL];
+    } else return NULL;
+}
+
+- (BOOL) canDeleteAll {
+    return ((cardPresent=YES)&&(firmwareVersion>=512));
+}
+
+- (CameraError) deleteAll {
+    if (![self dscWriteCmdWithBRequest:0x52 wValue:0x00 wIndex:0x00 buf:NULL len:0]) return CameraErrorUSBProblem;
+    fileInfoValid=NO;
+    return CameraErrorOK;
+}
+
+- (BOOL) canCaptureOne {
+    return ((cardPresent=YES)&&(firmwareVersion>=512));
+}
+
+- (CameraError) captureOne {
+    if (![self dscWriteCmdWithBRequest:0x51 wValue:0x00 wIndex:0x00 buf:NULL len:0]) return CameraErrorUSBProblem;
+    fileInfoValid=NO;
+    return CameraErrorOK;
+}
+
 
 - (CameraError) openDSCInterface {
     IOUSBFindInterfaceRequest		interfaceRequest;
@@ -979,7 +1088,8 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
     err = (*dscIntf)->SetAlternateInterface(dscIntf,0);
     CheckError(err,"openDSCInterface-SetAlternateInterface");
     if (err) return CameraErrorUSBProblem;
-    if (![self dscInit]) return CameraErrorUSBProblem;
+
+    sleep(5);
     return CameraErrorOK;
 }
 
@@ -1081,23 +1191,10 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
     return jpeg;
 }
 
-- (BOOL) dscInit {
+- (BOOL) dscCheckFileInfo {
     UInt8 buf[256];
-    firmwareVersion=0;
-
-    /* *** TODO/FIXME: Move firmware detection to some more appropriate place (e.g. startupWithUsbDeviceRef) */ 
-    
-    if (![self dscWaitCameraIdle]) return NO;
-    //Check firmware revision
-    if (![self dscReadCmdWithBRequest:0x20 wValue:0x0000 wIndex:0x0000 buf:buf len:1]) return NO;
-    firmwareVersion=buf[0]*256;
-
-    //Enable autp pb size
-    if (![self dscWriteCmdWithBRequest:0x00 wValue:0x0001 wIndex:0x2306 buf:NULL len:0]) return NO;
-    //set dram -> fifo, bulk
-    if (![self dscWriteCmdWithBRequest:0x00 wValue:0x0013 wIndex:0x2301 buf:NULL len:0]) return NO;
-    //Wait for idle
-    if (![self dscWaitCameraIdle]) return NO;
+    if (fileInfoValid) return YES;	//Already up-to-date? -> finish
+    fileInfoValid=YES;			//After this function, we're up-to-date
 
     //----------------- SDRAM ------------------
     
@@ -1195,7 +1292,7 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
         if (![self dscReadCmdWithBRequest:0x54 wValue:0x0000 wIndex:0x0000 buf:buf len:2]) return NO;
         mediaCount=buf[0]+256*buf[1];
         if (mediaCount>0) {    //Files on card -> Get info for files
-            //Get fdb storage
+                               //Get fdb storage
             long fdbSize=((mediaCount*32+511)/512)*512;
             NSMutableData* cardFDB=[NSMutableData dataWithLength:fdbSize];
             UInt8* fdbBuf=[cardFDB mutableBytes];
@@ -1222,7 +1319,8 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
                 fdbBuf+=32;
             }
         }
-    }    
+    }
+    
     
     [self dumpCamStats];
     return YES;
@@ -1352,13 +1450,12 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
         //read the page
         readLength=256;
         err=((IOUSBInterfaceInterface182*)(*dscIntf))->
-            ReadPipeTO(dscIntf,1,tmpBuf,&readLength,1000,2000);
+            ReadPipeTO(dscIntf,1,tmpBuf,&readLength,1000,2000+(readLength/100));
         if (bytesToTransfer>bytesTransferred) {
             int copyLength=MIN(256,(bytesToTransfer-bytesTransferred));
             memcpy(buf+bytesTransferred,tmpBuf,copyLength);
             bytesTransferred+=copyLength;
         }
-
         switch (err) {
             case 0: break;
             case kIOReturnOverrun:

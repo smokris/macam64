@@ -75,6 +75,7 @@ typedef struct SPCA504GrabContext {
     ImageDescriptionHandle pccamImgDesc;		//Image Description for JFIF decompress (PC Cam video)
     short pccamQTabIdx;					//Current Q Table index
 
+    BOOL fileInfoValid;			//Indicating if the file info arrays are up to date
     NSMutableArray* sdramFileInfo;	//Array of Dictionaries for each object
     NSMutableArray* flashFileInfo;	//Array of Dictionaries for each object
     NSMutableArray* cardFileInfo;	//Array of Dictionaries for each object
@@ -84,7 +85,7 @@ typedef struct SPCA504GrabContext {
 
 + (NSArray*) cameraUsbDescriptions;
 
-- (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 - (void) shutdown;
 
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;
@@ -104,7 +105,6 @@ typedef struct SPCA504GrabContext {
 - (BOOL) canStoreMedia;
 - (long) numberOfStoredMediaObjects;
 - (NSDictionary*) getStoredMediaObject:(long)idx;
-- (void) eraseStoredMedia;
 
 
 
