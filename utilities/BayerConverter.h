@@ -24,9 +24,10 @@
 /*
 sourceFormat specifies serialization type. Examples show first two lines of a 6-pixel-wide image
 
-1 = GRBG Bayer, sent lienar per line, inversed matrix order.    RRRGGG GGGBBB (STV680-type, defaults to this)
+1 = GRBG Bayer, sent linear per line, inversed matrix order.    RRRGGG GGGBBB (STV680-type, defaults to this)
 2 = GRBG Bayer, sent interleaved, correct matrix order.         GRGRGR BGBGBG (STV600-type)
 3 = GRBG Bayer, ?/green line, red/blue line			xGxGxG RBRBRB (QuickCam Pro subsampled-style)
+4 = BGGR Bayer, sent interleaved, correct matrix order.         BGBGBG GRGRGR (OV7630-style)
 */
 
 @interface BayerConverter : NSObject {
@@ -97,7 +98,8 @@ sourceFormat specifies serialization type. Examples show first two lines of a 6-
 
 //Do the whole decoding
 - (BOOL) convertFromSrc:(unsigned char*)src toDest:(unsigned char*)dst
-            srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP flip:(BOOL)flip;
+			srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP 
+				   flip:(BOOL)flip rotate180:(BOOL)rotate180;
 
 
 

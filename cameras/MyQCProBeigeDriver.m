@@ -476,7 +476,8 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
                                        srcRowBytes:width
                                        dstRowBytes:lastImageBufferRowBytes
                                             dstBPP:lastImageBufferBPP
-                                              flip:hFlip];
+                                              flip:hFlip
+										 rotate180:NO];
                     [imageBufferLock unlock];
                     [self mergeImageReady];
                 } else {

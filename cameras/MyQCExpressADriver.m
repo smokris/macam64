@@ -690,7 +690,8 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
                        srcRowBytes: [self width] + extraBytesInLine
                        dstRowBytes: nextImageBufferRowBytes
                             dstBPP: nextImageBufferBPP
-                              flip: hFlip];
+                              flip: hFlip
+						 rotate180: NO];
     
     // advance buffer
     lastImageBuffer         = nextImageBuffer;

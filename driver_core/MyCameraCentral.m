@@ -191,6 +191,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[MyOV511Driver class]];
     [self registerCameraDriver:[MyOV511PlusDriver class]];
     [self registerCameraDriver:[MySonix2028Driver class]];
+	[self registerCameraDriver:[MyViviCam3350BDriver class]];
     [self registerCameraDriver:[MySE401Driver class]];
     [self registerCameraDriver:[MyQCProBeigeDriver class]];
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];

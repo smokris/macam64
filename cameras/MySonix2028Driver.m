@@ -53,9 +53,23 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
 1111		: -18
 
 
+ViviCam 3350B additions
+=======================
 
+This uses the OV7630 imaging chip, which has a BGGR bayer matrix
 
+The code sent is almost exactly the same as above, except:
+- need to skip 20 bytes, not 12 when decoding
+- rows do indeed contain the full amount of pixels (the first two are actually the first two!)
+- the bit-stream decoding is almost the same, these work very well, and are absolutely correct
+11100		: +20
+11101xxxxx 	: =8*(xxxxx)+0
+1111		: -20
 
+Some of these changes may also apply to the original (Sonix2028) driver, but without 
+a way to test changes, they will be left alone.
+
+The video for the VivCam 3350B still does not work.
 
 */
 
@@ -69,8 +83,9 @@ After the line header, the actual pixels follow. Th line lengths don't match exa
 #include "MiscTools.h"
 #include "unistd.h"
 
-#define VENDOR_AEL	0x0c45
+#define VENDOR_SONIX	0x0c45
 #define PRODUCT_DC31UC	0x8000
+#define PRODUCT_VIVICAM3350B 0x800A
 
 #define MAX_SHUTTER 2560000.0f
 
@@ -80,6 +95,7 @@ typedef enum SonixSensorType {
     SonixSensorTASC5130D_VGA=4,
     SonixSensorOV7620_VGA=6,
     SonixSensorPixartPAS202B_VGA=8,
+    SonixSensorOV7630_VGA=10,
 } SonixSensorType;
 
 @interface MySonix2028Driver (Private)
@@ -128,7 +144,7 @@ typedef enum SonixSensorType {
 @implementation MySonix2028Driver
 
 + (unsigned short) cameraUsbProductID { return PRODUCT_DC31UC; }
-+ (unsigned short) cameraUsbVendorID { return VENDOR_AEL; }
++ (unsigned short) cameraUsbVendorID { return VENDOR_SONIX; }
 + (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"AEL Auracam DC-31UC"]; }
 
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
@@ -676,7 +692,8 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
                        srcRowBytes:width+2
                        dstRowBytes:rb
                             dstBPP:bpp
-                              flip:hFlip];
+                              flip:hFlip
+						 rotate180:NO];
 }
 
 - (CameraError) decodingThread {
@@ -1203,5 +1220,78 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 }
 
 
+@end
+
+
+// The Sonix2028 driver almost works for the ViviCam3350B
+// There are some small but significant changes in the decoding,
+// although some may also appply to the AEL Auracam DC-31UC
+// for example, the first two bytes on the line are actually the first two bytes, 
+// and thus the line is 640 wide or whatever it is supposed to be
+// The AEL may also use BGGR bayer pattern, which is perhaps why the 
+// original driver started on the second line
+
+@implementation MyViviCam3350BDriver
+
+//Class methods needed
++ (unsigned short) cameraUsbProductID { return PRODUCT_VIVICAM3350B; }
++ (unsigned short) cameraUsbVendorID { return VENDOR_SONIX; }
++ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"Vivitar ViviCam 3350B"]; }
+
+	// constructor? bayer:setSourceFormat:4
+
+#define PARSE_PIXEL_NEW(val) {\
+    PEEK_BITS(10,bits);\
+		if ((bits&0x00000200)==0) { EAT_BITS(1); }\
+        else if ((bits&0x00000380)==0x00000280) { EAT_BITS(3); val+=3; if (val>255) val=255;}\
+		else if ((bits&0x00000380)==0x00000300) { EAT_BITS(3); val-=3; if (val<0) val=0;}\
+		else if ((bits&0x000003c0)==0x00000200) { EAT_BITS(4); val+=8; if (val>255) val=255;}\
+		else if ((bits&0x000003c0)==0x00000240) { EAT_BITS(4); val-=8; if (val<0) val=0;}\
+		else if ((bits&0x000003c0)==0x000003c0) { EAT_BITS(4); val-=20; if (val<0) val=0;}\
+		else if ((bits&0x000003e0)==0x00000380) { EAT_BITS(5); val+=20; if (val>255) val=255;}\
+		else { EAT_BITS(10); val=8*(bits&0x0000001f)+0; }}
+
+
+- (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb 
+{
+    UInt8* dst=bayerBuffer;
+    UInt16 bits;
+    SInt16 c1val,c2val;
+    int x,y;
+    UInt32 bitBuf=0;
+    UInt32 bitBufCount=0;
+	
+    src += 20;  //  This works nicely for downloaded images
+	
+    for (y = 0; y < height; y++) 
+	{
+        PEEK_BITS(8,bits);
+        EAT_BITS(8);
+        c1val=bits&0x000000ff;
+		
+        PEEK_BITS(8,bits);
+        EAT_BITS(8);
+        c2val=bits&0x000000ff;
+		
+        PUT_PIXEL_PAIR;
+		
+        for (x = 2; x < width; x += 2) 
+		{
+            PARSE_PIXEL_NEW(c1val);
+            PARSE_PIXEL_NEW(c2val);
+            PUT_PIXEL_PAIR;
+        }
+    }
+	
+    //Decode Bayer
+	[bayerConverter setSourceFormat:4];  //  This is in BGGR format!
+    [bayerConverter convertFromSrc:bayerBuffer
+                            toDest:pixmap
+                       srcRowBytes:width
+                       dstRowBytes:rb
+                            dstBPP:bpp
+                              flip:hFlip
+						 rotate180:YES];
+}
 
 @end

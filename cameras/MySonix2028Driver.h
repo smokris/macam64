@@ -118,5 +118,17 @@ typedef struct SONIXGrabContext {
 - (long) numberOfStoredMediaObjects;
 - (NSDictionary*) getStoredMediaObject:(long)idx;
 
+@end
+
+
+@interface MyViviCam3350BDriver : MySonix2028Driver 
+
++ (unsigned short) cameraUsbProductID;
++ (unsigned short) cameraUsbVendorID;
++ (NSString*) cameraName;
+
+// decoding is slightly different
+- (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb;
 
 @end
+

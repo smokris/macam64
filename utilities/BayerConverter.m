@@ -27,6 +27,7 @@
 - (void) calcColorStatistics;
 - (void) updateGainsToColorStats;
 - (void) recalcTransferLookup;
+- (void) rotateImage180;
 
 @end
 
@@ -81,7 +82,7 @@
 }
 
 - (void) setSourceFormat:(short)fmt {
-    if ((fmt<1)||(fmt>3)) return;
+    if ((fmt<1)||(fmt>4)) return;
     sourceFormat=fmt;
 }
 
@@ -173,9 +174,10 @@
 
 //Do the whole decoding
 - (BOOL) convertFromSrc:(unsigned char*)src toDest:(unsigned char*)dst
-            srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP flip:(BOOL)flip {
+            srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP flip:(BOOL)flip rotate180:(BOOL)rotate180 {
     if (!rgbBuffer) return NO;
     [self demosaicFrom:src type:sourceFormat srcRowBytes:srcRB];
+	if (rotate180) [self rotateImage180];
     if (updateGains||produceColorStats) [self calcColorStatistics];
     if (updateGains) [self updateGainsToColorStats];
     [self postprocessGRBGTo:dst dstRowBytes:dstRB dstBPP:dstBPP flip:flip];
@@ -192,18 +194,26 @@
     B3 G7 B4 G8
 
     -> A GRBG-type Bayer Matrix
+	
+	and the BGGR type matrix is as follows
+	
+	B1 G1 B2 G2
+	G3 R1 G4 R2
+	B3 G5 B4 G6
+	G7 R3 G8 R4
 
     */
     short g1,g2,g3,g4,g5,g6,g7,g8;
     short r1,r2,r3,r4;
     short b1,b2,b3,b4;
-
+	
     unsigned char *green1Run,*green2Run,*green3Run,*green4Run;
     unsigned char *red1Run,*red2Run,*blue1Run,*blue2Run;
     unsigned char *dst1Run,*dst2Run;
     long x,y;
     long dstSkip=sourceWidth*3;
-
+	BOOL GRBGtype = YES;  //  As opposed to BGGR
+	
     //source type specific variables 
     long componentStep,srcSkip;
     switch (type) {
@@ -228,6 +238,14 @@
             green2Run =src+1;
             blue1Run  =src+srcRowBytes;
             break;
+        case 4:	//OV7630 style
+			GRBGtype = NO;
+            componentStep=2;
+            blue1Run  =src;
+            green1Run =src+1;
+            green2Run =src+srcRowBytes;
+            red1Run   =src+srcRowBytes+1;
+            break;
         default: //Assume type 2
 #ifdef VERBOSE
             NSLog(@"BayerConverter: Unknown bayer data type: %i",type);
@@ -239,47 +257,51 @@
             green2Run =src+srcRowBytes+1;
             break;
     }
-
+	
     //init data run pointers
     srcSkip =2*srcRowBytes-(((sourceWidth-2)/2)*componentStep);
-    green3Run =green1Run+2*srcRowBytes;
-    red2Run   =red1Run+2*srcRowBytes;
-    blue2Run  =blue1Run+2*srcRowBytes;
-    green4Run =green2Run+2*srcRowBytes;
+	// componentStep is added here to compensate for the initial subtraction in the big loop below
+	// the loop over the non-border rows starts with the runs pointing to the left half
+	// one could probably eliminate both adding it here and subtracting it later
+    green3Run =green1Run+2*srcRowBytes+componentStep;
+    red2Run   =red1Run+2*srcRowBytes+componentStep;
+    blue2Run  =blue1Run+2*srcRowBytes+componentStep;
+    green4Run =green2Run+2*srcRowBytes+componentStep;
     dst1Run=rgbBuffer;
     dst2Run=rgbBuffer+2*dstSkip;
-
-//First row, first column
+	
+	//First row, first column
     *(dst1Run++)=*red1Run;
-    *(dst1Run++)=*green1Run;
+	*(dst1Run++)=(GRBGtype)?*green1Run:(*green1Run+*green2Run)/2;
     *(dst1Run++)=*blue1Run;
-//First row, non-border columns
+	//First row, non-border columns
     for (x=(sourceWidth-2)/2;x>0;x--) {
         *(dst1Run++)=*red1Run;
-        *(dst1Run++)=(*green1Run+*(green1Run+componentStep)+*green2Run)/3;
+        *(dst1Run++)=(GRBGtype)?(*green1Run+*(green1Run+componentStep)+*green2Run)/3:*green1Run;
         *(dst1Run++)=(*blue1Run+*(blue1Run+componentStep))/2;
-        green1Run+=componentStep;
+        if (GRBGtype) green1Run+=componentStep;
         green2Run+=componentStep;
         blue1Run+=componentStep;
         *(dst1Run++)=(*red1Run+*(red1Run+componentStep))/2;
-        *(dst1Run++)=*green1Run;
+        *(dst1Run++)=(GRBGtype)?*green1Run:(*green1Run+*(green1Run+componentStep)+*green2Run)/3;
         *(dst1Run++)=*blue1Run;
         red1Run+=componentStep;
+        if (!GRBGtype) green1Run+=componentStep;
     }
-//First row, last column
+	//First row, last column
     *(dst1Run++)=*red1Run;
-    *(dst1Run++)=(*green1Run+*green2Run)/2;
+    *(dst1Run++)=(GRBGtype)?(*green1Run+*green2Run)/2:*green1Run;
     *(dst1Run++)=*blue1Run;
-//Reset the src data run pointers we changed in the first row - dst1RUn is ok now
+	//Reset the src data run pointers we changed in the first row - dst1RUn is ok now
     green1Run =green3Run-2*srcRowBytes;
     red1Run   =red2Run-2*srcRowBytes;
     blue1Run  =blue2Run-2*srcRowBytes;
     green2Run =green4Run-2*srcRowBytes;
     
     
-//All non-border rows
+	//All non-border rows
     for (y=(sourceHeight-2)/2;y>0;y--) {
-//init right half of colors to left values - will be shifted inside the loop
+		//init right half of colors to left values - will be shifted inside the loop
         r2=*(red1Run-componentStep);	
         r4=*(red2Run-componentStep);
         g2=*(green1Run-componentStep);
@@ -288,16 +310,16 @@
         g8=*(green4Run-componentStep);
         b2=*(blue1Run-componentStep);
         b4=*(blue2Run-componentStep);
-
-//First pixel column in row
-        *(dst1Run++)=(r2+r4)/2;
-        *(dst1Run++)=(g2+g4+g6)/3;
-        *(dst1Run++)=b2;
-        *(dst2Run++)=r4;
-        *(dst2Run++)=g6;
-        *(dst2Run++)=(b2+b4)/2;
-            
-//All non-border columns in row
+		
+		//First pixel column in row
+        *(dst1Run++)=(GRBGtype)?(r2+r4)/2:r2;
+        *(dst1Run++)=(GRBGtype)?(g2+g4+g6)/3:g2;
+        *(dst1Run++)=(GRBGtype)?b2:(b2+b4)/2;
+        *(dst2Run++)=(GRBGtype)?r4:(r2+r4)/2;
+        *(dst2Run++)=(GRBGtype)?g6:(g4+g6+g8)/3;
+        *(dst2Run++)=(GRBGtype)?(b2+b4)/2:b4;
+		
+		//All non-border columns in row
         for (x=(sourceWidth-2)/2;x>0;x--) {
             //shift right half of colors to left half
             r1=r2;
@@ -317,34 +339,34 @@
             g6=*green3Run; green3Run+=componentStep;
             g8=*green4Run; green4Run+=componentStep;
             b4=*blue2Run; blue2Run+=componentStep;
-
-            //Interpolate Pixel (2,2): location of g3.
-            *(dst1Run++)=(r1+r3)/2;
-            *(dst1Run++)=g3;
-            *(dst1Run++)=(b1+b2)/2;
-            //Interpolate Pixel (3,2): location of b2.
-            *(dst1Run++)=(r1+r2+r3+r4)/4;
-            *(dst1Run++)=(g2+g3+g4+g6)/4;
-            *(dst1Run++)=b2;
-            //Interpolate Pixel (2,3): location of r3.
-            *(dst2Run++)=r3;
-            *(dst2Run++)=(g3+g5+g6+g7)/4;
-            *(dst2Run++)=(b1+b2+b3+b4)/4;
-            //Interpolate Pixel (3,3): location of g6.
-            *(dst2Run++)=(r3+r4)/2;
-            *(dst2Run++)=g6;
-            *(dst2Run++)=(b2+b4)/2;
+			
+            //Interpolate Pixel (2,2): location of g3 (r1).
+            *(dst1Run++)=(GRBGtype)?(r1+r3)/2:r1;
+            *(dst1Run++)=(GRBGtype)?g3:(g1+g3+g4+g5)/4;
+            *(dst1Run++)=(GRBGtype)?(b1+b2)/2:(b1+b2+b3+b4)/4;
+            //Interpolate Pixel (3,2): location of b2 (g4).
+            *(dst1Run++)=(GRBGtype)?(r1+r2+r3+r4)/4:(r1+r2)/2;
+            *(dst1Run++)=(GRBGtype)?(g2+g3+g4+g6)/4:g4;
+            *(dst1Run++)=(GRBGtype)?b2:(b2+b4)/2;
+            //Interpolate Pixel (2,3): location of r3 (g5).
+            *(dst2Run++)=(GRBGtype)?r3:(r1+r3)/2;
+            *(dst2Run++)=(GRBGtype)?(g3+g5+g6+g7)/4:g5;
+            *(dst2Run++)=(GRBGtype)?(b1+b2+b3+b4)/4:(b3+b4)/2;
+            //Interpolate Pixel (3,3): location of g6 (b4).
+            *(dst2Run++)=(GRBGtype)?(r3+r4)/2:(r1+r2+r3+r4)/4;
+            *(dst2Run++)=(GRBGtype)?g6:(g4+g5+g6+g8)/4;
+            *(dst2Run++)=(GRBGtype)?(b2+b4)/2:b4;
         }
-
-//last pixel column in row
-        *(dst1Run++)=(r2+r4)/2;
-        *(dst1Run++)=g4;
-        *(dst1Run++)=b2;
-        *(dst2Run++)=r4;
-        *(dst2Run++)=(g4+g6+g8)/3;
-        *(dst2Run++)=(b2+b4)/2;
-
-//go to start of next two lines
+		
+		//last pixel column in row
+        *(dst1Run++)=(GRBGtype)?(r2+r4)/2:r2;
+        *(dst1Run++)=(GRBGtype)?g4:(g2+g4+g6)/3;
+        *(dst1Run++)=(GRBGtype)?b2:(b2+b4)/2;
+        *(dst2Run++)=(GRBGtype)?r4:(r2+r4)/2;
+        *(dst2Run++)=(GRBGtype)?(g4+g6+g8)/3:g6;
+        *(dst2Run++)=(GRBGtype)?(b2+b4)/2:b4;
+		
+		//go to start of next two lines
         dst1Run+=dstSkip;
         dst2Run+=dstSkip;
         red1Run+=srcSkip;
@@ -356,26 +378,26 @@
         blue1Run+=srcSkip;
         blue2Run+=srcSkip;
     }
-//Last row, first column
+	//Last row, first column
     *(dst1Run++)=*red1Run;
-    *(dst1Run++)=(*green1Run+*green2Run)/2;
+    *(dst1Run++)=(GRBGtype)?(*green1Run+*green2Run)/2:*green1Run;
     *(dst1Run++)=*blue1Run;
-//Last row, non-border columns
+	//Last row, non-border columns
     for (x=(sourceWidth-2)/2;x>0;x--) {
-        green1Run+=componentStep;
         *(dst1Run++)=*red1Run;
-        *(dst1Run++)=*green2Run;
+        *(dst1Run++)=(GRBGtype)?*green2Run:(*green1Run+*green2Run+*(green2Run+componentStep))/3;
         *(dst1Run++)=(*blue1Run+*(blue1Run+componentStep))/2;
+        green1Run+=componentStep;
         blue1Run+=componentStep;
         *(dst1Run++)=(*red1Run+*(red1Run+componentStep))/2;
-        *(dst1Run++)=(*green1Run+*green2Run+*(green2Run+componentStep))/3;
+        *(dst1Run++)=(GRBGtype)?(*green1Run+*green2Run+*(green2Run+componentStep))/3:*(green2Run+componentStep);
         *(dst1Run++)=*blue1Run;
         red1Run+=componentStep;
         green2Run+=componentStep;
     }
-//Last row, last column
+	//Last row, last column
     *(dst1Run++)=*red1Run;
-    *(dst1Run++)=*green2Run;
+    *(dst1Run++)=(GRBGtype)?*green2Run:(*green1Run+*green2Run)/2;
     *(dst1Run++)=*blue1Run;
 }
 
@@ -673,12 +695,39 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
 }	
 
 /*
+ 
+ This method will only be called when the rgb (temporary) buffer is filled. 
+ 
+ */
+
+- (void) rotateImage180 {
+	long x, y, z;
+	long width = sourceWidth;
+	long height = sourceHeight;
+	unsigned char temp[3];
+	unsigned char * buffer = rgbBuffer;
+	
+	if (buffer == NULL) 
+		return;
+	
+	for (y = 0; y < (height+1)/2; y++) 
+		for (x = 0; x < width; x++) 
+			for (z = 0; z < 3; z++) 
+			{
+				
+				temp[z] = rgbBuffer[3 * (y * width + x) + z];
+				rgbBuffer[3 * (y * width + x) + z] = rgbBuffer[3 * ((height - y) * width - x - 1) + z];
+				rgbBuffer[3 * ((height - y) * width - x - 1) + z] = temp[z];
+			}
+}
+
+/*
 
  This method will only be called when the rgb (temporary) buffer is filled. We take the average color of the temp image by adding some sample pixels from the temp image. Its color value is equal to the raw image. It's unsharp, but that doesn't matter... If the existing averages were valid, we update the averages (they are an exponentional average sum), if not, we set them. Then, we calculate compensation gains for the average color (which should sum up to three).
 
 */
 
-#define STATISTICS_SAMPLE_STEP 5	//take every fifth pixel - it won't be a gegular grid and it's faster...
+#define STATISTICS_SAMPLE_STEP 5	//take every fifth pixel - it won't be a regular grid and it's faster...
 - (void) calcColorStatistics {
     unsigned char* run;
     unsigned char* max=rgbBuffer+3*sourceWidth*sourceHeight;

@@ -478,7 +478,8 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
                                    srcRowBytes:grabWidth
                                    dstRowBytes:lastImageBufferRowBytes
                                         dstBPP:lastImageBufferBPP
-                                          flip:hFlip];
+                                          flip:hFlip
+									 rotate180:NO];
                 [imageBufferLock unlock];
                 [self mergeImageReady];
             } else {
@@ -583,7 +584,8 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
                               srcRowBytes:rawWidth
                               dstRowBytes:[imageRep bytesPerRow]
                                    dstBPP:[imageRep bitsPerPixel]/8
-                                     flip:NO];
+                                     flip:NO
+								rotate180:NO];
     }
 //Cleanup
     if (rawBuffer) [rawBuffer release]; rawBuffer=NULL;
