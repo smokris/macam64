@@ -143,12 +143,54 @@
 			<key>CFBundleTypeExtensions</key>
 			<array>
 				<string>tiff</string>
+				<string>tif</string>
+				<string>TIFF</string>
+				<string>TIF</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>Image</string>
+			<string>TIFF Image</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>TIFF</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSDocumentClass</key>
+			<string>MyImageDocument</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>mov</string>
+				<string>mpg</string>
+				<string>avi</string>
+				<string>aiff</string>
+				<string>mp3</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>QuickTime Movie</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>MooV</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSDocumentClass</key>
+			<string>MyMovieDocument</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>jpg</string>
+				<string>jpeg</string>
+				<string>JPG</string>
+				<string>JPEG</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>JPEG Image</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>JPEG</string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
@@ -235,6 +277,11 @@
 				F5A4FBC6031E34E00166D062,
 				F5BB387F0342871601E62307,
 				F5EDFAD8036876210166D062,
+				F5E78BF60371F3990166D062,
+				F589770003758BEE01159FE2,
+				F589770203758BEE01159FE2,
+				F589770403758BEE01159FE2,
+				F5A6652E037B256401C96C8F,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -264,6 +311,9 @@
 				F57D11BEC5B26FF6010B00CC,
 				F57D11BFC5B26FF6010B00CC,
 				F5794DE00285B922010B00CC,
+				F5E6AA670371F8920166D062,
+				F589724B0374636B01159FE2,
+				F5B1CC470375DAF501159FE2,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -314,6 +364,11 @@
 				F5C5790903049095010B006D,
 				F5E501500366072501987CBE,
 				F5EDFAD7036876210166D062,
+				F5E78BF30371F3990166D062,
+				F58976FF03758BEE01159FE2,
+				F589770103758BEE01159FE2,
+				F589770303758BEE01159FE2,
+				F5A6652D037B256401C96C8F,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -385,6 +440,8 @@
 				F500FB73022FB1BD01369AA6,
 				F52D2ED4025A9425016EC628,
 				F52D2ED5025A9425016EC628,
+				F589724A0374636B01159FE2,
+				F5B1CC460375DAF501159FE2,
 			);
 			isa = PBXGroup;
 			path = images;
@@ -933,8 +990,8 @@
 				F5F4373F02D278D6018D4F8C,
 				F5F4374F02D52947018D4F8C,
 				F5A4FBC8031E34E50166D062,
-				F5EDFAD4036875F00166D062,
 				F5EDFAD9036876210166D062,
+				F5CBE0D003807F2301260355,
 			);
 			isa = PBXSourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1269,6 +1326,7 @@
 		};
 		F55DD839021311680166DE0F = {
 			children = (
+				F5E6AA650371F8920166D062,
 				F51EEE5D0284BC9601B888F7,
 				F57D11B3C5B26FF6010B00CC,
 				F563AB480247FDC601BF65F7,
@@ -1288,6 +1346,16 @@
 				F58DB239024E9803019A97FC,
 				F5C80D8D02417A800166DE75,
 				F5C80D8E02417A800166DE75,
+				F5E78BF20371F3990166D062,
+				F5E78BEF0371F3990166D062,
+				F58976FA03758BEE01159FE2,
+				F58976F903758BEE01159FE2,
+				F58976FC03758BEE01159FE2,
+				F58976FB03758BEE01159FE2,
+				F58976FE03758BEE01159FE2,
+				F58976FD03758BEE01159FE2,
+				F5A6652C037B256401C96C8F,
+				F5A6652B037B256401C96C8F,
 				F500FB6C022FB1BD01369AA6,
 			);
 			isa = PBXGroup;
@@ -1636,6 +1704,83 @@
 			settings = {
 			};
 		};
+		F589724A0374636B01159FE2 = {
+			isa = PBXFileReference;
+			path = RecordMovieToolbarItem.tiff;
+			refType = 4;
+		};
+		F589724B0374636B01159FE2 = {
+			fileRef = F589724A0374636B01159FE2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F58976F903758BEE01159FE2 = {
+			isa = PBXFileReference;
+			path = MyMovieRecorder.m;
+			refType = 4;
+		};
+		F58976FA03758BEE01159FE2 = {
+			isa = PBXFileReference;
+			path = MyMovieRecorder.h;
+			refType = 4;
+		};
+		F58976FB03758BEE01159FE2 = {
+			isa = PBXFileReference;
+			path = MyMovieWindowController.m;
+			refType = 4;
+		};
+		F58976FC03758BEE01159FE2 = {
+			isa = PBXFileReference;
+			path = MyMovieWindowController.h;
+			refType = 4;
+		};
+		F58976FD03758BEE01159FE2 = {
+			isa = PBXFileReference;
+			path = MyNSMovieExtensions.m;
+			refType = 4;
+		};
+		F58976FE03758BEE01159FE2 = {
+			isa = PBXFileReference;
+			path = MyNSMovieExtensions.h;
+			refType = 4;
+		};
+		F58976FF03758BEE01159FE2 = {
+			fileRef = F58976F903758BEE01159FE2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F589770003758BEE01159FE2 = {
+			fileRef = F58976FA03758BEE01159FE2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F589770103758BEE01159FE2 = {
+			fileRef = F58976FB03758BEE01159FE2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F589770203758BEE01159FE2 = {
+			fileRef = F58976FC03758BEE01159FE2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F589770303758BEE01159FE2 = {
+			fileRef = F58976FD03758BEE01159FE2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F589770403758BEE01159FE2 = {
+			fileRef = F58976FE03758BEE01159FE2;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F589EB0E02268A6901D99A1F = {
 			isa = PBXFileReference;
 			path = MySTV680Driver.h;
@@ -1772,6 +1917,28 @@
 			settings = {
 			};
 		};
+		F5A6652B037B256401C96C8F = {
+			isa = PBXFileReference;
+			path = MyPrefsWindowController.m;
+			refType = 4;
+		};
+		F5A6652C037B256401C96C8F = {
+			isa = PBXFileReference;
+			path = MyPrefsWindowController.h;
+			refType = 4;
+		};
+		F5A6652D037B256401C96C8F = {
+			fileRef = F5A6652B037B256401C96C8F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5A6652E037B256401C96C8F = {
+			fileRef = F5A6652C037B256401C96C8F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5AA417601DA8EF70157C38C = {
 			isa = PBXFrameworkReference;
 			name = CoreFoundation.framework;
@@ -1792,6 +1959,17 @@
 		};
 		F5AA417901DA8F350157C38C = {
 			fileRef = F5AA417801DA8F350157C38C;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5B1CC460375DAF501159FE2 = {
+			isa = PBXFileReference;
+			path = RecordMovieActiveToolbarItem.tiff;
+			refType = 4;
+		};
+		F5B1CC470375DAF501159FE2 = {
+			fileRef = F5B1CC460375DAF501159FE2;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2037,8 +2215,71 @@
 			settings = {
 			};
 		};
+		F5CBE0D003807F2301260355 = {
+			fileRef = F5EF7FFB0364C3BD01E9B502;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5E501500366072501987CBE = {
 			fileRef = F5EF7FFB0364C3BD01E9B502;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5E6AA650371F8920166D062 = {
+			children = (
+				F5E6AA660371F8920166D062,
+				F5E6AA6B0371F8B00166D062,
+				F5E6AA6C0371F8B90166D062,
+			);
+			isa = PBXVariantGroup;
+			name = MyMovieDocument.nib;
+			path = "";
+			refType = 4;
+		};
+		F5E6AA660371F8920166D062 = {
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/MyMovieDocument.nib;
+			refType = 4;
+		};
+		F5E6AA670371F8920166D062 = {
+			fileRef = F5E6AA650371F8920166D062;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5E6AA6B0371F8B00166D062 = {
+			isa = PBXFileReference;
+			name = German;
+			path = German.lproj/MyMovieDocument.nib;
+			refType = 4;
+		};
+		F5E6AA6C0371F8B90166D062 = {
+			isa = PBXFileReference;
+			name = French;
+			path = French.lproj/MyMovieDocument.nib;
+			refType = 4;
+		};
+		F5E78BEF0371F3990166D062 = {
+			isa = PBXFileReference;
+			path = MyMovieDocument.m;
+			refType = 4;
+		};
+		F5E78BF20371F3990166D062 = {
+			isa = PBXFileReference;
+			path = MyMovieDocument.h;
+			refType = 4;
+		};
+		F5E78BF30371F3990166D062 = {
+			fileRef = F5E78BEF0371F3990166D062;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5E78BF60371F3990166D062 = {
+			fileRef = F5E78BF20371F3990166D062;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -2053,12 +2294,6 @@
 			isa = PBXFileReference;
 			path = yuv2rgbOV420.c;
 			refType = 4;
-		};
-		F5EDFAD4036875F00166D062 = {
-			fileRef = F5EDFAD2036875F00166D062;
-			isa = PBXBuildFile;
-			settings = {
-			};
 		};
 		F5EDFAD5036876210166D062 = {
 			isa = PBXFileReference;
