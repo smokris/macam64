@@ -47,6 +47,8 @@
 #import "MySPCA500Driver.h"
 #include "unistd.h"
 
+void DeviceAdded(void *refCon, io_iterator_t iterator);
+
 static NSString* driverBundleName=@"de.matthias-krauss.webcam";
 static NSMutableDictionary* prefsDict=NULL;
 
@@ -112,14 +114,8 @@ static NSMutableDictionary* prefsDict=NULL;
     cameraTypes=[[NSMutableArray alloc] initWithCapacity:10];
     cameras=[[NSMutableArray alloc] initWithCapacity:10];
     delegate=NULL;
-    wiringThreadRunning=NO;
-    wiringThreadRunLoop=NULL;
-    startupLock=NULL;
-    doNotificationsOnMainThread=NO;
-    mainThreadConnection=NULL;
-    wiringThreadConnection=NULL;
-    mainThreadRunLoop=NULL;
-//Cache localized error codes
+
+    //Cache localized error codes
     [[self class] localizedCStrFor:"CameraErrorOK" into:localizedErrorCStrs[CameraErrorOK]];
     [[self class] localizedCStrFor:"CameraErrorBusy" into:localizedErrorCStrs[CameraErrorBusy]];
     [[self class] localizedCStrFor:"CameraErrorNoPower" into:localizedErrorCStrs[CameraErrorNoPower]];
@@ -141,19 +137,27 @@ static NSMutableDictionary* prefsDict=NULL;
 }
 
 - (BOOL) startupWithNotificationsOnMainThread:(BOOL)nomt {
-    MyCameraInfo* info=NULL;
-    short i;
-    id threadParam=NULL;		//Used to pass info to the new thread
-    long numTestCameras=0;
-    id obj=NULL;
-    
-    NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
+    MyCameraInfo* 		info=NULL;
+    long 			i;
+    long 			numTestCameras=0;
+    id 				obj=NULL;
+    mach_port_t 		masterPort;
+    CFMutableDictionaryRef 	matchingDict;
+    CFRunLoopSourceRef		runLoopSource;
+    CFNumberRef			numberRef;
+    kern_return_t		ret;
+    SInt32			usbVendor;
+    SInt32			usbProduct;
+    io_iterator_t		iterator;
 
+    NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
     assert(cameraTypes);
     assert(cameras);
-//Add Driver classes (this is where we have to add new model classes!)
 
-
+    doNotificationsOnMainThread=nomt;
+    
+    //Add Driver classes (this is where we have to add new model classes!)
+    [self registerCameraDriver:[MySPCA500Driver class]];
     [self registerCameraDriver:[MyKiaraFamilyDriver class]];
     [self registerCameraDriver:[MyKiaraFlippedDriver class]];
     [self registerCameraDriver:[MyTimonFamilyDriver class]];
@@ -170,7 +174,6 @@ static NSMutableDictionary* prefsDict=NULL;
     [self registerCameraDriver:[MySonix2028Driver class]];
     [self registerCameraDriver:[MySE401Driver class]];
     [self registerCameraDriver:[MyQCProBeigeDriver class]];
-    [self registerCameraDriver:[MySPCA500Driver class]];
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];
 //    [self registerCameraDriver:[MyIntelPCCamera class]];
 //    [self registerCameraDriver:[MyGrandtecVcap class]];
@@ -178,28 +181,53 @@ static NSMutableDictionary* prefsDict=NULL;
 //    [self registerCameraDriver:[MyViewQuestVQ110 class]];
 //    [self registerCameraDriver:[MyDVC325 class]];
 
-    doNotificationsOnMainThread=nomt;	//Remember this!
-    if (doNotificationsOnMainThread) {	//The client wants merged threads: Build a connection to the new thread
-        NSPort* port1=[NSPort port];
-        NSPort* port2=[NSPort port];
-        mainThreadConnection=[[NSConnection alloc] initWithReceivePort:port1 sendPort:port2];
-        threadParam=[[NSArray alloc] initWithObjects:port2, port1, NULL];
-        [mainThreadConnection setRootObject:self];	//We'll handle calls
-        mainThreadRunLoop=[NSRunLoop currentRunLoop];	//Remember the main run loop
-    } else {	//We have to prevent returning before initially connected cameras have been detected
-        startupLock=[[NSLock alloc] init];	
-        if (startupLock==NULL) {
-            [self shutdown];
-            return NO;
-        }
-        [startupLock tryLock];		//Make sure it's locked
+    //Get the IOKit master port (needed for communication with IOKit)
+    ret = IOMasterPort(MACH_PORT_NULL, &masterPort);
+    if (ret||(!masterPort)) { NSLog(@"MyCameraCentral: IOMasterPort failed (%08x)", ret); return NO;}
+
+    //Get a notification port, get its event source and connect it to the current thread
+    notifyPort = IONotificationPortCreate(masterPort);
+    runLoopSource = IONotificationPortGetRunLoopSource(notifyPort);
+    CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, kCFRunLoopDefaultMode);
+
+    //Go through all our drivers and add plug-in notifications for them
+    for (i=0;i<[cameraTypes count];i++) {
+
+        //Get info about the current camera
+        info=[cameraTypes objectAtIndex:i];
+        if (info==NULL) { NSLog(@"MyCameraCentral:wiringThread: bad info"); return NO; }
+        usbVendor =[info vendorID];
+        usbProduct=[info productID];
+
+        // Set up the matching criteria for the devices we're interested in
+        matchingDict = IOServiceMatching(kIOUSBDeviceClassName);
+        if (!matchingDict) { NSLog(@"MyCameraCentral:IOServiceMatching failed"); return NO; }
+
+        // Add our vendor and product IDs to the matching criteria
+        numberRef = CFNumberCreate(kCFAllocatorDefault,kCFNumberSInt32Type,&usbVendor);
+        CFDictionarySetValue(matchingDict,CFSTR(kUSBVendorID),numberRef);
+        CFRelease(numberRef); numberRef=NULL;
+
+        numberRef = CFNumberCreate(kCFAllocatorDefault,kCFNumberSInt32Type,&usbProduct);
+        CFDictionarySetValue(matchingDict,CFSTR(kUSBProductID),numberRef);
+        CFRelease(numberRef); numberRef=NULL;
+
+        //Request notification if matching devices are plugged in
+        ret = IOServiceAddMatchingNotification(notifyPort,
+                                               kIOFirstMatchNotification,
+                                               matchingDict,
+                                               DeviceAdded,
+                                               info,
+                                               &iterator);
+        //Get first devices and trigger notification process
+        DeviceAdded(info, iterator);
     }
-//Try to find out how many test cameras we have
+    //Try to find out how many test cameras we have
     obj=[self prefsForKey:@"Dummy cameras"];
     if (obj) numTestCameras=[obj longValue];
     else numTestCameras=0;
-    
-//Add some dummy test image cameras
+
+    //Add the dummy test image cameras to the list of available cameras
     for (i=0;i<numTestCameras;i++) {
         info=[[MyCameraInfo alloc] init];
         [info setDriverClass:[MyDummyCameraDriver class]];
@@ -210,13 +238,6 @@ static NSMutableDictionary* prefsDict=NULL;
         [cameras addObject:info];
     }
     
-    wiringThreadRunning=YES;
-    [NSThread detachNewThreadSelector:@selector(wiringThread:) toTarget:self withObject:threadParam];
-    if (startupLock) {
-        [startupLock lock];			//stop execution until wiringThread lets us return
-        [startupLock release];
-        startupLock=NULL;
-    }
     [pool release];
     return YES;
 }
@@ -224,28 +245,21 @@ static NSMutableDictionary* prefsDict=NULL;
 - (void) shutdown {
     MyCameraInfo* info;
     NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];	//Get a pool to catch the remaining drivers
-//Stop the wiring thread
-    if (wiringThreadRunning) {					//Stop the wiring thread if necessary
-        while (!wiringThreadRunLoop) { usleep(10000); } 	//active wait until wiringThread has filled in the run loop reference
-        while (!CFRunLoopIsWaiting(wiringThreadRunLoop)) { usleep(10000); } 	//active wait until run loop is runnning
-        CFRunLoopStop(wiringThreadRunLoop);			//stop the run loop. intf and dev will be released there...
-    }
-    if (mainThreadConnection) {	//WiringThread is gone. Shutdown connection if there's one
-        [mainThreadConnection release];
-        mainThreadConnection=NULL;
-    }
-//shutdown all cameras
+
+    //shutdown all cameras
     while ([cameras count]>0) {
         info=[cameras lastObject];
         [cameras removeLastObject];
-//disconnect from the driver and autorelease our retain
+        //disconnect from the driver and autorelease our retain
         if ([info driver]!=NULL) {
             [[info driver] setCentral:NULL];
             [[info driver] shutdown];
         }
         [info release];
     }
-//release cameryTypes cameraInfos
+    //This would be a great place to release all USB notifications *****
+
+    //release cameryTypes cameraInfos
     while ([cameraTypes count]>0) {
         info=[cameraTypes lastObject];
         [cameraTypes removeLastObject];
@@ -262,7 +276,7 @@ static NSMutableDictionary* prefsDict=NULL;
     delegate=d;
 }
 
-- (BOOL) doesNotificationsOnMainThread {
+- (BOOL) doNotificationsOnMainThread {
     return doNotificationsOnMainThread;
 }
 
@@ -484,9 +498,6 @@ static NSMutableDictionary* prefsDict=NULL;
     return ok;
 }
 
-static IONotificationPortRef	gNotifyPort;
-static io_iterator_t		gAddedIter;
-
 typedef struct MyPrivateData {
     io_service_t	usbDeviceRef;	//A reference to our device in case we want to open it
     io_object_t		notification;	//A reference to our notification we want when we are unplugged
@@ -508,18 +519,11 @@ void DeviceRemoved( void *refCon,io_service_t service,natural_t messageType,void
 }
     
 - (void) deviceRemoved:(unsigned long)cid {
-    kern_return_t	kr;
+    kern_return_t	ret;
     long l;
     MyCameraInfo* dev=NULL;
-//If needed, go at this point to the main thread    
-    if (doNotificationsOnMainThread) {
-        if ([NSRunLoop currentRunLoop]!=mainThreadRunLoop) {
-            [(id)[wiringThreadConnection rootProxy] deviceRemoved:cid];
-            return;
-        }
-    }
-    
-//remove the device in the cameras list
+
+    //remove the device in the cameras list
     for (l=0;l<[cameras count];l++) {
         if ([[cameras objectAtIndex:l] cid]==cid) {
             dev=[cameras objectAtIndex:l];
@@ -533,8 +537,8 @@ void DeviceRemoved( void *refCon,io_service_t service,natural_t messageType,void
         return;	//We didn't find the camera
     }
     //Release the usb stuff
-    kr = IOObjectRelease([dev notification]);		//we don't need the usb notification any more
-    kr = IOObjectRelease([dev usbDeviceRef]);		//we don't need the device reference any more
+    ret = IOObjectRelease([dev notification]);		//we don't need the usb notification any more
+    ret = IOObjectRelease([dev usbDeviceRef]);		//we don't need the device reference any more
 //Initiate the driver shutdown.
     if ([dev driver]!=NULL) {
         [[dev driver] shutdown];	//We don't release it here - it is done in the cameraHasShutDown notification
@@ -550,118 +554,46 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
 }
 
 - (void) deviceAdded:(io_iterator_t)iterator info:(MyCameraInfo*)type {
-    kern_return_t	kr;
+    kern_return_t	ret;
     io_service_t	usbDeviceRef;
     MyCameraInfo*	dev;
     io_object_t		notification;
 
-    
     while (usbDeviceRef = IOIteratorNext(iterator)) {
-//Setup our data object we use to track the device while it is plugged
+        //Setup our data object we use to track the device while it is plugged
         dev=[type copy];
         if (!dev) {
 #ifdef VERBOSE
             NSLog(@"Could not copy MyCameraInfo object on insertion of a device");
 #endif
-        } else {
-            [dev setUsbDeviceRef:usbDeviceRef];
-            kr = IOServiceAddInterestNotification(gNotifyPort,
-                                                  usbDeviceRef,
-                                                  kIOGeneralInterest,
-                                                  DeviceRemoved,
-                                                  dev,
-                                                  &notification);
-            if (KERN_SUCCESS != kr)
-            {
-#ifdef VERBOSE
-                NSLog(@"IOServiceAddInterestNotification returned %08x\n",kr);
-#endif
-                [dev release];
-            } else {
-                [dev setNotification:notification];
-                [cameras addObject:dev];
-//If needed, go at this point to the main thread
-                if (doNotificationsOnMainThread) {
-                    [(id)[wiringThreadConnection rootProxy] cameraDetected:[dev cid]];
-                } else {
-                    [self cameraDetected:[dev cid]];
-                }
-            }
+            continue;
         }
-    }
-}
+        [dev setUsbDeviceRef:usbDeviceRef];
 
-- (void)wiringThread:(id)obj {
-    mach_port_t 		masterPort;
-    CFMutableDictionaryRef 	matchingDict;
-    CFRunLoopSourceRef		runLoopSource;
-    CFNumberRef			numberRef;
-    kern_return_t		kr;
-    long			usbVendor;
-    long			usbProduct;
-    NSAutoreleasePool*		pool=[[NSAutoreleasePool alloc] init];
-    long 			i;
-    MyCameraInfo*		info;
-
-    if (obj) {	//We received an array of ports to establish a connection
-        wiringThreadConnection=[[NSConnection alloc] initWithReceivePort:[obj objectAtIndex:0] sendPort:[obj objectAtIndex:1]];
-    }
-    
-    kr = IOMasterPort(MACH_PORT_NULL, &masterPort);
-    if (kr || !masterPort) {
+        //Request notification if the device is unplugged
+        ret = IOServiceAddInterestNotification(notifyPort,
+                                               usbDeviceRef,
+                                               kIOGeneralInterest,
+                                               DeviceRemoved,
+                                               dev,
+                                               &notification);
+        if (ret!=KERN_SUCCESS) {
 #ifdef VERBOSE
-        NSLog(@"MyCameraCentral:wiringThread: Couldn't create a master IOKit Port(%08x)", kr);
+            NSLog(@"IOServiceAddInterestNotification returned %08x\n",ret);
 #endif
-        return;
-    }
-    wiringThreadRunLoop = CFRunLoopGetCurrent();
-    gNotifyPort = IONotificationPortCreate(masterPort);
-    runLoopSource = IONotificationPortGetRunLoopSource(gNotifyPort);
-    CFRunLoopAddSource(wiringThreadRunLoop, runLoopSource, kCFRunLoopDefaultMode);
-
-    for (i=0;i<[cameraTypes count];i++) {	//Go through all our drivers and add notifications for them
-        info=[cameraTypes objectAtIndex:i];
-#ifdef VERBOSE
-        if (info==NULL) NSLog(@"MyCameraCentral:wiringThread: bad info");
-#endif
-        usbVendor =[info vendorID];
-        usbProduct=[info productID];
-//        NSLog(@"Adding plugging notification for vendorID %d, productID %d",usbVendor,usbProduct);
-//        NSLog([info cameraName]);
-        // Set up the matching criteria for the devices we're interested in
-        matchingDict = IOServiceMatching(kIOUSBDeviceClassName);
-        if (!matchingDict) {
-            NSLog(@"MyCameraCentral:wiringThread:Can't create a USB matching dictionary");
-//            mach_port_deallocate(mach_task_self(), masterPort);
-            return;
+            [dev release];
+            continue;
         }
-        // Add our vendor and product IDs to the matching criteria
-        numberRef = CFNumberCreate(kCFAllocatorDefault,kCFNumberSInt32Type,&usbVendor);
-        CFDictionarySetValue(matchingDict,CFSTR(kUSBVendorID),numberRef);
-        CFRelease(numberRef); numberRef=NULL;
 
-        numberRef = CFNumberCreate(kCFAllocatorDefault,kCFNumberSInt32Type,&usbProduct);
-        CFDictionarySetValue(matchingDict,CFSTR(kUSBProductID),numberRef);
-        CFRelease(numberRef); numberRef=NULL;
+        //Remember the notification (we have to release it later)
+        [dev setNotification:notification];
 
-        kr = IOServiceAddMatchingNotification(gNotifyPort,
-                                              kIOFirstMatchNotification,
-                                              matchingDict,
-                                              DeviceAdded,
-                                              info,
-                                              &gAddedIter);
-        DeviceAdded(info, gAddedIter);
+        //Put the new entry to the list of available cameras
+        [cameras addObject:dev];
+
+        //Spread the news that a camera was plugged in
+        [self cameraDetected:[dev cid]];
     }
-//    mach_port_deallocate(mach_task_self(), masterPort); masterPort = NULL;
-    if (startupLock) [startupLock unlock];	//First cams have been collected. Let startup return.
-    // Start the run loop. Now we'll receive notifications.
-    CFRunLoopRun();
-    if (wiringThreadConnection) {		//Clean up the connection if we had one
-        [wiringThreadConnection release];
-        wiringThreadConnection=NULL;
-    } 
-    [pool release];
-    wiringThreadRunning=NO;
 }
 
 - (void) cameraDetected:(unsigned long) cid {
