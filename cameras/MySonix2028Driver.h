@@ -103,12 +103,10 @@ typedef struct SONIXGrabContext {
 - (void) setSaturation:(float)v;
 - (BOOL) canSetGamma;
 - (void) setGamma:(float)v;
-- (BOOL) canSetGain;
 - (BOOL) canSetShutter;
+- (void) setShutter:(float)val;
 - (BOOL) canSetAutoGain;
 - (void) setAutoGain:(BOOL)v;
-- (void) setGain:(float)val;
-- (void) setShutter:(float)val;
 - (BOOL) canSetWhiteBalanceMode;
 - (BOOL) canSetWhiteBalanceModeTo:(WhiteBalanceMode)newMode;
 - (void) setWhiteBalanceMode:(WhiteBalanceMode)newMode;
