@@ -35,6 +35,7 @@ typedef enum WhiteBalanceMode {
 } WhiteBalanceMode;
 
 typedef enum CameraResolution {
+    ResolutionInvalid = 0,	//Indicates a wrong or not applicable resolution
     ResolutionSQSIF = 1,	//sqsif = 128 x  96
     ResolutionQSIF  = 2,	//qsif  = 160 x 120
     ResolutionQCIF  = 3,	//qcif  = 176 x 144
