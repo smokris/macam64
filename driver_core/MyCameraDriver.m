@@ -98,7 +98,7 @@
         [imageBufferLock release];
         return NULL;
     }
-    doNotificationsOnMainThread=[central doesNotificationsOnMainThread];
+    doNotificationsOnMainThread=[central doNotificationsOnMainThread];
     mainThreadRunLoop=[NSRunLoop currentRunLoop];
     mainThreadConnection=NULL;
     decodingThreadConnection=NULL;
