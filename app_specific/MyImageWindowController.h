@@ -1,4 +1,3 @@
-//
 /*
 macam - webcam app and QuickTime driver component
  Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)

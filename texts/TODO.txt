@@ -1,5 +1,7 @@
 Fix all (c) and license info
 Get matthias to pick a (c) and a name
+Make sure that things like the license
+	are copied into the binary app build.
 Ascii text file with supported drivers
 Write scripts to generate .dmg files and
     automate versionnumbering based on 
@@ -15,3 +17,4 @@ Domain - would it make sense to make this a
     a nice historic reminder.
      
 $Id$
+
