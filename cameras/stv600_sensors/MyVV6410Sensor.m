@@ -27,20 +27,20 @@
 #define VV6410_REG0A 		0x0a
 #define VV6410_REG0C 		0x0c
 #define VV6410_REG0E 		0x0e
-#define VV6410_SETUP_0 		0x10
+#define VV6410_SETUP_0 		0x10	//Bits: 0:Low power 2:Soft reset 
 #define VV6410_SETUP_1 		0x11
 #define VV6410_ADC_BITS		0x12
 #define VV6410_FG_MODES		0x14
-#define VV6410_PIN_MAPPING	0x15
+#define VV6410_PIN_MAPPING	0x15	//Bits: 5:RESETB low-active
 #define VV6410_DATA_FORMAT	0x16
 #define VV6410_OP_FORMAT	0x17
 #define VV6410_MODE_SELECT	0x18
 #define VV6410_INTEGRATE	0x1c
-#define VV6410_FEXP_H		0x20	//fine exposure value
+#define VV6410_FEXP_H		0x20	//fine exposure (pixel time) value
 #define VV6410_FEXP_L		0x21
-#define VV6410_CEXP_H		0x22	//Coarse exposure value
+#define VV6410_CEXP_H		0x22	//coarse exposure (line time) value
 #define VV6410_CEXP_L		0x23
-#define VV6410_GAIN  		0x24
+#define VV6410_GAIN  		0x24	//gain is 0..12. Add 0xf0.
 #define VV6410_CLK_DIV 		0x25
 #define VV6410_SHUTTERL 	0x26
 #define VV6410_SHUTTERH 	0x28
@@ -76,6 +76,8 @@
     reg23Value=5;
     i2cIdentityRegister=0;
     i2cIdentityValue=0x19;
+    gain=10;
+    exposure=192;
     return self;
 }
 
@@ -88,32 +90,26 @@
 
     if (ok) {
         [self resetI2CSequence];
-        [self addI2CRegister:VV6410_SETUP_0 	value:0x04];
-        ok=[self writeI2CSequence];
-    }
-    //Control: Web CIF: 0x02, Web QCIF: 0xa2, Express CIF:0x02, Express QCIF 0xc2
-    if (ok) {
-        [self resetI2CSequence];
-        [self addI2CRegister:VV6410_SETUP_0	value:0x02];
+        [self addI2CRegister:VV6410_SETUP_0 	value:0x04];	//Soft reset trigger
         ok=[self writeI2CSequence];
     }
 
     if (ok) {
         [self resetI2CSequence];
-        [self addI2CRegister:VV6410_GAIN	value:0xfb];
+        [self addI2CRegister:VV6410_SETUP_0	value:0x00];	//Set to CIF / 25 fps (QCIF:0xc0)
         ok=[self writeI2CSequence];
     }
 
+    //What's this good for ??? ***
     if (ok) ok=[camera writeSTVRegister:0x1504 value:0x07];
-
     if (ok) ok=[camera writeSTVRegister:0x1503 value:0x45];
 
-    if (ok) {
-        //Setup sensor rect
+/* Setup sensor rect - not necessary, already set by setup0
+ if (ok) {
         int x=1;
         int y=1;
-        int width=415;//356
-        int height=351;//320
+        int width=415;
+        int height=319;
         [self resetI2CSequence];
         [self addI2CRegister:VV6410_STARTX_H	value:(x>>8)&0xff];
         [self addI2CRegister:VV6410_STARTX_L	value:x%0xff];
@@ -125,16 +121,16 @@
         [self addI2CRegister:VV6410_HEIGHT_L	value:height%0xff];
         ok=[self writeI2CSequence];
     }
-
+*/
     if (ok) {
         //Gain, exposure and timing
         [self resetI2CSequence];
         [self addI2CRegister:VV6410_FEXP_H	value:0x01];
         [self addI2CRegister:VV6410_FEXP_L	value:0x80];
-        [self addI2CRegister:VV6410_CEXP_H	value:0x00];
-        [self addI2CRegister:VV6410_CEXP_L	value:0xc0];
-        [self addI2CRegister:VV6410_GAIN	value:0x7a];
-        [self addI2CRegister:VV6410_CLK_DIV	value:0x01];
+        [self addI2CRegister:VV6410_CEXP_H	value:(exposure>>8)&0xff];
+        [self addI2CRegister:VV6410_CEXP_L	value:(exposure)&0xff];
+        [self addI2CRegister:VV6410_GAIN	value:0xf0+gain];
+        [self addI2CRegister:VV6410_CLK_DIV	value:0x00];
         ok=[self writeI2CSequence];
     }
 
@@ -144,7 +140,7 @@
     if (ok) {
         //Various settings
         [self resetI2CSequence];
-        [self addI2CRegister:VV6410_SETUP_1	value:0x18];
+        [self addI2CRegister:VV6410_SETUP_1	value:0x58];	//Immediate gain & clock rate updates
         [self addI2CRegister:VV6410_FG_MODES	value:0x55];
         [self addI2CRegister:VV6410_PIN_MAPPING	value:0x10];
         [self addI2CRegister:VV6410_DATA_FORMAT	value:0x81];
@@ -179,6 +175,56 @@
 }
 
 - (void) adjustExposure {
+    BOOL ok=YES;
+    short newExposure,newGain;
+    short maxExposure=288;
+    short maxGain=12;
+    
+    if ([camera isAutoGain]) {	//Do AEC
+
+            /*The AEC plot: Try gain as low as possible:
+
+Situation:	Dark			Medium			Bright
+Exposure:	long			long			short
+Gain:		high			low			low
+
+            */
+
+        short expCorr=(lastMeanBrightness-0.45f)*-50.0f;
+        
+        newExposure=exposure;		//Start from current situation
+        newGain=gain;			//Start from current situation
+
+        if (expCorr>0) expCorr=MAX(0,expCorr-3);
+        else if (expCorr<0) expCorr=MIN(0,expCorr+3);
+
+        if (expCorr>0) {	//too dark - need to lighten up
+            if (newExposure<maxExposure) {
+                newExposure=MIN(maxExposure,newExposure+expCorr);
+            } else {
+                newGain=MIN(maxGain,newGain+(expCorr)/4+1);
+            }
+        } else if (expCorr<0) {	//too bright - need to darken
+            if (newGain>0) {
+                newGain=MAX(0,newGain+(expCorr/4)-1);
+            } else {
+                newExposure=MAX(0,newExposure+expCorr);
+            }
+        }
+    } else {
+        newExposure=[camera shutter]*286.0f+1.0f;
+        newGain=[camera gain]*12.0f;	//Real max is 14, but 12 is recommended as max
+    }
+    
+    if ((newExposure!=exposure)||(newGain!=gain)) {
+        exposure=newExposure;
+        gain=newGain;
+        [self resetI2CSequence];
+        [self addI2CRegister:VV6410_GAIN value:0xf0+gain];
+        [self addI2CRegister:VV6410_CEXP_H value:(exposure>>8)&0xff];
+        [self addI2CRegister:VV6410_CEXP_L value:exposure&0xff];
+        ok=ok&&[self writeI2CSequence];
+    }
 }
 
 @end

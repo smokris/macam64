@@ -23,7 +23,10 @@
 #import <MySTV600Sensor.h>
 
 
-@interface MyVV6410Sensor : MySTV600Sensor
+@interface MyVV6410Sensor : MySTV600Sensor {
+    short exposure;
+    short gain;
+}
 
 - (id) initWithCamera:(MyQCExpressADriver*)cam;
 - (BOOL) resetSensor;	//Sets the sensor to defaults for grabbing - to be called before grabbing starts
