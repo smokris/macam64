@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-Traduction française par Damien Persohn <damien@persohn.net>
+Traduction fran√ßaise par Damien Persohn <damien@persohn.net>
 
 $Id$
 -->
@@ -29,11 +29,11 @@ $Id$
 	<key>Automatic</key>
 	<string>Automatique</string>
 	<key>CPiA-based camera</key>
-	<string>Caméra de type CPiA</string>
+	<string>Cam√©ra de type CPiA</string>
 	<key>Camera</key>
-	<string>Caméra</string>
+	<string>Cam√©ra</string>
 	<key>CameraErrorBusy</key>
-	<string>Caméra utilisée par
+	<string>Cam√©ra utilis√©e par
 une autre application</string>
 	<key>CameraErrorInternal</key>
 	<string>Erreur Interne</string>
@@ -41,25 +41,25 @@ une autre application</string>
 	<string>Bande passante
 USB trop faible</string>
 	<key>CameraErrorNoCam</key>
-	<string>Pas de caméra</string>
+	<string>Pas de cam√©ra</string>
 	<key>CameraErrorNoMem</key>
-	<string>Pas assez de mémoire</string>
+	<string>Pas assez de m√©moire</string>
 	<key>CameraErrorNoPower</key>
 	<string>Pas assez de puissance
 sur le bus USB pour
-utiliser la caméra</string>
+utiliser la cam√©ra</string>
 	<key>CameraErrorOK</key>
 	<string>OK</string>
 	<key>CameraErrorTimeout</key>
-	<string>La charge processeur est trop élevée</string>
+	<string>La charge processeur est trop √©lev√©e</string>
 	<key>CameraErrorUSBProblem</key>
-	<string>Problème de communication USB</string>
+	<string>Probl√®me de communication USB</string>
 	<key>CameraErrorUnimplemented</key>
-	<string>Non supporté</string>
+	<string>Non support√©</string>
 	<key>Compress:</key>
 	<string>Compression:</string>
 	<key>Dummy camera for user feedback</key>
-	<string>Pseudo-caméra pour le suivi développeur</string>
+	<string>Pseudo-cam√©ra pour le suivi d√©veloppeur</string>
 	<key>Flip</key>
 	<string>Miroir</string>
 	<key>Format:</key>
@@ -71,17 +71,17 @@ utiliser la caméra</string>
 	<key>Gamma:</key>
 	<string>Gamma:</string>
 	<key>Image Data</key>
-	<string>Données image</string>
+	<string>Donn√©es image</string>
 	<key>Indoor</key>
-	<string>Intérieur</string>
+	<string>Int√©rieur</string>
 	<key>Linear</key>
 	<string>Pas de correction</string>
 	<key>Outdoor</key>
-	<string>Extérieur</string>
+	<string>Ext√©rieur</string>
 	<key>STV680-based camera</key>
-	<string>Caméro basé sur la puce STV680</string>
+	<string>Cam√©ro bas√© sur la puce STV680</string>
 	<key>Save as defaults</key>
-	<string>Enregistrer comme réglages par défaut</string>
+	<string>Enregistrer comme r√©glages par d√©faut</string>
 	<key>Shutter:</key>
 	<string>Shutter:</string>
 	<key>UnknownError</key>
