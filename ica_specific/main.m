@@ -401,7 +401,7 @@ int main (int argc, const char * argv[])
     //Init QuickTime
     EnterMovies();
     //Init camera central
-    central=[[MyCameraCentral alloc] init];
+    central=[MyCameraCentral sharedCameraCentral];
     delegate=[[MyDriverDelegate alloc] init];
     [central setDelegate:delegate];
     if (central) {
