@@ -26,6 +26,7 @@
 #import "Resolvers.h"
 #import "yuv2rgb.h"
 #include "MiscTools.h"
+#include "unistd.h"
 
 
 /*Some Camera specifics:
@@ -705,7 +706,8 @@ static bool StartNextIsochRead(CPIAGrabContext* grabContext, int transferIdx) {
         }
     }
 
-    while (grabbingThreadRunning) {}			//Active wait for grabbingThread finish
+    while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish
+    //We need to sleep here because otherwise the compiler would optimize the loop away
     
     [self cleanupGrabContext];				//grabbingThread doesn't need the context any more since it's done
     if (mergeBuffer) {

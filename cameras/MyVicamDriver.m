@@ -256,6 +256,8 @@ no data
 #import "Resolvers.h"
 #import "vicamurbs.h"
 #import "RGBScaler.h"
+#include "unistd.h"
+
 
 // --------------------------------------------------------------------------------
 
@@ -936,7 +938,9 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
         }
     }
     //wait until grabbingThread has finished
-    while (grabbingThreadRunning) {};
+    while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish
+    //We need to sleep here because otherwise the compiler would optimize the loop away
+
     //if the first error occurred on grabbingThread, take the result from there
     if (!err) err=grabbingError;
     //Cleanup everything

@@ -47,6 +47,7 @@
 #import "MyOV511Driver.h"
 #import "MySonix2028Driver.h"
 #import "MySE401Driver.h"
+#include "unistd.h"
 
 static NSString* driverBundleName=@"de.matthias-krauss.webcam";
 static NSMutableDictionary* prefsDict=NULL;
@@ -229,8 +230,8 @@ static NSMutableDictionary* prefsDict=NULL;
     NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];	//Get a pool to catch the remaining drivers
 //Stop the wiring thread
     if (wiringThreadRunning) {					//Stop the wiring thread if necessary
-        while (!wiringThreadRunLoop) {} 			//active wait until wiringThread has filled in the run loop reference
-        while (!CFRunLoopIsWaiting(wiringThreadRunLoop)) {} 	//active wait until run loop is runnning
+        while (!wiringThreadRunLoop) { usleep(10000); } 	//active wait until wiringThread has filled in the run loop reference
+        while (!CFRunLoopIsWaiting(wiringThreadRunLoop)) { usleep(10000); } 	//active wait until run loop is runnning
         CFRunLoopStop(wiringThreadRunLoop);			//stop the run loop. intf and dev will be released there...
     }
     if (mainThreadConnection) {	//WiringThread is gone. Shutdown connection if there's one

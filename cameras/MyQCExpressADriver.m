@@ -31,6 +31,7 @@
 #import "MyHDCS1000Sensor.h"
 #import "MyHDCS1020Sensor.h"
 #import "MyVV6410Sensor.h"
+#include "unistd.h"
 
 @interface MyQCExpressADriver (Private)
 
@@ -566,7 +567,8 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
             [grabContext.chunkListLock unlock];			//we're done accessing the chunk list.
         }
     }
-    while (grabbingThreadRunning) {}			//Active wait until decoding thread is done
+    while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish
+    //We need to sleep here because otherwise the compiler would optimize the loop away
     
     [self cleanupGrabContext];				//grabbingThread doesn't need the context any more since it's done
 

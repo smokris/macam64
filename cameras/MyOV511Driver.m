@@ -27,6 +27,7 @@
 #import "Resolvers.h"
 #import "yuv2rgb.h"
 #import "MiscTools.h"
+#include "unistd.h"
 
 //#define OV511_DEBUG
 //#define USE_COMPRESS
@@ -997,7 +998,9 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
 }
         }
     }
-    while (grabbingThreadRunning) {}
+
+    while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish			
+    //We need to sleep here because otherwise the compiler would optimize the loop away
     if (!err) err=grabContext.err;
     [self cleanupGrabContext];				//grabbingThread doesn't need the context any more since it's done
     return err;

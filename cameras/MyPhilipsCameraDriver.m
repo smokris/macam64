@@ -26,6 +26,7 @@
 #import "Resolvers.h"
 #import "yuv2rgb.h"
 #import "MiscTools.h"
+#include "unistd.h"
 
 //camera modes and the necessary data for them
 
@@ -492,7 +493,9 @@ static bool StartNextIsochRead(PhilipsGrabContext* grabContext, int transferIdx)
             }
         }
     }
-    while (grabbingThreadRunning) {}
+    while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish
+    //We need to sleep here because otherwise the compiler would optimize the loop away
+
     if (!err) err=grabContext.err;
     [self cleanupGrabContext];				//grabbingThread doesn't need the context any more since it's done
     return err;

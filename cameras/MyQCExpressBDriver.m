@@ -22,6 +22,7 @@
 #import "MyQCExpressBDriver.h"
 #import "MyCameraCentral.h"
 #include "MiscTools.h"
+#include "unistd.h"
 
 @implementation MyQCExpressBDriver
 
@@ -62,7 +63,7 @@
 - (void) shutdown {
     buttonThreadShouldBeRunning=NO;
     if ((intf)&&(isUSBOK)) (*intf)->AbortPipe(intf,2);
-    while (buttonThreadRunning) {}
+    while (buttonThreadRunning) { usleep(10000); }
     if (buttonToMainThreadConnection) [buttonToMainThreadConnection release];
     if (mainToButtonThreadConnection) [mainToButtonThreadConnection release];
     buttonToMainThreadConnection=NULL;

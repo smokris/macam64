@@ -24,6 +24,7 @@
 #import "MyCameraCentral.h"
 #include "Resolvers.h"
 #include "MiscTools.h"
+#include "unistd.h"	//usleep
 
 #define VENDOR_PHILIPS 0x0471
 #define PRODUCT_VESTA_FUN 0x030b
@@ -43,7 +44,7 @@
 @interface MySE401Driver (Private)
 
 - (void) doAutoExposure;
-- (void) doSensorAdjustments;
+- (void) doAutoResetLevel;
 - (CameraError) adjustSensorSensitivityWithForce:(BOOL)force;	//Without force, it's only updated if something changes
 - (CameraError) setExternalRegister:(UInt16)sel to:(UInt16)val;
 - (UInt8) readExternalRegister:(UInt16)sel;
@@ -133,7 +134,7 @@
     lastGreenGain=-1;
     lastBlueGain=-1;
     lastResetLevel=-1;
-    resetLevel=-1;
+    resetLevel=32;
 
     //Do the ramining, usual connection stuff
     err=[super startupWithUsbDeviceRef:usbDeviceRef];
@@ -306,7 +307,6 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 - (void) handleFullChunkWithReadBytes:(UInt32)readSize error:(IOReturn)err  {
     NSMutableData* tmpChunk;
     videoBulkReadsPending--;
-    NSLog(@"Got %i bytes",readSize);
     if (err) {
         if (!grabbingError) grabbingError=CameraErrorUSBProblem;
         shouldBeGrabbing=NO;
@@ -324,7 +324,6 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
             [tmpChunk release];
             tmpChunk=NULL;		//to be sure...
             [emptyChunkLock unlock];
-            [self doSensorAdjustments];
         }
         [fullChunkLock lock];		//Append our full chunk to the list
         [fullChunks addObject:fillingChunk];
@@ -340,8 +339,8 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
         fillingChunk=NULL;			//to be sure...
         [emptyChunkLock unlock];
     }
+    [self doAutoResetLevel];
     if (shouldBeGrabbing) [self fillNextChunk];
-
 //We can only stop if there's no read request left. If there is an error, no new one was issued
     if (videoBulkReadsPending<=0) CFRunLoopStop(CFRunLoopGetCurrent());
 
@@ -407,6 +406,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     shouldBeGrabbing=NO;			//error in grabbingThread or abort? initiate shutdown of everything else
     [chunkReadyLock unlock];			//give the decodingThread a chance to abort
     [pool release];
+    NSLog(@"grabbing thread exits");
     grabbingThreadRunning=NO;
     [NSThread exit];
 }
@@ -419,7 +419,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     long height=4;
     BOOL bufferSet;
     grabbingThreadRunning=NO;
-
+    
     err=[self startupGrabbing];
 
     if (err) shouldBeGrabbing=NO;
@@ -466,7 +466,9 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
             }
         }
     }
-    while (grabbingThreadRunning) {}
+    NSLog(@"waiting for grabbing thread exit");
+    while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish
+    //We need to sleep here because otherwise the compiler would optimize the loop away
     if (!err) err=grabbingError;	//Take error from grabbing thread
     [self shutdownGrabbing];
     return err;
@@ -477,11 +479,36 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 - (void) doAutoExposure {
 }
 
-- (void) doSensorAdjustments {
+- (void) doAutoResetLevel {
+    int lowCount=0;
+    int highCount=0;
+    NSLog(@"doAutoResetLevel");
+
     resetLevelFrameCounter++;
-    if (resetLevelFrameCounter<=3) return;
+    if (resetLevelFrameCounter<2) return;
     resetLevelFrameCounter=0;
-    
+
+    //Read high/low pixel statistics
+    lowCount +=[self readExternalRegister:0x57]*256;
+    lowCount +=[self readExternalRegister:0x58];
+    highCount+=[self readExternalRegister:0x59]*256;
+    highCount+=[self readExternalRegister:0x5a];
+
+    //see if we have to change the reset level
+    if(lowCount>10) resetLevel++;
+    if(highCount>20) resetLevel--;
+    if (resetLevel<0) resetLevel=0;
+    if (resetLevel>63) resetLevel=63;
+
+    //Trigger second time to reset
+    [self readExternalRegister:0x57];
+    [self readExternalRegister:0x58];
+    [self readExternalRegister:0x59];
+    [self readExternalRegister:0x5a];
+
+    NSLog(@"Low count: %i high count:%i level:%i",lowCount,highCount,resetLevel);
+    //Commit changes
+    [self adjustSensorSensitivityWithForce:NO];
 }
 
 - (CameraError) adjustSensorSensitivityWithForce:(BOOL)force {
@@ -523,6 +550,10 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 }
 
 - (UInt8) readExternalRegister:(UInt16)sel {
+    UInt8 buf[2];
+    BOOL ok=[self usbReadCmdWithBRequest:0x52 wValue:0 wIndex:sel buf:buf len:2];
+    if (!ok) return 0;
+    return buf[0]+256*buf[1];
 }
 
 - (CameraError) setInternalRegister:(UInt16)sel to:(UInt16)val {

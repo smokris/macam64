@@ -22,6 +22,7 @@
 #import "MyCameraCentral.h"
 #include "Resolvers.h"
 #include "MiscTools.h"
+#include "unistd.h"
 
 #define PRODUCT_STV680 0x202
 #define VENDOR_STM 0x553
@@ -490,7 +491,8 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
             [emptyChunkLock unlock];
         }
     }
-    while (grabbingThreadRunning) {}
+    while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish
+    //We need to sleep here because otherwise the compiler would optimize the loop away
     if (!err) err=grabbingError;	//Take error from grabbing thread
     [self shutdownGrabbing];
     return err;

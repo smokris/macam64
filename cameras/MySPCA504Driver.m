@@ -867,7 +867,8 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
     }
 
     //Shutdown
-    while (grabbingThreadRunning) {}	//Active wait for grabbingThread finish
+    while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish
+    //We need to sleep here because otherwise the compiler would optimize the loop away
     [self cleanupGrabContext];
     if (!err) err=grabContext.err;	//Take error from context
     return err;
