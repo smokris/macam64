@@ -21,6 +21,8 @@
 
 #import "MyController.h"
 #import "MyCameraInspector.h"
+#import "MiscTools.h"
+
 
 static NSString* 	ControllerToolbarIdentifier	= @"Controller Toolbar Identifier";
 static NSString* 	PlayToolbarItemIdentifier	= @"Play Video Item Identifier";
@@ -43,7 +45,31 @@ static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
     }
 }	
 
+- (void) compressTest {
+    GWorldPtr gw;
+    PixMapHandle pm;
+    UInt8* buf=malloc(640*480*4);
+    UInt8* buf2;
+    Rect r;
+    long maxSize;
+    OSErr err=0;
+    ImageDescriptionHandle idesc=(ImageDescriptionHandle)NewHandle(4);
+    SetRect(&r,0,0,640,480);
+    err=NewGWorldFromPtr(&gw,k32ARGBPixelFormat,&r,NULL,NULL,0,buf,640*4);
+    pm=GetGWorldPixMap(gw);
+    LockPixels(pm);
+    err=GetMaxCompressionSize(pm,&r,24,codecNormalQuality,kJPEGCodecType,bestSpeedCodec,&maxSize);
+    buf2=malloc(maxSize);
+    err=CompressImage(pm,&r,codecNormalQuality,kJPEGCodecType,idesc,buf2);
+    UnlockPixels(pm);
+    DisposeGWorld(gw);
+    free(buf);
+    DisposeHandle((Handle)idesc);
+    free(buf2);
+}
+
 - (void) startup {
+    [self compressTest];
     terminating=NO;
     imageGrabbed=NO;
     cameraGrabbing=NO;
@@ -313,9 +339,9 @@ static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
 - (void)downloadSaveSheetEnded:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void*)con {
     NSOpenPanel* panel=(NSOpenPanel*)sheet;
     long i,saveIdx;
-    id media;
-    NSBitmapImageRep* imgMedia;
+    NSDictionary* media;
     NSData* mediaData;
+    NSString* extension;
     NSString* baseName=[[panel filename] stringByDeletingPathExtension];
     NSString* filename;
     BOOL problem=NO;
@@ -351,22 +377,27 @@ static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
             [statusText display];
             [bar setDoubleValue:((double)(i+1))];
             [bar displayIfNeeded];
-            if ([media isKindOfClass:[NSBitmapImageRep class]]) {	//If it's an image
-                imgMedia=media;
-                mediaData=[imgMedia TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
-                if (mediaData) {
-                    idxFound=NO;
-                    while ((!idxFound)&&(!problem)) {		//Find a free index
-                        filename=[baseName stringByAppendingString:[NSString stringWithFormat:@" %04i.tiff",saveIdx]];
-                        if (![[NSFileManager defaultManager] fileExistsAtPath:filename]) idxFound=YES;
-                        else saveIdx++;
-                        if (saveIdx>9999) problem=YES;		//That's too much!
-                    }
-                    if (!problem) {
-                        if (![[NSFileManager defaultManager] createFileAtPath:filename contents:mediaData
-                                                                   attributes:atts]) problem=YES;
-                    }
-                } else problem=YES;
+            mediaData=NULL;
+            extension=NULL;
+            if ([[media objectForKey:@"type"] isEqualToString:@"jpeg"]) {
+                mediaData=[media objectForKey:@"data"];
+                extension=@"tiff";
+            } else if ([[media objectForKey:@"type"] isEqualToString:@"jpeg"]) {
+                mediaData=[[media objectForKey:@"data"] 		TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
+                extension=@"jpg";
+            }
+            if (mediaData) {
+                idxFound=NO;
+                while ((!idxFound)&&(!problem)) {		//Find a free index
+                    filename=[baseName stringByAppendingString:[NSString stringWithFormat:@" %04i.%@",saveIdx,extension]];
+                    if (![[NSFileManager defaultManager] fileExistsAtPath:filename]) idxFound=YES;
+                    else saveIdx++;
+                    if (saveIdx>9999) problem=YES;		//That's too much!
+                }
+                if (!problem) {
+                    if (![[NSFileManager defaultManager] createFileAtPath:filename contents:mediaData
+                                                               attributes:atts]) problem=YES;
+                }
             } else problem=YES;
             [[media retain] release];
         } else problem=YES;
@@ -382,7 +413,7 @@ static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
         err=[central useCameraWithID:cid to:&driver acceptDummy:NO];
         if (err) driver=NULL;
         if (driver!=NULL) {
-            [statusText setStringValue:[LStr(@"Status: Connected to ") stringByAppendingString:[[driver class] cameraName]]];
+            [statusText setStringValue:[LStr(@"Status: Connected to ") stringByAppendingString:[central nameForID:cid]]];
             [driver retain];			//We keep our own reference
             [contrastSlider setEnabled:[driver canSetContrast]];
             [brightnessSlider setEnabled:[driver canSetBrightness]];
