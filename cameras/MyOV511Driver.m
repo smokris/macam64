@@ -30,6 +30,48 @@
 
 //#define OV511_DEBUG
 
+
+@implementation MyOV511PlusDriver
+
+//Class methods needed
++ (unsigned short) cameraUsbProductID { return PRODUCT_OV511PLUS; }
++ (unsigned short) cameraUsbVendorID { return VENDOR_OVT; }
++ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"OV511Plus-based camera"]; }
+
+- (short) defaultAltInterface {
+    return 7;
+}
+
+- (short) packetSize:(short)altInterface {
+    short size;
+    switch(altInterface) {
+        case 7:
+            size = 961;
+            break;
+        case 6:
+            size = 769;
+            break;
+        case 5:
+            size = 513;
+            break;
+        case 4:
+            size = 385;
+            break;
+        case 3:
+            size = 257;
+            break;
+        case 2:
+            size = 129;
+            break;
+        case 1:
+            size = 22;
+            break;
+    }
+    return size;
+}
+
+@end
+
 //camera modes and the necessary data for them
 
 @interface MyOV511Driver (Private)
@@ -58,12 +100,12 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
     chunkHeader=0;
     chunkFooter=0;
 //set camera video defaults
-    [self setBrightness:0.5f];
-    [self setContrast:0.5f];
-    [self setGamma:0.5f];
-    [self setSaturation:0.5f];
-    [self setGain:0.5f];
-    [self setShutter:0.5f];
+//    [self setBrightness:0.584f];
+//    [self setContrast:0.567f];
+//    [self setGamma:0.5f];
+//    [self setSaturation:0.630f];
+//    [self setGain:0.5f];
+//    [self setShutter:0.5f];
     [self setAutoGain:YES];
 
     return [super startupWithUsbDeviceRef:usbDeviceRef];
@@ -78,9 +120,9 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
 - (void) setBrightness:(float)v{
     UInt8 b;
     if (![self canSetBrightness]) return;
-    b=TO_BRIGHTNESS(CLAMP_UNIT(v));
-    if ((b!=TO_BRIGHTNESS(brightness)))
-        [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_BRIGHTNESS wIndex:INTF_CONTROL buf:&b len:1];
+    b=SAA7111A_BRIGHTNESS(CLAMP_UNIT(v));
+    if ((b!=SAA7111A_BRIGHTNESS(brightness)))
+        [self i2cWrite:OV7610_REG_BRT val:b];
     [super setBrightness:v];
 }
 
@@ -88,9 +130,9 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
 - (void) setContrast:(float)v {
     UInt8 b;
     if (![self canSetContrast]) return;
-    b=TO_CONTRAST(CLAMP_UNIT(v));
-    if (b!=TO_CONTRAST(contrast))
-        [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_CONTRAST wIndex:INTF_CONTROL buf:&b len:1];
+    b=SAA7111A_CONTRAST(CLAMP_UNIT(v));
+    if (b!=SAA7111A_CONTRAST(contrast))
+        [self i2cWrite:0x0b val:b];
     [super setContrast:v];
 }
 
@@ -98,9 +140,9 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
 - (void) setSaturation:(float)v {
     UInt8 b;
     if (![self canSetSaturation]) return;
-    b=TO_SATURATION(CLAMP_UNIT(v));
-    if (b!=TO_SATURATION(saturation))
-        [self usbWriteCmdWithBRequest:GRP_SET_CHROMA wValue:SEL_SATURATION wIndex:INTF_CONTROL buf:&b len:1];
+    b=SAA7111A_SATURATION(CLAMP_UNIT(v));
+    if (b!=SAA7111A_SATURATION(saturation))
+        [self i2cWrite:OV7610_REG_SAT val:b];
     [super setSaturation:v];
 }
 
@@ -108,9 +150,9 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
 - (void) setGamma:(float)v {
     UInt8 b;
     if (![self canSetGamma]) return;
-    b=TO_GAMMA(CLAMP_UNIT(v));
-    if (b!=TO_GAMMA(gamma))
-        [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_GAMMA wIndex:INTF_CONTROL buf:&b len:1];
+    b=SAA7111A_GAMMA(CLAMP_UNIT(v));
+//    if (b!=SAA7111A_GAMMA(gamma))
+//        [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_GAMMA wIndex:INTF_CONTROL buf:&b len:1];
     [super setGamma:v];
 }
 
@@ -118,9 +160,9 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
 - (void) setShutter:(float)v {
     UInt8 b[2];
     if (![self canSetShutter]) return;
-    b[0]=TO_SHUTTER(CLAMP_UNIT(v));
-    if (b[0]!=TO_SHUTTER(shutter))
-        [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_SHUTTER wIndex:INTF_CONTROL buf:b len:2];
+    b[0]=SAA7111A_SHUTTER(CLAMP_UNIT(v));
+//    if (b[0]!=SAA7111A_SHUTTER(shutter))
+//        [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_SHUTTER wIndex:INTF_CONTROL buf:b len:2];
     [super setShutter:v];
 }
 
@@ -128,27 +170,27 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
 - (void) setGain:(float)v {
     UInt8 b;
     if (![self canSetGain]) return;
-    b=TO_GAIN(CLAMP_UNIT(v));
-    if (b!=TO_GAIN(gain))
-        [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_GAIN wIndex:INTF_CONTROL buf:&b len:1];
+    b=SAA7111A_GAIN(CLAMP_UNIT(v));
+//    if (b!=SAA7111A_GAIN(gain))
+//        [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_GAIN wIndex:INTF_CONTROL buf:&b len:1];
     [super setGain:v];
 }
 
-- (BOOL) canSetAutoGain { return YES; }
+- (BOOL) canSetAutoGain { return NO; }
 - (void) setAutoGain:(BOOL)v {
     UInt8 b;
     UInt8 gb;
     UInt8 sb[2];
     if (![self canSetAutoGain]) return;
-    b=TO_AUTOGAIN(v);
-    gb=TO_GAIN(gain);
-    sb[0]=TO_SHUTTER(shutter);
-    if (b!=TO_AUTOGAIN(autoGain)) {
-        [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_AUTOGAIN wIndex:INTF_CONTROL buf:&b len:1];
-        if (!v) {
-            [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_GAIN wIndex:INTF_CONTROL buf:&gb len:1];
-            [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_SHUTTER wIndex:INTF_CONTROL buf:sb len:2];
-        }
+    b=SAA7111A_AUTOGAIN(v);
+    gb=SAA7111A_GAIN(gain);
+    sb[0]=SAA7111A_SHUTTER(shutter);
+    if (b!=SAA7111A_AUTOGAIN(autoGain)) {
+//        [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_AUTOGAIN wIndex:INTF_CONTROL buf:&b len:1];
+//        if (!v) {
+//            [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_GAIN wIndex:INTF_CONTROL buf:&gb len:1];
+//            [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_SHUTTER wIndex:INTF_CONTROL buf:sb len:2];
+//        }
     }
     [super setAutoGain:v];
 }    
@@ -170,10 +212,6 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
             if (rate>10) return NO;
             return YES;
             break;
-//        case ResolutionQSIF:
-//            if (rate>10) return NO;
-//            return YES;
-//            break;
         default: return NO;
     }
 }
@@ -181,6 +219,38 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
 - (CameraResolution) defaultResolutionAndRate:(short*)rate {
     *rate=5;
     return ResolutionSIF;
+}
+
+- (short) defaultAltInterface {
+    return 1;
+}
+
+- (short) packetSize:(short)altInterface {
+    short size;
+    switch(altInterface) {
+        case 6:
+            size = 257;
+            break;
+        case 5:
+            size = 513;
+            break;
+        case 4:
+            size = 512;
+            break;
+        case 3:
+            size = 769;
+            break;
+        case 2:
+            size = 768;
+            break;
+        case 1:
+            size = 993;
+            break;
+        case 0:
+            size = 992;
+            break;
+    }
+    return size;
 }
 
 - (BOOL) setupGrabContext {
@@ -191,30 +261,9 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
     BOOL ok=YES;
     [self cleanupGrabContext];					//cleanup in case there's something left in here
 
-    usbAltInterface = 7;
-    switch(usbAltInterface) {
-        case 7:
-            usbFrameBytes = 961;
-            break;
-        case 6:
-            usbFrameBytes = 769;
-            break;
-        case 5:
-            usbFrameBytes = 513;
-            break;
-        case 4:
-            usbFrameBytes = 385;
-            break;
-        case 3:
-            usbFrameBytes = 257;
-            break;
-        case 2:
-            usbFrameBytes = 129;
-            break;
-        case 1:
-            usbFrameBytes = 22;
-            break;
-    }
+    usbAltInterface = [self defaultAltInterface];
+    usbFrameBytes = [self packetSize:usbAltInterface];
+
     grabContext.bytesPerFrame=usbFrameBytes;
     grabContext.framesPerTransfer=192;
     grabContext.framesInRing=grabContext.framesPerTransfer*16;
@@ -337,51 +386,41 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
 #endif
                 ret=CameraErrorUSBProblem;
             }
+            customId = buf[0];
+            switch(customId) {
+                case 0:
+                    sensorType = SENS_OV7610;
+                    sensorWrite = OV7610_I2C_WRITE_ID;
+                    sensorRead = OV7610_I2C_READ_ID;
 #ifdef OV511_DEBUG
-            switch(buf[0]) {
-                case 0: /* This also means that no custom ID was set */
-                    NSLog(@"macam: MediaForte MV300"); 
-                    break;
-                case 3:
-                    NSLog(@"macam: D-Link DSB-C300");
-                    break;
-                case 4:
-                    NSLog(@"macam: Generic OV511/OV7610");
-                    break;
-                case 5:
-                    NSLog(@"macam: Puretek PT-6007\n");
+                    NSLog(@"macam: OV511 Non Custom ID"); 
+#endif
                     break;
                 case 6:
+                    sensorType = SENS_SAA7111A;
+                    sensorWrite = SAA7111A_I2C_WRITE_ID;
+                    sensorRead = SAA7111A_I2C_READ_ID;
+#ifdef OV511_DEBUG
                     NSLog(@"macam: Lifeview USB Life TV (NTSC)");
-                    break;
-                case 21:
-                    NSLog(@"macam: Creative Labs WebCam 3");
-                    break;
-                case 36:
-                    NSLog(@"macam: Koala-Cam");
-                    break;
-                case 100:
-                    NSLog(@"macam: Lifeview RoboCam");
-                    break;
-                case 102:
-                    NSLog(@"macam: AverMedia InterCam Elite");
-                    break;
-                case 112: /* The OmniVision OV7110 evaluation kit uses this too */
-                    NSLog(@"macam: MediaForte MV300");
+#endif
                     break;
                 default:
+                    sensorType = SENS_OV7610;
+                    sensorWrite = OV7610_I2C_WRITE_ID;
+                    sensorRead = OV7610_I2C_READ_ID;
+#ifdef OV511_DEBUG
                     NSLog(@"macam: Camera custom ID %d not recognized", buf[0]);
+#endif
                     break;
             }
-#endif
         }
 
-        /* set I2C write slave ID for SAA7111A */
-        buf[0] = SAA7111A_I2C_WRITE_ID;
+        /* set I2C write slave ID */
+        buf[0] = sensorWrite;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
 
-        /* set I2C read slave ID for SAA7111A */
-        buf[0] = SAA7111A_I2C_READ_ID;
+        /* set I2C read slave ID */
+        buf[0] = sensorRead;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SRA buf:buf len:1];
 
         buf[0] = 0x01;
@@ -411,41 +450,83 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
         buf[0] = 0x00;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_CE_EN buf:buf len:1];
 
-        [self i2cWrite:0x06 val:0xce];
-        [self i2cWrite:0x07 val:0x00];
-        [self i2cWrite:0x10 val:0x44];
-        [self i2cWrite:0x0e val:0x01];
-        [self i2cWrite:0x00 val:0x00];
-        [self i2cWrite:0x01 val:0x00];
-        [self i2cWrite:0x03 val:0x23];
-        [self i2cWrite:0x04 val:0x00];
-        [self i2cWrite:0x05 val:0x00];
-        [self i2cWrite:0x08 val:0xc8];
-        [self i2cWrite:0x09 val:0x01];
-        [self i2cWrite:0x0a val:0x95];
-        [self i2cWrite:0x0b val:0x48];
-        [self i2cWrite:0x0c val:0x50];
-        [self i2cWrite:0x0d val:0x00];
-        [self i2cWrite:0x0f val:0x00];
-        [self i2cWrite:0x11 val:0x0c];
-        [self i2cWrite:0x12 val:0x00];
-        [self i2cWrite:0x13 val:0x00];
-        [self i2cWrite:0x14 val:0x00];
-        [self i2cWrite:0x15 val:0x00];
-        [self i2cWrite:0x16 val:0x00];
-        [self i2cWrite:0x17 val:0x00];
+        if(sensorType == SENS_OV7610) {
+            [self i2cWrite:OV7610_REG_RWB val:0x05];
+            [self i2cWrite:OV7610_REG_EC val:0xff];
+            [self i2cWrite:OV7610_REG_COMB val:0x01];
+            [self i2cWrite:OV7610_REG_FD val:0x06];
+            [self i2cWrite:OV7610_REG_COME val:0x1c];
+            [self i2cWrite:OV7610_REG_COMF val:0x90];
+            [self i2cWrite:OV7610_REG_ECW val:0x2e];
+            [self i2cWrite:OV7610_REG_ECB val:0x7c];
+            [self i2cWrite:OV7610_REG_COMH val:0x24];
+            [self i2cWrite:OV7610_REG_EHSH val:0x04];
+            [self i2cWrite:OV7610_REG_EHSL val:0xac];
+            [self i2cWrite:OV7610_REG_EXBK val:0xfe];
+            // Auto brightness enabled
+            [self i2cWrite:OV7610_REG_COMJ val:0x91];
+            [self i2cWrite:OV7610_REG_BADJ val:0x48];
+            [self i2cWrite:OV7610_REG_COMK val:0x81];
+            [self i2cWrite:OV7610_REG_GAM val:0x04];
 
-        [self i2cWrite:0x02 val:0xc0];
+            // himori add
+            [self i2cWrite:OV7610_REG_GC val:0x00];
+            [self i2cWrite:OV7610_REG_BLU val:0x80];
+            [self i2cWrite:OV7610_REG_RED val:0x80];
+            [self i2cWrite:OV7610_REG_SAT val:0xc0];
+            [self i2cWrite:OV7610_REG_BRT val:0x60];
+            [self i2cWrite:OV7610_REG_AS val:0x00];
+            [self i2cWrite:OV7610_REG_BBS val:0x24];
+            [self i2cWrite:OV7610_REG_RBS val:0x24];
+            [self i2cWrite:OV7610_REG_RBS val:0x24];
+
+            // SIF
+            [self i2cWrite:OV7610_REG_SYN_CLK val:0x01];
+            [self i2cWrite:OV7610_REG_COMA val:0x04];
+            [self i2cWrite:OV7610_REG_COMC val:0x24];
+            [self i2cWrite:OV7610_REG_COML val:0x9e];
+
+        } else {	// SAA7111A
+
+            [self i2cWrite:0x06 val:0xce];
+            [self i2cWrite:0x07 val:0x00];
+            [self i2cWrite:0x10 val:0x44];
+            [self i2cWrite:0x0e val:0x01];
+            [self i2cWrite:0x00 val:0x00];
+            [self i2cWrite:0x01 val:0x00];
+            [self i2cWrite:0x03 val:0x23];
+            [self i2cWrite:0x04 val:0x00];
+            [self i2cWrite:0x05 val:0x00];
+//            [self i2cWrite:0x08 val:0xc8];
+            [self i2cWrite:0x08 val:0x88];
+            [self i2cWrite:0x09 val:0x01];
+            [self i2cWrite:0x0a val:0x95];
+            [self i2cWrite:0x0b val:0x48];
+            [self i2cWrite:0x0c val:0x50];
+            [self i2cWrite:0x0d val:0x00];
+            [self i2cWrite:0x0f val:0x00];
+            [self i2cWrite:0x11 val:0x0c];
+            [self i2cWrite:0x12 val:0x00];
+            [self i2cWrite:0x13 val:0x00];
+            [self i2cWrite:0x14 val:0x00];
+            [self i2cWrite:0x15 val:0x00];
+            [self i2cWrite:0x16 val:0x00];
+            [self i2cWrite:0x17 val:0x00];
+
+            [self i2cWrite:0x02 val:0xc0];
 
 #ifdef OV511_DEBUG
-        NSLog(@"SAA7111A status = %02x\n",  [self i2cRead:0x1f]);
+            NSLog(@"SAA7111A status = %02x\n",  [self i2cRead:0x1f]);
 #endif
+        }
 
-        buf[0] = 0x00;
-        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_DLYM buf:buf len:1];
+        if(sensorType == SENS_SAA7111A) {
+            buf[0] = 0x00;
+            [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_DLYM buf:buf len:1];
 
-        buf[0] = 0x00;
-        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PEM buf:buf len:1];
+            buf[0] = 0x00;
+            [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PEM buf:buf len:1];
+        }
 
         buf[0] = ([self width] >> 3) - 1;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PXCNT buf:buf len:1];
@@ -460,14 +541,14 @@ void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int widt
         buf[0] = 0x00;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_LNDV buf:buf len:1];
 
-        buf[0] = 0xff;
+        buf[0] = 0x01;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_ENFC buf:buf len:1];
 
-        /* set FIFO format (961-byte packets) */
+        /* set FIFO format */
         buf[0] = (usbFrameBytes - 1) / 32;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PKSZ buf:buf len:1];
 
-        buf[0] = 0xFF;
+        buf[0] = 0x03;
         [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PKFMT buf:buf len:1];
 
         /* select the fifosize alternative */

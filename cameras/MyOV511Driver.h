@@ -50,42 +50,21 @@ Doing these amounts of defines is often called bad style. We should find a bette
 */
 
 #define VENDOR_OVT 0x05A9
-#define PRODUCT_OV511 0xA511
+#define PRODUCT_OV511 0x511
+#define PRODUCT_OV511PLUS 0xA511
 
 //Conversions into the values of the camera
 
-#define TO_BRIGHTNESS(a) ((UInt8)(a*127.0f))
-#define TO_CONTRAST(a) ((UInt8)(a*63.0f))
-#define TO_GAMMA(a) ((UInt8)(a*31.0f))
-#define TO_SATURATION(a) ((UInt8)(a*198.0f-99.0f))
-#define TO_GAIN(a) ((UInt8)(a*63.0f))
-#define TO_SHUTTER(a) ((UInt8)(a*255.0f))
-#define TO_AUTOGAIN(a) ((a)?0x0:0xff)
-#define TO_POWERSAVE(a) ((a)?0x0:0xff)
+#define SAA7111A_BRIGHTNESS(a) ((UInt8)(a*255.0f))
+#define SAA7111A_CONTRAST(a) ((UInt8)(a*127.0f))
+#define SAA7111A_GAMMA(a) ((UInt8)(a*31.0f))
+#define SAA7111A_SATURATION(a) ((UInt8)(a*127.0f))
+#define SAA7111A_GAIN(a) ((UInt8)(a*63.0f))
+#define SAA7111A_SHUTTER(a) ((UInt8)(a*255.0f))
+#define SAA7111A_AUTOGAIN(a) ((a)?0x0:0xff)
+#define SAA7111A_POWERSAVE(a) ((a)?0x0:0xff)
 #define CLAMP_UNIT(a) (CLAMP((a),0.0f,1.0f))
 
-//Command groups and selectors
-
-#define INTF_CONTROL	3
-#define GRP_SET_LUMA		0x01
-#define SEL_BRIGHTNESS			0x2b00
-#define SEL_CONTRAST			0x2700
-#define SEL_GAMMA			0x2c00
-#define SEL_SHUTTER			0x2300
-#define SEL_AUTOGAIN			0x2000
-#define SEL_GAIN			0x2100
-
-#define GRP_SET_CHROMA		0x03
-#define SEL_SATURATION			0x1600
-
-#define GRP_SET_STATUS		0x05
-#define SEL_POWER			0x3200
-#define SEL_MIRROR			0x3300
-#define SEL_LED				0x3400
-
-#define INTF_VIDEO	4
-#define GRP_SET_STREAM		0x07
-#define	SEL_FORMAT			0x0100
 
 #define OV511_REG_DLYM		0x10
 #define OV511_REG_PEM		0x11
@@ -140,6 +119,54 @@ Doing these amounts of defines is often called bad style. We should find a bette
 #define OV511_REG_LT_EN		0x79
 #define OV511_REG_LT_V		0x80
 
+#define OV7610_REG_GC		0x00
+#define OV7610_REG_BLU		0x01
+#define OV7610_REG_RED		0x02
+#define OV7610_REG_SAT		0x03
+#define OV7610_REG_CTR		0x05
+#define OV7610_REG_BRT		0x06
+#define OV7610_REG_AS		0x07
+#define OV7610_REG_BBS		0x0C
+#define OV7610_REG_RBS		0x0D
+#define OV7610_REG_GAM		0x0E
+#define OV7610_REG_RWB		0x0F
+#define OV7610_REG_EC		0x10
+#define OV7610_REG_SYN_CLK	0x11
+#define OV7610_REG_COMA		0x12
+#define OV7610_REG_COMB		0x13
+#define OV7610_REG_COMC		0x14
+#define OV7610_REG_COMD		0x15
+#define OV7610_REG_FD		0x16
+#define OV7610_REG_HS		0x17
+#define OV7610_REG_HE		0x18
+#define OV7610_REG_VS		0x19
+#define OV7610_REG_VE		0x1A
+#define OV7610_REG_PS		0x1B
+#define OV7610_REG_MIDH		0x1C
+#define OV7610_REG_MIDL		0x1D
+#define OV7610_REG_COME		0x20
+#define OV7610_REG_YOF		0x21
+#define OV7610_REG_UOF		0x22
+#define OV7610_REG_ECW		0x24
+#define OV7610_REG_ECB		0x25
+#define OV7610_REG_COMF		0x26
+#define OV7610_REG_COMG		0x27
+#define OV7610_REG_COMH		0x28
+#define OV7610_REG_COMI		0x29
+#define OV7610_REG_EHSH		0x2A
+#define OV7610_REG_EHSL		0x2B
+#define OV7610_REG_EXBK		0x2C
+#define OV7610_REG_COMJ		0x2D
+#define OV7610_REG_VOF		0x2E
+#define OV7610_REG_ABS		0x2F
+#define OV7610_REG_YGAM		0x33
+#define OV7610_REG_BADJ		0x34
+#define OV7610_REG_COML		0x35
+#define OV7610_REG_COMK		0x38
+
+#define OV7610_I2C_WRITE_ID	0x42
+#define OV7610_I2C_READ_ID	0x43
+
 #define OV7610_I2C_RETRIES	3
 #define OV7610_I2C_CLOCK_DIV	4
 
@@ -148,6 +175,9 @@ Doing these amounts of defines is often called bad style. We should find a bette
 
 #define FI1236MK2_I2C_WRITE_ID	0xC2
 #define FI1236MK2_I2C_READ_ID	0xC3
+
+#define SENS_OV7610		1
+#define SENS_SAA7111A		2		
 
 typedef struct OV511CompleteChunk {	//The description of a ready-to-decode chunk
     long start;			//start offset in grabBuffer
@@ -191,6 +221,12 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
 
 @interface MyOV511Driver : MyCameraDriver {
     
+//Camera Type
+    short customId;
+    short sensorType;
+    short sensorRead;
+    short sensorWrite;
+
 //Camera Status
     short usbFrameBytes;
     short usbAltInterface;
@@ -235,4 +271,10 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
 - (int) i2cWrite:(UInt8) reg val:(UInt8) val;
 - (int) i2cRead:(UInt8) reg;
 
+@end
+
+@interface MyOV511PlusDriver : MyOV511Driver 
++ (unsigned short) cameraUsbProductID;
++ (unsigned short) cameraUsbVendorID;
++ (NSString*) cameraName;
 @end
