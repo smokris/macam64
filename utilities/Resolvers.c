@@ -89,6 +89,19 @@ bool ErrorName (IOReturn err, char* out_buf) {
         case kIOUSBTransactionReturned:sprintf(out_buf,"kIOUSBTransactionReturned - The transaction has been returned to the caller"); break;
         case kIOUSBPipeStalled:sprintf(out_buf,"kIOUSBPipeStalled - Pipe has stalled, error needs to be cleared"); break;
         case kIOUSBInterfaceNotFound:sprintf(out_buf,"kIOUSBInterfaceNotFound - Interface ref not recognised"); break;
+        case kIOUSBLinkErr:sprintf(out_buf,"kIOUSBLinkErr - <no error description available>"); break;
+        case kIOUSBNotSent2Err:sprintf(out_buf,"kIOUSBNotSent2Err - Transaction not sent"); break;
+        case kIOUSBNotSent1Err:sprintf(out_buf,"kIOUSBNotSent1Err - Transaction not sent"); break;
+        case kIOUSBBufferUnderrunErr:sprintf(out_buf,"kIOUSBBufferUnderrunErr - Buffer Underrun (Host hardware failure on data out, PCI busy?)"); break;
+        case kIOUSBBufferOverrunErr:sprintf(out_buf,"kIOUSBBufferOverrunErr - Buffer Overrun (Host hardware failure on data out, PCI busy?)"); break;
+        case kIOUSBReserved2Err:sprintf(out_buf,"kIOUSBReserved2Err - Reserved"); break;
+        case kIOUSBReserved1Err:sprintf(out_buf,"kIOUSBReserved1Err - Reserved"); break;
+        case kIOUSBWrongPIDErr:sprintf(out_buf,"kIOUSBWrongPIDErr - Pipe stall, Bad or wrong PID"); break;
+        case kIOUSBPIDCheckErr:sprintf(out_buf,"kIOUSBPIDCheckErr - Pipe stall, PID CRC Err:or"); break;
+        case kIOUSBDataToggleErr:sprintf(out_buf,"kIOUSBDataToggleErr - Pipe stall, Bad data toggle"); break;
+        case kIOUSBBitstufErr:sprintf(out_buf,"kIOUSBBitstufErr - Pipe stall, bitstuffing"); break;
+        case kIOUSBCRCErr:sprintf(out_buf,"kIOUSBCRCErr - Pipe stall, bad CRC"); break;
+        
         default: sprintf(out_buf,"Unknown Error:%d Sub:%d System:%d",err_get_code(err),
                 err_get_sub(err),err_get_system(err)); ok=false; break;
     }
@@ -227,7 +240,7 @@ bool ResolveVDSelector(short sel, char* str) {
         case kSGPanelSetSettingsSelect: sprintf(str,"kSGPanelSetSettingsSelect"); break; //                  = 0x020A,
         case kSGPanelValidateInputSelect: sprintf(str,"kSGPanelValidateInputSelect"); break; //                = 0x020B,
         case kSGPanelSetEventFilterSelect: sprintf(str,"kSGPanelSetEventFilterSelect"); break; //               = 0x020C,
-
+            
         default: sprintf(str,"unknown component function selector: %d",sel); return false; break;
     }
     return true;
