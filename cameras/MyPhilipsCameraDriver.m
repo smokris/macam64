@@ -287,6 +287,8 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     bool frameListFound=false;
     long currFrameLength;
     bool fullFrame;
+    if (result==kIOReturnUnderrun) result=0;                  //Data underrun is not too bad (Jaguar fix)
+    //Thanks to Arthur Petry for checking this!
     if (result) {						//USB error handling
         *(grabContext->shouldBeGrabbing)=NO;			//We'll stop no matter what happened
         if (!grabContext->err) {
