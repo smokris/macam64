@@ -6,9 +6,8 @@
 	objectVersion = 39;
 	objects = {
 		1058C7A1FEA54F0111CA2CBB = {
-			expectedFileType = wrapper.framework;
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = Cocoa.framework;
 			path = /System/Library/Frameworks/Cocoa.framework;
 			refType = 0;
@@ -31,9 +30,8 @@
 //173
 //174
 		17587328FF379C6511CA2CBB = {
-			expectedFileType = wrapper.application;
-			fallbackIsa = PBXFileReference;
-			isa = PBXApplicationReference;
+			explicitFileType = wrapper.application;
+			isa = PBXFileReference;
 			path = macam.app;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -219,7 +217,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.8 © 2003 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.8.1b1 © 2005 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>WebcamHelp</string>
 	<key>CFBundleHelpBookName</key>
@@ -235,11 +233,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.8</string>
+	<string>0.8.1b1</string>
 	<key>CFBundleSignature</key>
 	<string>wC?!</string>
 	<key>CFBundleVersion</key>
-	<string>0.8</string>
+	<string>0.8.1b1</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -411,17 +409,17 @@
 //393
 //394
 		39185ABA03C8B5570066DE75 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyQCProBeigeDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		39185ABB03C8B5570066DE75 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyQCProBeigeDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -499,8 +497,8 @@
 			};
 		};
 		3950233F040A55A70066D062 = {
-			expectedFileType = file;
 			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
 			path = plugin.icns;
 			refType = 4;
 			sourceTree = "<group>";
@@ -556,7 +554,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macamDSC</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.8 © 2003 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.8.1b1 © 2005 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>WebcamHelp</string>
 	<key>CFBundleHelpBookName</key>
@@ -572,11 +570,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.8</string>
+	<string>0.8.1b1</string>
 	<key>CFBundleSignature</key>
 	<string>wC?!</string>
 	<key>CFBundleVersion</key>
-	<string>0.8</string>
+	<string>0.8.1b1</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -602,6 +600,12 @@
 			<string>0x504A</string>
 			<key>vendor</key>
 			<string>0x04FC</string>
+		</dict>
+		<dict>
+			<key>product</key>
+			<string>0x800A</string>
+			<key>vendor</key>
+			<string>0x0C45</string>
 		</dict>
 	</array>
 </dict>
@@ -1281,9 +1285,8 @@
 			};
 		};
 		39663A570402FCF000435B6F = {
-			expectedFileType = wrapper.application;
-			fallbackIsa = PBXFileReference;
-			isa = PBXApplicationReference;
+			explicitFileType = wrapper.application;
+			isa = PBXFileReference;
 			path = macamDSC.app;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -1306,9 +1309,9 @@
 			sourceTree = "<group>";
 		};
 		39663A670403023400435B6F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = main.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1320,8 +1323,8 @@
 			};
 		};
 		39663A690403091700435B6F = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			path = MainMenu.nib;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1333,17 +1336,17 @@
 			};
 		};
 		3973A6F203CDF44E0066D062 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MySPCA500Driver.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		3973A6F303CDF44E0066D062 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MySPCA500Driver.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1373,9 +1376,9 @@
 			};
 		};
 		397B163C03CED9B900153FEE = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = ov511_decomp.c;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1393,18 +1396,18 @@
 			};
 		};
 		39A2B45A0593E296009C5934 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			name = QTDummyPanel.m;
 			path = app_specific/QTDummyPanel.m;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		39A2B45B0593E297009C5934 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = QTDummyPanel.h;
 			path = app_specific/QTDummyPanel.h;
 			refType = 2;
@@ -1460,17 +1463,17 @@
 			targetProxy = 391D477105921F4200ADF722;
 		};
 		39CBD64F03DC0D79000F7EFC = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyKiaraFlippedDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		39CBD65003DC0D79000F7EFC = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyKiaraFlippedDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1500,9 +1503,9 @@
 			};
 		};
 		39FE214904030BB800BAABE7 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = ICD_CameraCalls.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1514,9 +1517,8 @@
 			};
 		};
 		39FE215504030E7E00BAABE7 = {
-			expectedFileType = wrapper.framework;
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = ICACameraPriv.framework;
 			path = /System/Library/PrivateFrameworks/ICACameraPriv.framework;
 			refType = 0;
@@ -1539,8 +1541,6 @@
 //4A3
 //4A4
 		4A9504CCFFE6A4B311CA0CBA = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
@@ -1554,8 +1554,6 @@
 			name = Development;
 		};
 		4A9504CDFFE6A4B311CA0CBA = {
-			buildRules = (
-			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
@@ -1601,51 +1599,51 @@
 			sourceTree = "<group>";
 		};
 		F500FB6D022FB1BD01369AA6 = {
-			expectedFileType = image.icns;
 			isa = PBXFileReference;
+			lastKnownFileType = image.icns;
 			name = Global;
 			path = app.icns;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F500FB6E022FB1BD01369AA6 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = DownloadToolbarItem.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F500FB6F022FB1BD01369AA6 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = NextCamToolbarItem.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F500FB70022FB1BD01369AA6 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = PauseToolbarItem.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F500FB71022FB1BD01369AA6 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = PlayToolbarItem.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F500FB72022FB1BD01369AA6 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = SettingsToolbarItem.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F500FB73022FB1BD01369AA6 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = SnapshotToolbarItem.tiff;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1687,17 +1685,17 @@
 			};
 		};
 		F511081D0241794801599652 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MySPCA504Driver.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F511081E0241794801599652 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MySPCA504Driver.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1727,17 +1725,17 @@
 			};
 		};
 		F51EEE570284B73A01B888F7 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyCameraInspector.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F51EEE580284B73A01B888F7 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyCameraInspector.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1755,8 +1753,8 @@
 			};
 		};
 		F51EEE5D0284BC9601B888F7 = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			path = DefaultCameraInspector.nib;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1780,9 +1778,9 @@
 			sourceTree = "<group>";
 		};
 		F5285DAB0248103E01AEB99D = {
-			expectedFileType = text.plist.strings;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = English;
 			path = English.lproj/DriverLocalizable.strings;
 			refType = 4;
@@ -1801,9 +1799,9 @@
 			};
 		};
 		F5285DAE0248104601AEB99D = {
-			expectedFileType = text.plist.strings;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = German;
 			path = German.lproj/DriverLocalizable.strings;
 			refType = 4;
@@ -1822,20 +1820,18 @@
 			sourceTree = "<group>";
 		};
 		F52D2ED1025A7383016EC628 = {
-			expectedFileType = folder;
-			fallbackIsa = PBXFileReference;
 			includeInIndex = 0;
-			isa = PBXFolderReference;
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
 			name = English;
 			path = English.lproj/WebcamHelp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F52D2ED2025A7383016EC628 = {
-			expectedFileType = folder;
-			fallbackIsa = PBXFileReference;
 			includeInIndex = 0;
-			isa = PBXFolderReference;
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
 			name = German;
 			path = German.lproj/WebcamHelp;
 			refType = 4;
@@ -1848,15 +1844,15 @@
 			};
 		};
 		F52D2ED4025A9425016EC628 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = RotateCWToolbarItem.tiff;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F52D2ED5025A9425016EC628 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = RotateCCWToolbarItem.tiff;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1874,17 +1870,17 @@
 			};
 		};
 		F533EEB70271ACF80166DE1F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyQCExpressBDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F533EEB90271ACF80166DE1F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyQCExpressBDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1914,17 +1910,17 @@
 			};
 		};
 		F533EEC20271B72D0166DE1F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyHDCS1000Sensor.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F533EEC30271B72D0166DE1F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyHDCS1000Sensor.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1954,17 +1950,17 @@
 			};
 		};
 		F53480CC027240FB013AF9AD = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyHDCS1020Sensor.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F53480CD027240FB013AF9AD = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyHDCS1020Sensor.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -1994,17 +1990,17 @@
 			};
 		};
 		F5376F35026C66D30166DE1F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyQX3Driver.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5376F36026C66D30166DE1F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyQX3Driver.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2034,27 +2030,24 @@
 			};
 		};
 		F538BD1B01E5D03A0166DE0F = {
-			expectedFileType = wrapper.framework;
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = Carbon.framework;
 			path = /System/Library/Frameworks/Carbon.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
 		F538BD1D01E5D0440166DE0F = {
-			expectedFileType = wrapper.framework;
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = QuickTime.framework;
 			path = /System/Library/Frameworks/QuickTime.framework;
 			refType = 0;
 			sourceTree = "<absolute>";
 		};
 		F538BD2201E5D23F0166DE0F = {
-			expectedFileType = folder;
-			fallbackIsa = PBXFileReference;
-			isa = PBXBundleReference;
+			explicitFileType = wrapper.cfbundle;
+			isa = PBXFileReference;
 			path = macam.component;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
@@ -2096,7 +2089,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.8 © 2003 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.8.1b1 © 2005 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -2108,11 +2101,11 @@
 	<key>CFBundlePackageType</key>
 	<string>thng</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.8</string>
+	<string>0.8.1b1</string>
 	<key>CFBundleSignature</key>
 	<string>wCam</string>
 	<key>CFBundleVersion</key>
-	<string>0.8</string>
+	<string>0.8.1b1</string>
 </dict>
 </plist>
 ";
@@ -2281,8 +2274,8 @@
 			sourceTree = "<group>";
 		};
 		F53B90550240CDFF0166DE75 = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = English;
 			path = English.lproj/MyImageDocument.nib;
 			refType = 4;
@@ -2295,17 +2288,17 @@
 			};
 		};
 		F53B90580240CE2B0166DE75 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyImageDocument.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F53B90590240CE2B0166DE75 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyImageDocument.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2323,17 +2316,17 @@
 			};
 		};
 		F53F6636039ACC3F01C3DF00 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MySonix2028Driver.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F53F6637039ACC3F01C3DF00 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MySonix2028Driver.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2363,18 +2356,18 @@
 			};
 		};
 		F55855D302EEF4A70166DE1F = {
-			expectedFileType = text.plist.strings;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = French;
 			path = French.lproj/Localizable.strings;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55855D402EEF4BF0166DE1F = {
-			expectedFileType = text.plist.strings;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = French;
 			path = French.lproj/DriverLocalizable.strings;
 			refType = 4;
@@ -2399,33 +2392,33 @@
 			sourceTree = "<group>";
 		};
 		F55A58C102572BFE014CA2B1 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyPB0100Sensor.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55A58C202572BFE014CA2B1 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyPB0100Sensor.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55A58C302572BFE014CA2B1 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MySTV600Sensor.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55A58C402572BFE014CA2B1 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MySTV600Sensor.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2496,57 +2489,57 @@
 			sourceTree = "<group>";
 		};
 		F55DD8210213113F0166DE0F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyCameraCentral.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD8230213113F0166DE0F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyCameraDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD8240213113F0166DE0F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyCameraDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD8250213113F0166DE0F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyCameraInfo.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD8260213113F0166DE0F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyCameraInfo.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD8270213113F0166DE0F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyDummyCameraDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD8280213113F0166DE0F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyDummyCameraDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2689,33 +2682,33 @@
 			sourceTree = "<group>";
 		};
 		F55DD83B021311680166DE0F = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = English;
 			path = English.lproj/MainMenu.nib;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD83C021311680166DE0F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = main.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD83D021311680166DE0F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyController.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD83E021311680166DE0F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyController.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2736,57 +2729,57 @@
 			sourceTree = "<group>";
 		};
 		F55DD840021311680166DE0F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyBridge.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD841021311680166DE0F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyBridge.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD842021311680166DE0F = {
-			expectedFileType = sourcecode.rez;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.rez;
 			path = QTComponent.r;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD843021311680166DE0F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = QTPanel.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD844021311680166DE0F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = QTPanel.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD845021311680166DE0F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = QTVideoDigitizer.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F55DD846021311680166DE0F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = QTVideoDigitizer.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2870,34 +2863,34 @@
 			sourceTree = "<group>";
 		};
 		F563AB490247FDC601BF65F7 = {
-			expectedFileType = text.plist.strings;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = English;
 			path = English.lproj/Localizable.strings;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F563AB4A0247FDC601BF65F7 = {
-			expectedFileType = text.plist.strings;
 			fileEncoding = 4;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = German;
 			path = German.lproj/Localizable.strings;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F563AB4B0247FDC601BF65F7 = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = German;
 			path = German.lproj/MyImageDocument.nib;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F563AB4C0247FDC601BF65F7 = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = German;
 			path = German.lproj/MainMenu.nib;
 			refType = 4;
@@ -2910,34 +2903,33 @@
 			};
 		};
 		F5787F180331464B01153FEE = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = French;
 			path = French.lproj/MyImageDocument.nib;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5787F190331465201153FEE = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = French;
 			path = French.lproj/MainMenu.nib;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5787F3E0331468F01153FEE = {
-			expectedFileType = folder;
-			fallbackIsa = PBXFileReference;
 			includeInIndex = 1;
-			isa = PBXFolderReference;
+			isa = PBXFileReference;
+			lastKnownFileType = folder;
 			name = French;
 			path = French.lproj/WebcamHelp;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5794DDF0285B922010B00CC = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = "QX3-5.tiff";
 			refType = 4;
 			sourceTree = "<group>";
@@ -2949,17 +2941,17 @@
 			};
 		};
 		F57D11AFC5B26FF6010B00CC = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyQX3CameraInspector.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F57D11B0C5B26FF6010B00CC = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyQX3CameraInspector.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2977,8 +2969,8 @@
 			};
 		};
 		F57D11B3C5B26FF6010B00CC = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			path = MyQX3CameraInspector.nib;
 			refType = 4;
 			sourceTree = "<group>";
@@ -2990,29 +2982,29 @@
 			};
 		};
 		F57D11B5C5B26FF6010B00CC = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = "QX3-4.tiff";
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F57D11B6C5B26FF6010B00CC = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = "QX3-3.tiff";
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F57D11B7C5B26FF6010B00CC = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = "QX3-2.tiff";
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F57D11B8C5B26FF6010B00CC = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = "QX3-1.tiff";
 			refType = 4;
 			sourceTree = "<group>";
@@ -3036,8 +3028,8 @@
 			};
 		};
 		F57D11BDC5B26FF6010B00CC = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = "QX3-0.tiff";
 			refType = 4;
 			sourceTree = "<group>";
@@ -3055,17 +3047,17 @@
 			};
 		};
 		F58530E10229AAB601479C37 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = BayerConverter.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58530E20229AAB601479C37 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = BayerConverter.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3095,8 +3087,8 @@
 			};
 		};
 		F589724A0374636B01159FE2 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = RecordMovieToolbarItem.tiff;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3108,49 +3100,49 @@
 			};
 		};
 		F58976F903758BEE01159FE2 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyMovieRecorder.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58976FA03758BEE01159FE2 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyMovieRecorder.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58976FB03758BEE01159FE2 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyMovieWindowController.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58976FC03758BEE01159FE2 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyMovieWindowController.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58976FD03758BEE01159FE2 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyNSMovieExtensions.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58976FE03758BEE01159FE2 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyNSMovieExtensions.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3192,17 +3184,17 @@
 			};
 		};
 		F589EB0E02268A6901D99A1F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MySTV680Driver.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F589EB0F02268A6901D99A1F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MySTV680Driver.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3226,17 +3218,17 @@
 			};
 		};
 		F58DB238024E9803019A97FC = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyImageWindowController.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F58DB239024E9803019A97FC = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyImageWindowController.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3254,26 +3246,26 @@
 			};
 		};
 		F5995F30029B5BB80126DA0B = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			name = TODO.txt;
 			path = texts/TODO.txt;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F59E4B7A0264A7910166DE1F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = RGB888Scaler.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F59E4B7B0264A7910166DE1F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = RGB888Scaler.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3291,17 +3283,17 @@
 			};
 		};
 		F5A153160274D3D501C56AC3 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyQCExpressADriver.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5A153170274D3D501C56AC3 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyQCExpressADriver.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3355,17 +3347,17 @@
 			};
 		};
 		F5A5077303BBC69501A78977 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MySE401Driver.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5A5077403BBC69501A78977 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MySE401Driver.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3395,17 +3387,17 @@
 			};
 		};
 		F5A6652B037B256401C96C8F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyPrefsWindowController.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5A6652C037B256401C96C8F = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyPrefsWindowController.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3423,9 +3415,8 @@
 			};
 		};
 		F5AA417601DA8EF70157C38C = {
-			expectedFileType = wrapper.framework;
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = CoreFoundation.framework;
 			path = /System/Library/Frameworks/CoreFoundation.framework;
 			refType = 0;
@@ -3438,9 +3429,8 @@
 			};
 		};
 		F5AA417801DA8F350157C38C = {
-			expectedFileType = wrapper.framework;
-			fallbackIsa = PBXFileReference;
-			isa = PBXFrameworkReference;
+			isa = PBXFileReference;
+			lastKnownFileType = wrapper.framework;
 			name = IOKit.framework;
 			path = /System/Library/Frameworks/IOKit.framework;
 			refType = 0;
@@ -3453,8 +3443,8 @@
 			};
 		};
 		F5B1CC460375DAF501159FE2 = {
-			expectedFileType = image.tiff;
 			isa = PBXFileReference;
+			lastKnownFileType = image.tiff;
 			path = RecordMovieActiveToolbarItem.tiff;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3466,9 +3456,9 @@
 			};
 		};
 		F5B9568C0250D31A0166DE1F = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyCameraCentral.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3486,9 +3476,9 @@
 			};
 		};
 		F5BB387E0342871601E62307 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = JFIFHeaderTemplate.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3522,87 +3512,88 @@
 			sourceTree = "<group>";
 		};
 		F5BFF536029B59BD01B6CBC8 = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			name = inspector.txt;
 			path = texts/inspector.txt;
 			refType = 4;
 			sourceTree = "<group>";
+			wrapsLines = 1;
 		};
 		F5BFF537029B59BD01B6CBC8 = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			name = QCE.txt;
 			path = texts/QCE.txt;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5BFF538029B59BD01B6CBC8 = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			name = QT_architecture.txt;
 			path = texts/QT_architecture.txt;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5BFF539029B59BD01B6CBC8 = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			name = source_documentation.txt;
 			path = texts/source_documentation.txt;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5BFF53A029B59BD01B6CBC8 = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			name = STV680.txt;
 			path = texts/STV680.txt;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5BFF540029B59CB01B6CBC8 = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = COPYING.txt;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5BFF542029B59D601B6CBC8 = {
-			expectedFileType = text;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text;
 			path = README;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5BFF548029B5A8801B6CBC8 = {
-			expectedFileType = text.html;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = text.html;
 			name = Supported_Cameras.html;
 			path = texts/Supported_Cameras.html;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5C5790603049095010B006D = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyIntelPCCameraPro.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5C5790703049095010B006D = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyIntelPCCameraPro.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3614,17 +3605,17 @@
 			};
 		};
 		F5C80D8D02417A800166DE75 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyScrollView.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5C80D8E02417A800166DE75 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyScrollView.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3666,8 +3657,8 @@
 			sourceTree = "<group>";
 		};
 		F5E6AA660371F8920166D062 = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = English;
 			path = English.lproj/MyMovieDocument.nib;
 			refType = 4;
@@ -3680,33 +3671,33 @@
 			};
 		};
 		F5E6AA6B0371F8B00166D062 = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = German;
 			path = German.lproj/MyMovieDocument.nib;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5E6AA6C0371F8B90166D062 = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			name = French;
 			path = French.lproj/MyMovieDocument.nib;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5E78BEF0371F3990166D062 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyMovieDocument.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5E78BF20371F3990166D062 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyMovieDocument.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3730,25 +3721,25 @@
 			};
 		};
 		F5EDFAD2036875F00166D062 = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = yuv2rgbOV420.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5EDFAD5036876210166D062 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyOV511Driver.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5EDFAD6036876210166D062 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyOV511Driver.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3778,33 +3769,33 @@
 			};
 		};
 		F5EF7FFB0364C3BD01E9B502 = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = JFIFHeaderTemplate.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F4373C02D278D6018D4F8C = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyVicamDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F4373D02D278D6018D4F8C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = vicamurbs.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F4373E02D278D6018D4F8C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyVicamDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3834,25 +3825,25 @@
 			};
 		};
 		F5F4374C02D52947018D4F8C = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = RGBScaler.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F4374D02D52947018D4F8C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = RGBScalerIncluded.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F4374E02D52947018D4F8C = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = RGBScaler.h;
 			refType = 4;
 			sourceTree = "<group>";
@@ -3937,66 +3928,66 @@
 			sourceTree = "<group>";
 		};
 		F5F79A810212038E01E152CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyCPIACameraDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A820212038E01E152CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyCPIACameraDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A830212038E01E152CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyKiaraFamilyDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A840212038E01E152CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyKiaraFamilyDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A850212038E01E152CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			name = MyPhilipsCameraDriver.h;
 			path = cameras/MyPhilipsCameraDriver.h;
 			refType = 2;
 			sourceTree = SOURCE_ROOT;
 		};
 		F5F79A860212038E01E152CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyPhilipsCameraDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A870212038E01E152CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyTimonFamilyDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A880212038E01E152CA = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyTimonFamilyDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4030,97 +4021,97 @@
 			sourceTree = "<group>";
 		};
 		F5F79A920212038E01E152CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = GlobalDefs.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A930212038E01E152CA = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = MiniGraphicsTools.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A940212038E01E152CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MiniGraphicsTools.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A950212038E01E152CA = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = MiscTools.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A960212038E01E152CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MiscTools.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A970212038E01E152CA = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = Resolvers.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A980212038E01E152CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = Resolvers.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A990212038E01E152CA = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = yuv2rgb.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A9A0212038E01E152CA = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = yuv2rgb.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A9B0212038E01E152CA = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = yuv2rgbCPIA420.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A9C0212038E01E152CA = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = yuv2rgbCPIA422.c;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5F79A9D0212038E01E152CA = {
-			expectedFileType = sourcecode.c.c;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.c;
 			path = yuv2rgbPhilips.c;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4324,17 +4315,17 @@
 			};
 		};
 		F5FC0F1D02834E82015925D2 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyQCWebDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5FC0F1E02834E82015925D2 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyQCWebDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -4364,17 +4355,17 @@
 			};
 		};
 		F5FC0F23028351A7015925D2 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = MyVV6410Sensor.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5FC0F24028351A7015925D2 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = MyVV6410Sensor.m;
 			refType = 4;
 			sourceTree = "<group>";
