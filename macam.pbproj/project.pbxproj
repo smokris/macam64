@@ -159,7 +159,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.6 Copyright 2002 Matthias Krauß</string>
+	<string>macam 0.7b1 © 2002 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>WebcamHelp</string>
 	<key>CFBundleHelpBookName</key>
@@ -175,11 +175,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.6</string>
+	<string>0.7b1</string>
 	<key>CFBundleSignature</key>
 	<string>wC?!</string>
 	<key>CFBundleVersion</key>
-	<string>0.6</string>
+	<string>0.7b1</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -343,7 +343,6 @@
 			);
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				OPTIMIZATION_CFLAGS = "-O2";
 			};
 			isa = PBXBuildStyle;
 			name = Deployment;
@@ -798,7 +797,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.6 Copyright 2002 Matthias Krauß</string>
+	<string>macam 0.7b1 © 2002 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -810,11 +809,11 @@
 	<key>CFBundlePackageType</key>
 	<string>thng</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.6</string>
+	<string>0.7b1</string>
 	<key>CFBundleSignature</key>
 	<string>wCam</string>
 	<key>CFBundleVersion</key>
-	<string>0.6</string>
+	<string>0.7b1</string>
 </dict>
 </plist>
 ";
