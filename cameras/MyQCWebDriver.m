@@ -29,6 +29,10 @@
 + (unsigned short) cameraUsbVendorID { return 0x46d; }
 + (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"QuickCam Web"]; }
 
+- (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr {
+    return ((r=ResolutionCIF)&&(fr==5));
+}
+
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
     CameraError err;
 
@@ -146,6 +150,9 @@
     [self writeSTVRegister:0x1445 value:0x00];	//LED
     return err;
 }
+
+
+
 
 
 @end

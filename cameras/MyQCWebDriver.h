@@ -37,6 +37,8 @@
 + (unsigned short) cameraUsbVendorID;
 + (NSString*) cameraName;
 
+- (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;	//Does this combination work?
+
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef;
 - (void) shutdown;
 
