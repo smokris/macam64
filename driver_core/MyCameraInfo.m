@@ -27,7 +27,6 @@ static unsigned long cidCount=1;
 - (id) init {
     self=[super init];
     if (self==NULL) return NULL;
-    usbDeviceRef=NULL;
     notification=NULL;
     driver=NULL;
     driverClass=NULL;
@@ -36,13 +35,13 @@ static unsigned long cidCount=1;
     name=NULL;
     pid=0;
     vid=0;
+    lid=0;
     return self;
 }
 
 - (id) copy {
     MyCameraInfo* c=[[MyCameraInfo alloc] init];
     if (c==NULL) return NULL;
-    [c setUsbDeviceRef:[self usbDeviceRef]];
     [c setNotification:[self notification]];
     [c setDriver:[self driver]];
     [c setDriverClass:[self driverClass]];
@@ -50,19 +49,12 @@ static unsigned long cidCount=1;
     [c setCameraName:[self cameraName]];
     [c setProductID:[self productID]];
     [c setVendorID:[self vendorID]];
+    [c setLocationID:[self locationID]];
     return c;
 }
 
 - (void) dealloc {
     if (name) [name release];
-}
-
-- (io_service_t) usbDeviceRef {
-    return usbDeviceRef;
-}
-
-- (void) setUsbDeviceRef:(io_service_t)devRef {
-    usbDeviceRef=devRef;
 }
 
 - (io_object_t) notification {
@@ -124,6 +116,14 @@ static unsigned long cidCount=1;
 
 - (void) setVendorID:(long)vendID {
     vid=vendID;
+}
+
+- (UInt32) locationID {
+    return lid;
+}
+
+- (void) setLocationID:(UInt32)locID {
+    lid=locID;
 }
 
 @end

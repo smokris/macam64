@@ -35,7 +35,6 @@ MyCameraCentral keeps an object for each connected camera and sets the driver ob
 #import <Cocoa/Cocoa.h>
 
 @interface MyCameraInfo : NSObject {
-    io_service_t	usbDeviceRef;	//A reference to our device in case we want to open it
     io_object_t		notification;	//A reference to our notification we want when we are unplugged
     Class		driverClass;	//The driver class if we want a driver
     id			driver;		//A driver - if we have one
@@ -44,14 +43,12 @@ MyCameraCentral keeps an object for each connected camera and sets the driver ob
     NSString*		name;		//the name of the camera type (e.g. "Philips ToUCam Pro")
     long 		pid;		//the usb product id
     long 		vid;		//the usb vendor id
+    UInt32		lid;		//The usb location id (only for connected cameras)
 }
 
 - (id) init;
 - (void) dealloc;
 - (id) copy;
-
-- (io_service_t) usbDeviceRef;
-- (void) setUsbDeviceRef:(io_service_t)devRef;
 
 - (io_object_t) notification;
 - (void) setNotification:(io_object_t)n;
@@ -75,5 +72,8 @@ MyCameraCentral keeps an object for each connected camera and sets the driver ob
 
 - (long) vendorID;
 - (void) setVendorID:(long)vendID;
+
+- (UInt32) locationID;
+- (void) setLocationID:(UInt32)locID;
 
 @end
