@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<!--
+macam - webcam app and QuickTime driver component
+Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+Traduction française par Damien Persohn <damien@persohn.net>
+
+$Id$
+-->
+<plist version="0.9">
+<dict>
+	<key>Auto gain</key>
+	<string>Gain automatique</string>
+	<key>Automatic</key>
+	<string>Automatique</string>
+	<key>CPiA-based camera</key>
+	<string>Caméra de type CPiA</string>
+	<key>Camera</key>
+	<string>Caméra</string>
+	<key>CameraErrorBusy</key>
+	<string>Caméra utilisée par
+une autre application</string>
+	<key>CameraErrorInternal</key>
+	<string>Erreur Interne</string>
+	<key>CameraErrorNoBandwidth</key>
+	<string>Bande passante
+USB trop faible</string>
+	<key>CameraErrorNoCam</key>
+	<string>Pas de caméra</string>
+	<key>CameraErrorNoMem</key>
+	<string>Pas assez de mémoire</string>
+	<key>CameraErrorNoPower</key>
+	<string>Pas assez de puissance
+sur le bus USB pour
+utiliser la caméra</string>
+	<key>CameraErrorOK</key>
+	<string>OK</string>
+	<key>CameraErrorTimeout</key>
+	<string>La charge processeur est trop élevée</string>
+	<key>CameraErrorUSBProblem</key>
+	<string>Problème de communication USB</string>
+	<key>CameraErrorUnimplemented</key>
+	<string>Non supporté</string>
+	<key>Compress:</key>
+	<string>Compression:</string>
+	<key>Dummy camera for user feedback</key>
+	<string>Pseudo-caméra pour le suivi développeur</string>
+	<key>Flip</key>
+	<string>Miroir</string>
+	<key>Format:</key>
+	<string>Format:</string>
+	<key>Fps:</key>
+	<string>ips:</string>
+	<key>Gain:</key>
+	<string>Gain:</string>
+	<key>Gamma:</key>
+	<string>Gamma:</string>
+	<key>Image Data</key>
+	<string>Données image</string>
+	<key>Indoor</key>
+	<string>Intérieur</string>
+	<key>Linear</key>
+	<string>Pas de correction</string>
+	<key>Outdoor</key>
+	<string>Extérieur</string>
+	<key>STV680-based camera</key>
+	<string>Caméro basé sur la puce STV680</string>
+	<key>Save as defaults</key>
+	<string>Enregistrer comme réglages par défaut</string>
+	<key>Shutter:</key>
+	<string>Shutter:</string>
+	<key>UnknownError</key>
+	<string>Erreur inconnue</string>
+	<key>WB</key>
+	<string>Balance des blancs</string>
+</dict>
+</plist>
