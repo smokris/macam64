@@ -47,6 +47,7 @@
 #import "MyOV511Driver.h"
 #import "MySonix2028Driver.h"
 #import "MySE401Driver.h"
+#import "MyQCProBeigeDriver.h"
 #include "unistd.h"
 
 static NSString* driverBundleName=@"de.matthias-krauss.webcam";
@@ -175,6 +176,7 @@ static NSMutableDictionary* prefsDict=NULL;
     [self registerCameraDriver:[MyOV511PlusDriver class]];
     [self registerCameraDriver:[MySonix2028Driver class]];
     [self registerCameraDriver:[MySE401Driver class]];
+    [self registerCameraDriver:[MyQCProBeigeDriver class]];
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];
 //    [self registerCameraDriver:[MyIntelPCCamera class]];
 //    [self registerCameraDriver:[MyGrandtecVcap class]];
