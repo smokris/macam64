@@ -132,7 +132,7 @@ pascal ComponentResult sgpnRegister(sgpnGlobals storage) {
     char cname[256];
     Str255 pname;
     if (!central) return 0;
-    if (![central startupWithNotificationsOnMainThread:NO]) return 0;
+    if (![central startupWithNotificationsOnMainThread:NO recognizeLaterPlugins:NO]) return 0;
     num=[central numCameras];
     cd.componentType='vdig';
     cd.componentSubType='wcam';
