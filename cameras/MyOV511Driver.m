@@ -29,7 +29,7 @@
 #import "MiscTools.h"
 #include "unistd.h"
 
-//#define OV511_DEBUG
+#define OV511_DEBUG
 #define USE_COMPRESS
 
 #ifdef USE_COMPRESS
@@ -226,16 +226,19 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     chunkHeader=0;
     chunkFooter=0;
 //set camera video defaults
-    if(sensorType == SENS_SAA7111A_WITH_FI1236MK2 || sensorType == SENS_SAA7111A)
+    if(sensorType == SENS_SAA7111A_WITH_FI1236MK2 || sensorType == SENS_SAA7111A) {
         [self setBrightness:0.584f];
-    else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620)
-        [self setBrightness:0.0f];
-//    [self setContrast:0.567f];
+        [self setContrast:0.567f];
+        [self setSaturation:0.630f];
+    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620) {
+        [self setBrightness:0.5f];
+        [self setContrast:0.5f];
+        [self setSaturation:0.5f];
+    }
 //    [self setGamma:0.5f];
-//    [self setSaturation:0.630f];
 //    [self setGain:0.5f];
 //    [self setShutter:0.5f];
-    [self setAutoGain:YES];
+//    [self setAutoGain:YES];
 
     return [super startupWithUsbDeviceRef:usbDeviceRef];
 }
@@ -256,28 +259,40 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620) {
         b=OV7610_BRIGHTNESS(CLAMP_UNIT(v));
         if ((b!=OV7610_BRIGHTNESS(brightness)))
-            [self i2cWrite:0 val:b];
+            [self i2cWrite:0x06 val:b];
     }
     [super setBrightness:v];
 }
 
-- (BOOL) canSetContrast { return NO; }
+- (BOOL) canSetContrast { return YES; }
 - (void) setContrast:(float)v {
     UInt8 b;
     if (![self canSetContrast]) return;
-    b=SAA7111A_CONTRAST(CLAMP_UNIT(v));
-    if (b!=SAA7111A_CONTRAST(contrast))
-        [self i2cWrite:0x0b val:b];
+    if(sensorType == SENS_SAA7111A_WITH_FI1236MK2 || sensorType == SENS_SAA7111A) {
+        b=SAA7111A_CONTRAST(CLAMP_UNIT(v));
+        if (b!=SAA7111A_CONTRAST(contrast))
+            [self i2cWrite:0x0b val:b];
+    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620) {
+        b=OV7610_CONTRAST(CLAMP_UNIT(v));
+        if (b!=OV7610_CONTRAST(contrast))
+            [self i2cWrite:0x05 val:b];
+    }
     [super setContrast:v];
 }
 
-- (BOOL) canSetSaturation { return NO; }
+- (BOOL) canSetSaturation { return YES; }
 - (void) setSaturation:(float)v {
     UInt8 b;
     if (![self canSetSaturation]) return;
-    b=SAA7111A_SATURATION(CLAMP_UNIT(v));
-    if (b!=SAA7111A_SATURATION(saturation))
-        [self i2cWrite:OV7610_REG_SAT val:b];
+    if(sensorType == SENS_SAA7111A_WITH_FI1236MK2 || sensorType == SENS_SAA7111A) {
+        b=SAA7111A_SATURATION(CLAMP_UNIT(v));
+        if (b!=SAA7111A_SATURATION(saturation))
+            [self i2cWrite:OV7610_REG_SAT val:b];
+    } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620) {
+        b=OV7610_SATURATION(CLAMP_UNIT(v));
+        if (b!=OV7610_SATURATION(saturation))
+            [self i2cWrite:0x03 val:b];
+    }
     [super setSaturation:v];
 }
 

@@ -66,6 +66,8 @@ Doing these amounts of defines is often called bad style. We should find a bette
 #define CLAMP_UNIT(a) (CLAMP((a),0.0f,1.0f))
 
 #define OV7610_BRIGHTNESS(a) ((UInt8)(a*63.0f))
+#define OV7610_CONTRAST(a) ((UInt8)(a*255.0f))
+#define OV7610_SATURATION(a) ((UInt8)(a*255.0f))
 
 #define OV511_REG_DLYM		0x10
 #define OV511_REG_PEM		0x11
