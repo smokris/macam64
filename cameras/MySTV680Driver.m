@@ -176,7 +176,7 @@
 }
 
 - (CameraError) startupGrabbing {
-    UInt16 val;
+    UInt16 val=0x0000;
     UInt8 buf[16];
     UInt8 originalPhotoResolution;
     CameraError ret=CameraErrorOK;
