@@ -674,9 +674,9 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     SONIXChunkBuffer currChunk;
     long i;
     CameraError err=CameraErrorOK;
-    grabbingThreadRunning=NO;
     int width=[self width];	//Width and height are constant during a grab session, so ...
     int height=[self height];	//... they can safely be cached (to reduce Obj-C calls)
+    grabbingThreadRunning=NO;
     //Setup the stuff for the decoder.
     [bayerConverter setSourceWidth:width height:height];
     [bayerConverter setDestinationWidth:width height:height];
@@ -919,8 +919,8 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     CameraError err;
 
     //Send write command
-    err=[self writeRegisterBlind:reg value:val];	
     UInt8 buf[4];
+    err=[self writeRegisterBlind:reg value:val];	
     //Wait for completion (?)
     do {
         if (![self usbReadVICmdWithBRequest:0 wValue:1 wIndex:0 buf:buf len:1]) return CameraErrorUSBProblem;
