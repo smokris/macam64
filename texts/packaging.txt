@@ -1,0 +1,31 @@
+How to pack a macam distribution
+
+Matthias Krauss, 2.9.2002
+
+It is not necessary to build a distribution this way and I don't want to force anyone to use this method, but I think it is a good way. In earlier times, macam distributions were tgz-ed folders. This way, it was not easily possible to add a custom folder layout and a background image. With disk images, it is. Another way would be to create a pkg or mpkg file which is handled by Apple's installer. But even Apple depreciates this method if the installation steps are easy enough to do a drag-and-drop installation (well, this is what they say, but many of their apps come in a pkg). This is also the reason why other installer systems are no option either (WISE isn't wise...)
+
+Besides, this is probably not the best solution. I've tried to to many things in the shell - hoping that one day I know how to do everything in the shell in order to build a script that does all the stuff automatically. But I haven't found shell commands for two tasks: a) Positioning the files in the window and b) setting the folder window characteristics and background image.
+
+Here are the steps I currently do:
+
+> cd ~/Desktop
+> hdiutil create macamtemp.dmg -size 6m -volname macam -fs HFS+
+> hdiutil attach macamtemp.dmg
+> cd /Volumes/macam
+> mkdir background
+> cp (background image) ./background/(bg image name)
+
+(Go into finder, set background image to image)
+
+> mv background .background
+
+(Copy and arranage stuff in the window)
+
+> df
+(find macam volume: /dev/... )
+> hdiutil detach (/dev/...)
+> cd ~/Desktop
+> hdiutil convert macamtemp.dmg -format UDZO -o macam.dmg
+> rm macamtemp.dmg
+
+Done! I don't know if it make sense to wrap this dmg file in MacBinary (or something else). Many people make the dmg available for download directly (including, for example, OmniGroup). Apple  still wraps it in a .dmg.bin. Why do they?
