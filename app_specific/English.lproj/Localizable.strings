@@ -1,25 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
-<!--
- macam - webcam app and QuickTime driver component
- Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
-
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- $Id$
--->
-<plist version="0.9">
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
 <dict>
 	<key>Camera video settings</key>
 	<string>Camera video settings</string>
@@ -41,6 +22,10 @@
 	<string>Play</string>
 	<key>Play camera video</key>
 	<string>Play camera video</string>
+	<key>Record live video to a QuickTime movie</key>
+	<string>Record live video to a QuickTime movie</string>
+	<key>Record movie</key>
+	<string>Record movie</string>
 	<key>Save current image</key>
 	<string>Save current image</string>
 	<key>Save image</key>
@@ -79,8 +64,6 @@
 	<string>Status: Not enough bandwidth</string>
 	<key>Status: Out of memory</key>
 	<string>Status: Out of memory</string>
-	<key>Status: Unsupported</key>
-	<string>Status: Unsupported</string>
 	<key>Status: Paused</key>
 	<string>Status: Paused</string>
 	<key>Status: Pausing</key>
@@ -91,6 +74,8 @@
 	<string>Status: USB communication problem</string>
 	<key>Status: Unknown error (this shouldn't happen)</key>
 	<string>Status: Unknown error (this shouldn't happen)</string>
+	<key>Status: Unsupported</key>
+	<string>Status: Unsupported</string>
 	<key>Switch to next camera</key>
 	<string>Switch to next camera</string>
 	<key>The camera you just plugged in contains %i stored images. Do you want to download them to your computer?</key>

@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
-<!--
- macam - webcam app and QuickTime driver component
- Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
-
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; either version 2 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program; if not, write to the Free Software
- Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- $Id$
-
- Traduit en français par Damien Persohn <damien@persohn.net>.
-
--->
-<plist version="0.9">
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
 <dict>
 	<key>Camera video settings</key>
 	<string>Réglages de la caméra</string>
@@ -44,6 +22,10 @@
 	<string>Lire</string>
 	<key>Play camera video</key>
 	<string>Lecture du flux vidéo</string>
+	<key>Record live video to a QuickTime movie</key>
+	<string>Enregistrer le flux vidéo au fichier QuickTime</string>
+	<key>Record movie</key>
+	<string>Enregistrer le vidéo</string>
 	<key>Save current image</key>
 	<string>Enregistrer l'image en cours</string>
 	<key>Save image</key>
@@ -82,8 +64,6 @@
 	<string>État: Bande passante trop faible</string>
 	<key>Status: Out of memory</key>
 	<string>État: Pas assez de mémoire</string>
-	<key>Status: Unsupported</key>
-	<string>État: Non supporté</string>
 	<key>Status: Paused</key>
 	<string>État: En pause</string>
 	<key>Status: Pausing</key>
@@ -94,6 +74,8 @@
 	<string>État: problème de communication sur USB</string>
 	<key>Status: Unknown error (this shouldn't happen)</key>
 	<string>État: Erreur inconnue (ceci ne devrait pas se produire)</string>
+	<key>Status: Unsupported</key>
+	<string>État: Non supporté</string>
 	<key>Switch to next camera</key>
 	<string>Bascule vers la caméra suivante</string>
 	<key>The camera you just plugged in contains %i stored images. Do you want to download them to your computer?</key>

@@ -22,6 +22,10 @@
 	<string>Abspielen</string>
 	<key>Play camera video</key>
 	<string>Kamerabild abspielen</string>
+	<key>Record live video to a QuickTime movie</key>
+	<string>Live-Video in einem QuickTime-Film aufzeichnen</string>
+	<key>Record movie</key>
+	<string>Filmaufnahme</string>
 	<key>Save current image</key>
 	<string>Das aktuelle Bild speichern</string>
 	<key>Save image</key>
