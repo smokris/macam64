@@ -49,7 +49,7 @@
 
 void DeviceAdded(void *refCon, io_iterator_t iterator);
 
-static NSString* driverBundleName=@"de.matthias-krauss.webcam";
+static NSString* driverBundleName=@"net.sourceforge.webcam-osx.common";
 static NSMutableDictionary* prefsDict=NULL;
 
 @interface MyCameraCentral (Private)
