@@ -89,7 +89,7 @@ extern NSString* SnapshotQualityPrefsKey;
                                                 samplesPerPixel:3
                                                        hasAlpha:NO
                                                        isPlanar:NO
-                                                 colorSpaceName:NSCalibratedRGBColorSpace
+                                                 colorSpaceName:NSDeviceRGBColorSpace
                                                     bytesPerRow:0
                                                    bitsPerPixel:0];
     assert (imageRep);
@@ -189,7 +189,7 @@ extern NSString* SnapshotQualityPrefsKey;
                                                         samplesPerPixel:3
                                                                hasAlpha:NO
                                                                isPlanar:NO
-                                                         colorSpaceName:NSCalibratedRGBColorSpace
+                                                         colorSpaceName:NSDeviceRGBColorSpace
                                                             bytesPerRow:0
                                                            bitsPerPixel:0];
             assert(imageRep);
