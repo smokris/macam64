@@ -185,7 +185,7 @@
 }
 
 - (BOOL) canSetSharpness {
-    return YES;
+    return NO;
 /* Well, basically, we can adjust this (the Bayer Converter does it for non-compressed video). But doing it with JangGu-compressed video would take much more processing time and high frame rates are probably more valuable... */
 }
 
@@ -526,7 +526,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     int iBrightness=(brightness*256.0f)-128.0f;
     int iContrast=contrast*512.0f;
     int iSaturation=saturation*512.0f;
-    UInt32 sum;
+    UInt32 sum=0;
     
     if (flip) {
         dstRowSkip+=2*dstBPP*width;
