@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
-<plist version="0.9">
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
 <dict>
 	<key>Camera video settings</key>
 	<string>Kamera-Einstellungen</string>
@@ -63,7 +63,7 @@
 	<key>Status: Paused</key>
 	<string>Status: Angehalten</string>
 	<key>Status: Pausing</key>
-	<string>Status: Halte an…</string>
+	<string>Status: Halte an</string>
 	<key>Status: Playing</key>
 	<string>Status: Wiedergabe</string>
 	<key>Status: USB communication problem</key>
@@ -73,7 +73,7 @@
 	<key>Status: Unsupported</key>
 	<string>Status: Nicht unterstützt</string>
 	<key>Switch to next camera</key>
-	<string>Zur nächsten Kamera wechseln</string>
+	<string>Zur n√§chsten Kamera wechseln</string>
 	<key>The camera you just plugged in contains %i stored images. Do you want to download them to your computer?</key>
 	<string>Diese Kamera enthält %i gespeicherte Bilder.Wollen Sie sie herunterladen?</string>
 	<key>The camera you just plugged in contains one stored image. Do you want to download them to your computer?</key>
