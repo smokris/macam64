@@ -1,6 +1,7 @@
 /*
-    macam - webcam app and QuickTime driver component
-    Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
+ MyQCExpressBDriver.m - macam camera driver class for QuickCam Express (STV602)
+
+ Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
