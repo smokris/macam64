@@ -30,7 +30,7 @@
 + (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"QuickCam Web"]; }
 
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr {
-    return ((r=ResolutionCIF)&&(fr==5));
+    return ((r==ResolutionCIF)&&(fr==5));
 }
 
 - (CameraError) startupWithUsbDeviceRef:(io_service_t)usbDeviceRef {
