@@ -17,7 +17,7 @@ Here are the steps I currently do:
 
 (Go into finder, set background image to image)
 
-> mv background .background
+> /Developer/Tools/SetFile -a V background
 
 (Copy and arranage stuff in the window)
 
