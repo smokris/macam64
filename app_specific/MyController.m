@@ -171,7 +171,7 @@ static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
             winFrame=[window frame];
             screenFrame=[[window screen] frame];
             minWinSize.width=[driver width]+40;
-            minWinSize.height=[driver height]+80;
+            minWinSize.height=[driver height]+48;
 //If the window is to small to show the whole preview, resize it to fit
             if ((minWinSize.width>winFrame.size.width)||(minWinSize.height>winFrame.size.height)) {
                 if (minWinSize.width>winFrame.size.width) {
@@ -311,7 +311,7 @@ static NSString*	NextCamToolbarItemIdentifier 	= @"Next Camera Item Identifier";
 }
 
 - (void)downloadSaveSheetEnded:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void*)con {
-    NSOpenPanel* panel=sheet;
+    NSOpenPanel* panel=(NSOpenPanel*)sheet;
     long i,saveIdx;
     id media;
     NSBitmapImageRep* imgMedia;
