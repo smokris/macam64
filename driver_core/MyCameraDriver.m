@@ -41,6 +41,14 @@
     return @"";
 }
 
++ (NSArray*) cameraUsbDescriptions {
+    NSDictionary* dict=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:[self cameraUsbProductID]],@"idProduct",
+        [NSNumber numberWithUnsignedShort:[self cameraUsbVendorID]],@"idVendor",
+        [self cameraName],@"idVendor",NULL];
+    return [NSArray arrayWithObject:dict];
+}
+
 - (id) initWithCentral:(id)c {
 //init superclass
     self=[super init];

@@ -96,10 +96,15 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
     NSLock* 		imageBufferLock;
 }
 
-//Get info about the camera specifics
+//Get info about the camera specifics - simple mechanism
 + (unsigned short) cameraUsbProductID;
 + (unsigned short) cameraUsbVendorID;
 + (NSString*) cameraName;
+
+//Get info - new mechanism. Overload this one if you have more than one idVendor/idProduct pair
+
++ (NSArray*) cameraUsbDescriptions;
+//Should return an array of dictionaries with keys "idVendor" (NSNumber), "idProduct" (NSNumber) and "name" (NSString). The default implementation creates an array with one entry with values of the above methods.
 
 //Start/stop
 - (id) initWithCentral:(id)c;
