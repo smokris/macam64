@@ -26,6 +26,7 @@
     NSBitmapImageRep* imageRep;
     BOOL started;
     NSBitmapImageRep* deferredOpenImageRep;
+    float quality;		//Only used for JPEG
 }
 - (void) dealloc;
 - (void)makeWindowControllers;
@@ -36,4 +37,6 @@
 - (NSBitmapImageRep*) imageRep;
 - (void) rotateCW:(id)sender;
 - (void) rotateCCW:(id)sender;
+- (float) quality;
+- (void) setQuality:(float)quality;
 @end

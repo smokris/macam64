@@ -35,7 +35,7 @@
 
 - (void)windowControllerDidLoadNib:(NSWindowController *) aController
 {
-    NSBitmapImageRep* newRep; 
+    NSBitmapImageRep* newRep;
     if (deferredOpenImageRep) [deferredOpenImageRep autorelease];
     newRep=deferredOpenImageRep;
     [self setHasUndoManager:NO];
@@ -57,8 +57,24 @@
     [super windowControllerDidLoadNib:aController];
 }
 
+- (BOOL)shouldRunSavePanelWithAccessoryView {
+    return NO;
+}
+
+- (BOOL) prepareSavePanel:(NSSavePanel*)panel {
+    if (![super prepareSavePanel:panel]) return NO;
+    [panel setAccessoryView:NULL];
+    return YES;
+}
+
 - (NSData *)dataRepresentationOfType:(NSString *)aType {
-    return [imageRep TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0f];
+    if ([aType isEqualToString:@"JPEG Image"]) {
+        NSDictionary* dict=[NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithFloat:quality],NSImageCompressionFactor,NULL];
+        return [imageRep representationUsingType:NSJPEGFileType properties:dict];
+    } else {
+        return [imageRep TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0f];
+    }
 }
 
 - (BOOL)loadDataRepresentation:(NSData *)data ofType:(NSString *)aType {
@@ -268,6 +284,16 @@
         }
     }
     [self setImageRep:newRep];
+}
+
+- (float) quality {
+    return quality;
+}
+
+- (void) setQuality:(float)newQuality {
+    quality=newQuality;
+    if (quality<0.0f) quality=0.0f;
+    if (quality>1.0f) quality=1.0f;
 }
 
 @end
