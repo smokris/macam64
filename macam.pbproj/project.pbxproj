@@ -73,6 +73,7 @@
 			targets = (
 				29B97326FDCFA39411CA2CEA,
 				F538BD2301E5D23F0166DE0F,
+				39AE92CB03C5131B0066D062,
 			);
 		};
 		29B97314FDCFA39411CA2CEA = {
@@ -113,6 +114,7 @@
 				29B9732DFDCFA39411CA2CEA,
 			);
 			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
 				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications";
@@ -393,6 +395,43 @@
 //292
 //293
 //294
+//390
+//391
+//392
+//393
+//394
+		39AE92CB03C5131B0066D062 = {
+			buildPhases = (
+			);
+			buildSettings = {
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = all;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+			};
+			dependencies = (
+				39AE92CD03C513490066D062,
+				39AE92CC03C513420066D062,
+			);
+			isa = PBXAggregateTarget;
+			name = all;
+			productName = all;
+		};
+		39AE92CC03C513420066D062 = {
+			isa = PBXTargetDependency;
+			target = 29B97326FDCFA39411CA2CEA;
+		};
+		39AE92CD03C513490066D062 = {
+			isa = PBXTargetDependency;
+			target = F538BD2301E5D23F0166DE0F;
+		};
+//390
+//391
+//392
+//393
+//394
 //4A0
 //4A1
 //4A2
@@ -862,7 +901,7 @@
 				DEBUGGING_SYMBOLS = NO;
 				INSTALL_PATH = /Library/QuickTime;
 				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
-				OPTIMIZATION_CFLAGS = "-O0";
+				OPTIMIZATION_CFLAGS = "-O2";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-bundle";
 				OTHER_REZFLAGS = "";
