@@ -23,7 +23,7 @@
 #import "GlobalDefs.h"
 #import "MyQCExpressADriver.h"
 
-//The QuickCam Web's STV0610 chip is like an extended STV0600. */
+/* The QuickCam Web's STV0610 chip is like an extended STV0600. */
 
 @interface MyQCWebDriver : MyQCExpressADriver {
     BOOL buttonThreadShouldBeRunning;
