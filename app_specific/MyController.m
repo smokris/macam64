@@ -147,8 +147,8 @@ extern NSString* SnapshotQualityPrefsKey;
     [driver setGain:gain];
     [driver setShutter:shutter];
     [driver setAutoGain:!man];
-    [gainSlider setEnabled:man];
-    [shutterSlider setEnabled:man];
+    [gainSlider setEnabled:man&[driver canSetGain]];
+    [shutterSlider setEnabled:man&[driver canSetShutter]];
 }
 
 - (IBAction)gainChanged:(id)sender {
