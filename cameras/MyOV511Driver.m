@@ -698,6 +698,8 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     bool frameListFound=false;
     int currStart;
 
+    if (result==kIOReturnUnderrun) result=0;
+
     if (result) {						//USB error handling
         *(grabContext->shouldBeGrabbing)=NO;			//We'll stop no matter what happened
         if (!grabContext->err) {
