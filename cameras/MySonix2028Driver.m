@@ -535,7 +535,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 
 
 #define PUT_PIXEL_PAIR {\
-    SInt32 pp=(c1val<<8)+c2val;*/\
+    SInt32 pp=(c1val<<8)+c2val;\
     *((UInt16*)dst)=pp;\
     dst+=2; }
     
