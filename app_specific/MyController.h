@@ -39,6 +39,7 @@
     IBOutlet NSSlider* gainSlider;
     IBOutlet NSSlider* shutterSlider;
     IBOutlet NSSlider* compressionSlider;
+    IBOutlet NSButton* horizontalFlipCheckbox;
     IBOutlet NSImageView* previewView;
     IBOutlet NSTextField* statusText;
     IBOutlet NSPopUpButton* whiteBalancePopup;
@@ -78,6 +79,7 @@
 - (IBAction)formatChanged:(id)sender;		//Handles both size and fps popups
 - (IBAction)compressionChanged:(id)sender;
 - (IBAction)whiteBalanceChanged:(id)sender;
+- (IBAction)horizontalFlipChanged:(id)sender;
 
 //UI: Actions to do
 - (IBAction)doGrab:(id)sender;
