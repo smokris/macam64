@@ -83,6 +83,16 @@
     bayerConverter=[[BayerConverter alloc] init];
     if (!bayerConverter) return NULL;
     [bayerConverter setSourceFormat:2];
+    maxWidth=320;
+    maxHeight=240;
+    aeGain=0.5f;
+    aeShutter=0.1f;
+    lastExposure=-1;
+    lastRedGain=-1;
+    lastGreenGain=-1;
+    lastBlueGain=-1;
+    lastResetLevel=-1;
+    resetLevel=32;
     return self;
 }
 
@@ -96,7 +106,8 @@
     UInt8 buf[64];
     int numSizes;
     int i;
-    int width,height;
+    int width=320;	//Assume there's no smaller camera
+    int height=240;
 
     //setup connection to camera
     err=[self usbConnectToCam:usbDeviceRef];
@@ -114,8 +125,11 @@
     for (i=0; i<numSizes; i++) {
         width =buf[6+i*4+0]+buf[6+i*4+1]*256;
         height=buf[6+i*4+2]+buf[6+i*4+3]*256;
-        NSLog(@"Resolution %i: %i * %i",i,width,height);
+//        NSLog(@"Resolution %i: %i * %i",i,width,height);
     }
+    
+    maxWidth=width;								//Remember max width (=last res)
+    maxWidth=height;								//Remember max height (=last res)
     [self setInternalRegister:0x56 to:0];					//Switch camera power off
     [self setInternalRegister:0x57 to:0];					//Switch LED off
     
@@ -127,16 +141,9 @@
     [self setSharpness:0.5];
     [self setGain:0.5];
     [self setShutter:0.1];
-    aeGain=0.5f;
-    aeShutter=0.1f;
-    lastExposure=-1;
-    lastRedGain=-1;
-    lastGreenGain=-1;
-    lastBlueGain=-1;
-    lastResetLevel=-1;
-    resetLevel=32;
-
-    //Do the ramining, usual connection stuff
+    [self setWhiteBalanceMode:WhiteBalanceLinear];
+    
+    //Do the remaining, usual connection stuff
     err=[super startupWithUsbDeviceRef:usbDeviceRef];
     if (err!=CameraErrorOK) return err;
 
@@ -145,12 +152,15 @@
 
 
 - (BOOL) supportsResolution:(CameraResolution)res fps:(short)rate {
+    if (rate!=5) return NO;
+    if (WidthOfResolution(res)>maxWidth) return NO;
+    if (HeightOfResolution(res)>maxHeight) return NO;
     return YES;
 }
 
 - (CameraResolution) defaultResolutionAndRate:(short*)rate {
     if (rate) *rate=5;
-    return ResolutionVGA;
+    return ResolutionSIF;
 }
 
 - (BOOL) canSetSharpness {
@@ -198,6 +208,38 @@
     [bayerConverter setGamma:gamma+0.5f];
 }
 
+- (BOOL) canSetWhiteBalanceMode {
+    return YES;
+}
+
+- (BOOL) canSetWhiteBalanceModeTo:(WhiteBalanceMode)newMode {
+    return ((newMode==WhiteBalanceLinear)||(newMode==WhiteBalanceIndoor)||(newMode==WhiteBalanceOutdoor));
+}
+
+- (void) setWhiteBalanceMode:(WhiteBalanceMode)newMode {
+    [super setWhiteBalanceMode:newMode];
+    switch (newMode) {
+        case WhiteBalanceLinear:
+            whiteBalanceRed=5.0f;
+            whiteBalanceGreen=5.0f;
+            whiteBalanceBlue=5.0f;
+            break;
+        case WhiteBalanceIndoor:
+            whiteBalanceRed=0.0f;
+            whiteBalanceGreen=5.0f;
+            whiteBalanceBlue=10.0f;
+            break;
+        case WhiteBalanceOutdoor:
+            whiteBalanceRed=10.0f;
+            whiteBalanceGreen=5.0f;
+            whiteBalanceBlue=0.0f;
+            break;
+        default:
+            break;
+    }
+    [self adjustSensorSensitivityWithForce:NO];
+}
+
 - (BOOL) canSetGain {
     return YES;
 }
@@ -214,6 +256,15 @@
 - (void) setShutter:(float)v {
     [super setShutter:v];
     [self adjustSensorSensitivityWithForce:NO];
+}
+
+- (BOOL) canSetAutoGain {
+    return YES;
+}
+
+- (void) setAutoGain:(BOOL)v {
+    [super setAutoGain:v];
+    [bayerConverter setMakeImageStats:v];
 }
 
 - (BOOL) canSetHFlip {
@@ -406,7 +457,6 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     shouldBeGrabbing=NO;			//error in grabbingThread or abort? initiate shutdown of everything else
     [chunkReadyLock unlock];			//give the decodingThread a chance to abort
     [pool release];
-    NSLog(@"grabbing thread exits");
     grabbingThreadRunning=NO;
     [NSThread exit];
 }
@@ -466,24 +516,43 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
             }
         }
     }
-    NSLog(@"waiting for grabbing thread exit");
     while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish
     //We need to sleep here because otherwise the compiler would optimize the loop away
-    if (!err) err=grabbingError;	//Take error from grabbing thread
+
+    if (!err) err=grabbingError;			//Take error from grabbing thread
     [self shutdownGrabbing];
     return err;
 }
 
-//Tool functions
+//(internal) tool functions
 
 - (void) doAutoExposure {
+//Auto exposure currently only changes the exposure time, not the gain. This could improve frame rates with low light conditions, for example... ***
+    float tolerance=0.06f;
+    float scale=0.1f;
+    float wanted=0.45f;
+    
+    float avg=[bayerConverter lastMeanBrightness];
+    if (avg<0.0f) return;	//Invalid value - bayer decoder didn't count yet
+    avg-=wanted;		//Shift wanted value to zero
+
+    //Free the tolerance corridor
+    if (avg>tolerance) avg-=tolerance;	
+    else if (avg<-tolerance) avg+=tolerance;
+    else return;
+
+    //Do the correction
+    aeShutter-=scale*avg;
+    if (aeShutter<0.0f) aeShutter=0.0f;
+    if (aeShutter>1.0f) aeShutter=1.0f;
+    [self adjustSensorSensitivityWithForce:NO];
 }
 
 - (void) doAutoResetLevel {
     int lowCount=0;
     int highCount=0;
-    NSLog(@"doAutoResetLevel");
 
+    //Count frames so we don't adjust each frame (see Hynix docs)
     resetLevelFrameCounter++;
     if (resetLevelFrameCounter<2) return;
     resetLevelFrameCounter=0;
@@ -506,7 +575,6 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     [self readExternalRegister:0x59];
     [self readExternalRegister:0x5a];
 
-    NSLog(@"Low count: %i high count:%i level:%i",lowCount,highCount,resetLevel);
     //Commit changes
     [self adjustSensorSensitivityWithForce:NO];
 }
@@ -514,9 +582,9 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 - (CameraError) adjustSensorSensitivityWithForce:(BOOL)force {
     CameraError err=CameraErrorOK;
     SInt32 exposure=(autoGain?aeShutter:shutter)*((float)0xffffff);
-    SInt16 redGain=63.0f-((autoGain?aeGain:gain)*33.0f);
-    SInt16 greenGain=63.0f-((autoGain?aeGain:gain)*33.0f);
-    SInt16 blueGain=63.0f-((autoGain?aeGain:gain)*33.0f);
+    SInt16 redGain=63.0f-((autoGain?aeGain:gain)*23.0f+whiteBalanceRed);
+    SInt16 greenGain=63.0f-((autoGain?aeGain:gain)*23.0f+whiteBalanceGreen);
+    SInt16 blueGain=63.0f-((autoGain?aeGain:gain)*23.0f+whiteBalanceBlue);
     if (isGrabbing) {
         if (force||(exposure!=lastExposure)) {
             if (!err) err=[self setExternalRegister:0x25 to:((exposure>>16)&0xff)];		//Set exposure high

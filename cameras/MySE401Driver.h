@@ -48,9 +48,16 @@
     SInt16 lastResetLevel;		//The last reset level setting sent to the sensor
     SInt16 resetLevel;			//The current reset level
     int resetLevelFrameCounter;		//The reset level shouldn't be changed each frame (see Hynix docs)
+
+    float whiteBalanceRed;		//White balance gain correction
+    float whiteBalanceGreen;		//White balance gain correction
+    float whiteBalanceBlue;		//White balance gain correction
+
+    int maxWidth;			//real camera sensor size
+    int maxHeight;			//real camera sensor size
 }
 
-#define SE401_NUM_CHUNKS 5
+#define SE401_NUM_CHUNKS 3
 #define SE401_CHUNK_SPARE 400000
 
 + (NSArray*) cameraUsbDescriptions;
@@ -76,6 +83,9 @@
 - (void) setSaturation:(float)v;
 - (BOOL) canSetGamma;
 - (void) setGamma:(float)v;
+- (BOOL) canSetWhiteBalanceMode;
+- (BOOL) canSetWhiteBalanceModeTo:(WhiteBalanceMode)newMode;
+- (void) setWhiteBalanceMode:(WhiteBalanceMode)newMode;
 
 //Grabbing
 - (CameraError) startupGrabbing;
