@@ -1,0 +1,33 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                gotoEnd = id; 
+                gotoStart = id; 
+                pause = id; 
+                play = id; 
+                positionSliderChanged = id; 
+                speedSliderChanged = id; 
+                stepBackward = id; 
+                stepForward = id; 
+                toggleTimeDisplay = id; 
+                volumeSliderChanged = id; 
+            }; 
+            CLASS = MyMovieDocument; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                movieView = NSMovieView; 
+                movieViewContainer = NSView; 
+                pauseButton = NSButton; 
+                playButton = NSButton; 
+                positionSlider = NSSlider; 
+                speedSlider = NSSlider; 
+                timeTextField = id; 
+                volumeSlider = NSSlider; 
+            }; 
+            SUPERCLASS = NSDocument; 
+        }
+    ); 
+    IBVersion = 1; 
+}
