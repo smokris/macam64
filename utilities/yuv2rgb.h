@@ -63,7 +63,8 @@ Someone interested in AltiVec optimization?
 typedef enum YUVStyle {
     YUVPhilipsStyle	=0,
     YUVCPIA420Style	=1,
-    YUVCPIA422Style	=2
+    YUVCPIA422Style	=2,
+    YUVOV420Style	=3
 } YUVStyle;
 
  void yuv2rgb(int width,

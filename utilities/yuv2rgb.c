@@ -35,7 +35,10 @@ void _cpia4202rgb888      (int width, int height, unsigned char *src, unsigned c
 void _cpia4222rgb888      (int width, int height, unsigned char *src, unsigned char *dst, long srcRowExtra, long dstRowExtra) {
 #include "yuv2rgbCPIA422.c"
 }
-
+void _ov4202rgb888      (int width, int height, unsigned char *src, unsigned char *dst, long srcRowExtra, long dstRowExtra) {
+#include "yuv2rgbOV420.c"
+}
+    
 #undef YUV2RGB_FLIP
 #define YUV2RGB_ALPHA
 void _philips2argb8888    (int width, int height, unsigned char *src, unsigned char *dst, long srcRowExtra, long dstRowExtra) {
@@ -47,7 +50,10 @@ void _cpia4202argb8888    (int width, int height, unsigned char *src, unsigned c
 void _cpia4222argb8888    (int width, int height, unsigned char *src, unsigned char *dst, long srcRowExtra, long dstRowExtra) {
 #include "yuv2rgbCPIA422.c"
 }
-
+void _ov4202argb8888    (int width, int height, unsigned char *src, unsigned char *dst, long srcRowExtra, long dstRowExtra) {
+#include "yuv2rgbOV420.c"
+}
+    
 #define YUV2RGB_FLIP
 #undef YUV2RGB_ALPHA
 void _philips2rgb888flip  (int width, int height, unsigned char *src, unsigned char *dst, long srcRowExtra, long dstRowExtra) {
@@ -60,6 +66,10 @@ void _cpia4222rgb888flip  (int width, int height, unsigned char *src, unsigned c
 #include "yuv2rgbCPIA422.c"
 }
 
+void _ov4202rgb888flip  (int width, int height, unsigned char *src, unsigned char *dst, long srcRowExtra, long dstRowExtra) {
+#include "yuv2rgbOV420.c"
+}
+    
 #define YUV2RGB_FLIP
 #define YUV2RGB_ALPHA
 void _philips2argb8888flip(int width, int height, unsigned char *src, unsigned char *dst, long srcRowExtra, long dstRowExtra) {
@@ -71,6 +81,11 @@ void _cpia4202argb8888flip(int width, int height, unsigned char *src, unsigned c
 void _cpia4222argb8888flip(int width, int height, unsigned char *src, unsigned char *dst, long srcRowExtra, long dstRowExtra) {
 #include "yuv2rgbCPIA422.c"
 }
+
+void _ov4202argb8888flip(int width, int height, unsigned char *src, unsigned char *dst, long srcRowExtra, long dstRowExtra) {
+#include "yuv2rgbOV420.c"
+}
+
 #undef YUV2RGB_FLIP
 #undef YUV2RGB_ALPHA
 
@@ -99,6 +114,10 @@ void yuv2rgb(int width,
         case  9: _cpia4222rgb888flip		(width,height,src,dst,srcRowExtra,dstRowExtra); break;
         case 10: _cpia4222argb8888		(width,height,src,dst,srcRowExtra,dstRowExtra); break;
         case 11: _cpia4222argb8888flip		(width,height,src,dst,srcRowExtra,dstRowExtra); break;
+        case 12: _ov4202rgb888			(width,height,src,dst,srcRowExtra,dstRowExtra); break;
+        case 13: _ov4202rgb888flip		(width,height,src,dst,srcRowExtra,dstRowExtra); break;
+        case 14: _ov4202argb8888		(width,height,src,dst,srcRowExtra,dstRowExtra); break;
+        case 15: _ov4202argb8888flip		(width,height,src,dst,srcRowExtra,dstRowExtra); break;
         default:
 #ifdef _VERBOSE_
         printf("yuv2rgb: unknown conversion\n");
