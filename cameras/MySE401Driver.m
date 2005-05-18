@@ -402,13 +402,29 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     [driver handleFullChunkWithReadBytes:size error:result];
 }
 
+/*
+ Patch # 862936 - Patch for MySE401Driver (Kensigton stutters)
+ Werner - wlogon@users.sourceforge.net
+ 
+ Now an empty chunk is directly lead to the recycling-
+ area.The oldest chunk, as required in '- (NSMutableData*) 
+ getOldestFullChunkBuffer {}', is no longer empty, and newer 
+ ones are no longer saved until its their turn (again).
+ 
+ In fact, it seems that the camera provides only one chunk at 
+ a time, which then is a whole image.
+ However is works, at least for me an my 67015.
+ 
+ Werner
+ */
+
 - (void) handleFullChunkWithReadBytes:(UInt32)readSize error:(IOReturn)err  {
     videoBulkReadsPending--;
     if (err) {
         if (!grabbingError) grabbingError=CameraErrorUSBProblem;
         shouldBeGrabbing=NO;
     }
-    if (shouldBeGrabbing) {			//no usb error
+	if (shouldBeGrabbing && readSize > 0) { //no usb error and no empty chunk
         [self passChunkBufferToFullOnes:fillingChunk];
         fillingChunk=NULL;			//to be sure...
     } else {					//Incorrect chunk -> ignore (but back to empty chunks)
