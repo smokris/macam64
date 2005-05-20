@@ -106,7 +106,7 @@ extern UInt8 ZigZagLookup[];
 
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     UInt8 buf[2];
-    CameraError err;
+    CameraError err = CameraErrorOK;
 
     firmwareVersion=0;
     sdramSize=0;

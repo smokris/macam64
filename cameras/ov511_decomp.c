@@ -466,7 +466,10 @@ Decompress420HiNoMMX(unsigned char *pIn,
  * Output format is YUV400
  * Returns uncompressed data length if success, or zero if error
  */
-static int
+#if !(__FreeBSD__) && !defined(__APPLE__)
+static 
+#endif
+int
 Decompress400(unsigned char *pIn,
 	      unsigned char *pOut,
 	      unsigned char *pTmp,
