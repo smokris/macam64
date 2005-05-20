@@ -50,6 +50,7 @@ Doing these amounts of defines is often called bad style. We should find a bette
 
 #define VENDOR_PHILIPS 0x0471
 #define VENDOR_LOGITECH 0x046d
+#define VENDOR_CREATIVE_LABS 0x041e
 
 //Conversions into the values of the camera
 

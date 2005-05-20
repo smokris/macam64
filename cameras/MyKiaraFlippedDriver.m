@@ -23,6 +23,7 @@
 
 #define PRODUCT_TOUCAM_FUN 0x0310
 #define PRODUCT_QUICKCAM_PRO_3000 0x08b0
+#define PRODUCT_WEBCAM_5 0x400c
 
 @implementation MyKiaraFlippedDriver
 
@@ -35,7 +36,11 @@
         [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_PRO_3000],@"idProduct",
         [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
         @"Logitech QuickCam Pro 3000",@"name",NULL];
-    return [NSArray arrayWithObjects:dict1,dict2,NULL];
+	NSDictionary* dict3=[NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithUnsignedShort:PRODUCT_WEBCAM_5],@"idProduct",
+		[NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS],@"idVendor",
+		@"Creative Labs Webcam 5",@"name",NULL];
+	return [NSArray arrayWithObjects:dict1,dict2,dict3,NULL];
 }
 
 
