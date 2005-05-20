@@ -322,6 +322,28 @@ Here is a table of sniffed data. I have no idea what this means
 #define PRODUCT_TOUCAM_PRO 0x0311
 #define PRODUCT_TOUCAM_PRO_3D 0x0312
 #define PRODUCT_QUICKCAM_PRO_4000 0x08b2
+#define PRODUCT_QUICKCAM_ZOOM 0x08b3
+
+/*
+ Added QuickCam zoom via patch # 738976
+ Submitted by Karsten Jeppesen - bjowulf@users.sourceforge.net
+ 
+ Patch for Logitech QuickCam Zoom USB
+ 
+ Logitech QuickCam Zoom (046d/08b3)
+ is equivalent to Logitech QuickCam 4000 Pro USB.
+ 
+ I have the camera (Logitech QuickCam Zoom (046d/08b3)) and 
+ verified that I get a picture.
+ Hope I am submitting the patch correctly.
+ 
+ Sincerely,
+ Dr. Karsten Jeppesen
+ VP of Technology
+ Total Impact 
+ 
+ - patch added by hxr
+ */
 
 + (NSArray*) cameraUsbDescriptions {
     NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
@@ -336,8 +358,13 @@ Here is a table of sniffed data. I have no idea what this means
         [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_PRO_4000],@"idProduct",
         @"Logitech QuickCam Pro 4000",@"name",NULL];
-    return [NSArray arrayWithObjects:dict1,dict2,dict3,NULL];
+    NSDictionary* dict4=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_ZOOM],@"idProduct",
+        @"Logitech QuickCam Zoom USB",@"name",NULL];
+    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,NULL];
 }
+
 
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraError err=[super startupWithUsbLocationId:usbLocationId];
