@@ -177,6 +177,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     
     //Add Driver classes (this is where we have to add new model classes!)
     [self registerCameraDriver:[MySPCA500Driver class]];
+    [self registerCameraDriver:[MyAiptekPocketDV class]];
     [self registerCameraDriver:[MyKiaraFamilyDriver class]];
     [self registerCameraDriver:[MyKiaraFlippedDriver class]];
     [self registerCameraDriver:[MyTimonFamilyDriver class]];
