@@ -96,5 +96,16 @@ typedef struct SPCA500GrabContext {
 - (NSDictionary*) getStoredMediaObject:(long)idx;
 
 
+@end
+
+
+@interface MyAiptekPocketDV : MySPCA500Driver {}
+
+//  Get info about the camera specifics - use the simple mechanism
+
++ (unsigned short) cameraUsbProductID;
++ (unsigned short) cameraUsbVendorID;
++ (NSString*) cameraName;
 
 @end
+

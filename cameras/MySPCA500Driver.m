@@ -1251,5 +1251,25 @@ static inline void decode420Block(SInt8* srcy,SInt8* srcu,SInt8* srcv,UInt8* dst
     }
 }
 
+@end
+
+
+@implementation MyAiptekPocketDV
+
++ (unsigned short) cameraUsbProductID 
+{ 
+	return 0x0103;  //  AIPTEK?
+}
+
++ (unsigned short) cameraUsbVendorID 
+{ 
+	return 0x08ca;  //  PocketDV?
+}
+
++ (NSString*) cameraName 
+{ 
+	return [MyCameraCentral localizedStringFor:@"AIPTEK Pocket DV"]; 
+}
 
 @end
+
