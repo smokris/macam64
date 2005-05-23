@@ -106,6 +106,8 @@ pascal VideoDigitizerError vdigGetSharpness(vdigGlobals storage,unsigned short* 
 pascal VideoDigitizerError vdigSetSharpness(vdigGlobals storage,unsigned short* val);
 pascal VideoDigitizerError vdigGetPreferredTimeScale(vdigGlobals storage,TimeScale* ts);
 
+pascal VideoDigitizerError vdigGetUniqueIDs(vdigGlobals storage, UInt64* device, UInt64* input);
+
 // The compressed source devices function suite - e.g. needed for BTV and Oculus
 
 pascal VideoDigitizerError vdigGetCompressionTypes(vdigGlobals storage, VDCompressionListHandle h);

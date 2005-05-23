@@ -170,7 +170,9 @@ bool vdigLookupSelector(short what,ProcPtr* ptr,ProcInfoType* info) {
                                                   *ptr=(ComponentRoutineUPP)vdigReleaseAsyncBuffers; break;
 //            case kVDGetPreferredImageDimensionsSelect: *info=uppVDGetPreferredImageDimensionsProcInfo;
 //                                                  *ptr=(ComponentRoutineUPP)vdigGetPreferredImageDimensions; break;
-            default: ok=false; break;
+			case kVDGetUniqueIDsSelect:				*info=uppVDGetUniqueIDsProcInfo;
+													*ptr=(ComponentRoutineUPP)vdigGetUniqueIDs; break;
+			default: ok=false; break;
         }
         
     }
@@ -609,5 +611,70 @@ pascal VideoDigitizerError vdigGetPreferredImageDimensions(vdigGlobals storage, 
     if (width) *width=[(**storage).bridge width];
     if (height) *height=[(**storage).bridge height];
     return 0;
+}
+
+/*
+ This patch submitted by Werner - wlogon@users.sourceforge.net
+ 
+ patch # 966497 - Support for unique IDs, VDGetUniqueIDs()
+ 
+ In the Quicktime API an optional function, VDGetUniqueIDs(), is 
+ declared as optional:
+ 
+ <a href = "http://developer.apple.com/documentation/QuickTime/APIREF/SOURCESIII/vdgetuniqueids.htm"VDGetUniqueIDs()</a>
+ 
+ This function is intended for the use with firewire-cameras, not 
+ USB-devices. For this reason normally, this function would return 
+ zero for USB-cameras,indicating that there is a no valid ID.
+ However, as long as only one computer is involved, a workaround 
+ is possible.
+ 
+ This function utilize the USB-channel numbers. Ranging from 0 to 
+ 128, they are unique for every USB -device on a particualr USB-
+ bus on a particular machine. The number is used and around in 
+ macam for every connected and supported. Actually the cid is used, 
+ and is unique for every camera on the system.
+ 
+ The function produces this values, as example output with the UInt 
+ 64 splitted in two int for the use with '%d':
+ 
+ Output:
+ "AIPTEK Pocket DV A" = AIPTEK Pocket DV (421 31, 0 0); 
+ "AIPTEK Pocket DV B" = AIPTEK Pocket DV (421 32, 0 0); 
+ "DCR-TRV820E; DV Video" = DCR-TRV820E; DV Video 
+ (134235649 33643454, 0 0); 
+ "Kensington VideoCAM 67015/67017" = Kensington VideoCAM 
+ 67015/67017 (421 33, 0 0); 
+ "Kensington VideoCAM 67016" = Kensington VideoCAM 67016 
+ (421 34, 0 0); 
+ 
+ (The assumption, all cameras were running, is wrong, there are 
+  other problems)
+ 
+ I do not know how to print an UInt64, anyway, the format does not 
+ matter as long as the numbers are unique. There lies a problem:
+ I do not know, whether this number area is used, in other words, 
+ whether there is another firewire camera with exactly this ID, or 
+ not. Chances are good, that one of these particular camera is not 
+ connected to a mac, especially a mac running macam.
+ And also, just to mention it, there are no rules around how to 
+ construct a unique ID, which is not supposed to be constructed 
+ anyway.
+ */
+
+//VDGetUniqueIDs
+pascal VideoDigitizerError vdigGetUniqueIDs(vdigGlobals storage, UInt64* device, UInt64* input) 
+{
+	unsigned long *p; // use for both
+	
+	p = (unsigned long *) device; // UInt64 (or wide) to long
+	*p = 421; // first to 421; (high, just a value)
+	*(p+1) = [(**storage).bridge cid]; // usbDeviceRef, is long
+		
+	p = (void *) input; // input is unused
+	*p = 0;
+	*(p+1) = 0;
+	
+	return 0;
 }
 
