@@ -75,6 +75,7 @@ typedef enum BridgeClientState {
 //----------------------
 
 - (id) initWithCentral:(MyCameraCentral*)central cid:(unsigned long)cid;
+- (unsigned long) cid;
 - (void) dealloc;
 - (BOOL) startup;				//Opens the camera driver and starts up bridge (reflect VDOpen)
 - (void) shutdown;				//Closes the camera driver shuts down bridge (reflect VDClose)

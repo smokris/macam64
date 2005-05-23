@@ -93,6 +93,10 @@
     return self;
 }
 
+- (unsigned long) cid {
+    return cid;
+}
+
 - (void) dealloc {
     short i;
     [stateLock lock];
