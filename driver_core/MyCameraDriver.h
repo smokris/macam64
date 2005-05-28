@@ -244,6 +244,9 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (BOOL) canDeleteOne;			//Does the camera support [deleteOne:]?
 - (CameraError) deleteOne:(long)idx;	//Clears one camera media object
 
+- (BOOL) canDeleteLast;			//Does the camera support [deleteLast]?
+- (CameraError) deleteLast;		//Clears the last camera media object
+
 - (BOOL) canCaptureOne;			//Does the camera support [CaptureOne]?
 - (CameraError) captureOne;		//Captures one image (or whatever - camera's current setting)
 

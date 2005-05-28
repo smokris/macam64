@@ -562,6 +562,14 @@
     return CameraErrorUnimplemented;
 }
 
+- (BOOL) canDeleteLast {
+    return NO;
+}
+
+- (CameraError) deleteLast {
+    return CameraErrorUnimplemented;
+}
+
 - (BOOL) canCaptureOne {
     return NO;
 }
