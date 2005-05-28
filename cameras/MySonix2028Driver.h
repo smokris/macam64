@@ -79,6 +79,8 @@ typedef struct SONIXGrabContext {
    SONIXGrabContext grabContext;		//the grab context (everything the async usb read callbacks need)
    BOOL grabbingThreadRunning;		//For active wait for grabbingThread finish
 
+   short writeSkipBytes;			//  Used in getStoredMediaObject
+   
    BayerConverter* bayerConverter;
    UInt8* bayerBuffer;
 }
@@ -118,6 +120,15 @@ typedef struct SONIXGrabContext {
 - (long) numberOfStoredMediaObjects;
 - (NSDictionary*) getStoredMediaObject:(long)idx;
 
+- (BOOL) canDeleteAll;			//Does the camera support [deleteAll]?
+- (CameraError) deleteAll;		//Clears the camera media memory
+
+- (BOOL) canDeleteLast;			//Does the camera support [deleteLast:]?
+- (CameraError) deleteLast;		//Clears the last camera media object
+
+- (BOOL) canCaptureOne;			//Does the camera support [CaptureOne]?
+- (CameraError) captureOne;		//Captures one image (or whatever - camera's current setting)
+
 @end
 
 
@@ -126,6 +137,8 @@ typedef struct SONIXGrabContext {
 + (unsigned short) cameraUsbProductID;
 + (unsigned short) cameraUsbVendorID;
 + (NSString*) cameraName;
+
+- (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId;
 
 // decoding is slightly different
 - (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb;
