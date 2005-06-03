@@ -35,12 +35,16 @@
                 contrastChanged = id; 
                 disclaimerOK = id; 
                 disclaimerQuit = id; 
+                doDeleteAll = id; 
+                doDeleteLast = id; 
+                doDeleteOne = id; 
                 doDownloadMedia = id; 
                 doGrab = id; 
                 doNextCam = id; 
                 doQuit = id; 
                 doSaveImage = id; 
                 doSavePrefs = id; 
+                doTakeStillImage = id; 
                 formatChanged = id; 
                 gainChanged = id; 
                 gammaChanged = id; 
