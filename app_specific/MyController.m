@@ -55,6 +55,10 @@ extern NSString* SnapshotQualityPrefsKey;
 - (BOOL) canDoDownloadMedia;
 - (BOOL) canDoSaveImage;
 - (BOOL) canDoNextCam;
+- (BOOL) canDoDeleteAll;
+- (BOOL) canDoDeleteOne;
+- (BOOL) canDoDeleteLast;
+- (BOOL) canDoTakeStillImage;
 - (BOOL) canDoSavePrefs;
 - (BOOL) canDoRecordMovie;
 - (void) updateCameraMediaCount;
@@ -456,6 +460,34 @@ extern NSString* SnapshotQualityPrefsKey;
     if (returnCode==NSOKButton) [self doDownloadMedia:self];
 }
 
+- (IBAction)doDeleteAll:(id)sender {
+	// Should put up a sheet to double-check!
+	[driver deleteAll];
+    [self updateCameraMediaCount];
+}
+
+- (IBAction)doDeleteOne:(id)sender {
+	long idx = cameraMediaCount-1;
+	// Should put up a sheet, get the number to delete?
+	[driver deleteOne:idx];
+    [self updateCameraMediaCount];
+}
+
+- (IBAction)doDeleteLast:(id)sender {
+	// Should put up a sheet to double-check!
+	[driver deleteLast];
+    [self updateCameraMediaCount];
+}
+
+- (IBAction)doTakeStillImage:(id)sender {
+	CameraError err = [driver captureOne];
+    [self updateCameraMediaCount];
+	if (!err) {
+		// download the new image
+		// create a window with the picture
+	}
+}
+
 - (IBAction)doDownloadMedia:(id)sender {
     NSSavePanel* panel;
     [self updateCameraMediaCount];
@@ -515,6 +547,7 @@ extern NSString* SnapshotQualityPrefsKey;
             [bar displayIfNeeded];
             mediaData=NULL;
             extension=NULL;
+	// TODO change so that we use the desired format for downloading, not what's available
             if ([[media objectForKey:@"type"] isEqualToString:@"jpeg"]) {
                 mediaData=[media objectForKey:@"data"];
                 extension=@"jpg";
@@ -739,6 +772,10 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
     if ([item action]==@selector(doGrab:)) return [self canDoGrab];
     if ([item action]==@selector(toggleSettings:)) return [self canToggleSettings];
     if ([item action]==@selector(doSaveImage:)) return [self canDoSaveImage];
+    if ([item action]==@selector(doDeleteAll:)) return [self canDoDeleteAll];
+    if ([item action]==@selector(doDeleteOne:)) return [self canDoDeleteOne];
+    if ([item action]==@selector(doDeleteLast:)) return [self canDoDeleteLast];
+    if ([item action]==@selector(doTakeStillImage:)) return [self canDoTakeStillImage];
     if ([item action]==@selector(doSavePrefs:)) return [self canDoSavePrefs];
     if ([item action]==@selector(doDownloadMedia:)) return [self canDoDownloadMedia];
     if ([item action]==@selector(doNextCam:)) return [self canDoNextCam];
@@ -869,6 +906,48 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
 
 - (BOOL) canDoNextCam {
     return ([central numCameras]>1);
+}
+
+- (BOOL) canDoDeleteAll {
+    if (driver) {
+        if (cameraMediaCount>0) {
+            if ([driver canDeleteAll]) {
+                return (!cameraGrabbing);
+            }
+        }
+    }
+    return NO;
+}
+
+- (BOOL) canDoDeleteOne {
+    if (driver) {
+        if (cameraMediaCount>0) {
+            if ([driver canDeleteOne]) {
+                return (!cameraGrabbing);
+            }
+        }
+    }
+    return NO;
+}
+
+- (BOOL) canDoDeleteLast {
+    if (driver) {
+        if (cameraMediaCount>0) {
+            if ([driver canDeleteLast]) {
+                return (!cameraGrabbing);
+            }
+        }
+    }
+    return NO;
+}
+
+- (BOOL) canDoTakeStillImage {
+    if (driver) {
+		if ([driver canCaptureOne]) {
+			return (!cameraGrabbing);
+		}
+    }
+    return NO;
 }
 
 - (BOOL) canDoSavePrefs {

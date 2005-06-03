@@ -99,6 +99,10 @@
 - (IBAction)doNextCam:(id)sender;
 - (IBAction)doDownloadMedia:(id)sender;
 - (IBAction)doSaveImage:(id)sender;
+- (IBAction)doDeleteAll:(id)sender;
+- (IBAction)doDeleteOne:(id)sender;
+- (IBAction)doDeleteLast:(id)sender;
+- (IBAction)doTakeStillImage:(id)sender;
 - (IBAction)doSavePrefs:(id)sender;
 - (IBAction)toggleSettingsDrawer:(id)sender;
 - (IBAction)doQuit:(id)sender;
