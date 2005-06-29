@@ -296,6 +296,7 @@
 				3973A6F503CDF44E0066D062,
 				39CBD65203DC0D79000F7EFC,
 				39A2B45E0593E297009C5934,
+				F522580B08725639002023A4,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -651,6 +652,7 @@
 				39663A060402FCF000435B6F,
 				39663A070402FCF000435B6F,
 				39FE214A04030BB800BAABE7,
+				F522580A08725639002023A4,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1765,6 +1767,32 @@
 			settings = {
 			};
 		};
+		F522580908725639002023A4 = {
+			fileEncoding = 4;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			path = USB_VendorProductIDs.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F522580A08725639002023A4 = {
+			fileRef = F522580908725639002023A4;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F522580B08725639002023A4 = {
+			fileRef = F522580908725639002023A4;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F522580C08725639002023A4 = {
+			fileRef = F522580908725639002023A4;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
 		F5285DAA0248103E01AEB99D = {
 			children = (
 				F5285DAB0248103E01AEB99D,
@@ -2153,6 +2181,7 @@
 				39185ABE03C8B5570066DE75,
 				3973A6F703CDF44E0066D062,
 				39CBD65403DC0D79000F7EFC,
+				F522580C08725639002023A4,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2322,6 +2351,7 @@
 			path = MySonix2028Driver.m;
 			refType = 4;
 			sourceTree = "<group>";
+			wrapsLines = 1;
 		};
 		F53F6637039ACC3F01C3DF00 = {
 			fileEncoding = 30;
@@ -2495,6 +2525,7 @@
 			path = MyCameraCentral.h;
 			refType = 4;
 			sourceTree = "<group>";
+			wrapsLines = 1;
 		};
 		F55DD8230213113F0166DE0F = {
 			fileEncoding = 30;
@@ -2519,6 +2550,7 @@
 			path = MyCameraInfo.h;
 			refType = 4;
 			sourceTree = "<group>";
+			wrapsLines = 1;
 		};
 		F55DD8260213113F0166DE0F = {
 			fileEncoding = 30;
@@ -3529,6 +3561,7 @@
 			path = texts/QCE.txt;
 			refType = 4;
 			sourceTree = "<group>";
+			wrapsLines = 1;
 		};
 		F5BFF538029B59BD01B6CBC8 = {
 			fileEncoding = 30;
@@ -3538,6 +3571,7 @@
 			path = texts/QT_architecture.txt;
 			refType = 4;
 			sourceTree = "<group>";
+			wrapsLines = 1;
 		};
 		F5BFF539029B59BD01B6CBC8 = {
 			fileEncoding = 30;
@@ -3547,6 +3581,7 @@
 			path = texts/source_documentation.txt;
 			refType = 4;
 			sourceTree = "<group>";
+			wrapsLines = 1;
 		};
 		F5BFF53A029B59BD01B6CBC8 = {
 			fileEncoding = 30;
@@ -3556,6 +3591,7 @@
 			path = texts/STV680.txt;
 			refType = 4;
 			sourceTree = "<group>";
+			wrapsLines = 1;
 		};
 		F5BFF540029B59CB01B6CBC8 = {
 			fileEncoding = 30;
@@ -3934,6 +3970,7 @@
 			path = MyCPIACameraDriver.h;
 			refType = 4;
 			sourceTree = "<group>";
+			wrapsLines = 1;
 		};
 		F5F79A820212038E01E152CA = {
 			fileEncoding = 30;
@@ -3942,6 +3979,7 @@
 			path = MyCPIACameraDriver.m;
 			refType = 4;
 			sourceTree = "<group>";
+			wrapsLines = 1;
 		};
 		F5F79A830212038E01E152CA = {
 			fileEncoding = 30;
@@ -3994,6 +4032,7 @@
 		};
 		F5F79A910212038E01E152CA = {
 			children = (
+				F522580908725639002023A4,
 				F5F79A920212038E01E152CA,
 				F58530E10229AAB601479C37,
 				F58530E20229AAB601479C37,
