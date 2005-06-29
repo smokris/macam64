@@ -25,6 +25,7 @@
 #include "MiscTools.h"
 #include "unistd.h"	//usleep
 #include "JFIFHeaderTemplate.h"
+#include "USB_VendorProductIDs.h"
 
 extern UInt8 JFIFHeaderTemplate[];
 extern UInt8 ZigZagLookup[];
@@ -55,27 +56,76 @@ extern UInt8 QTables[];
 
 @end 
 
+
 @implementation MySPCA500Driver
 
+// The constants were set for the Palmpix, so it should work
+// It is also claimed that the Sweda should work
+// the others are unsupported
 
-#define VENDOR_SUNPLUS 0x4fc
-#define PRODUCT_SPCA500 0x500a
-#define PRODUCT_SPCA500B 0x500b
-#define VENDOR_MUSTEK 0x055f
-#define PRODUCT_GSMART_MINI2 0xc420
+// others:
+// Kodak EZ200 - 040a:0300
+// Creative PC-CAM 300 - 041e:400a
+// Logitech ClickSmart 510	046d	0901
+// Finet Technology Palmpix DC-85	04fc	7333
+// ViewQuest M318B	0733	0402 ??
+// Minton S-Cam F5/D-Link DSC-350	- 084d	0003
+// Intel Pocket PC Camera (CS630)/Intel PC Camera (CS630)	- 8086	0630
+// Minton S-Cam F5/D-Link DSC-350/Trust FamilyC@m 300 Movie	 - 084d	0003	spca500a
 
-+ (unsigned short) cameraUsbProductID {
-    return 0x7333;
+// Aiptek	PenCam 400	SPCA500A  unsupported by macam
+// Creative	PC-CAM 300	SPCA500A	unsupported (no camera)
+// D-Link	DSC-350F	SPCA500A	unsupported (no camera)
+// Finet Technology	Palmpix DC-85	SPCA500A	unsupported (no camera)
+// Intel	CS630 Pocket PC Camera	SPCA500A	unsupported (no camera)
+// Kodak	EZ200	SPCA500A	unsupported (no camera)
+// Minton	S-Cam F5	SPCA500A	unsupported (no camera)
+// Sweda	SmartCam VGAs	SPCA500A	should work
+// ViewQuest	M318B	SPCA500A	unsupported (no camera)
+
++ (NSArray*) cameraUsbDescriptions {
+    NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_PALMPIX_DC_85],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_FINET_TECHNOLOGY],@"idVendor",
+        @"Palmpix DC-85",@"name",NULL];
+	
+	NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_SMARTCAM_VGAS],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_SWEDA],@"idVendor",
+        @"Sweda SmartCam VGAs",@"name",NULL];
+	
+	NSDictionary* dict3=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_EZ200],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_KODAK],@"idVendor",
+        @"Kodak EZ200 (experimental)",@"name",NULL];
+	
+	NSDictionary* dict4=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_PC_CAM_300],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE],@"idVendor",
+        @"Creative PC-Cam 300 (experimental)",@"name",NULL];
+	
+	NSDictionary* dict5=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_CLICKSMART_510],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
+        @"Logitech Clicksmart 510 (experimental)",@"name",NULL];
+	
+	NSDictionary* dict6=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_M318B],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_VIEWQUEST],@"idVendor",
+        @"ViewQuest M318B (experimental)",@"name",NULL];
+	
+	NSDictionary* dict7=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_S_CAM_F5],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_MINTON],@"idVendor",
+        @"Minton S-Cam F5 (experimental)",@"name",NULL];
+	
+	NSDictionary* dict8=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_POCKET_PC_CS630],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_INTEL],@"idVendor",
+        @"Intel Pocket PC/PC Camera CS630 (experimental)",@"name",NULL];
+	
+	return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,dict7,dict8,NULL];
 }
-
-+ (unsigned short) cameraUsbVendorID {
-    return 0x04fc;
-}
-
-+ (NSString*) cameraName {
-    return @"SmartCam";
-}
-
 
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraError err;
@@ -1256,20 +1306,17 @@ static inline void decode420Block(SInt8* srcy,SInt8* srcu,SInt8* srcv,UInt8* dst
 
 @implementation MyAiptekPocketDV
 
-+ (unsigned short) cameraUsbProductID 
-{ 
-	return 0x0103;  //  AIPTEK?
-}
+// This class is for systems based on the SPCA500C chip
+// Right now it is not clear if it differs at all from the "A" version
+// This is a place-holder in case variances need to be added.
 
-+ (unsigned short) cameraUsbVendorID 
-{ 
-	return 0x08ca;  //  PocketDV?
-}
-
-+ (NSString*) cameraName 
-{ 
-	return [MyCameraCentral localizedStringFor:@"AIPTEK Pocket DV"]; 
++ (NSArray*) cameraUsbDescriptions {
+    NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_POCKET_DV],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_AIPTEK],@"idVendor",
+        @"AIPTEK Pocket DV",@"name",NULL];
+		
+	return [NSArray arrayWithObjects:dict1,NULL];
 }
 
 @end
-

@@ -69,10 +69,8 @@ typedef struct SPCA500GrabContext {
     NSMutableArray* storedFileInfo;
 }
 
-//Get info about the camera specifics - simple mechanism
-+ (unsigned short) cameraUsbProductID;
-+ (unsigned short) cameraUsbVendorID;
-+ (NSString*) cameraName;
+//Get info about the camera specifics
++ (NSArray*) cameraUsbDescriptions;
 
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 - (void) shutdown;
@@ -95,17 +93,12 @@ typedef struct SPCA500GrabContext {
 - (long) numberOfStoredMediaObjects;
 - (NSDictionary*) getStoredMediaObject:(long)idx;
 
-
 @end
 
 
 @interface MyAiptekPocketDV : MySPCA500Driver {}
 
-//  Get info about the camera specifics - use the simple mechanism
-
-+ (unsigned short) cameraUsbProductID;
-+ (unsigned short) cameraUsbVendorID;
-+ (NSString*) cameraName;
+//  Get info about the camera specifics
++ (NSArray*) cameraUsbDescriptions;
 
 @end
-
