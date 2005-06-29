@@ -1072,8 +1072,8 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 }
 
 - (CameraError) captureOne {
-    short num;
-    SonixSensorType sensorType;
+//  short num;
+//  SonixSensorType sensorType;
 	CameraError err = CameraErrorOK;
 	if (!err) err = [self sonixSetModeToDSC];
 //  if (!err) err = [self sonixGetSensorType:&sensorType];

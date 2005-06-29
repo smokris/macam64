@@ -81,6 +81,7 @@ int Decompress420(unsigned char *pIn, unsigned char *pOut, unsigned char *pTmp, 
     short size;
     switch(altInterface) {
         case 7:
+		default:
             size = 961;
             break;
         case 6:
@@ -437,6 +438,7 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
             size = 768;
             break;
         case 1:
+		default:
             size = 993;
             break;
         case 0:
