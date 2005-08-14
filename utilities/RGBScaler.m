@@ -52,9 +52,18 @@
     return self;
 }
 
-- (void) dealloc {
-    if (internalDst) free(internalDst); internalDst=NULL;
-    if (tmpRow1) free(tmpRow1); tmpRow1=NULL; tmpRow2=NULL;
+- (void) dealloc 
+{
+    if (internalDst) 
+        free(internalDst); 
+    internalDst=NULL;
+    
+    if (tmpRow1) 
+        free(tmpRow1); 
+    tmpRow1=NULL; 
+    tmpRow2=NULL;
+    
+    [super dealloc];
 }
 
 - (BOOL) setSourceWidth:(int)sw height:(int)sh bytesPerPixel:(int)sbpp rowBytes:(int)srb {
