@@ -254,3 +254,36 @@ o Intel Play QX3 Microscope@2100000  <class IOUSBDevice>
     return r;
 }
 @end
+
+@implementation MyQX5Driver 
+
++ (unsigned short) cameraUsbProductID 
+{ 
+    return 0x0553;
+}
+
++ (unsigned short) cameraUsbVendorID 
+{ 
+    return 0x0151; 
+}
+
++ (NSString*) cameraName 
+{
+    return [MyCameraCentral localizedStringFor:@"Digital Blue QX5 Microscope"];
+}
+
+// user interface issues, can we have both lights on the QX5?
+
+// is the light communication the same?
+// - doLights
+
+// same or different color balance values?
+
+// same routines for collecting the data?
+
+// methods to deal with new image encoding etc
+
+// separate program to turn on/off lights? script or simple unix tool?
+
+@end
+

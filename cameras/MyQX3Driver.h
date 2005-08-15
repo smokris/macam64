@@ -66,3 +66,11 @@
 // Private define of our event channel to the
 #define EVENT_QX3_ACHANGE (@"CAMERADRIVER_QX3_aChange")	
 @end
+
+@interface MyQX5Driver : MyQX3Driver 
+
++ (unsigned short) cameraUsbProductID;
++ (unsigned short) cameraUsbVendorID;
++ (NSString*) cameraName;
+
+@end
