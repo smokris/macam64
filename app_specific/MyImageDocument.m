@@ -23,8 +23,13 @@
 
 @implementation MyImageDocument
 
-- (void) dealloc {
-    if (imageRep) [imageRep release];
+- (void) dealloc 
+{
+    if (imageRep) 
+        [imageRep release];
+//    imageRep = NULL;
+    
+    [super dealloc];
 }
 
 - (void)makeWindowControllers {
