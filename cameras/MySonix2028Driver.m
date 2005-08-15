@@ -87,10 +87,8 @@ width and height are wrong in decoding...
 #import "yuv2rgb.h"
 #include "MiscTools.h"
 #include "unistd.h"
+#include "USB_VendorProductIDs.h"
 
-#define VENDOR_SONIX	0x0c45
-#define PRODUCT_DC31UC	0x8000
-#define PRODUCT_VIVICAM3350B 0x800A
 
 #define MAX_SHUTTER 2560000.0f
 
@@ -1297,10 +1295,25 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 
 @implementation MyViviCam3350BDriver
 
++ (NSArray*) cameraUsbDescriptions 
+{
+    NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_SONIX],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_VIVICAM3350B],@"idProduct",
+        @"Vivitar ViviCam 3350B",@"name",NULL];
+    
+	NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_SMARTCAM_VGAS],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_SWEDA],@"idVendor",
+        @"Sweda SmartCam VGAs",@"name",NULL];
+	
+    return [NSArray arrayWithObjects:dict1,dict2,NULL];
+}
+
 //  Class methods needed
-+ (unsigned short) cameraUsbProductID { return PRODUCT_VIVICAM3350B; }
-+ (unsigned short) cameraUsbVendorID { return VENDOR_SONIX; }
-+ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"Vivitar ViviCam 3350B"]; }
+//+ (unsigned short) cameraUsbProductID { return PRODUCT_VIVICAM3350B; }
+//+ (unsigned short) cameraUsbVendorID { return VENDOR_SONIX; }
+//+ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"Vivitar ViviCam 3350B"]; }
 
 - (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId 
 {

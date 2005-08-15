@@ -134,9 +134,7 @@ typedef struct SONIXGrabContext {
 
 @interface MyViviCam3350BDriver : MySonix2028Driver 
 
-+ (unsigned short) cameraUsbProductID;
-+ (unsigned short) cameraUsbVendorID;
-+ (NSString*) cameraName;
++ (NSArray*) cameraUsbDescriptions;
 
 - (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId;
 
