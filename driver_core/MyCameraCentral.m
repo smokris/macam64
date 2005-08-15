@@ -148,10 +148,18 @@ MyCameraCentral* sharedCameraCentral=NULL;
     return self;
 }
 
-- (void) dealloc {
+- (void) dealloc 
+{
     [self shutdown];	//Make sure everything's shut down
-    if (cameraTypes!=NULL) [cameraTypes release]; cameraTypes=NULL;
-    if (cameras!=NULL) [cameras release]; cameras=NULL;
+    if (cameraTypes!=NULL) 
+        [cameraTypes release]; 
+    cameraTypes=NULL;
+    
+    if (cameras!=NULL) 
+        [cameras release]; 
+    cameras=NULL;
+    
+    [super dealloc]; // where is the constructor?
 }
 
 - (BOOL) startupWithNotificationsOnMainThread:(BOOL)nomt recognizeLaterPlugins:(BOOL)rlp{
@@ -183,6 +191,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[MyTimonFamilyDriver class]];
     [self registerCameraDriver:[MyCPIACameraDriver class]];
     [self registerCameraDriver:[MyQX3Driver class]];
+    [self registerCameraDriver:[MyQX5Driver class]];
     [self registerCameraDriver:[MySTV680Driver class]];
     [self registerCameraDriver:[MyQCExpressADriver class]];
     [self registerCameraDriver:[MyQCExpressBDriver class]];
