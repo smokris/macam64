@@ -798,7 +798,7 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
     GetGWorld(&oldPort,&oldGDev);
     SetGWorld(gw,NULL);
     (**pccamImgDesc).dataSize=jfifLength;
-    DecompressImage(jfifBuf,pccamImgDesc,pm,&srcBounds,&dstBounds,srcCopy,NULL);
+    DecompressImage((Ptr) jfifBuf,pccamImgDesc,pm,&srcBounds,&dstBounds,srcCopy,NULL);
     SetGWorld(oldPort,oldGDev);
     UnlockPixels(pm);
     DisposeGWorld(gw);
@@ -1394,7 +1394,7 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
     UInt8 save2714;
     UInt8 save2715;
     IOReturn err;
-    long actCount=count;
+    UInt32 actCount=(UInt32) count;
     
     //Set mode to upload
     if (![self dscSetCameraModeTo:4]) return NO;
@@ -1440,7 +1440,7 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
 - (BOOL) dscReadBulkTo:(UInt8*)buf count:(long)bytesToTransfer {
     UInt8 tmpBuf[256];
     long bytesTransferred=0;
-    long readLength;
+    UInt32 readLength;
     IOReturn err;
 
     //Wait until a page is ready
