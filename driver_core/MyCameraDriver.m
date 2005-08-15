@@ -773,7 +773,7 @@
     io_service_t			usbInterfaceRef;
     short    				retries;
     kern_return_t			ret;
-    io_service_t			usbDeviceRef=NULL;
+    io_service_t			usbDeviceRef=IO_OBJECT_NULL;
     mach_port_t				masterPort;
     CFMutableDictionaryRef 		matchingDict;
     
@@ -838,7 +838,7 @@
         }            
     }
 
-    IOObjectRelease(iterator); iterator=NULL;
+    IOObjectRelease(iterator); iterator=IO_OBJECT_NULL;
     
     if (!dev) return CameraErrorNoCam;
     
