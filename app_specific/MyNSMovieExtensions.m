@@ -76,7 +76,7 @@
     OSStatus status;
     FSSpec fsSpec;
     short resId=movieInDataForkResID;
-    status = FSPathMakeRef ([path fileSystemRepresentation],
+    status = FSPathMakeRef ((UInt8 *) [path fileSystemRepresentation],
                             &fsRef,
                             NULL);
     if (status==noErr)
