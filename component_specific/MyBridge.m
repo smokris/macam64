@@ -181,7 +181,7 @@
     return clientImagePending;
 }
 
-- (BOOL) compressionDoneTo:(Ptr*)data		//Returns if grabOneFrameCompressedAsync has finished
+- (BOOL) compressionDoneTo:(unsigned char **)data		//Returns if grabOneFrameCompressedAsync has finished
                       size:(long*)size
                 similarity:(UInt8*)similarity {
     BOOL ok=NO;

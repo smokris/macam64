@@ -85,7 +85,7 @@ typedef enum BridgeClientState {
 //-----------------
 
 - (BOOL) grabOneFrameCompressedAsync;		//Starts grabbing one frame to compressed target
-- (BOOL) compressionDoneTo:(Ptr*)data		//Returns if grabOneFrameCompressedAsync has finished
+- (BOOL) compressionDoneTo:(unsigned char **)data		//Returns if grabOneFrameCompressedAsync has finished
                       size:(long*)size
                 similarity:(UInt8*)similarity;
 - (void) takeBackCompressionBuffer:(Ptr)buf;	//returns a buffer (they are taken out when starting a compressed grab)
