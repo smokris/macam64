@@ -18,6 +18,7 @@
  $Id$
  */
 
+
 #include "GlobalDefs.h"
 #import "MySPCA500Driver.h"
 #import "MyCameraCentral.h"
@@ -26,6 +27,7 @@
 #include "unistd.h"	//usleep
 #include "JFIFHeaderTemplate.h"
 #include "USB_VendorProductIDs.h"
+
 
 extern UInt8 JFIFHeaderTemplate[];
 extern UInt8 ZigZagLookup[];
@@ -83,16 +85,17 @@ extern UInt8 QTables[];
 // Sweda	SmartCam VGAs	SPCA500A	should work
 // ViewQuest	M318B	SPCA500A	unsupported (no camera)
 
-+ (NSArray*) cameraUsbDescriptions {
++ (NSArray*) cameraUsbDescriptions 
+{
     NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:PRODUCT_PALMPIX_DC_85],@"idProduct",
         [NSNumber numberWithUnsignedShort:VENDOR_FINET_TECHNOLOGY],@"idVendor",
         @"Palmpix DC-85",@"name",NULL];
 	
 	NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithUnsignedShort:PRODUCT_SMARTCAM_VGAS],@"idProduct",
-        [NSNumber numberWithUnsignedShort:VENDOR_SWEDA],@"idVendor",
-        @"Sweda SmartCam VGAs",@"name",NULL];
+        [NSNumber numberWithUnsignedShort:PRODUCT_POCKET_PC_CS630],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_INTEL],@"idVendor",
+        @"Intel Pocket PC/PC Camera CS630 (experimental)",@"name",NULL];
 	
 	NSDictionary* dict3=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:PRODUCT_EZ200],@"idProduct",
@@ -119,12 +122,7 @@ extern UInt8 QTables[];
         [NSNumber numberWithUnsignedShort:VENDOR_MINTON],@"idVendor",
         @"Minton S-Cam F5 (experimental)",@"name",NULL];
 	
-	NSDictionary* dict8=[NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithUnsignedShort:PRODUCT_POCKET_PC_CS630],@"idProduct",
-        [NSNumber numberWithUnsignedShort:VENDOR_INTEL],@"idVendor",
-        @"Intel Pocket PC/PC Camera CS630 (experimental)",@"name",NULL];
-	
-	return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,dict7,dict8,NULL];
+	return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,dict7,NULL];
 }
 
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
@@ -1136,7 +1134,7 @@ bail2:
     (**pccamImgDesc).dataSize=jfifLength;
     (**pccamImgDesc).width=width;
     (**pccamImgDesc).height=height;
-    DecompressImage(jfifBuf,pccamImgDesc,pm,&bounds,&bounds,srcCopy,NULL);
+    DecompressImage((Ptr) jfifBuf,pccamImgDesc,pm,&bounds,&bounds,srcCopy,NULL);
     SetGWorld(oldPort,oldGDev);
     UnlockPixels(pm);
     DisposeGWorld(gw);
@@ -1289,10 +1287,10 @@ static inline void decode420Block(SInt8* srcy,SInt8* srcu,SInt8* srcv,UInt8* dst
     UInt8* dst=nextImageBuffer;
     for (j=0;j<macroBlocksPerCol;j++) {
         for (i=0;i<macroBlocksPerRow;i++) {
-            decode420Block(src    ,src+256,src+320,dst                          ,nextImageBufferBPP,nextImageBufferRowBytes);
-            decode420Block(src+64 ,src+260,src+324,dst+8*nextImageBufferBPP     ,nextImageBufferBPP,nextImageBufferRowBytes);
-            decode420Block(src+128,src+288,src+352,dst+8*nextImageBufferRowBytes,nextImageBufferBPP,nextImageBufferRowBytes);
-            decode420Block(src+192,src+292,src+356,dst+8*nextImageBufferRowBytes+8*nextImageBufferBPP
+            decode420Block((SInt8 *) (src)    ,(SInt8 *) (src+256),(SInt8 *) (src+320),dst                          ,nextImageBufferBPP,nextImageBufferRowBytes);
+            decode420Block((SInt8 *) (src+64) ,(SInt8 *) (src+260),(SInt8 *) (src+324),dst+8*nextImageBufferBPP     ,nextImageBufferBPP,nextImageBufferRowBytes);
+            decode420Block((SInt8 *) (src+128),(SInt8 *) (src+288),(SInt8 *) (src+352),dst+8*nextImageBufferRowBytes,nextImageBufferBPP,nextImageBufferRowBytes);
+            decode420Block((SInt8 *) (src+192),(SInt8 *) (src+292),(SInt8 *) (src+356),dst+8*nextImageBufferRowBytes+8*nextImageBufferBPP
                            ,nextImageBufferBPP,nextImageBufferRowBytes);
             src+=6*64;
             dst+=16*nextImageBufferBPP;
