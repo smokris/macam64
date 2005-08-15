@@ -98,7 +98,6 @@ typedef struct SPCA500GrabContext {
 
 @interface MyAiptekPocketDV : MySPCA500Driver {}
 
-//  Get info about the camera specifics
 + (NSArray*) cameraUsbDescriptions;
 
 @end
