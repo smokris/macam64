@@ -44,7 +44,7 @@
         err=noErr;
         if (![[NSMutableData dataWithLength:4] writeToFile:savePath atomically:NO]) err=1;	//Error code doesn't really matter
         //Create FSSpec for path
-        if (err==noErr) err=FSPathMakeRef([savePath lossyCString],&fr,NULL);
+        if (err==noErr) err=FSPathMakeRef((UInt8 *) [savePath lossyCString],&fr,NULL);
         if (err==noErr) err=FSGetCatalogInfo(&fr,0,NULL,NULL,&fs,NULL);
         if (err!=noErr) useProvidedPath=NO;
     }
@@ -72,7 +72,7 @@
     //Get path of movie file (might be the original path that was provided)
     err=FSpMakeFSRef(&fs,&fr);
     if (err) NSLog(@"FSpMakeFSRef failed with error %i",err);
-    err=FSRefMakePath(&fr,cName,1023);
+    err=FSRefMakePath(&fr, (unsigned char *) cName,1023);
     if (err) NSLog(@"FSRefMakePath failed with error %i",err);
     path=[[NSString alloc] initWithCString:cName];
     NSAssert(path,@"Could not alloc NSString for path");
@@ -123,6 +123,8 @@
         [path release];
         path=NULL;
     }
+    
+    [super dealloc];
 }
 
 - (BOOL) appendLastCompressedImageWithDuration:(double)duration {
