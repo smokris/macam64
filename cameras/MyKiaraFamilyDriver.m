@@ -20,6 +20,9 @@
 
 #import "MyKiaraFamilyDriver.h"
 
+#include "USB_VendorProductIDs.h"
+
+
 typedef struct _ToUCamFormatEntry {
     CameraResolution res;
     short frameRate;
@@ -345,7 +348,8 @@ Here is a table of sniffed data. I have no idea what this means
  - patch added by hxr
  */
 
-+ (NSArray*) cameraUsbDescriptions {
++ (NSArray*) cameraUsbDescriptions 
+{
     NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_TOUCAM_PRO],@"idProduct",
@@ -362,7 +366,11 @@ Here is a table of sniffed data. I have no idea what this means
         [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_ZOOM],@"idProduct",
         @"Logitech QuickCam Zoom USB",@"name",NULL];
-    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,NULL];
+    NSDictionary* dict5=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_NOTEBOOK_PRO],@"idProduct",
+        @"Logitech QuickCam Notebook Pro",@"name",NULL];
+    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,NULL];
 }
 
 
