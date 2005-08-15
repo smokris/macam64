@@ -85,7 +85,7 @@ OSErr _ICD_OpenDevice(UInt32 locationID, ObjectInfo * objectInfo)
     objectInfo->flags = 0;
     objectInfo->thumbnailSize = 0;
     objectInfo->dataSize = 0;
-    sprintf(objectInfo->name,"Macam camera");
+    sprintf((char *) objectInfo->name,"Macam camera");
     objectInfo->icaObjectInfo.objectType = kICADevice;
     objectInfo->icaObjectInfo.objectSubtype = kICADeviceCamera;
 
@@ -209,8 +209,8 @@ OSErr _ICD_GetObjectInfo(const ObjectInfo * parentInfo,
         newInfo->dataSize = [[fileInfo objectForKey:@"size"] longValue];
         newInfo->dataWidth =[[fileInfo objectForKey:@"width"] longValue];
         newInfo->dataHeight = [[fileInfo objectForKey:@"height"] longValue];
-        sprintf(newInfo->name,"Macam image");
-        sprintf(newInfo->creationDate, "%s",
+        sprintf((char *) newInfo->name,"Macam image");
+        sprintf((char *) newInfo->creationDate, "%s",
                 [[[NSDate date] descriptionWithCalendarFormat:@"%Y:%m:%d %H:%M:%S" timeZone:nil locale:nil] cString]);
         newInfo->icaObjectInfo.objectType = kICAFile;
         newInfo->icaObjectInfo.objectSubtype = kICAFileImage;
@@ -387,23 +387,26 @@ int main (int argc, const char * argv[])
 {
     
     gICDCallbackFunctions.f_ICD_OpenUSBDevice			= _ICD_OpenDevice;
-    gICDCallbackFunctions.f_ICD_CloseDevice			= _ICD_CloseDevice;
+    gICDCallbackFunctions.f_ICD_CloseDevice				= _ICD_CloseDevice;
     gICDCallbackFunctions.f_ICD_PeriodicTask			= _ICD_PeriodicTask;
     gICDCallbackFunctions.f_ICD_GetObjectInfo			= _ICD_GetObjectInfo;
-    gICDCallbackFunctions.f_ICD_Cleanup				= _ICD_Cleanup;
+    gICDCallbackFunctions.f_ICD_Cleanup					= _ICD_Cleanup;
     gICDCallbackFunctions.f_ICD_GetPropertyData			= _ICD_GetPropertyData;
     gICDCallbackFunctions.f_ICD_SetPropertyData			= _ICD_SetPropertyData;
     gICDCallbackFunctions.f_ICD_ReadFileData			= _ICD_ReadFileData;
     gICDCallbackFunctions.f_ICD_WriteFileData			= _ICD_WriteFileData;
-    gICDCallbackFunctions.f_ICD_SendMessage			= _ICD_SendMessage;
+    gICDCallbackFunctions.f_ICD_SendMessage				= _ICD_SendMessage;
     gICDCallbackFunctions.f_ICD_AddPropertiesToCFDictionary	= _ICD_AddPropertiesToCFDictionary;
     gICDCallbackFunctions.f_ICD_AddPropertiesToCFDictionary	= _ICD_AddPropertiesToCFDictionary;
-    //Init QuickTime
+    
+	//Init QuickTime
     EnterMovies();
+	
     //Init camera central
     central=[MyCameraCentral sharedCameraCentral];
     delegate=[[MyDriverDelegate alloc] init];
     [central setDelegate:delegate];
+	
     if (central) {
         if (![central startupWithNotificationsOnMainThread:YES recognizeLaterPlugins:YES]) {
             [central release];
