@@ -41,7 +41,7 @@ macam - webcam app and QuickTime driver component
 
 - (BOOL) checkSensor {
     BOOL ok=YES;
-    short sensorID;
+    unsigned short sensorID;
     NSAssert(bytePerRegister>0,@"Your subclass of MySTV600Sensor must set bytePerRegister on init");
     NSAssert(i2cSensorAddress>=0,@"Your subclass of MySTV600Sensor must set i2cSensorAddress on init");
     NSAssert(reg23Value>=0,@"Your subclass of MySTV600Sensor must set reg23Value on init");
