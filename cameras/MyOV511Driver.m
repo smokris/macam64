@@ -1099,15 +1099,15 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
 #endif
 //                    chunkBuffer=grabContext.buffer+currChunk.start+chunkHeader;	//Our chunk starts here
                         cursize = 0;
-                        blockCopy(grabContext.bytesPerFrame-9-1, &cursize, grabContext.buffer+currChunk.start+9, grabContext.chunkBuffer,
+                        blockCopy(grabContext.bytesPerFrame-9-1, &cursize, (char *) (grabContext.buffer+currChunk.start+9), (char *) (grabContext.chunkBuffer),
                             width, height);
                         for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end; ++i)
-                            blockCopy(grabContext.bytesPerFrame-1, &cursize, grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i,
-                                grabContext.chunkBuffer, width, height);
+                            blockCopy(grabContext.bytesPerFrame-1, &cursize, (char *) (grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i),
+                                (char *) grabContext.chunkBuffer, width, height);
                         if(currChunk.isSeparate)
                             for(i=0;currChunk.start2 + grabContext.bytesPerFrame*i < currChunk.end2; ++i)
-                                blockCopy(grabContext.bytesPerFrame-1, &cursize, grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i,
-                                    grabContext.chunkBuffer, width, height);
+                                blockCopy(grabContext.bytesPerFrame-1, &cursize, (char *) (grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i),
+                                    (char *) grabContext.chunkBuffer, width, height);
 //                    lineExtra=nextImageBufferRowBytes-width*nextImageBufferBPP;	//bytes to skip after each line in target buffer
                     }
                     lineExtra = 0;
