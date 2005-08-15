@@ -27,7 +27,7 @@ static unsigned long cidCount=1;
 - (id) init {
     self=[super init];
     if (self==NULL) return NULL;
-    notification=NULL;
+    notification=IO_OBJECT_NULL;
     driver=NULL;
     driverClass=NULL;
     cid=cidCount++;
@@ -53,8 +53,13 @@ static unsigned long cidCount=1;
     return c;
 }
 
-- (void) dealloc {
-    if (name) [name release];
+- (void) dealloc 
+{
+    if (name) 
+        [name release];
+    name = NULL;
+    
+    [super dealloc];
 }
 
 - (io_object_t) notification {
