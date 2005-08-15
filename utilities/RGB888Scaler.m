@@ -33,11 +33,15 @@
     return self;
 }
 
-- (void) dealloc {
-    if (dstData) {
+- (void) dealloc 
+{
+    if (dstData) 
+    {
         FREE(dstData,"RGB888Scaler dealloc dst data");
         dstData=NULL;
     }
+    
+    [super dealloc];
 }
 
 - (BOOL) setDestinationWidth:(long)width height:(long)height {
