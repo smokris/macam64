@@ -130,7 +130,7 @@ pascal ComponentResult sgpnRegister(sgpnGlobals storage) {
     
     //Bail if the camera central has already been loaded (might register-loop infinitely...)
     if ([MyCameraCentral isCameraCentralExisting]) {
-#ifdef VERBOSE
+#ifdef REALLY_VERBOSE
         NSLog(@"Camera central already inited - probably duplicate register. Skipping...");
 #endif
         return 1;

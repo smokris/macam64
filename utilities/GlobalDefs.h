@@ -68,6 +68,8 @@ typedef enum ColorMode {
 
 #define VERBOSE 1
 
+//#define REALLY_VERBOSE 1
+
 /*
 malloc/free tracking: Since I sometimes have to do "remote debugging" (send the code to someone else and ask what happens), I cannot use elaborate tools there. So I use macros for malloc and free so we can switch on memory logging to the console. The testers then can send the console log back. To switch on or off, uncomment or comment the next #define statement.
 */
