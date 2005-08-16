@@ -278,7 +278,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
         [info setDriverClass:[MyDummyCameraDriver class]];
         [info setProductID:[MyDummyCameraDriver cameraUsbProductID]];
         [info setVendorID:[MyDummyCameraDriver cameraUsbVendorID]];
-        [info setCameraName:[MyDummyCameraDriver cameraName]];
+        [info setCameraName: [NSString stringWithFormat:@"%@ #%i", [MyDummyCameraDriver cameraName], i+1]];
         [info setCentral: self];
         [cameras addObject:info];
     }
@@ -392,6 +392,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     }
     if (cam!=NULL) {
         [dev setDriver:cam];
+        [cam setCameraInfo:dev];
         [self setCameraToDefaults:cam];
         if (outCam) *outCam=cam;
     }

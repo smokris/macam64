@@ -25,7 +25,7 @@
 
 + (unsigned short) cameraUsbProductID { return 0; }
 + (unsigned short) cameraUsbVendorID { return 0; }
-+ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"Dummy camera for user feedback"]; }
++ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"Dummy camera"]; }
 
 
 - (id) initWithError:(CameraError)err central:(MyCameraCentral*)c {

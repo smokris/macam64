@@ -676,6 +676,13 @@
     }
 }
 
+- (MyCameraInfo*) getCameraInfo {
+       return cameraInfo;
+}
+
+- (void) setCameraInfo:(MyCameraInfo *)info {
+       cameraInfo = info;
+}
 
 //USB Tool functions for subclasses
 
@@ -1048,6 +1055,8 @@
             f=((long long)(time))%100;
             sprintf(cstr,"%02i:%02i:%02i:%02i",h,m,s,f);
             MiniDrawString(lastImageBuffer,lastImageBufferBPP,lastImageBufferRowBytes,10,10,cstr);
+            MiniDrawString(lastImageBuffer,lastImageBufferBPP,lastImageBufferRowBytes,10,23,
+                            (char*)[[[self getCameraInfo] cameraName] cString]);
         }
         [self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer
     }
