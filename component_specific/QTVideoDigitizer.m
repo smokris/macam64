@@ -531,7 +531,7 @@ pascal VideoDigitizerError vdigCompressOneFrameAsync(vdigGlobals storage) {
 
 pascal VideoDigitizerError vdigCompressDone(vdigGlobals storage,Boolean* done,Ptr* theData,long* dataSize,
                                             UInt8* similarity,TimeRecord* t) {
-    Ptr myData;
+    unsigned char * myData;
     long mySize;
     UInt8 mySimilarity;
     if (!done) return qtParamErr;
@@ -539,7 +539,7 @@ pascal VideoDigitizerError vdigCompressDone(vdigGlobals storage,Boolean* done,Pt
     OSXYieldToAnyThread();
     if ([(**storage).bridge compressionDoneTo:&myData size:&mySize similarity:&mySimilarity]) {
         *done=true;
-        if (theData) *theData=myData;
+        if (theData) *theData = (Ptr) myData;
         if (dataSize) *dataSize=mySize;
         if (similarity) *similarity=mySimilarity;
         if ((t)&&((**storage).timeBase)) {
