@@ -322,55 +322,59 @@ Here is a table of sniffed data. I have no idea what this means
 
 @implementation MyKiaraFamilyDriver
 
-#define PRODUCT_TOUCAM_PRO 0x0311
-#define PRODUCT_TOUCAM_PRO_3D 0x0312
-#define PRODUCT_QUICKCAM_PRO_4000 0x08b2
-#define PRODUCT_QUICKCAM_ZOOM 0x08b3
-
-/*
- Added QuickCam zoom via patch # 738976
- Submitted by Karsten Jeppesen - bjowulf@users.sourceforge.net
- 
- Patch for Logitech QuickCam Zoom USB
- 
- Logitech QuickCam Zoom (046d/08b3)
- is equivalent to Logitech QuickCam 4000 Pro USB.
- 
- I have the camera (Logitech QuickCam Zoom (046d/08b3)) and 
- verified that I get a picture.
- Hope I am submitting the patch correctly.
- 
- Sincerely,
- Dr. Karsten Jeppesen
- VP of Technology
- Total Impact 
- 
- - patch added by hxr
- */
-
 + (NSArray*) cameraUsbDescriptions 
 {
     NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_TOUCAM_PRO],@"idProduct",
         @"Philips ToUCam Pro",@"name",NULL];
+    
     NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_TOUCAM_PRO_3D],@"idProduct",
         @"Philips ToUCam Pro 3D",@"name",NULL];
+    
     NSDictionary* dict3=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_PRO_4000],@"idProduct",
         @"Logitech QuickCam Pro 4000",@"name",NULL];
+    
     NSDictionary* dict4=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_ZOOM],@"idProduct",
         @"Logitech QuickCam Zoom USB",@"name",NULL];
+    
     NSDictionary* dict5=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_NOTEBOOK_PRO],@"idProduct",
         @"Logitech QuickCam Notebook Pro",@"name",NULL];
-    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,NULL];
+    
+    NSDictionary* dict6=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_TOUCAM_XS],@"idProduct",
+        @"Philips ToUCam XS",@"name",NULL];
+    
+    NSDictionary* dict7=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_WEBCAM_PRO_EX],@"idProduct",
+        @"Creative Labs Webcam Pro EX",@"name",NULL];
+    
+    NSDictionary* dict8=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_VISIONITE],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_VCS_UC300],@"idProduct",
+        @"Visionite VCS-UC300",@"name",NULL];
+    
+    NSDictionary* dict9=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_ZOOM_NEW],@"idProduct",
+        @"Logitech QuickCam Zoom (new)",@"name",NULL];
+    
+    NSDictionary* dict10=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_ORBIT],@"idProduct",
+        @"Logitech QuickCam Orbit/Sphere",@"name",NULL];
+    
+    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,dict7,dict8,dict9,dict10,NULL];
 }
 
 
@@ -421,6 +425,7 @@ Here is a table of sniffed data. I have no idea what this means
 }
 
 - (BOOL) canSetLed { return YES; }
+
 - (void) setLed:(BOOL)v {
     UInt8 b[2];
     UInt16* b_16;
