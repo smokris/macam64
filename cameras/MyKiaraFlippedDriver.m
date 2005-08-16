@@ -21,29 +21,45 @@
 #import "MyKiaraFlippedDriver.h"
 #import "MyCameraCentral.h"
 
-#define PRODUCT_TOUCAM_FUN 0x0310
-#define PRODUCT_QUICKCAM_PRO_3000 0x08b0
-#define PRODUCT_WEBCAM_5 0x400c
+#include "USB_VendorProductIDs.h"
+
 
 @implementation MyKiaraFlippedDriver
 
-+ (NSArray*) cameraUsbDescriptions {
++ (NSArray*) cameraUsbDescriptions 
+{
     NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:PRODUCT_TOUCAM_FUN],@"idProduct",
         [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
         @"Philips ToUCam Fun",@"name",NULL];
+    
     NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_PRO_3000],@"idProduct",
         [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
         @"Logitech QuickCam Pro 3000",@"name",NULL];
+    
 	NSDictionary* dict3=[NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithUnsignedShort:PRODUCT_WEBCAM_5],@"idProduct",
 		[NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS],@"idVendor",
 		@"Creative Labs Webcam 5",@"name",NULL];
-	return [NSArray arrayWithObjects:dict1,dict2,dict3,NULL];
+    
+	NSDictionary* dict4=[NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithUnsignedShort:PRODUCT_AFINA_EYE],@"idProduct",
+		[NSNumber numberWithUnsignedShort:VENDOR_SOTEC],@"idVendor",
+		@"Sotec Afina Eye",@"name",NULL];
+    
+	NSDictionary* dict5=[NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithUnsignedShort:PRODUCT_AFINA_EYE],@"idProduct",
+		[NSNumber numberWithUnsignedShort:VENDOR_AME_CO],@"idVendor",
+		@"AME Co. Afina Eye",@"name",NULL];
+    
+	NSDictionary* dict6=[NSDictionary dictionaryWithObjectsAndKeys:
+		[NSNumber numberWithUnsignedShort:PRODUCT_VCS_UM100],@"idProduct",
+		[NSNumber numberWithUnsignedShort:VENDOR_VISIONITE],@"idVendor",
+		@"Visionite VCS-UM100",@"name",NULL];
+    
+	return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,NULL];
 }
-
-
 
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraError err=[super startupWithUsbLocationId:usbLocationId];
