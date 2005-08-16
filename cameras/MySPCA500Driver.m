@@ -104,7 +104,7 @@ extern UInt8 QTables[];
 	
 	NSDictionary* dict4=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:PRODUCT_PC_CAM_300],@"idProduct",
-        [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE],@"idVendor",
+        [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS],@"idVendor",
         @"Creative PC-Cam 300 (experimental)",@"name",NULL];
 	
 	NSDictionary* dict5=[NSDictionary dictionaryWithObjectsAndKeys:
