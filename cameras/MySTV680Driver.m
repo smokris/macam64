@@ -48,15 +48,15 @@
 
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraError err;
-    UInt8 cameraInfo[16];
+    UInt8 cameraInfoBuffer[16];
     err=[self usbConnectToCam:usbLocationId configIdx:0];
     //setup connection to camera
     if (err!=CameraErrorOK) return err;
     //wake up camera
     [self usbWriteCmdWithBRequest:SET_CAMERA_IDLE wValue:0 wIndex:0 buf:NULL len:0];
 
-    [self usbReadCmdWithBRequest:GET_CAMERA_INFO wValue:0 wIndex:0 buf:cameraInfo len:16];
-    resolutionBits=cameraInfo[7];
+    [self usbReadCmdWithBRequest:GET_CAMERA_INFO wValue:0 wIndex:0 buf:cameraInfoBuffer len:16];
+    resolutionBits=cameraInfoBuffer[7];
     [self setBrightness:0.5];
     [self setContrast:0.5];
     [self setGamma:0.5];
