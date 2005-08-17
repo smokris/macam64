@@ -1,0 +1,13 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {center = id; movedown = id; moveleft = id; moveright = id; moveup = id; }; 
+            CLASS = MyQCOrbitCameraInspector; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {camName = NSTextField; contentView = NSView; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
