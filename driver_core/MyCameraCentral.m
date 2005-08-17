@@ -45,6 +45,7 @@
 #import "MySE401Driver.h"
 #import "MyQCProBeigeDriver.h"
 #import "MySPCA500Driver.h"
+#import "MyQCOrbitDriver.h"
 #include "unistd.h"
     
 
@@ -204,6 +205,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
 	[self registerCameraDriver:[MyViviCam3350BDriver class]];
     [self registerCameraDriver:[MySE401Driver class]];
     [self registerCameraDriver:[MyQCProBeigeDriver class]];
+    [self registerCameraDriver:[MyQCOrbitDriver class]];
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];
 //    [self registerCameraDriver:[MyIntelPCCamera class]];
 //    [self registerCameraDriver:[MyGrandtecVcap class]];
