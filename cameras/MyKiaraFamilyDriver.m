@@ -369,12 +369,7 @@ Here is a table of sniffed data. I have no idea what this means
         [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_ZOOM_NEW],@"idProduct",
         @"Logitech QuickCam Zoom (new)",@"name",NULL];
     
-    NSDictionary* dict10=[NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
-        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_ORBIT],@"idProduct",
-        @"Logitech QuickCam Orbit/Sphere",@"name",NULL];
-    
-    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,dict7,dict8,dict9,dict10,NULL];
+    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,dict7,dict8,dict9,NULL];
 }
 
 
