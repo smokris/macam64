@@ -376,6 +376,111 @@ extern NSString* SnapshotQualityPrefsKey;
     }
 }
 
+/*
+ *  Save the image in a file
+ *
+ *  Use the preferred image format, stored in preferences, unless camera uses jpeg
+ *
+ *  Convert image formats if necessary
+ *
+ *  Parameters:
+ *  - image data (NSDictionary *) - must contain type & data keys, with either "bitmap" and (NSBitmapImageRep *) or "jpeg" and jpeg data
+ *  - base filename (NSString *)
+ *  - attributes (NSDictionary*) - passed from the save dialog
+ *
+ * Returns YES if everything OK; NO if there was a problem
+ */
+- (BOOL) saveImage:(NSDictionary *) media toFile:(NSString *) baseFilename with:(NSDictionary *) attributes
+{
+    BOOL problem = NO;
+    NSData * mediaData = NULL;
+    NSString * fileExtension;
+    
+    // If the camera stores images in jpeg format, then this wil be used for the file;
+    // otherwise the user preferred format willl be used
+    
+    if ([[media objectForKey:@"type"] isEqualToString:@"jpeg"]) 
+    {
+        mediaData = [media objectForKey:@"data"];
+        fileExtension = @"jpg";
+    } 
+    else if ([[media objectForKey:@"type"] isEqualToString:@"bitmap"]) 
+    {
+        int imageFileType;
+        NSBitmapImageRep * theImage = [media objectForKey:@"data"];
+        NSString * preferredImageType = [[NSUserDefaults standardUserDefaults] objectForKey:SnapshotFormatPrefsKey];
+        
+        // Find the user-preferred format for image files
+        // Map the preference menu choice to the appropriate enum
+        
+        if ([preferredImageType isEqualToString:@"JPEG"]) 
+        {
+            imageFileType = NSJPEGFileType;
+            fileExtension = @"jpg";
+        } 
+        else if ([preferredImageType isEqualToString:@"PNG"]) 
+        {
+            imageFileType = NSPNGFileType;
+            fileExtension = @"png";
+        }
+        else if ([preferredImageType isEqualToString:@"BMP"]) 
+        {
+            imageFileType = NSBMPFileType;
+            fileExtension = @"bmp";
+        }
+        else if ([preferredImageType isEqualToString:@"GIF"]) 
+        {
+            imageFileType = NSGIFFileType;
+            fileExtension = @"gif";
+        }
+        else // if ([preferredImageType isEqualToString:@"TIFF"]) // default is TIFF
+        {
+            imageFileType = NSTIFFFileType;
+            fileExtension = @"tiff";
+            mediaData = [theImage TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
+        }
+        
+        if (!mediaData) 
+            mediaData = [theImage representationUsingType:imageFileType properties:nil];
+    }
+    else
+    {
+        // error, either no "type" or unknown type
+        problem = YES;
+    }
+    
+    if (mediaData) 
+    {
+        long saveIndex = 1;
+        BOOL indexFound = NO;
+        NSString * filename;
+        
+        while ((!indexFound) && (!problem)) // Find a free index
+        {
+            filename = [baseFilename stringByAppendingString:[NSString stringWithFormat:@" %04i.%@", saveIndex, fileExtension]];
+            
+            if (![[NSFileManager defaultManager] fileExistsAtPath:filename]) 
+                indexFound = YES;
+            else 
+                saveIndex++;
+            
+            if (saveIndex > 9999) 
+                problem = YES; // That's too high!
+        }
+        if (!problem) 
+        {
+            if (![[NSFileManager defaultManager] createFileAtPath:filename 
+                                                         contents:mediaData
+                                                       attributes:attributes]) 
+                problem = YES;
+        }
+    } 
+    else 
+        problem = YES;
+    
+    return !problem;
+}
+
 - (void) doSaveImage:(id)sender {
     NSArray* controllers;
     int i;
@@ -386,19 +491,28 @@ extern NSString* SnapshotQualityPrefsKey;
     imageType=[[NSUserDefaults standardUserDefaults] objectForKey:SnapshotFormatPrefsKey];
     if ([imageType isEqualToString:@"JPEG"]) {
         imageType=@"JPEG Image";
+    } else if ([imageType isEqualToString:@"PNG"]) {
+        imageType=@"PNG Image";
+    } else if ([imageType isEqualToString:@"GIF"]) {
+        imageType=@"GIF Image";
+    } else if ([imageType isEqualToString:@"BMP"]) {
+        imageType=@"BMP Image";
     } else {
         imageType=@"TIFF Image";
     }
         
-    doc=[[NSDocumentController sharedDocumentController] openUntitledDocumentOfType:imageType display:NO];
+    doc=[[NSDocumentController sharedDocumentController] openUntitledDocumentOfType:imageType 
+																			display:NO];
     imageData=[imageRep TIFFRepresentation];
     [doc loadDataRepresentation:imageData ofType:@"TIFF Image"];
+    
     [doc setQuality:[[NSUserDefaults standardUserDefaults] floatForKey:SnapshotQualityPrefsKey]];
     //Show image window behind control window
     controllers=[doc windowControllers];
     if (controllers) {
         for (i=0;i<[controllers count];i++) {
-            [[[controllers objectAtIndex:i] window] orderWindow:NSWindowBelow relativeTo:[window windowNumber]];
+            [[[controllers objectAtIndex:i] window] orderWindow:NSWindowBelow 
+													 relativeTo:[window windowNumber]];
         }
     }
     [doc setFileType:imageType];
@@ -495,7 +609,8 @@ extern NSString* SnapshotQualityPrefsKey;
     panel=[NSSavePanel savePanel];
     [panel setPrompt:LStr(@"Save like this")];
     [panel setCanSelectHiddenExtension:YES];
-    [panel setRequiredFileType:@"tiff"];
+//  [panel setRequiredFileType:@"tiff"];
+    [panel setRequiredFileType:@"[extension]"];
     [panel beginSheetForDirectory:[@"~/Pictures" stringByExpandingTildeInPath]
                              file:NULL
                    modalForWindow:window
@@ -506,15 +621,11 @@ extern NSString* SnapshotQualityPrefsKey;
 
 - (void)downloadSaveSheetEnded:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void*)con {
     NSOpenPanel* panel=(NSOpenPanel*)sheet;
-    long i,saveIdx;
+    long i;
     NSDictionary* media;
-    NSData* mediaData;
-    NSString* extension;
     NSString* baseName=[[panel filename] stringByDeletingPathExtension];
-    NSString* filename;
     BOOL problem=NO;
-    BOOL idxFound;
-    NSDictionary* atts;
+    NSDictionary* attributes;
     NSProgressIndicator* bar;
     
     //Stop sheet so the status is visible
@@ -524,11 +635,11 @@ extern NSString* SnapshotQualityPrefsKey;
         [statusText setStringValue:LStr(@"Status: Media not downloaded")];
         return;
     }
-    atts=[NSDictionary dictionaryWithObject:	[NSNumber numberWithBool:[panel isExtensionHidden]]
-                                     forKey:	NSFileExtensionHidden];
+    attributes=[NSDictionary dictionaryWithObject:	[NSNumber numberWithBool:[panel isExtensionHidden]]
+                                           forKey:	NSFileExtensionHidden];
     [self updateCameraMediaCount];
-    if (cameraMediaCount<1) return;
-    saveIdx=1;
+    if (cameraMediaCount < 1) 
+        return;
 
     bar=[[[NSProgressIndicator alloc] initWithFrame:[statusText frame]] autorelease];
     [bar setIndeterminate:NO];
@@ -537,43 +648,34 @@ extern NSString* SnapshotQualityPrefsKey;
     [bar setDoubleValue:0.0];
     [[statusText superview] addSubview:bar];
     [bar display];
-        
-    for (i=0;(i<cameraMediaCount)&&(!problem);i++) {		//Iterate over all media objects
-        media=[driver getStoredMediaObject:i];	//Get media
-        if (media) {
+    
+    // Download each image and save to disk
+    
+    for (i = 0; (i < cameraMediaCount) && (!problem); i++) // Iterate over all media objects
+    {		
+        media=[driver getStoredMediaObject:i];	// Get media
+        if (media) 
+        {
             [statusText setStringValue:[NSString stringWithFormat:LStr(@"Status: Downloading number %i"),i+1]];
             [statusText display];
             [bar setDoubleValue:((double)(i+1))];
             [bar displayIfNeeded];
-            mediaData=NULL;
-            extension=NULL;
-	// TODO change so that we use the desired format for downloading, not what's available
-            if ([[media objectForKey:@"type"] isEqualToString:@"jpeg"]) {
-                mediaData=[media objectForKey:@"data"];
-                extension=@"jpg";
-            } else if ([[media objectForKey:@"type"] isEqualToString:@"bitmap"]) {
-                mediaData=[[media objectForKey:@"data"] 		TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
-                extension=@"tiff";
-            }
-            if (mediaData) {
-                idxFound=NO;
-                while ((!idxFound)&&(!problem)) {		//Find a free index
-                    filename=[baseName stringByAppendingString:[NSString stringWithFormat:@" %04i.%@",saveIdx,extension]];
-                    if (![[NSFileManager defaultManager] fileExistsAtPath:filename]) idxFound=YES;
-                    else saveIdx++;
-                    if (saveIdx>9999) problem=YES;		//That's too much!
-                }
-                if (!problem) {
-                    if (![[NSFileManager defaultManager] createFileAtPath:filename contents:mediaData
-                                                               attributes:atts]) problem=YES;
-                }
-            } else problem=YES;
+			
+            if (![self saveImage:media toFile:baseName with:attributes]) 
+                problem = YES;
+            
             [[media retain] release];
-        } else problem=YES;
+        } 
+        else 
+            problem=YES;
     }
+    
     [bar removeFromSuperview];
-    if (problem) [statusText setStringValue:LStr(@"Status: A problem occurred - please check files")];
-    else [statusText setStringValue:LStr(@"Status: Media downloaded from camera")];
+    
+    if (problem) 
+        [statusText setStringValue:LStr(@"Status: A problem occurred - please check files")];
+    else 
+        [statusText setStringValue:LStr(@"Status: Media downloaded from camera")];
 }
 
 - (void)cameraDetected:(unsigned long)cid {
