@@ -138,8 +138,7 @@ NSString* SnapshotQualityPrefsKey=@"Snapshot quality";		//Float [0=min .. 1=max]
     if ([mCompression isEqualToString:@"RAW"]) [movieCompressionPopup selectItemAtIndex:0];
     else if ([mCompression isEqualToString:@"JPEG"]) [movieCompressionPopup selectItemAtIndex:1];
     [movieQualitySlider setFloatValue:[settings floatForKey:MovieQualityPrefsKey]];
-    if ([sFormat isEqualToString:@"TIFF"]) [snapshotFormatPopup selectItemAtIndex:0];
-    else if ([sFormat isEqualToString:@"JPEG"]) [snapshotFormatPopup selectItemAtIndex:1];
+    [snapshotFormatPopup selectItemWithTitle:sFormat];
     [snapshotQualitySlider setFloatValue:[settings floatForKey:SnapshotQualityPrefsKey]];
 }
 
@@ -148,17 +147,11 @@ NSString* SnapshotQualityPrefsKey=@"Snapshot quality";		//Float [0=min .. 1=max]
     [window makeKeyAndOrderFront:sender];
 }
 
-- (IBAction)snapshotFormatChanged:(id)sender {
+- (IBAction)snapshotFormatChanged:(id)sender 
+{
     NSUserDefaults* settings=[NSUserDefaults standardUserDefaults];
-    int idx=[snapshotFormatPopup indexOfSelectedItem];
-    switch (idx) {
-        case 0:
-            [settings setObject:@"TIFF" forKey:SnapshotFormatPrefsKey];
-            break;
-        case 1:
-            [settings setObject:@"JPEG" forKey:SnapshotFormatPrefsKey];
-            break;
-    }
+    [settings setObject:[snapshotFormatPopup titleOfSelectedItem]
+                 forKey:SnapshotFormatPrefsKey];
     [self snapshotQualityChanged:sender];
 }
 
@@ -167,7 +160,7 @@ NSString* SnapshotQualityPrefsKey=@"Snapshot quality";		//Float [0=min .. 1=max]
     float quality=[snapshotQualitySlider floatValue];
     BOOL canSetQuality=YES;
     NSString* compressionType=[settings objectForKey:SnapshotFormatPrefsKey];
-    if ([compressionType isEqualToString:@"TIFF"]) canSetQuality=NO;
+    if (![compressionType isEqualToString:@"JPEG"]) canSetQuality=NO;
     if (canSetQuality==NO) quality=1.0f;
     [settings setFloat:quality forKey:SnapshotQualityPrefsKey];
     [snapshotQualitySlider setFloatValue:quality];

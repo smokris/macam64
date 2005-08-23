@@ -72,12 +72,29 @@
     return YES;
 }
 
-- (NSData *)dataRepresentationOfType:(NSString *)aType {
-    if ([aType isEqualToString:@"JPEG Image"]) {
-        NSDictionary* dict=[NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithFloat:quality],NSImageCompressionFactor,NULL];
+- (NSData *)dataRepresentationOfType:(NSString *)aType 
+{
+    NSDictionary* dict=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithFloat:quality], NSImageCompressionFactor, NULL];
+    
+    if ([aType isEqualToString:@"JPEG Image"]) 
+    {
         return [imageRep representationUsingType:NSJPEGFileType properties:dict];
-    } else {
+    } 
+    else if ([aType isEqualToString:@"PNG Image"]) 
+    {
+        return [imageRep representationUsingType:NSPNGFileType properties:dict];
+    } 
+    else if ([aType isEqualToString:@"BMP Image"]) 
+    {
+        return [imageRep representationUsingType:NSBMPFileType properties:dict];
+    } 
+    else if ([aType isEqualToString:@"GIF Image"]) 
+    {
+        return [imageRep representationUsingType:NSGIFFileType properties:dict];
+    } 
+    else 
+    {
         return [imageRep TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0f];
     }
 }
