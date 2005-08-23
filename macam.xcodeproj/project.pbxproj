@@ -79,25 +79,6 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
-				<string>tiff</string>
-				<string>tif</string>
-				<string>TIFF</string>
-				<string>TIF</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>TIFF Image</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>TIFF</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>NSDocumentClass</key>
-			<string>MyImageDocument</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
 				<string>mov</string>
 				<string>mpg</string>
 				<string>avi</string>
@@ -118,6 +99,25 @@
 		<dict>
 			<key>CFBundleTypeExtensions</key>
 			<array>
+				<string>tiff</string>
+				<string>tif</string>
+				<string>TIFF</string>
+				<string>TIF</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>TIFF Image</string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>TIFF</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSDocumentClass</key>
+			<string>MyImageDocument</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
 				<string>jpg</string>
 				<string>jpeg</string>
 				<string>JPG</string>
@@ -129,6 +129,46 @@
 			<array>
 				<string>JPEG</string>
 			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSDocumentClass</key>
+			<string>MyImageDocument</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>png</string>
+				<string>PNG</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>PNG Image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSDocumentClass</key>
+			<string>MyImageDocument</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>bmp</string>
+				<string>BMP</string>
+				<string>BMPf</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>BMP Image</string>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>NSDocumentClass</key>
+			<string>MyImageDocument</string>
+		</dict>
+		<dict>
+			<key>CFBundleTypeExtensions</key>
+			<array>
+				<string>gif</string>
+				<string>GIF</string>
+			</array>
+			<key>CFBundleTypeName</key>
+			<string>GIF Image</string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>NSDocumentClass</key>
@@ -529,6 +569,15 @@
 		F5E78BF30371F3990166D062 /* MyMovieDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E78BEF0371F3990166D062 /* MyMovieDocument.m */; };
 		F5E78BF60371F3990166D062 /* MyMovieDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E78BF20371F3990166D062 /* MyMovieDocument.h */; };
 		F5E9C93A036489100181E072 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1D01E5D0440166DE0F /* QuickTime.framework */; };
+		F5EB6B0B08B304960099821A /* MyQCOrbitCameraInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B0708B304960099821A /* MyQCOrbitCameraInspector.h */; };
+		F5EB6B0C08B304960099821A /* MyQCOrbitCameraInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B0808B304960099821A /* MyQCOrbitCameraInspector.m */; };
+		F5EB6B1508B304BE0099821A /* MyQCOrbitCameraInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = F5EB6B0F08B304BE0099821A /* MyQCOrbitCameraInspector.nib */; };
+		F5EB6B1908B304DB0099821A /* MyQCOrbitDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */; };
+		F5EB6B1A08B304DB0099821A /* MyQCOrbitDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */; };
+		F5EB6B1B08B304DB0099821A /* MyQCOrbitDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */; };
+		F5EB6B1C08B304DB0099821A /* MyQCOrbitDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */; };
+		F5EB6B1D08B304DB0099821A /* MyQCOrbitDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */; };
+		F5EB6B1E08B304DB0099821A /* MyQCOrbitDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */; };
 		F5EDFAD7036876210166D062 /* MyOV511Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EDFAD5036876210166D062 /* MyOV511Driver.m */; };
 		F5EDFAD8036876210166D062 /* MyOV511Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EDFAD6036876210166D062 /* MyOV511Driver.h */; };
 		F5EDFAD9036876210166D062 /* MyOV511Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EDFAD5036876210166D062 /* MyOV511Driver.m */; };
@@ -838,6 +887,11 @@
 		F5E6AA6C0371F8B90166D062 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E78BEF0371F3990166D062 /* MyMovieDocument.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyMovieDocument.m; sourceTree = "<group>"; };
 		F5E78BF20371F3990166D062 /* MyMovieDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyMovieDocument.h; sourceTree = "<group>"; };
+		F5EB6B0708B304960099821A /* MyQCOrbitCameraInspector.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyQCOrbitCameraInspector.h; sourceTree = "<group>"; };
+		F5EB6B0808B304960099821A /* MyQCOrbitCameraInspector.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyQCOrbitCameraInspector.m; sourceTree = "<group>"; };
+		F5EB6B0F08B304BE0099821A /* MyQCOrbitCameraInspector.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = MyQCOrbitCameraInspector.nib; sourceTree = "<group>"; };
+		F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyQCOrbitDriver.h; sourceTree = "<group>"; };
+		F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyQCOrbitDriver.m; sourceTree = "<group>"; };
 		F5EDFAD2036875F00166D062 /* yuv2rgbOV420.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = yuv2rgbOV420.c; sourceTree = "<group>"; };
 		F5EDFAD5036876210166D062 /* MyOV511Driver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyOV511Driver.m; sourceTree = "<group>"; };
 		F5EDFAD6036876210166D062 /* MyOV511Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyOV511Driver.h; sourceTree = "<group>"; };
@@ -1025,6 +1079,9 @@
 		F55DD839021311680166DE0F /* app_specific */ = {
 			isa = PBXGroup;
 			children = (
+				F5EB6B0F08B304BE0099821A /* MyQCOrbitCameraInspector.nib */,
+				F5EB6B0708B304960099821A /* MyQCOrbitCameraInspector.h */,
+				F5EB6B0808B304960099821A /* MyQCOrbitCameraInspector.m */,
 				F5E6AA650371F8920166D062 /* MyMovieDocument.nib */,
 				F51EEE5D0284BC9601B888F7 /* DefaultCameraInspector.nib */,
 				F57D11B3C5B26FF6010B00CC /* MyQX3CameraInspector.nib */,
@@ -1094,6 +1151,8 @@
 		F5F79A800212038E01E152CA /* cameras */ = {
 			isa = PBXGroup;
 			children = (
+				F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */,
+				F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */,
 				3973A6F303CDF44E0066D062 /* MySPCA500Driver.h */,
 				3973A6F203CDF44E0066D062 /* MySPCA500Driver.m */,
 				39185ABA03C8B5570066DE75 /* MyQCProBeigeDriver.h */,
@@ -1222,6 +1281,8 @@
 				39CBD65203DC0D79000F7EFC /* MyKiaraFlippedDriver.h in Headers */,
 				39A2B45E0593E297009C5934 /* QTDummyPanel.h in Headers */,
 				F522580B08725639002023A4 /* USB_VendorProductIDs.h in Headers */,
+				F5EB6B0B08B304960099821A /* MyQCOrbitCameraInspector.h in Headers */,
+				F5EB6B1B08B304DB0099821A /* MyQCOrbitDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1266,6 +1327,7 @@
 				39663A070402FCF000435B6F /* MyKiaraFlippedDriver.h in Headers */,
 				39FE214A04030BB800BAABE7 /* ICD_CameraCalls.h in Headers */,
 				F522580A08725639002023A4 /* USB_VendorProductIDs.h in Headers */,
+				F5EB6B1908B304DB0099821A /* MyQCOrbitDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1314,6 +1376,7 @@
 				3973A6F703CDF44E0066D062 /* MySPCA500Driver.h in Headers */,
 				39CBD65403DC0D79000F7EFC /* MyKiaraFlippedDriver.h in Headers */,
 				F522580C08725639002023A4 /* USB_VendorProductIDs.h in Headers */,
+				F5EB6B1D08B304DB0099821A /* MyQCOrbitDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1371,6 +1434,7 @@
 				F5E6AA670371F8920166D062 /* MyMovieDocument.nib in Resources */,
 				F589724B0374636B01159FE2 /* RecordMovieToolbarItem.tiff in Resources */,
 				F5B1CC470375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff in Resources */,
+				F5EB6B1508B304BE0099821A /* MyQCOrbitCameraInspector.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1482,6 +1546,8 @@
 				397B163D03CED9B900153FEE /* ov511_decomp.c in Sources */,
 				39CBD65103DC0D79000F7EFC /* MyKiaraFlippedDriver.m in Sources */,
 				39A2B45D0593E297009C5934 /* QTDummyPanel.m in Sources */,
+				F5EB6B0C08B304960099821A /* MyQCOrbitCameraInspector.m in Sources */,
+				F5EB6B1C08B304DB0099821A /* MyQCOrbitDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1525,6 +1591,7 @@
 				39663A500402FCF000435B6F /* ov511_decomp.c in Sources */,
 				39663A510402FCF000435B6F /* MyKiaraFlippedDriver.m in Sources */,
 				39663A680403023400435B6F /* main.m in Sources */,
+				F5EB6B1A08B304DB0099821A /* MyQCOrbitDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1571,6 +1638,7 @@
 				3973A6F603CDF44E0066D062 /* MySPCA500Driver.m in Sources */,
 				397B163E03CED9B900153FEE /* ov511_decomp.c in Sources */,
 				39CBD65303DC0D79000F7EFC /* MyKiaraFlippedDriver.m in Sources */,
+				F5EB6B1E08B304DB0099821A /* MyQCOrbitDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1666,7 +1734,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		F5E3BBB008A9C910009E490F /* Development */ = {
+		F5E3BBB008A9C910009E490F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -1691,9 +1759,9 @@
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
-			name = Development;
+			name = Debug;
 		};
-		F5E3BBB108A9C910009E490F /* Deployment */ = {
+		F5E3BBB108A9C910009E490F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -1715,7 +1783,7 @@
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = Release;
 		};
 		F5E3BBB208A9C910009E490F /* Default */ = {
 			isa = XCBuildConfiguration;
@@ -1738,7 +1806,7 @@
 			};
 			name = Default;
 		};
-		F5E3BBB408A9C910009E490F /* Development */ = {
+		F5E3BBB408A9C910009E490F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -1763,9 +1831,9 @@
 				WRAPPER_EXTENSION = component;
 				ZERO_LINK = YES;
 			};
-			name = Development;
+			name = Debug;
 		};
-		F5E3BBB508A9C910009E490F /* Deployment */ = {
+		F5E3BBB508A9C910009E490F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -1787,7 +1855,7 @@
 				WRAPPER_EXTENSION = component;
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = Release;
 		};
 		F5E3BBB608A9C910009E490F /* Default */ = {
 			isa = XCBuildConfiguration;
@@ -1810,7 +1878,7 @@
 			};
 			name = Default;
 		};
-		F5E3BBB808A9C910009E490F /* Development */ = {
+		F5E3BBB808A9C910009E490F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -1836,9 +1904,9 @@
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = YES;
 			};
-			name = Development;
+			name = Debug;
 		};
-		F5E3BBB908A9C910009E490F /* Deployment */ = {
+		F5E3BBB908A9C910009E490F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -1861,7 +1929,7 @@
 				WRAPPER_EXTENSION = app;
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = Release;
 		};
 		F5E3BBBA08A9C910009E490F /* Default */ = {
 			isa = XCBuildConfiguration;
@@ -1885,7 +1953,7 @@
 			};
 			name = Default;
 		};
-		F5E3BBBC08A9C910009E490F /* Development */ = {
+		F5E3BBBC08A9C910009E490F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -1906,9 +1974,9 @@
 				);
 				ZERO_LINK = YES;
 			};
-			name = Development;
+			name = Debug;
 		};
-		F5E3BBBD08A9C910009E490F /* Deployment */ = {
+		F5E3BBBD08A9C910009E490F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -1926,7 +1994,7 @@
 				);
 				ZERO_LINK = NO;
 			};
-			name = Deployment;
+			name = Release;
 		};
 		F5E3BBBE08A9C910009E490F /* Default */ = {
 			isa = XCBuildConfiguration;
@@ -1944,21 +2012,33 @@
 			};
 			name = Default;
 		};
-		F5E3BBC008A9C910009E490F /* Development */ = {
+		F5E3BBC008A9C910009E490F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = "";
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
+				ZERO_LINK = YES;
 			};
-			name = Development;
+			name = Debug;
 		};
-		F5E3BBC108A9C910009E490F /* Deployment */ = {
+		F5E3BBC108A9C910009E490F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
 			};
-			name = Deployment;
+			name = Release;
 		};
 		F5E3BBC208A9C910009E490F /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.2;
+				SDKROOT = /Developer/SDKs/MacOSX10.2.8.sdk;
 			};
 			name = Default;
 		};
@@ -1968,8 +2048,8 @@
 		F5E3BBAF08A9C910009E490F /* Build configuration list for PBXApplicationTarget "app" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F5E3BBB008A9C910009E490F /* Development */,
-				F5E3BBB108A9C910009E490F /* Deployment */,
+				F5E3BBB008A9C910009E490F /* Debug */,
+				F5E3BBB108A9C910009E490F /* Release */,
 				F5E3BBB208A9C910009E490F /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1978,8 +2058,8 @@
 		F5E3BBB308A9C910009E490F /* Build configuration list for PBXBundleTarget "component" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F5E3BBB408A9C910009E490F /* Development */,
-				F5E3BBB508A9C910009E490F /* Deployment */,
+				F5E3BBB408A9C910009E490F /* Debug */,
+				F5E3BBB508A9C910009E490F /* Release */,
 				F5E3BBB608A9C910009E490F /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1988,8 +2068,8 @@
 		F5E3BBB708A9C910009E490F /* Build configuration list for PBXApplicationTarget "ica module" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F5E3BBB808A9C910009E490F /* Development */,
-				F5E3BBB908A9C910009E490F /* Deployment */,
+				F5E3BBB808A9C910009E490F /* Debug */,
+				F5E3BBB908A9C910009E490F /* Release */,
 				F5E3BBBA08A9C910009E490F /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1998,8 +2078,8 @@
 		F5E3BBBB08A9C910009E490F /* Build configuration list for PBXAggregateTarget "all" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F5E3BBBC08A9C910009E490F /* Development */,
-				F5E3BBBD08A9C910009E490F /* Deployment */,
+				F5E3BBBC08A9C910009E490F /* Debug */,
+				F5E3BBBD08A9C910009E490F /* Release */,
 				F5E3BBBE08A9C910009E490F /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -2008,8 +2088,8 @@
 		F5E3BBBF08A9C910009E490F /* Build configuration list for PBXProject "macam" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F5E3BBC008A9C910009E490F /* Development */,
-				F5E3BBC108A9C910009E490F /* Deployment */,
+				F5E3BBC008A9C910009E490F /* Debug */,
+				F5E3BBC108A9C910009E490F /* Release */,
 				F5E3BBC208A9C910009E490F /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
