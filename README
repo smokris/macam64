@@ -4,8 +4,11 @@ This directory contains the source code for Macam. A MacOS X
 application and quicktime driver for various types of cameras.
 
 Tested on/build with:
-	MacOS X 	10.3.9
-	Xcode		1.5
+	MacOS X 	10.4.2
+	Xcode		2.1
+    
+Should work with 10.2, 10.3, and 10.4
+It is not a universal binary yet.
 
 For copyright, license conditions on use and the source code; please 
 consult each source file; or the file COPYING.txt in this directory.
