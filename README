@@ -7,7 +7,7 @@ Tested on/build with:
 	MacOS X 	10.4.2
 	Xcode		2.1
     
-Should work with 10.2, 10.3, and 10.4
+Should work with 10.1, 10.2, 10.3, and 10.4
 It is not a universal binary yet.
 
 For copyright, license conditions on use and the source code; please 
