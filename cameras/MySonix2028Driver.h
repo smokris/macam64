@@ -85,9 +85,7 @@ typedef struct SONIXGrabContext {
    UInt8* bayerBuffer;
 }
 
-+ (unsigned short) cameraUsbProductID;
-+ (unsigned short) cameraUsbVendorID;
-+ (NSString*) cameraName;
++ (NSArray*) cameraUsbDescriptions;
 
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 - (void) dealloc;
@@ -139,6 +137,18 @@ typedef struct SONIXGrabContext {
 - (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId;
 
 // decoding is slightly different
+- (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb;
+
+@end
+
+
+@interface MySwedaSSP09BDriver : MySonix2028Driver 
+
++ (NSArray*) cameraUsbDescriptions;
+
+- (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId;
+
+// decoding is different
 - (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb;
 
 @end

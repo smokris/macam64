@@ -146,9 +146,15 @@ typedef enum SonixSensorType {
 
 @implementation MySonix2028Driver
 
-+ (unsigned short) cameraUsbProductID { return PRODUCT_DC31UC; }
-+ (unsigned short) cameraUsbVendorID { return VENDOR_SONIX; }
-+ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"AEL Auracam DC-31UC"]; }
++ (NSArray*) cameraUsbDescriptions 
+{
+    NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_SONIX],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_DC31UC],@"idProduct",
+        @"AEL Auracam DC-31UC",@"name",NULL];
+    
+    return [NSArray arrayWithObjects:dict1,NULL];
+}
 
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraError err=[self usbConnectToCam:usbLocationId configIdx:0];
@@ -1302,12 +1308,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
         [NSNumber numberWithUnsignedShort:PRODUCT_VIVICAM3350B],@"idProduct",
         @"Vivitar ViviCam 3350B",@"name",NULL];
     
-	NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithUnsignedShort:PRODUCT_SMARTCAM_VGAS],@"idProduct",
-        [NSNumber numberWithUnsignedShort:VENDOR_SWEDA],@"idVendor",
-        @"Sweda SmartCam VGAs",@"name",NULL];
-	
-    return [NSArray arrayWithObjects:dict1,dict2,NULL];
+    return [NSArray arrayWithObjects:dict1,NULL];
 }
 
 //  Class methods needed
@@ -1504,6 +1505,218 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
                             dstBPP:bpp
                               flip:hFlip
 						 rotate180:YES];
+}
+
+@end
+
+
+@interface MySwedaSSP09BDriver (Private)
+
+- (BOOL) startupGrabStream;				//Initiates camera streaming
+
+@end
+
+@implementation MySwedaSSP09BDriver
+
++ (NSArray*) cameraUsbDescriptions 
+{
+	NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_SMARTCAM_VGAS],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_SWEDA],@"idVendor",
+        @"Sweda SmartCam VGAs",@"name",NULL];
+	
+    return [NSArray arrayWithObjects:dict1,NULL];
+}
+
+- (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId 
+{
+	CameraError err = [super startupWithUsbLocationId:usbLocationId];
+    if (err != CameraErrorOK) 
+		return err;
+	
+	[bayerConverter setSourceFormat:2];
+	
+	writeSkipBytes = 4;
+	
+	return CameraErrorOK;
+}
+
+
+- (BOOL) startupGrabStream {
+    //Don't ask me why - it's just a reproduction of what the windows driver does...
+    UInt8 retBuf[1];
+    CameraError err=CameraErrorOK;
+    
+    if (!err) err=[self sonixSetModeToPCCam];
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixSetSubsampling:1 forDSCMode:NO]; break;
+        case ResolutionSIF: if (!err) err=[self sonixSetSubsampling:2 forDSCMode:NO]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixSetSubsampling:4 forDSCMode:NO]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    //Some setup from the windows driver is omitted here - I think it's useless
+    if (!err) err=[self sonixIICSensorReadByte:0x00 to:retBuf];	//Get sensor identity - here model 0 (7131), rev. 1
+    if (!err) err=[self sonixAsicRamWriteByte:0x0120 to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0121 to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0122 to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0123 to:0x01];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0124 to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0125 to:0x16];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0126 to:0x12];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0127 to:0x20];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0128 to:0x0e];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0129 to:0x22];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012a to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012b to:0x00];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012c to:0x02];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012d to:0x02];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012e to:0x09];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012f to:0x07];
+    if (!err) err=[self sonixAsicRamReadByte:0x0134 to:retBuf];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0134 to:0xa1];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0135 to:0x00];
+/*	
+    if (!err) err=[self sonixIICSensorWriteByte:0x01 to:0x04];	//Window mode, exposure line timing
+    if (!err) err=[self sonixIICSensorWriteByte:0x02 to:0x92];	//some rev. 1 stuff
+    if (!err) err=[self sonixIICSensorWriteByte:0x10 to:0x00];	//row start high
+    if (!err) err=[self sonixIICSensorWriteByte:0x11 to:0x64];	//row start low
+    if (!err) err=[self sonixIICSensorWriteByte:0x12 to:0x00];	//col start high
+    if (!err) err=[self sonixIICSensorWriteByte:0x13 to:0x91];	//col start low
+    if (!err) err=[self sonixIICSensorWriteByte:0x14 to:0x01];	//win width high
+    if (!err) err=[self sonixIICSensorWriteByte:0x15 to:0x20];	//win width low
+    if (!err) err=[self sonixIICSensorWriteByte:0x16 to:0x01];	//win height high
+    if (!err) err=[self sonixIICSensorWriteByte:0x17 to:0x60];	//win height low
+    if (!err) err=[self sonixIICSensorWriteByte:0x20 to:0x00];	//hsync high
+    if (!err) err=[self sonixIICSensorWriteByte:0x21 to:0x2d];	//hsync low
+    if (!err) err=[self sonixIICSensorWriteByte:0x22 to:0x00];	//vsync high
+    if (!err) err=[self sonixIICSensorWriteByte:0x23 to:0x03];	//vsync low
+    if (!err) err=[self sonixIICSensorWriteByte:0x25 to:0x00];	//intg hi
+    if (!err) err=[self sonixIICSensorWriteByte:0x26 to:0x02];	//intg mid
+    if (!err) err=[self sonixIICSensorWriteByte:0x27 to:0x88];	//intg low
+    if (!err) err=[self sonixIICSensorWriteByte:0x30 to:0x38];	//reset level
+    if (!err) err=[self sonixIICSensorWriteByte:0x31 to:0x1e];	//gain red
+    if (!err) err=[self sonixIICSensorWriteByte:0x32 to:0x1e];	//gain green
+    if (!err) err=[self sonixIICSensorWriteByte:0x33 to:0x1e];	//intg blue
+    if (!err) err=[self sonixIICSensorWriteByte:0x34 to:0x02];	//pixel bias
+    if (!err) err=[self sonixIICSensorWriteByte:0x5b to:0x0a];	//some rev. 1 suff
+*/	
+    if (!err) err=[self sonixAsicRamWriteByte:0x0125 to:0x28];
+    if (!err) err=[self sonixAsicRamWriteByte:0x0126 to:0x1e];
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixAsicRamWriteByte:0x0128 to:0x0e]; break;
+        case ResolutionSIF: if (!err) err=[self sonixAsicRamWriteByte:0x0128 to:0x1e]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixAsicRamWriteByte:0x0128 to:0x2e]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    if (!err) err=[self sonixAsicRamWriteByte:0x0127 to:0x20];
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixAsicRamWriteByte:0x0129 to:0x62]; break;
+        case ResolutionSIF: if (!err) err=[self sonixAsicRamWriteByte:0x0129 to:0x22]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixAsicRamWriteByte:0x0129 to:0x22]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    if (!err) err=[self sonixAsicRamWriteByte:0x012c to:0x02];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012d to:0x03];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012e to:0x0f];
+    if (!err) err=[self sonixAsicRamWriteByte:0x012f to:0x0c];
+/*	
+    if (!err) err=[self sonixIICSensorWriteByte:0x20 to:0x00];	
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixIICSensorWriteByte:0x21 to:0x2a]; break;
+        case ResolutionSIF: if (!err) err=[self sonixIICSensorWriteByte:0x21 to:0xc1]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixIICSensorWriteByte:0x21 to:0xc1]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    if (!err) err=[self sonixIICSensorWriteByte:0x22 to:0x00];
+    switch (resolution) {
+        case ResolutionVGA: if (!err) err=[self sonixIICSensorWriteByte:0x23 to:0x28]; break;
+        case ResolutionSIF: if (!err) err=[self sonixIICSensorWriteByte:0x23 to:0x10]; break;
+        case ResolutionQSIF: if (!err) err=[self sonixIICSensorWriteByte:0x23 to:0x10]; break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+    if (!err) err=[self sonixIICSensorWriteByte:0x10 to:0x00];
+    if (!err) err=[self sonixIICSensorWriteByte:0x11 to:0x04];
+    if (!err) err=[self sonixIICSensorWriteByte:0x12 to:0x00];
+    if (!err) err=[self sonixIICSensorWriteByte:0x13 to:0x03];
+    if (!err) err=[self sonixIICSensorWriteByte:0x14 to:0x01];
+    if (!err) err=[self sonixIICSensorWriteByte:0x15 to:0xe0];
+    if (!err) err=[self sonixIICSensorWriteByte:0x16 to:0x02];
+    if (!err) err=[self sonixIICSensorWriteByte:0x17 to:0x80];
+	switch (resolution) {
+        case ResolutionVGA:
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0x2a];
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0x2a];
+				break;
+        case ResolutionSIF:
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1];
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1];
+				break;
+        case ResolutionQSIF:
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1];
+            if (!err) err=[self sonixSensorWrite2:0x20 byte1:0x00 byte2:0xc1];
+				break;
+        default: if (!err) err=CameraErrorInternal; break;
+    }
+*/
+    if (!err) err=[self sonixAsicWrite1:0x0134 byte1:0xa1];
+	
+    if (!err) [self setGain:[self gain]];
+    if (!err) [self setShutter:[self shutter]];
+    return YES;
+}
+
+
+#define PARSE_PIXEL_NEW(val) {\
+    PEEK_BITS(10,bits);\
+		if ((bits&0x00000200)==0) { EAT_BITS(1); }\
+        else if ((bits&0x00000380)==0x00000280) { EAT_BITS(3); val+=3; if (val>255) val=255;}\
+		else if ((bits&0x00000380)==0x00000300) { EAT_BITS(3); val-=3; if (val<0) val=0;}\
+		else if ((bits&0x000003c0)==0x00000200) { EAT_BITS(4); val+=8; if (val>255) val=255;}\
+		else if ((bits&0x000003c0)==0x00000240) { EAT_BITS(4); val-=8; if (val<0) val=0;}\
+		else if ((bits&0x000003c0)==0x000003c0) { EAT_BITS(4); val-=20; if (val<0) val=0;}\
+		else if ((bits&0x000003e0)==0x00000380) { EAT_BITS(5); val+=20; if (val>255) val=255;}\
+		else { EAT_BITS(10); val=8*(bits&0x0000001f)+0; }}
+
+
+- (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb 
+{
+    UInt8* dst=bayerBuffer;
+    UInt16 bits;
+    SInt16 c1val,c2val;
+    int x,y;
+    UInt32 bitBuf=0;
+    UInt32 bitBufCount=0;
+	
+	src += 12;	//  This should work for video *and* stills now
+	
+    for (y = 0; y < height; y++) 
+	{
+        PEEK_BITS(8,bits);
+        EAT_BITS(8);
+        c1val=bits&0x000000ff;
+		
+        PEEK_BITS(8,bits);
+        EAT_BITS(8);
+        c2val=bits&0x000000ff;
+		
+        PUT_PIXEL_PAIR;
+		
+        for (x = 2; x < width; x += 2) 
+		{
+            PARSE_PIXEL_NEW(c1val);
+            PARSE_PIXEL_NEW(c2val);
+            PUT_PIXEL_PAIR;
+        }
+    }
+	
+    //Decode Bayer
+    [bayerConverter convertFromSrc:bayerBuffer
+                            toDest:pixmap
+                       srcRowBytes:width
+                       dstRowBytes:rb
+                            dstBPP:bpp
+                              flip:hFlip
+						 rotate180:NO];
 }
 
 @end
