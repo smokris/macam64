@@ -48,6 +48,8 @@
     float lastShutter;			//The last exposure setting sent to the sensor
     float aeGain;			//The computed auto gain value  
     float aeShutter;			//The computed auto exposure value
+    
+    BOOL rotate;            // "NO" for QCProBeige, "YES" for QCVC
 }
 
 #define QCPROBEIGE_NUM_CHUNKS 3
@@ -93,5 +95,14 @@
 - (void) grabbingThread:(id)data;
 - (CameraError) decodingThread;
 
+@end
+
+
+@interface MyQCVCDriver : MyQCProBeigeDriver 
+
++ (NSArray*) cameraUsbDescriptions;
+
+- (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId;
 
 @end
+

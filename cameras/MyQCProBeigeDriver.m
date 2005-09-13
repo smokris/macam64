@@ -26,9 +26,7 @@
 #include "Resolvers.h"
 #include "MiscTools.h"
 #include "unistd.h"	//usleep
-
-#define VENDOR_LOGITECH 0x046d
-#define PRODUCT_QCPROBEIGE 0x0810
+#include "USB_VendorProductIDs.h"
 
 @interface MyQCProBeigeDriver (Private)
 
@@ -88,6 +86,8 @@
     err=[super startupWithUsbLocationId:usbLocationId];
     if (err!=CameraErrorOK) return err;
 
+    rotate = NO;
+    
     return err;
 }
 
@@ -477,7 +477,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
                                        dstRowBytes:lastImageBufferRowBytes
                                             dstBPP:lastImageBufferBPP
                                               flip:hFlip
-										 rotate180:NO];
+										 rotate180:rotate];
                     [imageBufferLock unlock];
                     [self mergeImageReady];
                 } else {
@@ -715,5 +715,30 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     return (ok)?CameraErrorOK:CameraErrorUSBProblem;
 }    
 
-
 @end		
+
+
+@implementation MyQCVCDriver
+
++ (NSArray*) cameraUsbDescriptions 
+{
+	NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_VC],@"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_CONNECTIX],@"idVendor",
+        @"Logitech QuickCam VC",@"name",NULL];
+	
+    return [NSArray arrayWithObjects:dict1,NULL];
+}
+
+- (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId 
+{
+	CameraError err = [super startupWithUsbLocationId:usbLocationId];
+    if (err != CameraErrorOK) 
+		return err;
+	
+	rotate = YES;
+	
+	return CameraErrorOK;
+}
+
+@end

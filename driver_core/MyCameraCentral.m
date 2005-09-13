@@ -206,6 +206,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
 	[self registerCameraDriver:[MySwedaSSP09BDriver class]];
     [self registerCameraDriver:[MySE401Driver class]];
     [self registerCameraDriver:[MyQCProBeigeDriver class]];
+    [self registerCameraDriver:[MyQCVCDriver class]];
     [self registerCameraDriver:[MyQCOrbitDriver class]];
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];
 //    [self registerCameraDriver:[MyIntelPCCamera class]];
