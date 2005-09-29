@@ -111,6 +111,9 @@ USB control tracking. Another sometimes interesting thing is to track the sequen
 //A shortcut for localization
 #define LStr(a) NSLocalizedString(a,NULL)	
 
-
+// This was only defined in 10.4, and is needed for compilation on previous systems
+#ifndef IO_OBJECT_NULL
+#define IO_OBJECT_NULL  NULL
+#endif
 
 #endif
