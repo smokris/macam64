@@ -46,7 +46,7 @@
 @end
 @implementation MyQCProBeigeDriver
 
-+ (unsigned short) cameraUsbProductID { return PRODUCT_QCPROBEIGE; }
++ (unsigned short) cameraUsbProductID { return PRODUCT_QUICKCAM_PRO_BEIGE; }
 + (unsigned short) cameraUsbVendorID { return VENDOR_LOGITECH; }
 + (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"QuickCam Pro (beige)"]; }
 
