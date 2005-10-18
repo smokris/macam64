@@ -684,7 +684,10 @@ extern NSString* SnapshotQualityPrefsKey;
         err=[central useCameraWithID:cid to:&driver acceptDummy:NO];
         if (err) driver=NULL;
         if (driver!=NULL) {
-            [statusText setStringValue:[LStr(@"Status: Connected to ") stringByAppendingString:[central nameForID:cid]]];
+            if ([driver hasSpecificName]) 
+                [statusText setStringValue:[LStr(@"Status: Connected to ") stringByAppendingString:[driver getSpecificName]]];
+            else
+                [statusText setStringValue:[LStr(@"Status: Connected to ") stringByAppendingString:[central nameForID:cid]]];
             [driver retain];			//We keep our own reference
             [contrastSlider setEnabled:[driver canSetContrast]];
             [brightnessSlider setEnabled:[driver canSetBrightness]];
@@ -697,6 +700,7 @@ extern NSString* SnapshotQualityPrefsKey;
             [whiteBalancePopup setEnabled:[driver canSetWhiteBalanceMode]];
             [horizontalFlipCheckbox setEnabled:[driver canSetHFlip]];
             [blackwhiteCheckbox setEnabled:[driver canBlackWhiteMode]];
+            [ledCheckbox setEnabled:[driver canSetLed]];
 
             [whiteBalancePopup selectItemAtIndex:[driver whiteBalanceMode]-1];
             [gainSlider setEnabled:([driver canSetGain])&&(![driver isAutoGain])];
