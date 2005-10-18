@@ -129,6 +129,8 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 
 //Camera introspection
 - (BOOL) realCamera;	//Returns if the camera is a real image grabber or a dummy
+- (BOOL) hasSpecificName; // Returns is the camera has a more specific name (derived from USB connection perhaps)
+- (NSString *) getSpecificName;
 
 //Image / camera property get/set: All continuous data in the range [0 .. 1]. Their use should be quite obvious.
 

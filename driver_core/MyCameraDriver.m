@@ -168,6 +168,14 @@
     return YES;		//By default, subclasses are real cams. Dummys should override this
 }
 
+- (BOOL) hasSpecificName { // Returns is the camera has a more specific name (derived from USB connection perhaps)
+    return NO;
+}
+
+- (NSString *) getSpecificName {
+    return @"Error!: Name has not been specified";
+}
+
 //Image / camera properties get/set
 - (BOOL) canSetBrightness {
     return NO;
@@ -784,7 +792,7 @@
     mach_port_t				masterPort;
     CFMutableDictionaryRef 		matchingDict;
     
-//Get a master port (we should rlease it later...) *******
+//Get a master port (we should release it later...) *******
 
     ret=IOMasterPort(MACH_PORT_NULL,&masterPort);
     if (ret) {
