@@ -1453,6 +1453,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     return YES;
 }
 
+#undef PARSE_PIXEL_NEW
 
 #define PARSE_PIXEL_NEW(val) {\
     PEEK_BITS(10,bits);\
@@ -1665,6 +1666,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     return YES;
 }
 
+#undef PARSE_PIXEL_NEW
 
 #define PARSE_PIXEL_NEW(val) {\
     PEEK_BITS(10,bits);\
