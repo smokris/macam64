@@ -2,8 +2,8 @@
  *  USB_VendorProductIDs.h
  *  macam
  *
- *  Created by Harald Ruda on 6/29/05.
- *  Copyright 2005 __MyCompanyName__. All rights reserved.
+ *  Created by HXR on 6/29/05.
+ *  Copyright 2005 HXR. All rights reserved. GPL applies.
  *
  */
 
@@ -58,6 +58,8 @@
 #define PRODUCT_QUICKCAM_EXPRESS_C      0x0920
 #define PRODUCT_LABTEC_WEBCAM           0x0921
 #define PRODUCT_QUICKCAM_EXPRESS_D      0x0928
+#define PRODUCT_LABTEC_WEBCAM_B         0x0929
+#define PRODUCT_QUICKCAM_NOTEBOOKS_A    0x092a      // square one, SPCA561A
 #define PRODUCT_POCKET_CAMERA           0x0950
 #define PRODUCT_CLICKSMART_420          0x0960
 #define PRODUCT_POCKET_750              0x0970
@@ -65,6 +67,7 @@
 #define PRODUCT_QUICKCAM_IM_MIC         0x08a1
 #define PRODUCT_LABTEC_WEBCAM_PRO       0x08a2
 #define PRODUCT_QUICKCAM_CHAT           0x08a3
+#define PRODUCT_QUICKCAM_NOTEBOOKS_B    0x08ae      // round one, zc0302
 
 #define VENDOR_PHILIPS          0x0471
 #define PRODUCT_VESTA                   0x0307
@@ -116,6 +119,10 @@
 #define VENDOR_VISIONITE        0x0d81
 #define PRODUCT_VCS_UC300               0x1900
 #define PRODUCT_VCS_UM100               0x1910
+
+#define VENDOR_SQ905            0x2770
+#define PRODUCT_SQ905                   0x9120      // common for many SQ905 cameras
+#define PRODUCT_SQ905_B                 0x913e      // another type
 
 // do we need these?
 
