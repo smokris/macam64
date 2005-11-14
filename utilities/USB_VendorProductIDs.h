@@ -122,7 +122,7 @@
 
 #define VENDOR_SQ905            0x2770
 #define PRODUCT_SQ905                   0x9120      // common for many SQ905 cameras
-#define PRODUCT_SQ905_B                 0x913e      // another type
+#define PRODUCT_SQ913C                  0x913c      // uses 913C chip
 
 // do we need these?
 
