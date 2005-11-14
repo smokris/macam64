@@ -46,6 +46,7 @@
 #import "MyQCProBeigeDriver.h"
 #import "MySPCA500Driver.h"
 #import "MyQCOrbitDriver.h"
+#import "SQ905.h"
 #include "unistd.h"
     
 
@@ -208,6 +209,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[MyQCProBeigeDriver class]];
     [self registerCameraDriver:[MyQCVCDriver class]];
     [self registerCameraDriver:[MyQCOrbitDriver class]];
+    [self registerCameraDriver:[SQ905 class]];
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];
 //    [self registerCameraDriver:[MyIntelPCCamera class]];
 //    [self registerCameraDriver:[MyGrandtecVcap class]];
