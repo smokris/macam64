@@ -28,6 +28,7 @@ sourceFormat specifies serialization type. Examples show first two lines of a 6-
 2 = GRBG Bayer, sent interleaved, correct matrix order.         GRGRGR BGBGBG (STV600-type)
 3 = GRBG Bayer, ?/green line, red/blue line			xGxGxG RBRBRB (QuickCam Pro subsampled-style)
 4 = BGGR Bayer, sent interleaved, correct matrix order.         BGBGBG GRGRGR (OV7630-style)
+5 = RGGB Bayer, sent interleaved, correct matrix order.         RGRGRG GBGBGB (rotated BGGR)
 */
 
 @interface BayerConverter : NSObject {

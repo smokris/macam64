@@ -82,7 +82,7 @@
 }
 
 - (void) setSourceFormat:(short)fmt {
-    if ((fmt<1)||(fmt>4)) return;
+    if ((fmt<1)||(fmt>5)) return;
     sourceFormat=fmt;
 }
 
@@ -202,6 +202,8 @@
 	B3 G5 B4 G6
 	G7 R3 G8 R4
 
+    RGGB is just rotated...
+    
     */
     short g1,g2,g3,g4,g5,g6,g7,g8;
     short r1,r2,r3,r4;
@@ -238,7 +240,8 @@
             green2Run =src+1;
             blue1Run  =src+srcRowBytes;
             break;
-        case 4:	//OV7630 style
+        case 4:	// OV7630 style
+        case 5: // works like 4 then switch R and B at the end
 			GRBGtype = NO;
             componentStep=2;
             blue1Run  =src;
@@ -378,6 +381,15 @@
         blue1Run+=srcSkip;
         blue2Run+=srcSkip;
     }
+    // corrections
+    red1Run   += srcRowBytes - srcSkip;
+    red2Run   += srcRowBytes - srcSkip;
+    green1Run += srcRowBytes - srcSkip;
+    green2Run += srcRowBytes - srcSkip;
+    green3Run += srcRowBytes - srcSkip;
+    green4Run += srcRowBytes - srcSkip;
+    blue1Run  += srcRowBytes - srcSkip;
+    blue2Run  += srcRowBytes - srcSkip;
 	//Last row, first column
     *(dst1Run++)=*red1Run;
     *(dst1Run++)=(GRBGtype)?(*green1Run+*green2Run)/2:*green1Run;
@@ -399,6 +411,17 @@
     *(dst1Run++)=*red1Run;
     *(dst1Run++)=(GRBGtype)?*green2Run:(*green1Run+*green2Run)/2;
     *(dst1Run++)=*blue1Run;
+    
+    if (type == 5) // RGGB
+    {
+        for (y = 0; y < sourceHeight; y++) 
+            for (x = 0; x < sourceWidth; x++) 
+            {
+                unsigned char temp = rgbBuffer[3 * (x + y * sourceWidth) + 0]; // R
+                rgbBuffer[3 * (x + y * sourceWidth) + 0] = rgbBuffer[3 * (x + y * sourceWidth) + 2];
+                rgbBuffer[3 * (x + y * sourceWidth) + 2] = temp;
+            }
+    }
 }
 
 #define _SL (long)
@@ -714,10 +737,30 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
 		for (x = 0; x < width; x++) 
 			for (z = 0; z < 3; z++) 
 			{
-				
 				temp[z] = rgbBuffer[3 * (y * width + x) + z];
 				rgbBuffer[3 * (y * width + x) + z] = rgbBuffer[3 * ((height - y) * width - x - 1) + z];
 				rgbBuffer[3 * ((height - y) * width - x - 1) + z] = temp[z];
+			}
+}
+
+
+- (void) flipImageHorizontal {
+	long x, y, z;
+	long width = sourceWidth;
+	long height = sourceHeight;
+	unsigned char temp[3];
+	unsigned char * buffer = rgbBuffer;
+	
+	if (buffer == NULL) 
+		return;
+	
+	for (y = 0; y < height; y++) 
+		for (x = 0; x < (width)/2; x++) 
+			for (z = 0; z < 3; z++) 
+			{
+				temp[z] = rgbBuffer[3 * (y * width + x) + z];
+				rgbBuffer[3 * (y * width + x) + z] = rgbBuffer[3 * (y * width + (width - x - 1)) + z];
+				rgbBuffer[3 * (y * width + (width - x - 1)) + z] = temp[z];
 			}
 }
 
