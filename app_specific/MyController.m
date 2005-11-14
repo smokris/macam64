@@ -63,6 +63,12 @@ extern NSString* SnapshotQualityPrefsKey;
 - (BOOL) canDoRecordMovie;
 - (void) updateCameraMediaCount;
 
+- (BOOL) makeFSSpec:(FSSpec *) specPtr fromPath:(NSString *) inPath;
+- (BOOL) addFrameToVideoTrack:(Media) videoTrackMedia withImage:(NSBitmapImageRep *) theImage;
+- (BOOL) addImageToMedia:(Media) videoTrackMedia imageData:(NSData *) data of:(NSString *) type;
+- (BOOL) addVideoTrack:(Movie) theMovie withContent:(NSArray *) media of:(NSString *) type;
+- (BOOL) saveClip:(NSArray *) media ofType:(NSString *) type toFile:(NSString *) filename with:(NSDictionary *) attributes;
+
 @end
 
 @implementation MyController
@@ -376,8 +382,382 @@ extern NSString* SnapshotQualityPrefsKey;
     }
 }
 
+
+//
+// This only works if the file already exists...
+//
+// usage:
+//
+//  FSSpec spec;
+//  if (![self makeFSSpec:&spec fromPath:path]) 
+//    NSLog(@"fsspec: vol=%d parent=%08x name=%s", spec.vRefNum, spec.parID, &spec.name[1]);
+//
+- (BOOL) makeFSSpec:(FSSpec *) specPtr fromPath:(NSString *) inPath
+{
+    FSRef fsRef;
+    
+    OSStatus status = FSPathMakeRef((unsigned char *) [inPath fileSystemRepresentation], &fsRef, NULL);
+    
+    if (status == noErr)
+        status = FSGetCatalogInfo(&fsRef, kFSCatInfoNone, NULL, NULL, specPtr, NULL);
+    
+    return status != noErr; // return YES if there was a problem
+}
+
+
+// This might work if file doesn't exist yet, but will need to be fixed
+/*
+OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
+{
+    OSStatus err = noErr;
+    FSRef ref;
+    Boolean isDirectory;
+    FSCatalogInfo info;
+    CFStringRef pathString = NULL;
+    CFURLRef pathURL = NULL;
+    CFURLRef parentURL = NULL;
+    CFStringRef nameString = NULL;
+    
+    const char *inPath = [path cString];
+    
+    // First, try to create an FSRef for the full path 
+    if (err == noErr) {
+        err = FSPathMakeRef ((UInt8 *) inPath, &ref, &isDirectory);
+    }
+    
+    if (err == noErr) {
+        // It's a directory or a file that exists; convert directly into an FSSpec:
+        err = FSGetCatalogInfo (&ref, kFSCatInfoNone, NULL, NULL, outSpec, NULL);
+    } else {
+        // The harder case.  The file doesn't exist.
+        err = noErr;
+        
+        // Get a CFString for the path
+        if (err == noErr) {
+            pathString = CFStringCreateWithCString (CFAllocatorGetDefault (), inPath, CFStringGetSystemEncoding ());
+            if (pathString == NULL) { err = memFullErr; }
+        }
+        
+        // Get a CFURL for the path
+        if (err == noErr) {
+            pathURL = CFURLCreateWithFileSystemPath (CFAllocatorGetDefault (), 
+                                                     pathString, kCFURLPOSIXPathStyle, 
+                                                     false ); // Not a directory 
+            if (pathURL == NULL) { err = memFullErr; }
+        }
+        
+        // Get a CFURL for the parent
+        if (err == noErr) {
+            parentURL = CFURLCreateCopyDeletingLastPathComponent (CFAllocatorGetDefault (), pathURL);
+            if (parentURL == NULL) { err = memFullErr; }
+        }
+        
+        // Build an FSRef for the parent directory, which must be valid to make an FSSpec
+        if (err == noErr) {
+            Boolean converted = CFURLGetFSRef (parentURL, &ref);
+            if (!converted) { err = fnfErr; } 
+        }
+        
+        // Get the node ID of the parent directory
+        if (err == noErr) {
+            err = FSGetCatalogInfo(&ref, kFSCatInfoNodeFlags|kFSCatInfoNodeID, &info, NULL, outSpec, NULL);
+        }
+        
+        // Get a CFString for the file name
+        if (err == noErr) {
+            nameString = CFURLCopyLastPathComponent (pathURL);
+            if (nameString == NULL) { err = memFullErr; }
+        }
+        
+        // Copy the string into the FSSpec
+        if (err == noErr) {     
+            Boolean converted = CFStringGetPascalString (nameString, outSpec->name, sizeof (outSpec->name), 
+                                                         CFStringGetSystemEncoding ());
+            if (!converted) { err = fnfErr; }
+            
+        }
+        
+        // Set the node ID in the FSSpec
+        if (err == noErr) {
+            outSpec->parID = info.nodeID;
+        }
+    }
+    
+    // Free allocated memory
+    if (pathURL != NULL)    { CFRelease (pathURL);    }
+    if (pathString != NULL) { CFRelease (pathString); }
+    if (parentURL != NULL)  { CFRelease (parentURL);  }
+    if (nameString != NULL) { CFRelease (nameString); }
+    
+    return err;
+}
+*/
+
+
+#define ToFix(A) ((Fixed)(((long)(A))<<16))
+
+
+- (BOOL) addFrameToVideoTrack:(Media) videoTrackMedia withImage:(NSBitmapImageRep *) theImage
+{
+    BOOL problem = NO;
+    double duration = 0.1; // try 1/10 of a second 
+    OSErr err;
+    
+    // Variables needed for conversion
+    
+    CodecQ codecSpatialQuality = codecHighQuality; // codecNormalQuality
+    CodecType codecType = kJPEGCodecType;
+    
+    Handle imageData;
+    ImageDescriptionHandle imageDescription;
+    
+    Rect srcRect;
+    GWorldPtr gw;
+    PixMapHandle pm;
+    long maxDataLength;
+    
+    // Setup GWorld / PixMap
+    
+    SetRect(&srcRect, 0, 0, [theImage pixelsWide], [theImage pixelsHigh]);
+    err = QTNewGWorldFromPtr(&gw, ([theImage bitsPerPixel] == 24) ? k24RGBPixelFormat : k32ARGBPixelFormat,
+                             &srcRect, NULL, NULL, 0, [theImage bitmapData], [theImage bytesPerRow]);
+    if (err) 
+    {
+        problem = YES;
+        NSLog(@"QTNewGWorldFromPtr returned %i", err);
+    }
+    
+    if (!problem) 
+        pm = GetGWorldPixMap(gw);
+    
+    // Determine compressed data size
+    
+    if (!problem) 
+        err = GetMaxCompressionSize(pm, &srcRect, 24, codecSpatialQuality, codecType, NULL, &maxDataLength);
+    
+    if (err) 
+    {
+        problem = YES;
+        NSLog(@"GetMaxCompressionSize returned %i", err);
+    }
+    
+    // Allocate appropiate buffers
+    
+    imageData = NewHandle(maxDataLength);
+    
+    NSAssert(imageData, @"addFrame: at: Could not allocate buffer for compressed image data");
+    if (imageData == NULL) 
+        problem = YES;
+    
+    imageDescription = (ImageDescriptionHandle) NewHandle(sizeof(ImageDescription));
+    
+    NSAssert(imageDescription, @"addFrame: at: Could not allocate buffer for compressed image description");
+    if (imageDescription == NULL) 
+        problem = YES;
+    
+    // Do image compression
+    
+    HLock(imageData);
+    
+    if (!problem) 
+        err = CompressImage(pm, &srcRect, codecSpatialQuality, codecType, imageDescription, *imageData);
+    
+    if (err) 
+    {
+        problem = YES;
+        NSLog(@"CompressImage returned %i", err);
+    }
+    
+    HUnlock(imageData);
+
+    // Insert image
+    
+    if (!problem) 
+        err = AddMediaSample(videoTrackMedia, imageData, 0, (**imageDescription).dataSize,
+                             duration * 600.0f, (SampleDescriptionHandle) imageDescription, 1, 0, NULL);
+    
+    if (err) 
+    {
+        problem = YES;
+        NSLog(@"AddMediaSample returned %i", err);
+    }
+    
+    // Cleanup
+    
+    DisposeGWorld(gw);
+    DisposeHandle(imageData);
+    DisposeHandle((Handle) imageDescription);
+    
+    return problem;
+}
+
+
+// outstanding issues with saving clips:
+//
+// non-bitmaps do not work yet
+// preferred movie compression is ignored
+//
+- (BOOL) addImageToMedia:(Media) videoTrackMedia imageData:(NSData *) data of:(NSString *) type
+{
+    BOOL problem = NO;
+    
+    NSBitmapImageRep * bitmap = (NSBitmapImageRep *) data;
+    
+    problem = [self addFrameToVideoTrack:videoTrackMedia withImage:bitmap];
+
+//    if (type is @"bitmap") 
+     
+/*
+    //Find wanted compression
+    if ([cType isEqualToString:@"RAW"]) {
+        codecType=kRawCodecType;
+        codecSpatialQuality=codecLosslessQuality;
+    } else if ([cType isEqualToString:@"JPEG"]) {
+        codecType=kJPEGCodecType;
+        codecSpatialQuality=((float)codecLosslessQuality)*cQual;
+    } else {
+        //FIXME: [self dealloc] here?
+        return NULL;
+    }
+*/    
+        
+    return problem;
+}
+
+
+- (BOOL) addVideoTrack:(Movie) theMovie withContent:(NSArray *) media of:(NSString *) type
+{
+    BOOL problem = NO;
+    OSErr err = noErr;
+    Track videoTrack;
+    Media videoTrackMedia;
+    int index;
+    
+    if ([media count] < 1) 
+        return YES; // This is a problem
+    
+    // Create the video track
+    
+    NSBitmapImageRep * firstImage = [media objectAtIndex:0];
+    
+    if (!problem) 
+        videoTrack = NewMovieTrack(theMovie, ToFix([firstImage pixelsWide]), ToFix([firstImage pixelsHigh]), kNoVolume);
+    
+    err = GetMoviesError();
+    if (err != noErr) 
+    {
+        problem = YES;
+        NSLog(@"NewMovieTrack returned %i", err);
+    }
+    
+    // Create the track media
+    
+    if (!problem) 
+        videoTrackMedia = NewTrackMedia(videoTrack, VideoMediaType, 600, NULL, 0);
+    
+    err = GetMoviesError();
+    if (err != noErr) 
+    {
+        problem = YES;
+        NSLog(@"NewTrackMedia returned %i", err);
+    }
+    
+    // Start recording session
+    
+    if (!problem) 
+        err = BeginMediaEdits(videoTrackMedia);
+    
+    if (err) 
+    {
+        problem = YES;
+        NSLog(@"BeginMediaEdits returned %i", err);
+    }
+    
+    // Loop through array in media, add each image
+    
+    if (!problem) 
+        for (index = 0; index < [media count]; index++)
+            problem = [self addImageToMedia:videoTrackMedia imageData:[media objectAtIndex:index] of:type];
+    
+    // Now insert the media into the track
+    
+    if (!problem) 
+        err = InsertMediaIntoTrack(videoTrack, 0, 0, GetMediaDuration(videoTrackMedia), ToFix(1));
+    
+    if (err) 
+    {
+        problem = YES;
+        NSLog(@"InsertMediaIntoTrack returned %i", err);
+    }
+    
+    if (!problem) 
+        err = EndMediaEdits(videoTrackMedia);
+    
+    if (err) 
+    {
+        problem = YES;
+        NSLog(@"EndMediaEdits returned %i", err);
+    }
+    
+    return problem;
+}
+
+
+- (BOOL) saveClip:(NSArray *) media ofType:(NSString *) type toFile:(NSString *) filename with:(NSDictionary *) attributes
+{
+    BOOL problem = NO;
+    Movie theMovie = NULL;
+    FSSpec spec;
+    OSErr err = 0;
+    short resRefNum = 0;
+    short resId = movieInDataForkResID;
+    
+    // Create the file in case it doesn't exist yet
+    
+    problem = ![[NSFileManager defaultManager] createFileAtPath:filename contents:[NSMutableData dataWithLength:37] attributes:attributes];
+
+    // Make an FSSpec for the file now that it exists
+ 
+    if (!problem) 
+        problem = [self makeFSSpec:&spec fromPath:filename];
+    
+    // Create the movie file
+ 
+    if (!problem) 
+        err = CreateMovieFile(&spec, 'TVOD', smCurrentScript,
+                              createMovieFileDeleteCurFile | createMovieFileDontCreateResFile,
+                              &resRefNum, &theMovie);
+    
+    if (err) 
+    {
+        problem = YES;
+        NSLog(@"CreateMovieFile failed with error %i", err);
+    }
+    
+    if (!problem) 
+        problem = [self addVideoTrack:theMovie withContent:media of:type];
+    
+    err = AddMovieResource(theMovie, resRefNum, &resId, NULL);
+    
+    if (err) 
+    {
+        problem = YES;
+        NSLog(@"AddMovieResource failed with error %i", err);
+    }
+    
+    if (resRefNum != 0)
+        err = CloseMovieFile(resRefNum);
+    
+    if (theMovie) 
+        DisposeMovie(theMovie);
+    
+    return problem; // hopefully NO
+}
+
+
 /*
  *  Save the image in a file
+ *  Should reale be called saveMedia, since it can be a clip too
  *
  *  Use the preferred image format, stored in preferences, unless camera uses jpeg
  *
@@ -395,6 +775,7 @@ extern NSString* SnapshotQualityPrefsKey;
     BOOL problem = NO;
     NSData * mediaData = NULL;
     NSString * fileExtension;
+    NSString * clipType = NULL;
     
     // If the camera stores images in jpeg format, then this wil be used for the file;
     // otherwise the user preferred format willl be used
@@ -443,6 +824,12 @@ extern NSString* SnapshotQualityPrefsKey;
         if (!mediaData) 
             mediaData = [theImage representationUsingType:imageFileType properties:nil];
     }
+    else if ([[media objectForKey:@"type"] isEqualToString:@"clip"]) 
+    {
+        mediaData = [media objectForKey:@"data"];
+        clipType = [media objectForKey:@"clip-type"];
+        fileExtension = @"mov";
+    }
     else
     {
         // error, either no "type" or unknown type
@@ -457,9 +844,11 @@ extern NSString* SnapshotQualityPrefsKey;
         
         while ((!indexFound) && (!problem)) // Find a free index
         {
-            filename = [baseFilename stringByAppendingString:[NSString stringWithFormat:@" %04i.%@", saveIndex, fileExtension]];
+            // build path without extension
+            filename = [baseFilename stringByAppendingString:[NSString stringWithFormat:@" %04i", saveIndex]];
             
-            if (![[NSFileManager defaultManager] fileExistsAtPath:filename]) 
+            if ([filename completePathIntoString:NULL caseSensitive:NO matchesIntoArray:NULL filterTypes:NULL] == 0) 
+//          if (![[NSFileManager defaultManager] fileExistsAtPath:filename]) // old check
                 indexFound = YES;
             else 
                 saveIndex++;
@@ -467,12 +856,20 @@ extern NSString* SnapshotQualityPrefsKey;
             if (saveIndex > 9999) 
                 problem = YES; // That's too high!
         }
+        
+        // build path with extension
+        filename = [baseFilename stringByAppendingString:[NSString stringWithFormat:@" %04i.%@", saveIndex, fileExtension]];
+        
         if (!problem) 
         {
-            if (![[NSFileManager defaultManager] createFileAtPath:filename 
-                                                         contents:mediaData
-                                                       attributes:attributes]) 
-                problem = YES;
+            if (clipType == NULL) 
+            {
+                problem = ![[NSFileManager defaultManager] createFileAtPath:filename contents:mediaData attributes:attributes];
+            }
+            else 
+            {
+               problem = [self saveClip:(NSArray *) mediaData ofType:clipType toFile:filename with:attributes];
+            }
         }
     } 
     else 
