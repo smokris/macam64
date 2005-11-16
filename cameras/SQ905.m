@@ -209,7 +209,7 @@
     for(i = 0; i < numEntries; i++)
         numImages += [self numFrames:i];
     
-#ifdef VERBOSE
+#ifdef REALLY_VERBOSE
     printf("There are %d entries in the camera!\n", numEntries);
     printf("There are %d images in the camera!\n", numImages);
     
@@ -801,7 +801,9 @@
 //
 - (SQModel) decodeModelID
 {
-    printf("chip id: %x %x %x %x\n", modelID[0], modelID[1], modelID[2], modelID[3]);
+#ifdef VERBOSE
+    printf("SQ905 chip id: %x %x %x %x\n", modelID[0], modelID[1], modelID[2], modelID[3]);
+#endif
     
     if (modelID[0] == 0x09 && modelID[1] == 0x13 && modelID[2] == 0x06 && modelID[3] == 0x67) 
         return SQ_MODEL_ARGUS_DC_1730;
@@ -1712,13 +1714,17 @@ sq_decompress (SQModel model, unsigned char *output, unsigned char *data,
     if (error != CameraErrorOK)
         return error;
     
+#ifdef REALLY_VERBOSE
     if (zero_byte != COMMAND_ZERO) 
         printf("accessRegister: after rawWrite reg=0x%02x, zero-byte=0x%02x\n", reg & 0x00ff, zero_byte & 0x00ff);
+#endif
     
     error =  [self rawRead:USB_REGISTER_COMPLETE index:0x00 buf:&zero_byte len:1];
     
+#ifdef REALLY_VERBOSE
     if (zero_byte != COMMAND_ZERO) 
         printf("accessRegister: after rawRead reg=0x%02x, zero-byte=0x%02x\n", reg & 0x00ff, zero_byte & 0x00ff);
+#endif    
     
     return error;
 }
