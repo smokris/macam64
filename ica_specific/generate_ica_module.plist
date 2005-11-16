@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleDocumentTypes</key>
+	<array/>
+	<key>CFBundleExecutable</key>
+	<string>macamDSC</string>
+	<key>CFBundleGetInfoString</key>
+	<string>macam 0.8.3 © 2005 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<key>CFBundleHelpBookFolder</key>
+	<string>WebcamHelp</string>
+	<key>CFBundleHelpBookName</key>
+	<string>Webcam Help</string>
+	<key>CFBundleIconFile</key>
+	<string>plugin.icns</string>
+	<key>CFBundleIdentifier</key>
+	<string>net.sourceforge.webcam-osx.macamDSC</string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundleName</key>
+	<string>macamDSC</string>
+	<key>CFBundlePackageType</key>
+	<string>APPL</string>
+	<key>CFBundleShortVersionString</key>
+	<string>0.8.3</string>
+	<key>CFBundleSignature</key>
+	<string>wC?!</string>
+	<key>CFBundleVersion</key>
+	<string>0.8.3</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
+	<key>NSPrincipalClass</key>
+	<string>NSApplication</string>
+	<key>NSUIElement</key>
+	<string>1</string>
+	<key>devices</key>
+	<array>
+		<dict>
+			<key>product</key>
+			<string>0x0202</string>
+			<key>vendor</key>
+			<string>0x0553</string>
+		</dict>
+		<dict>
+			<key>product</key>
+			<string>0x504B</string>
+			<key>vendor</key>
+			<string>0x04FC</string>
+		</dict>
+		<dict>
+			<key>product</key>
+			<string>0x504A</string>
+			<key>vendor</key>
+			<string>0x04FC</string>
+		</dict>
+		<dict>
+			<key>product</key>
+			<string>0x800A</string>
+			<key>vendor</key>
+			<string>0x0C45</string>
+		</dict>
+	</array>
+</dict>
+</plist>
