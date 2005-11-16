@@ -513,7 +513,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
     
     Rect srcRect;
     GWorldPtr gw;
-    PixMapHandle pm;
+    PixMapHandle pm = NULL;
     long maxDataLength;
     
     // Setup GWorld / PixMap
@@ -630,7 +630,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
     BOOL problem = NO;
     OSErr err = noErr;
     Track videoTrack;
-    Media videoTrackMedia;
+    Media videoTrackMedia = NULL;
     int index;
     
     if ([media count] < 1) 
