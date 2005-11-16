@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		39AE92CB03C5131B0066D062 /* all */ = {
+		F535ED6D08DB3971007943DA /* all */ = {
 			isa = PBXAggregateTarget;
-			buildConfigurationList = F5E3BBBB08A9C910009E490F /* Build configuration list for PBXAggregateTarget "all" */;
+			buildConfigurationList = F535ED7408DB3971007943DA /* Build configuration list for PBXAggregateTarget "all" */;
 			buildPhases = (
 			);
 			buildSettings = {
@@ -25,613 +25,348 @@
 				);
 			};
 			dependencies = (
-				39AE92CD03C513490066D062 /* PBXTargetDependency */,
-				39AE92CC03C513420066D062 /* PBXTargetDependency */,
-				39663A5A0402FD1400435B6F /* PBXTargetDependency */,
+				F535ED7908DB3971007943DA /* PBXTargetDependency */,
+				F535ED7B08DB3971007943DA /* PBXTargetDependency */,
+				F535ED7D08DB3971007943DA /* PBXTargetDependency */,
 			);
 			name = all;
 			productName = all;
 		};
 /* End PBXAggregateTarget section */
 
-/* Begin PBXApplicationTarget section */
-		29B97326FDCFA39411CA2CEA /* app */ = {
-			isa = PBXApplicationTarget;
-			buildConfigurationList = F5E3BBAF08A9C910009E490F /* Build configuration list for PBXApplicationTarget "app" */;
-			buildPhases = (
-				29B97327FDCFA39411CA2CEA /* Headers */,
-				29B97328FDCFA39411CA2CEA /* Resources */,
-				29B9732BFDCFA39411CA2CEA /* Sources */,
-				29B9732DFDCFA39411CA2CEA /* Frameworks */,
-				39A2B4820593E4A8009C5934 /* Rez */,
-			);
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "";
-				HEADER_SEARCH_PATHS = "";
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = macam;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = app;
-			};
-			dependencies = (
-			);
-			name = app;
-			productInstallPath = "$(HOME)/Applications";
-			productName = wc;
-			productReference = 17587328FF379C6511CA2CBB /* macam.app */;
-			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
-<plist version=\"1.0\">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
-	<key>CFBundleDocumentTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>mov</string>
-				<string>mpg</string>
-				<string>avi</string>
-				<string>aiff</string>
-				<string>mp3</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>QuickTime Movie</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>MooV</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>NSDocumentClass</key>
-			<string>MyMovieDocument</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>tiff</string>
-				<string>tif</string>
-				<string>TIFF</string>
-				<string>TIF</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>TIFF Image</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>TIFF</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>NSDocumentClass</key>
-			<string>MyImageDocument</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>jpg</string>
-				<string>jpeg</string>
-				<string>JPG</string>
-				<string>JPEG</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>JPEG Image</string>
-			<key>CFBundleTypeOSTypes</key>
-			<array>
-				<string>JPEG</string>
-			</array>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>NSDocumentClass</key>
-			<string>MyImageDocument</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>png</string>
-				<string>PNG</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>PNG Image</string>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>NSDocumentClass</key>
-			<string>MyImageDocument</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>bmp</string>
-				<string>BMP</string>
-				<string>BMPf</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>BMP Image</string>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>NSDocumentClass</key>
-			<string>MyImageDocument</string>
-		</dict>
-		<dict>
-			<key>CFBundleTypeExtensions</key>
-			<array>
-				<string>gif</string>
-				<string>GIF</string>
-			</array>
-			<key>CFBundleTypeName</key>
-			<string>GIF Image</string>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>NSDocumentClass</key>
-			<string>MyImageDocument</string>
-		</dict>
-	</array>
-	<key>CFBundleExecutable</key>
-	<string>macam</string>
-	<key>CFBundleGetInfoString</key>
-	<string>macam 0.8.3 © 2005 the macam project (http://webcam-osx.sourceforge.net)</string>
-	<key>CFBundleHelpBookFolder</key>
-	<string>WebcamHelp</string>
-	<key>CFBundleHelpBookName</key>
-	<string>Webcam Help</string>
-	<key>CFBundleIconFile</key>
-	<string>app.icns</string>
-	<key>CFBundleIdentifier</key>
-	<string>net.sourceforge.webcam-osx.application</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>macam</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>0.8.3</string>
-	<key>CFBundleSignature</key>
-	<string>wC?!</string>
-	<key>CFBundleVersion</key>
-	<string>0.8.3</string>
-	<key>NSMainNibFile</key>
-	<string>MainMenu</string>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
-</dict>
-</plist>
-";
-		};
-		396639D80402FCF000435B6F /* ica module */ = {
-			isa = PBXApplicationTarget;
-			buildConfigurationList = F5E3BBB708A9C910009E490F /* Build configuration list for PBXApplicationTarget "ica module" */;
-			buildPhases = (
-				396639D90402FCF000435B6F /* Headers */,
-				39663A080402FCF000435B6F /* Resources */,
-				39663A220402FCF000435B6F /* Sources */,
-				39663A520402FCF000435B6F /* Frameworks */,
-			);
-			buildSettings = {
-				DEBUGGING_SYMBOLS = NO;
-				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
-				HEADER_SEARCH_PATHS = "";
-				INSTALL_PATH = "$(HOME)/Applications";
-				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O2";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				PRODUCT_NAME = macamDSC;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = app;
-			};
-			dependencies = (
-			);
-			name = "ica module";
-			productInstallPath = "$(HOME)/Applications";
-			productName = wc;
-			productReference = 39663A570402FCF000435B6F /* macamDSC.app */;
-			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
-<plist version=\"1.0\">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
-	<key>CFBundleDocumentTypes</key>
-	<array/>
-	<key>CFBundleExecutable</key>
-	<string>macamDSC</string>
-	<key>CFBundleGetInfoString</key>
-	<string>macam 0.8.3 © 2005 the macam project (http://webcam-osx.sourceforge.net)</string>
-	<key>CFBundleHelpBookFolder</key>
-	<string>WebcamHelp</string>
-	<key>CFBundleHelpBookName</key>
-	<string>Webcam Help</string>
-	<key>CFBundleIconFile</key>
-	<string>plugin.icns</string>
-	<key>CFBundleIdentifier</key>
-	<string>net.sourceforge.webcam-osx.macamDSC</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>macamDSC</string>
-	<key>CFBundlePackageType</key>
-	<string>APPL</string>
-	<key>CFBundleShortVersionString</key>
-	<string>0.8.3</string>
-	<key>CFBundleSignature</key>
-	<string>wC?!</string>
-	<key>CFBundleVersion</key>
-	<string>0.8.3</string>
-	<key>NSMainNibFile</key>
-	<string>MainMenu</string>
-	<key>NSPrincipalClass</key>
-	<string>NSApplication</string>
-	<key>NSUIElement</key>
-	<string>1</string>
-	<key>devices</key>
-	<array>
-		<dict>
-			<key>product</key>
-			<string>0x0202</string>
-			<key>vendor</key>
-			<string>0x0553</string>
-		</dict>
-		<dict>
-			<key>product</key>
-			<string>0x504B</string>
-			<key>vendor</key>
-			<string>0x04FC</string>
-		</dict>
-		<dict>
-			<key>product</key>
-			<string>0x504A</string>
-			<key>vendor</key>
-			<string>0x04FC</string>
-		</dict>
-		<dict>
-			<key>product</key>
-			<string>0x800A</string>
-			<key>vendor</key>
-			<string>0x0C45</string>
-		</dict>
-	</array>
-</dict>
-</plist>
-";
-		};
-/* End PBXApplicationTarget section */
-
 /* Begin PBXBuildFile section */
-		1058C7A3FEA54F0111CA2CBB /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		39185ABC03C8B5570066DE75 /* MyQCProBeigeDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39185ABA03C8B5570066DE75 /* MyQCProBeigeDriver.h */; };
-		39185ABD03C8B5570066DE75 /* MyQCProBeigeDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39185ABB03C8B5570066DE75 /* MyQCProBeigeDriver.m */; };
-		39185ABE03C8B5570066DE75 /* MyQCProBeigeDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39185ABA03C8B5570066DE75 /* MyQCProBeigeDriver.h */; };
-		39185ABF03C8B5570066DE75 /* MyQCProBeigeDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39185ABB03C8B5570066DE75 /* MyQCProBeigeDriver.m */; };
-		39186EC903C8FF7B0066DE75 /* Resolvers.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A970212038E01E152CA /* Resolvers.c */; };
-		391D4A93059280DF00ADF722 /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 391D4A92059280DF00ADF722 /* app.icns */; };
-		391D4A94059280DF00ADF722 /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 391D4A92059280DF00ADF722 /* app.icns */; };
-		39502340040A55A70066D062 /* plugin.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3950233F040A55A70066D062 /* plugin.icns */; };
-		395E9AD704044198007E00C6 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1B01E5D03A0166DE0F /* Carbon.framework */; };
-		396639DA0402FCF000435B6F /* GlobalDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A920212038E01E152CA /* GlobalDefs.h */; };
-		396639DB0402FCF000435B6F /* MiniGraphicsTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A940212038E01E152CA /* MiniGraphicsTools.h */; };
-		396639DC0402FCF000435B6F /* MiscTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A960212038E01E152CA /* MiscTools.h */; };
-		396639DD0402FCF000435B6F /* Resolvers.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A980212038E01E152CA /* Resolvers.h */; };
-		396639DE0402FCF000435B6F /* yuv2rgb.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A9A0212038E01E152CA /* yuv2rgb.h */; };
-		396639DF0402FCF000435B6F /* MyCPIACameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A810212038E01E152CA /* MyCPIACameraDriver.h */; };
-		396639E00402FCF000435B6F /* MyKiaraFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A830212038E01E152CA /* MyKiaraFamilyDriver.h */; };
-		396639E10402FCF000435B6F /* MyPhilipsCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A850212038E01E152CA /* MyPhilipsCameraDriver.h */; };
-		396639E20402FCF000435B6F /* MyTimonFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A870212038E01E152CA /* MyTimonFamilyDriver.h */; };
-		396639E30402FCF000435B6F /* MyCameraCentral.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8210213113F0166DE0F /* MyCameraCentral.h */; };
-		396639E40402FCF000435B6F /* MyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8230213113F0166DE0F /* MyCameraDriver.h */; };
-		396639E50402FCF000435B6F /* MyCameraInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8250213113F0166DE0F /* MyCameraInfo.h */; };
-		396639E60402FCF000435B6F /* MyDummyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8270213113F0166DE0F /* MyDummyCameraDriver.h */; };
-		396639E80402FCF000435B6F /* MySTV680Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F589EB0E02268A6901D99A1F /* MySTV680Driver.h */; };
-		396639E90402FCF000435B6F /* BayerConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58530E10229AAB601479C37 /* BayerConverter.h */; };
-		396639EC0402FCF000435B6F /* MySPCA504Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F511081E0241794801599652 /* MySPCA504Driver.h */; };
-		396639EE0402FCF000435B6F /* MyPB0100Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C102572BFE014CA2B1 /* MyPB0100Sensor.h */; };
-		396639EF0402FCF000435B6F /* MySTV600Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C302572BFE014CA2B1 /* MySTV600Sensor.h */; };
-		396639F00402FCF000435B6F /* MyQX3Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5376F35026C66D30166DE1F /* MyQX3Driver.h */; };
-		396639F10402FCF000435B6F /* MyQCExpressBDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEB70271ACF80166DE1F /* MyQCExpressBDriver.h */; };
-		396639F20402FCF000435B6F /* MyHDCS1000Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEC20271B72D0166DE1F /* MyHDCS1000Sensor.h */; };
-		396639F30402FCF000435B6F /* MyHDCS1020Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F53480CC027240FB013AF9AD /* MyHDCS1020Sensor.h */; };
-		396639F40402FCF000435B6F /* MyQCExpressADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A153160274D3D501C56AC3 /* MyQCExpressADriver.h */; };
-		396639F50402FCF000435B6F /* MyQCWebDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F1D02834E82015925D2 /* MyQCWebDriver.h */; };
-		396639F60402FCF000435B6F /* MyVV6410Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F23028351A7015925D2 /* MyVV6410Sensor.h */; };
-		396639F90402FCF000435B6F /* MyVicamDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4373E02D278D6018D4F8C /* MyVicamDriver.h */; };
-		396639FA0402FCF000435B6F /* RGBScaler.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4374E02D52947018D4F8C /* RGBScaler.h */; };
-		396639FB0402FCF000435B6F /* MyIntelPCCameraPro.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5790603049095010B006D /* MyIntelPCCameraPro.h */; };
-		396639FC0402FCF000435B6F /* JFIFHeaderTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BB387E0342871601E62307 /* JFIFHeaderTemplate.h */; };
-		396639FD0402FCF000435B6F /* MyOV511Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EDFAD6036876210166D062 /* MyOV511Driver.h */; };
-		39663A030402FCF000435B6F /* MySonix2028Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F53F6637039ACC3F01C3DF00 /* MySonix2028Driver.h */; };
-		39663A040402FCF000435B6F /* MySE401Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A5077403BBC69501A78977 /* MySE401Driver.h */; };
-		39663A050402FCF000435B6F /* MyQCProBeigeDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39185ABA03C8B5570066DE75 /* MyQCProBeigeDriver.h */; };
-		39663A060402FCF000435B6F /* MySPCA500Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3973A6F303CDF44E0066D062 /* MySPCA500Driver.h */; };
-		39663A070402FCF000435B6F /* MyKiaraFlippedDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CBD65003DC0D79000F7EFC /* MyKiaraFlippedDriver.h */; };
-		39663A0B0402FCF000435B6F /* DownloadToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB6E022FB1BD01369AA6 /* DownloadToolbarItem.tiff */; };
-		39663A0C0402FCF000435B6F /* NextCamToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB6F022FB1BD01369AA6 /* NextCamToolbarItem.tiff */; };
-		39663A0D0402FCF000435B6F /* PauseToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB70022FB1BD01369AA6 /* PauseToolbarItem.tiff */; };
-		39663A0E0402FCF000435B6F /* PlayToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB71022FB1BD01369AA6 /* PlayToolbarItem.tiff */; };
-		39663A0F0402FCF000435B6F /* SettingsToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB72022FB1BD01369AA6 /* SettingsToolbarItem.tiff */; };
-		39663A100402FCF000435B6F /* SnapshotToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB73022FB1BD01369AA6 /* SnapshotToolbarItem.tiff */; };
-		39663A130402FCF000435B6F /* DriverLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F5285DAA0248103E01AEB99D /* DriverLocalizable.strings */; };
-		39663A150402FCF000435B6F /* RotateCWToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F52D2ED4025A9425016EC628 /* RotateCWToolbarItem.tiff */; };
-		39663A160402FCF000435B6F /* RotateCCWToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F52D2ED5025A9425016EC628 /* RotateCCWToolbarItem.tiff */; };
-		39663A190402FCF000435B6F /* QX3-3.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B6C5B26FF6010B00CC /* QX3-3.tiff */; };
-		39663A1A0402FCF000435B6F /* QX3-2.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B7C5B26FF6010B00CC /* QX3-2.tiff */; };
-		39663A1B0402FCF000435B6F /* QX3-1.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B8C5B26FF6010B00CC /* QX3-1.tiff */; };
-		39663A1C0402FCF000435B6F /* QX3-0.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11BDC5B26FF6010B00CC /* QX3-0.tiff */; };
-		39663A1D0402FCF000435B6F /* QX3-4.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B5C5B26FF6010B00CC /* QX3-4.tiff */; };
-		39663A1E0402FCF000435B6F /* QX3-5.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F5794DDF0285B922010B00CC /* QX3-5.tiff */; };
-		39663A200402FCF000435B6F /* RecordMovieToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F589724A0374636B01159FE2 /* RecordMovieToolbarItem.tiff */; };
-		39663A210402FCF000435B6F /* RecordMovieActiveToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F5B1CC460375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff */; };
-		39663A230402FCF000435B6F /* MiniGraphicsTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A930212038E01E152CA /* MiniGraphicsTools.c */; };
-		39663A240402FCF000435B6F /* MiscTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A950212038E01E152CA /* MiscTools.c */; };
-		39663A250402FCF000435B6F /* yuv2rgb.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A990212038E01E152CA /* yuv2rgb.c */; };
-		39663A260402FCF000435B6F /* MyCPIACameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A820212038E01E152CA /* MyCPIACameraDriver.m */; };
-		39663A270402FCF000435B6F /* MyKiaraFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A840212038E01E152CA /* MyKiaraFamilyDriver.m */; };
-		39663A280402FCF000435B6F /* MyPhilipsCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A860212038E01E152CA /* MyPhilipsCameraDriver.m */; };
-		39663A290402FCF000435B6F /* MyTimonFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A880212038E01E152CA /* MyTimonFamilyDriver.m */; };
-		39663A2A0402FCF000435B6F /* MyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8240213113F0166DE0F /* MyCameraDriver.m */; };
-		39663A2B0402FCF000435B6F /* MyCameraInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8260213113F0166DE0F /* MyCameraInfo.m */; };
-		39663A2C0402FCF000435B6F /* MyDummyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8280213113F0166DE0F /* MyDummyCameraDriver.m */; };
-		39663A2F0402FCF000435B6F /* MySTV680Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F589EB0F02268A6901D99A1F /* MySTV680Driver.m */; };
-		39663A300402FCF000435B6F /* BayerConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = F58530E20229AAB601479C37 /* BayerConverter.m */; };
-		39663A330402FCF000435B6F /* MySPCA504Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F511081D0241794801599652 /* MySPCA504Driver.m */; };
-		39663A350402FCF000435B6F /* MyCameraCentral.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B9568C0250D31A0166DE1F /* MyCameraCentral.m */; };
-		39663A360402FCF000435B6F /* MyPB0100Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C202572BFE014CA2B1 /* MyPB0100Sensor.m */; };
-		39663A370402FCF000435B6F /* MySTV600Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C402572BFE014CA2B1 /* MySTV600Sensor.m */; };
-		39663A380402FCF000435B6F /* MyQX3Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5376F36026C66D30166DE1F /* MyQX3Driver.m */; };
-		39663A390402FCF000435B6F /* MyQCExpressBDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEB90271ACF80166DE1F /* MyQCExpressBDriver.m */; };
-		39663A3A0402FCF000435B6F /* MyHDCS1000Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEC30271B72D0166DE1F /* MyHDCS1000Sensor.m */; };
-		39663A3B0402FCF000435B6F /* MyHDCS1020Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F53480CD027240FB013AF9AD /* MyHDCS1020Sensor.m */; };
-		39663A3C0402FCF000435B6F /* MyQCExpressADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A153170274D3D501C56AC3 /* MyQCExpressADriver.m */; };
-		39663A3D0402FCF000435B6F /* MyQCWebDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F1E02834E82015925D2 /* MyQCWebDriver.m */; };
-		39663A3E0402FCF000435B6F /* MyVV6410Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F24028351A7015925D2 /* MyVV6410Sensor.m */; };
-		39663A410402FCF000435B6F /* MyVicamDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */; };
-		39663A420402FCF000435B6F /* RGBScaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4374C02D52947018D4F8C /* RGBScaler.m */; };
-		39663A430402FCF000435B6F /* MyIntelPCCameraPro.m in Sources */ = {isa = PBXBuildFile; fileRef = F5C5790703049095010B006D /* MyIntelPCCameraPro.m */; };
-		39663A440402FCF000435B6F /* JFIFHeaderTemplate.c in Sources */ = {isa = PBXBuildFile; fileRef = F5EF7FFB0364C3BD01E9B502 /* JFIFHeaderTemplate.c */; };
-		39663A450402FCF000435B6F /* MyOV511Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EDFAD5036876210166D062 /* MyOV511Driver.m */; };
-		39663A4B0402FCF000435B6F /* MySonix2028Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F53F6636039ACC3F01C3DF00 /* MySonix2028Driver.m */; };
-		39663A4C0402FCF000435B6F /* MySE401Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A5077303BBC69501A78977 /* MySE401Driver.m */; };
-		39663A4D0402FCF000435B6F /* MyQCProBeigeDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39185ABB03C8B5570066DE75 /* MyQCProBeigeDriver.m */; };
-		39663A4E0402FCF000435B6F /* Resolvers.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A970212038E01E152CA /* Resolvers.c */; };
-		39663A4F0402FCF000435B6F /* MySPCA500Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = 3973A6F203CDF44E0066D062 /* MySPCA500Driver.m */; };
-		39663A500402FCF000435B6F /* ov511_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 397B163C03CED9B900153FEE /* ov511_decomp.c */; };
-		39663A510402FCF000435B6F /* MyKiaraFlippedDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CBD64F03DC0D79000F7EFC /* MyKiaraFlippedDriver.m */; };
-		39663A530402FCF000435B6F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		39663A540402FCF000435B6F /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417601DA8EF70157C38C /* CoreFoundation.framework */; };
-		39663A550402FCF000435B6F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417801DA8F350157C38C /* IOKit.framework */; };
-		39663A560402FCF000435B6F /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1D01E5D0440166DE0F /* QuickTime.framework */; };
-		39663A680403023400435B6F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 39663A670403023400435B6F /* main.m */; };
-		39663A6A0403091700435B6F /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 39663A690403091700435B6F /* MainMenu.nib */; };
-		3973A6F403CDF44E0066D062 /* MySPCA500Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = 3973A6F203CDF44E0066D062 /* MySPCA500Driver.m */; };
-		3973A6F503CDF44E0066D062 /* MySPCA500Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3973A6F303CDF44E0066D062 /* MySPCA500Driver.h */; };
-		3973A6F603CDF44E0066D062 /* MySPCA500Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = 3973A6F203CDF44E0066D062 /* MySPCA500Driver.m */; };
-		3973A6F703CDF44E0066D062 /* MySPCA500Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3973A6F303CDF44E0066D062 /* MySPCA500Driver.h */; };
-		397B163D03CED9B900153FEE /* ov511_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 397B163C03CED9B900153FEE /* ov511_decomp.c */; };
-		397B163E03CED9B900153FEE /* ov511_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 397B163C03CED9B900153FEE /* ov511_decomp.c */; };
-		39A2B45D0593E297009C5934 /* QTDummyPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A2B45A0593E296009C5934 /* QTDummyPanel.m */; };
-		39A2B45E0593E297009C5934 /* QTDummyPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A2B45B0593E297009C5934 /* QTDummyPanel.h */; };
-		39CBD65103DC0D79000F7EFC /* MyKiaraFlippedDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CBD64F03DC0D79000F7EFC /* MyKiaraFlippedDriver.m */; };
-		39CBD65203DC0D79000F7EFC /* MyKiaraFlippedDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CBD65003DC0D79000F7EFC /* MyKiaraFlippedDriver.h */; };
-		39CBD65303DC0D79000F7EFC /* MyKiaraFlippedDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CBD64F03DC0D79000F7EFC /* MyKiaraFlippedDriver.m */; };
-		39CBD65403DC0D79000F7EFC /* MyKiaraFlippedDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CBD65003DC0D79000F7EFC /* MyKiaraFlippedDriver.h */; };
-		39FE214A04030BB800BAABE7 /* ICD_CameraCalls.h in Headers */ = {isa = PBXBuildFile; fileRef = 39FE214904030BB800BAABE7 /* ICD_CameraCalls.h */; };
-		39FE215604030E7E00BAABE7 /* ICACameraPriv.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE215504030E7E00BAABE7 /* ICACameraPriv.framework */; };
-		F500FB75022FB1BD01369AA6 /* DownloadToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB6E022FB1BD01369AA6 /* DownloadToolbarItem.tiff */; };
-		F500FB76022FB1BD01369AA6 /* NextCamToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB6F022FB1BD01369AA6 /* NextCamToolbarItem.tiff */; };
-		F500FB77022FB1BD01369AA6 /* PauseToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB70022FB1BD01369AA6 /* PauseToolbarItem.tiff */; };
-		F500FB78022FB1BD01369AA6 /* PlayToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB71022FB1BD01369AA6 /* PlayToolbarItem.tiff */; };
-		F500FB79022FB1BD01369AA6 /* SettingsToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB72022FB1BD01369AA6 /* SettingsToolbarItem.tiff */; };
-		F500FB7A022FB1BD01369AA6 /* SnapshotToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB73022FB1BD01369AA6 /* SnapshotToolbarItem.tiff */; };
-		F511081F0241794801599652 /* MySPCA504Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F511081E0241794801599652 /* MySPCA504Driver.h */; };
-		F51108200241794801599652 /* MySPCA504Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F511081D0241794801599652 /* MySPCA504Driver.m */; };
-		F51108210241794801599652 /* MySPCA504Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F511081E0241794801599652 /* MySPCA504Driver.h */; };
-		F51108220241794801599652 /* MySPCA504Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F511081D0241794801599652 /* MySPCA504Driver.m */; };
-		F51EEE590284B73A01B888F7 /* MyCameraInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = F51EEE570284B73A01B888F7 /* MyCameraInspector.h */; };
-		F51EEE5A0284B73A01B888F7 /* MyCameraInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = F51EEE580284B73A01B888F7 /* MyCameraInspector.m */; };
-		F51EEE5E0284BC9601B888F7 /* DefaultCameraInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = F51EEE5D0284BC9601B888F7 /* DefaultCameraInspector.nib */; };
-		F522580A08725639002023A4 /* USB_VendorProductIDs.h in Headers */ = {isa = PBXBuildFile; fileRef = F522580908725639002023A4 /* USB_VendorProductIDs.h */; };
-		F522580B08725639002023A4 /* USB_VendorProductIDs.h in Headers */ = {isa = PBXBuildFile; fileRef = F522580908725639002023A4 /* USB_VendorProductIDs.h */; };
-		F522580C08725639002023A4 /* USB_VendorProductIDs.h in Headers */ = {isa = PBXBuildFile; fileRef = F522580908725639002023A4 /* USB_VendorProductIDs.h */; };
-		F5285DAC0248103E01AEB99D /* DriverLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F5285DAA0248103E01AEB99D /* DriverLocalizable.strings */; };
-		F5285DAD0248103E01AEB99D /* DriverLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F5285DAA0248103E01AEB99D /* DriverLocalizable.strings */; };
-		F52D2ED3025A7383016EC628 /* WebcamHelp in Resources */ = {isa = PBXBuildFile; fileRef = F52D2ED0025A7383016EC628 /* WebcamHelp */; };
-		F52D2ED6025A9425016EC628 /* RotateCWToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F52D2ED4025A9425016EC628 /* RotateCWToolbarItem.tiff */; };
-		F52D2ED7025A9425016EC628 /* RotateCCWToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F52D2ED5025A9425016EC628 /* RotateCCWToolbarItem.tiff */; };
-		F533EEBB0271ACF80166DE1F /* MyQCExpressBDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEB70271ACF80166DE1F /* MyQCExpressBDriver.h */; };
-		F533EEBD0271ACF80166DE1F /* MyQCExpressBDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEB90271ACF80166DE1F /* MyQCExpressBDriver.m */; };
-		F533EEBF0271ACF80166DE1F /* MyQCExpressBDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEB70271ACF80166DE1F /* MyQCExpressBDriver.h */; };
-		F533EEC10271ACF80166DE1F /* MyQCExpressBDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEB90271ACF80166DE1F /* MyQCExpressBDriver.m */; };
-		F533EEC40271B72D0166DE1F /* MyHDCS1000Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEC20271B72D0166DE1F /* MyHDCS1000Sensor.h */; };
-		F533EEC50271B72D0166DE1F /* MyHDCS1000Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEC30271B72D0166DE1F /* MyHDCS1000Sensor.m */; };
-		F533EEC60271B72D0166DE1F /* MyHDCS1000Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEC20271B72D0166DE1F /* MyHDCS1000Sensor.h */; };
-		F533EEC70271B72D0166DE1F /* MyHDCS1000Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEC30271B72D0166DE1F /* MyHDCS1000Sensor.m */; };
-		F53480CE027240FB013AF9AD /* MyHDCS1020Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F53480CC027240FB013AF9AD /* MyHDCS1020Sensor.h */; };
-		F53480CF027240FB013AF9AD /* MyHDCS1020Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F53480CD027240FB013AF9AD /* MyHDCS1020Sensor.m */; };
-		F53480D0027240FB013AF9AD /* MyHDCS1020Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F53480CC027240FB013AF9AD /* MyHDCS1020Sensor.h */; };
-		F53480D1027240FB013AF9AD /* MyHDCS1020Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F53480CD027240FB013AF9AD /* MyHDCS1020Sensor.m */; };
-		F5376F37026C66D30166DE1F /* MyQX3Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5376F35026C66D30166DE1F /* MyQX3Driver.h */; };
-		F5376F38026C66D30166DE1F /* MyQX3Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5376F36026C66D30166DE1F /* MyQX3Driver.m */; };
-		F5376F39026C66D30166DE1F /* MyQX3Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5376F35026C66D30166DE1F /* MyQX3Driver.h */; };
-		F5376F3A026C66D30166DE1F /* MyQX3Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5376F36026C66D30166DE1F /* MyQX3Driver.m */; };
-		F538BD3501E5D2DF0166DE0F /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417601DA8EF70157C38C /* CoreFoundation.framework */; };
-		F538BD3601E5D2DF0166DE0F /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
-		F538BD3701E5D2DF0166DE0F /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417801DA8F350157C38C /* IOKit.framework */; };
-		F538BD3801E5D2DF0166DE0F /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1D01E5D0440166DE0F /* QuickTime.framework */; };
-		F538BD3901E5D2DF0166DE0F /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1B01E5D03A0166DE0F /* Carbon.framework */; };
-		F53B90560240CDFF0166DE75 /* MyImageDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = F53B90540240CDFF0166DE75 /* MyImageDocument.nib */; };
-		F53B905A0240CE2B0166DE75 /* MyImageDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F53B90580240CE2B0166DE75 /* MyImageDocument.h */; };
-		F53B905B0240CE2B0166DE75 /* MyImageDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = F53B90590240CE2B0166DE75 /* MyImageDocument.m */; };
-		F53F6638039ACC3F01C3DF00 /* MySonix2028Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F53F6636039ACC3F01C3DF00 /* MySonix2028Driver.m */; };
-		F53F6639039ACC3F01C3DF00 /* MySonix2028Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F53F6637039ACC3F01C3DF00 /* MySonix2028Driver.h */; };
-		F53F663A039ACC3F01C3DF00 /* MySonix2028Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F53F6636039ACC3F01C3DF00 /* MySonix2028Driver.m */; };
-		F53F663B039ACC3F01C3DF00 /* MySonix2028Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F53F6637039ACC3F01C3DF00 /* MySonix2028Driver.h */; };
-		F55A58C502572BFE014CA2B1 /* MyPB0100Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C102572BFE014CA2B1 /* MyPB0100Sensor.h */; };
-		F55A58C602572BFE014CA2B1 /* MySTV600Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C302572BFE014CA2B1 /* MySTV600Sensor.h */; };
-		F55A58C702572BFE014CA2B1 /* MyPB0100Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C202572BFE014CA2B1 /* MyPB0100Sensor.m */; };
-		F55A58C802572BFE014CA2B1 /* MySTV600Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C402572BFE014CA2B1 /* MySTV600Sensor.m */; };
-		F55A58C902572BFE014CA2B1 /* MyPB0100Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C102572BFE014CA2B1 /* MyPB0100Sensor.h */; };
-		F55A58CA02572BFE014CA2B1 /* MySTV600Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C302572BFE014CA2B1 /* MySTV600Sensor.h */; };
-		F55A58CB02572BFE014CA2B1 /* MyPB0100Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C202572BFE014CA2B1 /* MyPB0100Sensor.m */; };
-		F55A58CC02572BFE014CA2B1 /* MySTV600Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C402572BFE014CA2B1 /* MySTV600Sensor.m */; };
-		F55DD8290213113F0166DE0F /* MyCameraCentral.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8210213113F0166DE0F /* MyCameraCentral.h */; };
-		F55DD82A0213113F0166DE0F /* MyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8230213113F0166DE0F /* MyCameraDriver.h */; };
-		F55DD82B0213113F0166DE0F /* MyCameraInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8250213113F0166DE0F /* MyCameraInfo.h */; };
-		F55DD82C0213113F0166DE0F /* MyDummyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8270213113F0166DE0F /* MyDummyCameraDriver.h */; };
-		F55DD82E0213113F0166DE0F /* MyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8240213113F0166DE0F /* MyCameraDriver.m */; };
-		F55DD82F0213113F0166DE0F /* MyCameraInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8260213113F0166DE0F /* MyCameraInfo.m */; };
-		F55DD8300213113F0166DE0F /* MyDummyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8280213113F0166DE0F /* MyDummyCameraDriver.m */; };
-		F55DD8310213113F0166DE0F /* MyCameraCentral.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8210213113F0166DE0F /* MyCameraCentral.h */; };
-		F55DD8320213113F0166DE0F /* MyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8230213113F0166DE0F /* MyCameraDriver.h */; };
-		F55DD8330213113F0166DE0F /* MyCameraInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8250213113F0166DE0F /* MyCameraInfo.h */; };
-		F55DD8340213113F0166DE0F /* MyDummyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8270213113F0166DE0F /* MyDummyCameraDriver.h */; };
-		F55DD8360213113F0166DE0F /* MyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8240213113F0166DE0F /* MyCameraDriver.m */; };
-		F55DD8370213113F0166DE0F /* MyCameraInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8260213113F0166DE0F /* MyCameraInfo.m */; };
-		F55DD8380213113F0166DE0F /* MyDummyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8280213113F0166DE0F /* MyDummyCameraDriver.m */; };
-		F55DD847021311680166DE0F /* MyController.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD83D021311680166DE0F /* MyController.h */; };
-		F55DD848021311680166DE0F /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = F55DD83A021311680166DE0F /* MainMenu.nib */; };
-		F55DD849021311680166DE0F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD83C021311680166DE0F /* main.m */; };
-		F55DD84A021311680166DE0F /* MyController.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD83E021311680166DE0F /* MyController.m */; };
-		F55DD84B021311680166DE0F /* MyBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD840021311680166DE0F /* MyBridge.h */; };
-		F55DD84C021311680166DE0F /* QTPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD843021311680166DE0F /* QTPanel.h */; };
-		F55DD84D021311680166DE0F /* QTVideoDigitizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD845021311680166DE0F /* QTVideoDigitizer.h */; };
-		F55DD84E021311680166DE0F /* MyBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD841021311680166DE0F /* MyBridge.m */; };
-		F55DD84F021311680166DE0F /* QTPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD844021311680166DE0F /* QTPanel.m */; };
-		F55DD850021311680166DE0F /* QTVideoDigitizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD846021311680166DE0F /* QTVideoDigitizer.m */; };
-		F55DD851021311680166DE0F /* QTComponent.r in Rez */ = {isa = PBXBuildFile; fileRef = F55DD842021311680166DE0F /* QTComponent.r */; };
-		F563AB4D0247FDC601BF65F7 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F563AB480247FDC601BF65F7 /* Localizable.strings */; };
-		F5794DE00285B922010B00CC /* QX3-5.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F5794DDF0285B922010B00CC /* QX3-5.tiff */; };
-		F57D11B1C5B26FF6010B00CC /* MyQX3CameraInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = F57D11AFC5B26FF6010B00CC /* MyQX3CameraInspector.h */; };
-		F57D11B2C5B26FF6010B00CC /* MyQX3CameraInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = F57D11B0C5B26FF6010B00CC /* MyQX3CameraInspector.m */; };
-		F57D11B4C5B26FF6010B00CC /* MyQX3CameraInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B3C5B26FF6010B00CC /* MyQX3CameraInspector.nib */; };
-		F57D11BAC5B26FF6010B00CC /* QX3-3.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B6C5B26FF6010B00CC /* QX3-3.tiff */; };
-		F57D11BBC5B26FF6010B00CC /* QX3-2.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B7C5B26FF6010B00CC /* QX3-2.tiff */; };
-		F57D11BCC5B26FF6010B00CC /* QX3-1.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B8C5B26FF6010B00CC /* QX3-1.tiff */; };
-		F57D11BEC5B26FF6010B00CC /* QX3-0.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11BDC5B26FF6010B00CC /* QX3-0.tiff */; };
-		F57D11BFC5B26FF6010B00CC /* QX3-4.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B5C5B26FF6010B00CC /* QX3-4.tiff */; };
-		F58530E30229AAB601479C37 /* BayerConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58530E10229AAB601479C37 /* BayerConverter.h */; };
-		F58530E40229AAB601479C37 /* BayerConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = F58530E20229AAB601479C37 /* BayerConverter.m */; };
-		F58530E50229AAB601479C37 /* BayerConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58530E10229AAB601479C37 /* BayerConverter.h */; };
-		F58530E60229AAB601479C37 /* BayerConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = F58530E20229AAB601479C37 /* BayerConverter.m */; };
-		F589724B0374636B01159FE2 /* RecordMovieToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F589724A0374636B01159FE2 /* RecordMovieToolbarItem.tiff */; };
-		F58976FF03758BEE01159FE2 /* MyMovieRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = F58976F903758BEE01159FE2 /* MyMovieRecorder.m */; };
-		F589770003758BEE01159FE2 /* MyMovieRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = F58976FA03758BEE01159FE2 /* MyMovieRecorder.h */; };
-		F589770103758BEE01159FE2 /* MyMovieWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F58976FB03758BEE01159FE2 /* MyMovieWindowController.m */; };
-		F589770203758BEE01159FE2 /* MyMovieWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = F58976FC03758BEE01159FE2 /* MyMovieWindowController.h */; };
-		F589770303758BEE01159FE2 /* MyNSMovieExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = F58976FD03758BEE01159FE2 /* MyNSMovieExtensions.m */; };
-		F589770403758BEE01159FE2 /* MyNSMovieExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = F58976FE03758BEE01159FE2 /* MyNSMovieExtensions.h */; };
-		F589EB1002268A6901D99A1F /* MySTV680Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F589EB0E02268A6901D99A1F /* MySTV680Driver.h */; };
-		F589EB1102268A6901D99A1F /* MySTV680Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F589EB0F02268A6901D99A1F /* MySTV680Driver.m */; };
-		F589EB1302268A6901D99A1F /* MySTV680Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F589EB0F02268A6901D99A1F /* MySTV680Driver.m */; };
-		F58DB23A024E9804019A97FC /* MyImageWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = F58DB238024E9803019A97FC /* MyImageWindowController.h */; };
-		F58DB23B024E9804019A97FC /* MyImageWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F58DB239024E9803019A97FC /* MyImageWindowController.m */; };
-		F59E4B7C0264A7910166DE1F /* RGB888Scaler.h in Headers */ = {isa = PBXBuildFile; fileRef = F59E4B7B0264A7910166DE1F /* RGB888Scaler.h */; };
-		F59E4B7D0264A7910166DE1F /* RGB888Scaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F59E4B7A0264A7910166DE1F /* RGB888Scaler.m */; };
-		F5A153180274D3D501C56AC3 /* MyQCExpressADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A153160274D3D501C56AC3 /* MyQCExpressADriver.h */; };
-		F5A153190274D3D501C56AC3 /* MyQCExpressADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A153170274D3D501C56AC3 /* MyQCExpressADriver.m */; };
-		F5A1531A0274D3D501C56AC3 /* MyQCExpressADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A153160274D3D501C56AC3 /* MyQCExpressADriver.h */; };
-		F5A1531B0274D3D501C56AC3 /* MyQCExpressADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A153170274D3D501C56AC3 /* MyQCExpressADriver.m */; };
-		F5A4FBC6031E34E00166D062 /* MyIntelPCCameraPro.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5790603049095010B006D /* MyIntelPCCameraPro.h */; };
-		F5A4FBC7031E34E50166D062 /* MyIntelPCCameraPro.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5790603049095010B006D /* MyIntelPCCameraPro.h */; };
-		F5A4FBC8031E34E50166D062 /* MyIntelPCCameraPro.m in Sources */ = {isa = PBXBuildFile; fileRef = F5C5790703049095010B006D /* MyIntelPCCameraPro.m */; };
-		F5A4FBC9031E34E70166D062 /* MySTV680Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F589EB0E02268A6901D99A1F /* MySTV680Driver.h */; };
-		F5A5077503BBC69501A78977 /* MySE401Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A5077303BBC69501A78977 /* MySE401Driver.m */; };
-		F5A5077603BBC69501A78977 /* MySE401Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A5077403BBC69501A78977 /* MySE401Driver.h */; };
-		F5A5077703BBC69501A78977 /* MySE401Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A5077303BBC69501A78977 /* MySE401Driver.m */; };
-		F5A5077803BBC69501A78977 /* MySE401Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A5077403BBC69501A78977 /* MySE401Driver.h */; };
-		F5A6652D037B256401C96C8F /* MyPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A6652B037B256401C96C8F /* MyPrefsWindowController.m */; };
-		F5A6652E037B256401C96C8F /* MyPrefsWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A6652C037B256401C96C8F /* MyPrefsWindowController.h */; };
-		F5AA417701DA8EF70157C38C /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417601DA8EF70157C38C /* CoreFoundation.framework */; };
-		F5AA417901DA8F350157C38C /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417801DA8F350157C38C /* IOKit.framework */; };
-		F5B1CC470375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F5B1CC460375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff */; };
-		F5B9568D0250D31A0166DE1F /* MyCameraCentral.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B9568C0250D31A0166DE1F /* MyCameraCentral.m */; };
-		F5B9568E0250D31A0166DE1F /* MyCameraCentral.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B9568C0250D31A0166DE1F /* MyCameraCentral.m */; };
-		F5BB387F0342871601E62307 /* JFIFHeaderTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BB387E0342871601E62307 /* JFIFHeaderTemplate.h */; };
-		F5BB38800342871601E62307 /* JFIFHeaderTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BB387E0342871601E62307 /* JFIFHeaderTemplate.h */; };
-		F5C5790903049095010B006D /* MyIntelPCCameraPro.m in Sources */ = {isa = PBXBuildFile; fileRef = F5C5790703049095010B006D /* MyIntelPCCameraPro.m */; };
-		F5C80D8F02417A800166DE75 /* MyScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C80D8D02417A800166DE75 /* MyScrollView.h */; };
-		F5C80D9002417A800166DE75 /* MyScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = F5C80D8E02417A800166DE75 /* MyScrollView.m */; };
-		F5CBE0D003807F2301260355 /* JFIFHeaderTemplate.c in Sources */ = {isa = PBXBuildFile; fileRef = F5EF7FFB0364C3BD01E9B502 /* JFIFHeaderTemplate.c */; };
-		F5E501500366072501987CBE /* JFIFHeaderTemplate.c in Sources */ = {isa = PBXBuildFile; fileRef = F5EF7FFB0364C3BD01E9B502 /* JFIFHeaderTemplate.c */; };
-		F5E6AA670371F8920166D062 /* MyMovieDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = F5E6AA650371F8920166D062 /* MyMovieDocument.nib */; };
-		F5E78BF30371F3990166D062 /* MyMovieDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E78BEF0371F3990166D062 /* MyMovieDocument.m */; };
-		F5E78BF60371F3990166D062 /* MyMovieDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E78BF20371F3990166D062 /* MyMovieDocument.h */; };
-		F5E9C93A036489100181E072 /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1D01E5D0440166DE0F /* QuickTime.framework */; };
-		F5EB6B0B08B304960099821A /* MyQCOrbitCameraInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B0708B304960099821A /* MyQCOrbitCameraInspector.h */; };
-		F5EB6B0C08B304960099821A /* MyQCOrbitCameraInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B0808B304960099821A /* MyQCOrbitCameraInspector.m */; };
-		F5EB6B1508B304BE0099821A /* MyQCOrbitCameraInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = F5EB6B0F08B304BE0099821A /* MyQCOrbitCameraInspector.nib */; };
-		F5EB6B1908B304DB0099821A /* MyQCOrbitDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */; };
-		F5EB6B1A08B304DB0099821A /* MyQCOrbitDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */; };
-		F5EB6B1B08B304DB0099821A /* MyQCOrbitDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */; };
-		F5EB6B1C08B304DB0099821A /* MyQCOrbitDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */; };
-		F5EB6B1D08B304DB0099821A /* MyQCOrbitDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */; };
-		F5EB6B1E08B304DB0099821A /* MyQCOrbitDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */; };
-		F5EDFAD7036876210166D062 /* MyOV511Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EDFAD5036876210166D062 /* MyOV511Driver.m */; };
-		F5EDFAD8036876210166D062 /* MyOV511Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EDFAD6036876210166D062 /* MyOV511Driver.h */; };
-		F5EDFAD9036876210166D062 /* MyOV511Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EDFAD5036876210166D062 /* MyOV511Driver.m */; };
-		F5EDFADA036876210166D062 /* MyOV511Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EDFAD6036876210166D062 /* MyOV511Driver.h */; };
-		F5F4373F02D278D6018D4F8C /* MyVicamDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */; };
-		F5F4374102D278D6018D4F8C /* MyVicamDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4373E02D278D6018D4F8C /* MyVicamDriver.h */; };
-		F5F4374202D27B4B018D4F8C /* MyVicamDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4373E02D278D6018D4F8C /* MyVicamDriver.h */; };
-		F5F4374302D27B4C018D4F8C /* MyVicamDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */; };
-		F5F4374F02D52947018D4F8C /* RGBScaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4374C02D52947018D4F8C /* RGBScaler.m */; };
-		F5F4375002D52947018D4F8C /* RGBScalerIncluded.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4374D02D52947018D4F8C /* RGBScalerIncluded.h */; };
-		F5F4375102D52947018D4F8C /* RGBScaler.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4374E02D52947018D4F8C /* RGBScaler.h */; };
-		F5F4375202D5294A018D4F8C /* RGBScaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4374C02D52947018D4F8C /* RGBScaler.m */; };
-		F5F4375402D5299C018D4F8C /* RGBScaler.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4374E02D52947018D4F8C /* RGBScaler.h */; };
-		F5F79AB10212038E01E152CA /* GlobalDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A920212038E01E152CA /* GlobalDefs.h */; };
-		F5F79AB20212038E01E152CA /* MiniGraphicsTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A940212038E01E152CA /* MiniGraphicsTools.h */; };
-		F5F79AB30212038E01E152CA /* MiscTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A960212038E01E152CA /* MiscTools.h */; };
-		F5F79AB40212038E01E152CA /* Resolvers.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A980212038E01E152CA /* Resolvers.h */; };
-		F5F79AB50212038E01E152CA /* yuv2rgb.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A9A0212038E01E152CA /* yuv2rgb.h */; };
-		F5F79AB60212038E01E152CA /* MyCPIACameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A810212038E01E152CA /* MyCPIACameraDriver.h */; };
-		F5F79AB70212038E01E152CA /* MyKiaraFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A830212038E01E152CA /* MyKiaraFamilyDriver.h */; };
-		F5F79AB80212038E01E152CA /* MyPhilipsCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A850212038E01E152CA /* MyPhilipsCameraDriver.h */; };
-		F5F79AB90212038E01E152CA /* MyTimonFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A870212038E01E152CA /* MyTimonFamilyDriver.h */; };
-		F5F79AC50212038E01E152CA /* MiniGraphicsTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A930212038E01E152CA /* MiniGraphicsTools.c */; };
-		F5F79AC60212038E01E152CA /* MiscTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A950212038E01E152CA /* MiscTools.c */; };
-		F5F79AC80212038E01E152CA /* yuv2rgb.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A990212038E01E152CA /* yuv2rgb.c */; };
-		F5F79ACC0212038E01E152CA /* MyCPIACameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A820212038E01E152CA /* MyCPIACameraDriver.m */; };
-		F5F79ACD0212038E01E152CA /* MyKiaraFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A840212038E01E152CA /* MyKiaraFamilyDriver.m */; };
-		F5F79ACE0212038E01E152CA /* MyPhilipsCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A860212038E01E152CA /* MyPhilipsCameraDriver.m */; };
-		F5F79ACF0212038E01E152CA /* MyTimonFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A880212038E01E152CA /* MyTimonFamilyDriver.m */; };
-		F5F79ADB0212038E01E152CA /* GlobalDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A920212038E01E152CA /* GlobalDefs.h */; };
-		F5F79ADC0212038E01E152CA /* MiniGraphicsTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A940212038E01E152CA /* MiniGraphicsTools.h */; };
-		F5F79ADD0212038E01E152CA /* MiscTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A960212038E01E152CA /* MiscTools.h */; };
-		F5F79ADE0212038E01E152CA /* Resolvers.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A980212038E01E152CA /* Resolvers.h */; };
-		F5F79ADF0212038E01E152CA /* yuv2rgb.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A9A0212038E01E152CA /* yuv2rgb.h */; };
-		F5F79AE40212038E01E152CA /* MyTimonFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A870212038E01E152CA /* MyTimonFamilyDriver.h */; };
-		F5F79AE50212038E01E152CA /* MyPhilipsCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A850212038E01E152CA /* MyPhilipsCameraDriver.h */; };
-		F5F79AE60212038E01E152CA /* MyKiaraFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A830212038E01E152CA /* MyKiaraFamilyDriver.h */; };
-		F5F79AE70212038E01E152CA /* MyCPIACameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A810212038E01E152CA /* MyCPIACameraDriver.h */; };
-		F5F79AEF0212038E01E152CA /* MiniGraphicsTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A930212038E01E152CA /* MiniGraphicsTools.c */; };
-		F5F79AF00212038E01E152CA /* MiscTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A950212038E01E152CA /* MiscTools.c */; };
-		F5F79AF10212038E01E152CA /* Resolvers.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A970212038E01E152CA /* Resolvers.c */; };
-		F5F79AF20212038E01E152CA /* yuv2rgb.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A990212038E01E152CA /* yuv2rgb.c */; };
-		F5F79AF70212038E01E152CA /* MyTimonFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A880212038E01E152CA /* MyTimonFamilyDriver.m */; };
-		F5F79AF80212038E01E152CA /* MyPhilipsCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A860212038E01E152CA /* MyPhilipsCameraDriver.m */; };
-		F5F79AF90212038E01E152CA /* MyKiaraFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A840212038E01E152CA /* MyKiaraFamilyDriver.m */; };
-		F5F79AFA0212038E01E152CA /* MyCPIACameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A820212038E01E152CA /* MyCPIACameraDriver.m */; };
-		F5FC0F1F02834E83015925D2 /* MyQCWebDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F1D02834E82015925D2 /* MyQCWebDriver.h */; };
-		F5FC0F2002834E83015925D2 /* MyQCWebDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F1E02834E82015925D2 /* MyQCWebDriver.m */; };
-		F5FC0F2102834E83015925D2 /* MyQCWebDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F1D02834E82015925D2 /* MyQCWebDriver.h */; };
-		F5FC0F2202834E83015925D2 /* MyQCWebDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F1E02834E82015925D2 /* MyQCWebDriver.m */; };
-		F5FC0F25028351A7015925D2 /* MyVV6410Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F23028351A7015925D2 /* MyVV6410Sensor.h */; };
-		F5FC0F26028351A7015925D2 /* MyVV6410Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F24028351A7015925D2 /* MyVV6410Sensor.m */; };
-		F5FC0F27028351A7015925D2 /* MyVV6410Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F23028351A7015925D2 /* MyVV6410Sensor.h */; };
-		F5FC0F28028351A7015925D2 /* MyVV6410Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F24028351A7015925D2 /* MyVV6410Sensor.m */; };
+		F535EC0A08DB3970007943DA /* GlobalDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A920212038E01E152CA /* GlobalDefs.h */; };
+		F535EC0B08DB3970007943DA /* MiniGraphicsTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A940212038E01E152CA /* MiniGraphicsTools.h */; };
+		F535EC0C08DB3970007943DA /* MiscTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A960212038E01E152CA /* MiscTools.h */; };
+		F535EC0D08DB3970007943DA /* Resolvers.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A980212038E01E152CA /* Resolvers.h */; };
+		F535EC0E08DB3970007943DA /* yuv2rgb.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A9A0212038E01E152CA /* yuv2rgb.h */; };
+		F535EC0F08DB3970007943DA /* MyCPIACameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A810212038E01E152CA /* MyCPIACameraDriver.h */; };
+		F535EC1008DB3970007943DA /* MyKiaraFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A830212038E01E152CA /* MyKiaraFamilyDriver.h */; };
+		F535EC1108DB3970007943DA /* MyPhilipsCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A850212038E01E152CA /* MyPhilipsCameraDriver.h */; };
+		F535EC1208DB3970007943DA /* MyTimonFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A870212038E01E152CA /* MyTimonFamilyDriver.h */; };
+		F535EC1308DB3970007943DA /* MyCameraCentral.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8210213113F0166DE0F /* MyCameraCentral.h */; };
+		F535EC1408DB3970007943DA /* MyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8230213113F0166DE0F /* MyCameraDriver.h */; };
+		F535EC1508DB3970007943DA /* MyCameraInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8250213113F0166DE0F /* MyCameraInfo.h */; };
+		F535EC1608DB3970007943DA /* MyDummyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8270213113F0166DE0F /* MyDummyCameraDriver.h */; };
+		F535EC1708DB3970007943DA /* MyController.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD83D021311680166DE0F /* MyController.h */; };
+		F535EC1808DB3970007943DA /* MySTV680Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F589EB0E02268A6901D99A1F /* MySTV680Driver.h */; };
+		F535EC1908DB3970007943DA /* BayerConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58530E10229AAB601479C37 /* BayerConverter.h */; };
+		F535EC1A08DB3970007943DA /* MyImageDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F53B90580240CE2B0166DE75 /* MyImageDocument.h */; };
+		F535EC1B08DB3970007943DA /* MyScrollView.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C80D8D02417A800166DE75 /* MyScrollView.h */; };
+		F535EC1C08DB3970007943DA /* MySPCA504Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F511081E0241794801599652 /* MySPCA504Driver.h */; };
+		F535EC1D08DB3970007943DA /* MyImageWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = F58DB238024E9803019A97FC /* MyImageWindowController.h */; };
+		F535EC1E08DB3970007943DA /* MyPB0100Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C102572BFE014CA2B1 /* MyPB0100Sensor.h */; };
+		F535EC1F08DB3970007943DA /* MySTV600Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C302572BFE014CA2B1 /* MySTV600Sensor.h */; };
+		F535EC2008DB3970007943DA /* MyQX3Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5376F35026C66D30166DE1F /* MyQX3Driver.h */; };
+		F535EC2108DB3970007943DA /* MyQCExpressBDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEB70271ACF80166DE1F /* MyQCExpressBDriver.h */; };
+		F535EC2208DB3970007943DA /* MyHDCS1000Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEC20271B72D0166DE1F /* MyHDCS1000Sensor.h */; };
+		F535EC2308DB3970007943DA /* MyHDCS1020Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F53480CC027240FB013AF9AD /* MyHDCS1020Sensor.h */; };
+		F535EC2408DB3970007943DA /* MyQCExpressADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A153160274D3D501C56AC3 /* MyQCExpressADriver.h */; };
+		F535EC2508DB3970007943DA /* MyQCWebDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F1D02834E82015925D2 /* MyQCWebDriver.h */; };
+		F535EC2608DB3970007943DA /* MyVV6410Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F23028351A7015925D2 /* MyVV6410Sensor.h */; };
+		F535EC2708DB3970007943DA /* MyCameraInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = F51EEE570284B73A01B888F7 /* MyCameraInspector.h */; };
+		F535EC2808DB3970007943DA /* MyQX3CameraInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = F57D11AFC5B26FF6010B00CC /* MyQX3CameraInspector.h */; };
+		F535EC2908DB3970007943DA /* MyVicamDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4373E02D278D6018D4F8C /* MyVicamDriver.h */; };
+		F535EC2A08DB3970007943DA /* RGBScaler.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4374E02D52947018D4F8C /* RGBScaler.h */; };
+		F535EC2B08DB3970007943DA /* MyIntelPCCameraPro.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5790603049095010B006D /* MyIntelPCCameraPro.h */; };
+		F535EC2C08DB3970007943DA /* JFIFHeaderTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BB387E0342871601E62307 /* JFIFHeaderTemplate.h */; };
+		F535EC2D08DB3970007943DA /* MyOV511Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EDFAD6036876210166D062 /* MyOV511Driver.h */; };
+		F535EC2E08DB3970007943DA /* MyMovieDocument.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E78BF20371F3990166D062 /* MyMovieDocument.h */; };
+		F535EC2F08DB3970007943DA /* MyMovieRecorder.h in Headers */ = {isa = PBXBuildFile; fileRef = F58976FA03758BEE01159FE2 /* MyMovieRecorder.h */; };
+		F535EC3008DB3970007943DA /* MyMovieWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = F58976FC03758BEE01159FE2 /* MyMovieWindowController.h */; };
+		F535EC3108DB3970007943DA /* MyNSMovieExtensions.h in Headers */ = {isa = PBXBuildFile; fileRef = F58976FE03758BEE01159FE2 /* MyNSMovieExtensions.h */; };
+		F535EC3208DB3970007943DA /* MyPrefsWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A6652C037B256401C96C8F /* MyPrefsWindowController.h */; };
+		F535EC3308DB3970007943DA /* MySonix2028Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F53F6637039ACC3F01C3DF00 /* MySonix2028Driver.h */; };
+		F535EC3408DB3970007943DA /* MySE401Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A5077403BBC69501A78977 /* MySE401Driver.h */; };
+		F535EC3508DB3970007943DA /* MyQCProBeigeDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39185ABA03C8B5570066DE75 /* MyQCProBeigeDriver.h */; };
+		F535EC3608DB3970007943DA /* MySPCA500Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3973A6F303CDF44E0066D062 /* MySPCA500Driver.h */; };
+		F535EC3708DB3970007943DA /* MyKiaraFlippedDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CBD65003DC0D79000F7EFC /* MyKiaraFlippedDriver.h */; };
+		F535EC3808DB3970007943DA /* QTDummyPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = 39A2B45B0593E297009C5934 /* QTDummyPanel.h */; };
+		F535EC3908DB3970007943DA /* USB_VendorProductIDs.h in Headers */ = {isa = PBXBuildFile; fileRef = F522580908725639002023A4 /* USB_VendorProductIDs.h */; };
+		F535EC3A08DB3970007943DA /* MyQCOrbitCameraInspector.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B0708B304960099821A /* MyQCOrbitCameraInspector.h */; };
+		F535EC3B08DB3970007943DA /* MyQCOrbitDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */; };
+		F535EC3D08DB3970007943DA /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = F55DD83A021311680166DE0F /* MainMenu.nib */; };
+		F535EC3E08DB3970007943DA /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 391D4A92059280DF00ADF722 /* app.icns */; };
+		F535EC3F08DB3970007943DA /* DownloadToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB6E022FB1BD01369AA6 /* DownloadToolbarItem.tiff */; };
+		F535EC4008DB3970007943DA /* NextCamToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB6F022FB1BD01369AA6 /* NextCamToolbarItem.tiff */; };
+		F535EC4108DB3970007943DA /* PauseToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB70022FB1BD01369AA6 /* PauseToolbarItem.tiff */; };
+		F535EC4208DB3970007943DA /* PlayToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB71022FB1BD01369AA6 /* PlayToolbarItem.tiff */; };
+		F535EC4308DB3970007943DA /* SettingsToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB72022FB1BD01369AA6 /* SettingsToolbarItem.tiff */; };
+		F535EC4408DB3970007943DA /* SnapshotToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB73022FB1BD01369AA6 /* SnapshotToolbarItem.tiff */; };
+		F535EC4508DB3970007943DA /* MyImageDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = F53B90540240CDFF0166DE75 /* MyImageDocument.nib */; };
+		F535EC4608DB3970007943DA /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F563AB480247FDC601BF65F7 /* Localizable.strings */; };
+		F535EC4708DB3970007943DA /* DriverLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F5285DAA0248103E01AEB99D /* DriverLocalizable.strings */; };
+		F535EC4808DB3970007943DA /* WebcamHelp in Resources */ = {isa = PBXBuildFile; fileRef = F52D2ED0025A7383016EC628 /* WebcamHelp */; };
+		F535EC4908DB3970007943DA /* RotateCWToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F52D2ED4025A9425016EC628 /* RotateCWToolbarItem.tiff */; };
+		F535EC4A08DB3970007943DA /* RotateCCWToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F52D2ED5025A9425016EC628 /* RotateCCWToolbarItem.tiff */; };
+		F535EC4B08DB3970007943DA /* DefaultCameraInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = F51EEE5D0284BC9601B888F7 /* DefaultCameraInspector.nib */; };
+		F535EC4C08DB3970007943DA /* MyQX3CameraInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B3C5B26FF6010B00CC /* MyQX3CameraInspector.nib */; };
+		F535EC4D08DB3970007943DA /* QX3-3.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B6C5B26FF6010B00CC /* QX3-3.tiff */; };
+		F535EC4E08DB3970007943DA /* QX3-2.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B7C5B26FF6010B00CC /* QX3-2.tiff */; };
+		F535EC4F08DB3970007943DA /* QX3-1.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B8C5B26FF6010B00CC /* QX3-1.tiff */; };
+		F535EC5008DB3970007943DA /* QX3-0.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11BDC5B26FF6010B00CC /* QX3-0.tiff */; };
+		F535EC5108DB3970007943DA /* QX3-4.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B5C5B26FF6010B00CC /* QX3-4.tiff */; };
+		F535EC5208DB3970007943DA /* QX3-5.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F5794DDF0285B922010B00CC /* QX3-5.tiff */; };
+		F535EC5308DB3970007943DA /* MyMovieDocument.nib in Resources */ = {isa = PBXBuildFile; fileRef = F5E6AA650371F8920166D062 /* MyMovieDocument.nib */; };
+		F535EC5408DB3970007943DA /* RecordMovieToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F589724A0374636B01159FE2 /* RecordMovieToolbarItem.tiff */; };
+		F535EC5508DB3970007943DA /* RecordMovieActiveToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F5B1CC460375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff */; };
+		F535EC5608DB3970007943DA /* MyQCOrbitCameraInspector.nib in Resources */ = {isa = PBXBuildFile; fileRef = F5EB6B0F08B304BE0099821A /* MyQCOrbitCameraInspector.nib */; };
+		F535EC5808DB3970007943DA /* MiniGraphicsTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A930212038E01E152CA /* MiniGraphicsTools.c */; };
+		F535EC5908DB3970007943DA /* MiscTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A950212038E01E152CA /* MiscTools.c */; };
+		F535EC5A08DB3970007943DA /* yuv2rgb.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A990212038E01E152CA /* yuv2rgb.c */; };
+		F535EC5B08DB3970007943DA /* MyCPIACameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A820212038E01E152CA /* MyCPIACameraDriver.m */; };
+		F535EC5C08DB3970007943DA /* MyKiaraFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A840212038E01E152CA /* MyKiaraFamilyDriver.m */; };
+		F535EC5D08DB3970007943DA /* MyPhilipsCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A860212038E01E152CA /* MyPhilipsCameraDriver.m */; };
+		F535EC5E08DB3970007943DA /* MyTimonFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A880212038E01E152CA /* MyTimonFamilyDriver.m */; };
+		F535EC5F08DB3970007943DA /* MyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8240213113F0166DE0F /* MyCameraDriver.m */; };
+		F535EC6008DB3970007943DA /* MyCameraInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8260213113F0166DE0F /* MyCameraInfo.m */; };
+		F535EC6108DB3970007943DA /* MyDummyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8280213113F0166DE0F /* MyDummyCameraDriver.m */; };
+		F535EC6208DB3970007943DA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD83C021311680166DE0F /* main.m */; };
+		F535EC6308DB3970007943DA /* MyController.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD83E021311680166DE0F /* MyController.m */; };
+		F535EC6408DB3970007943DA /* MySTV680Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F589EB0F02268A6901D99A1F /* MySTV680Driver.m */; };
+		F535EC6508DB3970007943DA /* BayerConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = F58530E20229AAB601479C37 /* BayerConverter.m */; };
+		F535EC6608DB3970007943DA /* MyImageDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = F53B90590240CE2B0166DE75 /* MyImageDocument.m */; };
+		F535EC6708DB3970007943DA /* MyScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = F5C80D8E02417A800166DE75 /* MyScrollView.m */; };
+		F535EC6808DB3970007943DA /* MySPCA504Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F511081D0241794801599652 /* MySPCA504Driver.m */; };
+		F535EC6908DB3970007943DA /* MyImageWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F58DB239024E9803019A97FC /* MyImageWindowController.m */; };
+		F535EC6A08DB3970007943DA /* MyCameraCentral.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B9568C0250D31A0166DE1F /* MyCameraCentral.m */; };
+		F535EC6B08DB3970007943DA /* MyPB0100Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C202572BFE014CA2B1 /* MyPB0100Sensor.m */; };
+		F535EC6C08DB3970007943DA /* MySTV600Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C402572BFE014CA2B1 /* MySTV600Sensor.m */; };
+		F535EC6D08DB3970007943DA /* MyQX3Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5376F36026C66D30166DE1F /* MyQX3Driver.m */; };
+		F535EC6E08DB3970007943DA /* MyQCExpressBDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEB90271ACF80166DE1F /* MyQCExpressBDriver.m */; };
+		F535EC6F08DB3970007943DA /* MyHDCS1000Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEC30271B72D0166DE1F /* MyHDCS1000Sensor.m */; };
+		F535EC7008DB3970007943DA /* MyHDCS1020Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F53480CD027240FB013AF9AD /* MyHDCS1020Sensor.m */; };
+		F535EC7108DB3970007943DA /* MyQCExpressADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A153170274D3D501C56AC3 /* MyQCExpressADriver.m */; };
+		F535EC7208DB3970007943DA /* MyQCWebDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F1E02834E82015925D2 /* MyQCWebDriver.m */; };
+		F535EC7308DB3970007943DA /* MyVV6410Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F24028351A7015925D2 /* MyVV6410Sensor.m */; };
+		F535EC7408DB3970007943DA /* MyCameraInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = F51EEE580284B73A01B888F7 /* MyCameraInspector.m */; };
+		F535EC7508DB3970007943DA /* MyQX3CameraInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = F57D11B0C5B26FF6010B00CC /* MyQX3CameraInspector.m */; };
+		F535EC7608DB3970007943DA /* MyVicamDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */; };
+		F535EC7708DB3970007943DA /* RGBScaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4374C02D52947018D4F8C /* RGBScaler.m */; };
+		F535EC7808DB3970007943DA /* MyIntelPCCameraPro.m in Sources */ = {isa = PBXBuildFile; fileRef = F5C5790703049095010B006D /* MyIntelPCCameraPro.m */; };
+		F535EC7908DB3970007943DA /* JFIFHeaderTemplate.c in Sources */ = {isa = PBXBuildFile; fileRef = F5EF7FFB0364C3BD01E9B502 /* JFIFHeaderTemplate.c */; };
+		F535EC7A08DB3970007943DA /* MyOV511Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EDFAD5036876210166D062 /* MyOV511Driver.m */; };
+		F535EC7B08DB3970007943DA /* MyMovieDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E78BEF0371F3990166D062 /* MyMovieDocument.m */; };
+		F535EC7C08DB3970007943DA /* MyMovieRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = F58976F903758BEE01159FE2 /* MyMovieRecorder.m */; };
+		F535EC7D08DB3970007943DA /* MyMovieWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F58976FB03758BEE01159FE2 /* MyMovieWindowController.m */; };
+		F535EC7E08DB3970007943DA /* MyNSMovieExtensions.m in Sources */ = {isa = PBXBuildFile; fileRef = F58976FD03758BEE01159FE2 /* MyNSMovieExtensions.m */; };
+		F535EC7F08DB3970007943DA /* MyPrefsWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A6652B037B256401C96C8F /* MyPrefsWindowController.m */; };
+		F535EC8008DB3970007943DA /* MySonix2028Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F53F6636039ACC3F01C3DF00 /* MySonix2028Driver.m */; };
+		F535EC8108DB3970007943DA /* MySE401Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A5077303BBC69501A78977 /* MySE401Driver.m */; };
+		F535EC8208DB3970007943DA /* MyQCProBeigeDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39185ABB03C8B5570066DE75 /* MyQCProBeigeDriver.m */; };
+		F535EC8308DB3970007943DA /* Resolvers.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A970212038E01E152CA /* Resolvers.c */; };
+		F535EC8408DB3970007943DA /* MySPCA500Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = 3973A6F203CDF44E0066D062 /* MySPCA500Driver.m */; };
+		F535EC8508DB3970007943DA /* ov511_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 397B163C03CED9B900153FEE /* ov511_decomp.c */; };
+		F535EC8608DB3970007943DA /* MyKiaraFlippedDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CBD64F03DC0D79000F7EFC /* MyKiaraFlippedDriver.m */; };
+		F535EC8708DB3970007943DA /* QTDummyPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = 39A2B45A0593E296009C5934 /* QTDummyPanel.m */; };
+		F535EC8808DB3970007943DA /* MyQCOrbitCameraInspector.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B0808B304960099821A /* MyQCOrbitCameraInspector.m */; };
+		F535EC8908DB3970007943DA /* MyQCOrbitDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */; };
+		F535EC8B08DB3970007943DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		F535EC8C08DB3970007943DA /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417601DA8EF70157C38C /* CoreFoundation.framework */; };
+		F535EC8D08DB3970007943DA /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417801DA8F350157C38C /* IOKit.framework */; };
+		F535EC8E08DB3970007943DA /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1D01E5D0440166DE0F /* QuickTime.framework */; };
+		F535EC9908DB3970007943DA /* GlobalDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A920212038E01E152CA /* GlobalDefs.h */; };
+		F535EC9A08DB3970007943DA /* MiniGraphicsTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A940212038E01E152CA /* MiniGraphicsTools.h */; };
+		F535EC9B08DB3970007943DA /* MiscTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A960212038E01E152CA /* MiscTools.h */; };
+		F535EC9C08DB3970007943DA /* Resolvers.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A980212038E01E152CA /* Resolvers.h */; };
+		F535EC9D08DB3970007943DA /* yuv2rgb.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A9A0212038E01E152CA /* yuv2rgb.h */; };
+		F535EC9E08DB3970007943DA /* MyTimonFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A870212038E01E152CA /* MyTimonFamilyDriver.h */; };
+		F535EC9F08DB3970007943DA /* MyPhilipsCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A850212038E01E152CA /* MyPhilipsCameraDriver.h */; };
+		F535ECA008DB3970007943DA /* MyKiaraFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A830212038E01E152CA /* MyKiaraFamilyDriver.h */; };
+		F535ECA108DB3970007943DA /* MyCPIACameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A810212038E01E152CA /* MyCPIACameraDriver.h */; };
+		F535ECA208DB3970007943DA /* MyCameraCentral.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8210213113F0166DE0F /* MyCameraCentral.h */; };
+		F535ECA308DB3970007943DA /* MyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8230213113F0166DE0F /* MyCameraDriver.h */; };
+		F535ECA408DB3970007943DA /* MyCameraInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8250213113F0166DE0F /* MyCameraInfo.h */; };
+		F535ECA508DB3970007943DA /* MyDummyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8270213113F0166DE0F /* MyDummyCameraDriver.h */; };
+		F535ECA608DB3970007943DA /* MyBridge.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD840021311680166DE0F /* MyBridge.h */; };
+		F535ECA708DB3970007943DA /* QTPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD843021311680166DE0F /* QTPanel.h */; };
+		F535ECA808DB3970007943DA /* QTVideoDigitizer.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD845021311680166DE0F /* QTVideoDigitizer.h */; };
+		F535ECA908DB3970007943DA /* BayerConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58530E10229AAB601479C37 /* BayerConverter.h */; };
+		F535ECAA08DB3970007943DA /* MySPCA504Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F511081E0241794801599652 /* MySPCA504Driver.h */; };
+		F535ECAB08DB3970007943DA /* MyPB0100Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C102572BFE014CA2B1 /* MyPB0100Sensor.h */; };
+		F535ECAC08DB3970007943DA /* MySTV600Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C302572BFE014CA2B1 /* MySTV600Sensor.h */; };
+		F535ECAD08DB3970007943DA /* RGB888Scaler.h in Headers */ = {isa = PBXBuildFile; fileRef = F59E4B7B0264A7910166DE1F /* RGB888Scaler.h */; };
+		F535ECAE08DB3970007943DA /* MyQX3Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5376F35026C66D30166DE1F /* MyQX3Driver.h */; };
+		F535ECAF08DB3970007943DA /* MyQCExpressBDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEB70271ACF80166DE1F /* MyQCExpressBDriver.h */; };
+		F535ECB008DB3970007943DA /* MyHDCS1000Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEC20271B72D0166DE1F /* MyHDCS1000Sensor.h */; };
+		F535ECB108DB3970007943DA /* MyHDCS1020Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F53480CC027240FB013AF9AD /* MyHDCS1020Sensor.h */; };
+		F535ECB208DB3970007943DA /* MyQCExpressADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A153160274D3D501C56AC3 /* MyQCExpressADriver.h */; };
+		F535ECB308DB3970007943DA /* MyQCWebDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F1D02834E82015925D2 /* MyQCWebDriver.h */; };
+		F535ECB408DB3970007943DA /* MyVV6410Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F23028351A7015925D2 /* MyVV6410Sensor.h */; };
+		F535ECB508DB3970007943DA /* MyVicamDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4373E02D278D6018D4F8C /* MyVicamDriver.h */; };
+		F535ECB608DB3970007943DA /* RGBScalerIncluded.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4374D02D52947018D4F8C /* RGBScalerIncluded.h */; };
+		F535ECB708DB3970007943DA /* RGBScaler.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4374E02D52947018D4F8C /* RGBScaler.h */; };
+		F535ECB808DB3970007943DA /* MyIntelPCCameraPro.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5790603049095010B006D /* MyIntelPCCameraPro.h */; };
+		F535ECB908DB3970007943DA /* MySTV680Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F589EB0E02268A6901D99A1F /* MySTV680Driver.h */; };
+		F535ECBA08DB3970007943DA /* JFIFHeaderTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BB387E0342871601E62307 /* JFIFHeaderTemplate.h */; };
+		F535ECBB08DB3970007943DA /* MyOV511Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EDFAD6036876210166D062 /* MyOV511Driver.h */; };
+		F535ECBC08DB3970007943DA /* MySonix2028Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F53F6637039ACC3F01C3DF00 /* MySonix2028Driver.h */; };
+		F535ECBD08DB3970007943DA /* MySE401Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A5077403BBC69501A78977 /* MySE401Driver.h */; };
+		F535ECBE08DB3970007943DA /* MyQCProBeigeDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39185ABA03C8B5570066DE75 /* MyQCProBeigeDriver.h */; };
+		F535ECBF08DB3970007943DA /* MySPCA500Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3973A6F303CDF44E0066D062 /* MySPCA500Driver.h */; };
+		F535ECC008DB3970007943DA /* MyKiaraFlippedDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CBD65003DC0D79000F7EFC /* MyKiaraFlippedDriver.h */; };
+		F535ECC108DB3970007943DA /* USB_VendorProductIDs.h in Headers */ = {isa = PBXBuildFile; fileRef = F522580908725639002023A4 /* USB_VendorProductIDs.h */; };
+		F535ECC208DB3970007943DA /* MyQCOrbitDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */; };
+		F535ECC408DB3970007943DA /* DriverLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F5285DAA0248103E01AEB99D /* DriverLocalizable.strings */; };
+		F535ECC608DB3970007943DA /* MiniGraphicsTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A930212038E01E152CA /* MiniGraphicsTools.c */; };
+		F535ECC708DB3970007943DA /* MiscTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A950212038E01E152CA /* MiscTools.c */; };
+		F535ECC808DB3970007943DA /* Resolvers.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A970212038E01E152CA /* Resolvers.c */; };
+		F535ECC908DB3970007943DA /* yuv2rgb.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A990212038E01E152CA /* yuv2rgb.c */; };
+		F535ECCA08DB3970007943DA /* MyTimonFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A880212038E01E152CA /* MyTimonFamilyDriver.m */; };
+		F535ECCB08DB3970007943DA /* MyPhilipsCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A860212038E01E152CA /* MyPhilipsCameraDriver.m */; };
+		F535ECCC08DB3970007943DA /* MyKiaraFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A840212038E01E152CA /* MyKiaraFamilyDriver.m */; };
+		F535ECCD08DB3970007943DA /* MyCPIACameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A820212038E01E152CA /* MyCPIACameraDriver.m */; };
+		F535ECCE08DB3970007943DA /* MyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8240213113F0166DE0F /* MyCameraDriver.m */; };
+		F535ECCF08DB3970007943DA /* MyCameraInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8260213113F0166DE0F /* MyCameraInfo.m */; };
+		F535ECD008DB3970007943DA /* MyDummyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8280213113F0166DE0F /* MyDummyCameraDriver.m */; };
+		F535ECD108DB3970007943DA /* MyBridge.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD841021311680166DE0F /* MyBridge.m */; };
+		F535ECD208DB3970007943DA /* QTPanel.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD844021311680166DE0F /* QTPanel.m */; };
+		F535ECD308DB3970007943DA /* QTVideoDigitizer.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD846021311680166DE0F /* QTVideoDigitizer.m */; };
+		F535ECD408DB3970007943DA /* MySTV680Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F589EB0F02268A6901D99A1F /* MySTV680Driver.m */; };
+		F535ECD508DB3970007943DA /* BayerConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = F58530E20229AAB601479C37 /* BayerConverter.m */; };
+		F535ECD608DB3970007943DA /* MySPCA504Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F511081D0241794801599652 /* MySPCA504Driver.m */; };
+		F535ECD708DB3970007943DA /* MyCameraCentral.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B9568C0250D31A0166DE1F /* MyCameraCentral.m */; };
+		F535ECD808DB3970007943DA /* MyPB0100Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C202572BFE014CA2B1 /* MyPB0100Sensor.m */; };
+		F535ECD908DB3970007943DA /* MySTV600Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C402572BFE014CA2B1 /* MySTV600Sensor.m */; };
+		F535ECDA08DB3970007943DA /* RGB888Scaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F59E4B7A0264A7910166DE1F /* RGB888Scaler.m */; };
+		F535ECDB08DB3970007943DA /* MyQX3Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5376F36026C66D30166DE1F /* MyQX3Driver.m */; };
+		F535ECDC08DB3970007943DA /* MyQCExpressBDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEB90271ACF80166DE1F /* MyQCExpressBDriver.m */; };
+		F535ECDD08DB3970007943DA /* MyHDCS1000Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEC30271B72D0166DE1F /* MyHDCS1000Sensor.m */; };
+		F535ECDE08DB3970007943DA /* MyHDCS1020Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F53480CD027240FB013AF9AD /* MyHDCS1020Sensor.m */; };
+		F535ECDF08DB3970007943DA /* MyQCExpressADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A153170274D3D501C56AC3 /* MyQCExpressADriver.m */; };
+		F535ECE008DB3970007943DA /* MyQCWebDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F1E02834E82015925D2 /* MyQCWebDriver.m */; };
+		F535ECE108DB3970007943DA /* MyVV6410Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F24028351A7015925D2 /* MyVV6410Sensor.m */; };
+		F535ECE208DB3970007943DA /* MyVicamDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */; };
+		F535ECE308DB3970007943DA /* RGBScaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4374C02D52947018D4F8C /* RGBScaler.m */; };
+		F535ECE408DB3970007943DA /* MyIntelPCCameraPro.m in Sources */ = {isa = PBXBuildFile; fileRef = F5C5790703049095010B006D /* MyIntelPCCameraPro.m */; };
+		F535ECE508DB3970007943DA /* MyOV511Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EDFAD5036876210166D062 /* MyOV511Driver.m */; };
+		F535ECE608DB3970007943DA /* JFIFHeaderTemplate.c in Sources */ = {isa = PBXBuildFile; fileRef = F5EF7FFB0364C3BD01E9B502 /* JFIFHeaderTemplate.c */; };
+		F535ECE708DB3970007943DA /* MySonix2028Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F53F6636039ACC3F01C3DF00 /* MySonix2028Driver.m */; };
+		F535ECE808DB3970007943DA /* MySE401Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A5077303BBC69501A78977 /* MySE401Driver.m */; };
+		F535ECE908DB3970007943DA /* MyQCProBeigeDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39185ABB03C8B5570066DE75 /* MyQCProBeigeDriver.m */; };
+		F535ECEA08DB3970007943DA /* MySPCA500Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = 3973A6F203CDF44E0066D062 /* MySPCA500Driver.m */; };
+		F535ECEB08DB3970007943DA /* ov511_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 397B163C03CED9B900153FEE /* ov511_decomp.c */; };
+		F535ECEC08DB3970007943DA /* MyKiaraFlippedDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CBD64F03DC0D79000F7EFC /* MyKiaraFlippedDriver.m */; };
+		F535ECED08DB3970007943DA /* MyQCOrbitDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */; };
+		F535ECEF08DB3970007943DA /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417601DA8EF70157C38C /* CoreFoundation.framework */; };
+		F535ECF008DB3970007943DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		F535ECF108DB3970007943DA /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417801DA8F350157C38C /* IOKit.framework */; };
+		F535ECF208DB3970007943DA /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1D01E5D0440166DE0F /* QuickTime.framework */; };
+		F535ECF308DB3970007943DA /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1B01E5D03A0166DE0F /* Carbon.framework */; };
+		F535ECF508DB3970007943DA /* QTComponent.r in Rez */ = {isa = PBXBuildFile; fileRef = F55DD842021311680166DE0F /* QTComponent.r */; };
+		F535ECFE08DB3970007943DA /* GlobalDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A920212038E01E152CA /* GlobalDefs.h */; };
+		F535ECFF08DB3970007943DA /* MiniGraphicsTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A940212038E01E152CA /* MiniGraphicsTools.h */; };
+		F535ED0008DB3970007943DA /* MiscTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A960212038E01E152CA /* MiscTools.h */; };
+		F535ED0108DB3970007943DA /* Resolvers.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A980212038E01E152CA /* Resolvers.h */; };
+		F535ED0208DB3970007943DA /* yuv2rgb.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A9A0212038E01E152CA /* yuv2rgb.h */; };
+		F535ED0308DB3970007943DA /* MyCPIACameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A810212038E01E152CA /* MyCPIACameraDriver.h */; };
+		F535ED0408DB3970007943DA /* MyKiaraFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A830212038E01E152CA /* MyKiaraFamilyDriver.h */; };
+		F535ED0508DB3970007943DA /* MyPhilipsCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A850212038E01E152CA /* MyPhilipsCameraDriver.h */; };
+		F535ED0608DB3970007943DA /* MyTimonFamilyDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A870212038E01E152CA /* MyTimonFamilyDriver.h */; };
+		F535ED0708DB3970007943DA /* MyCameraCentral.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8210213113F0166DE0F /* MyCameraCentral.h */; };
+		F535ED0808DB3970007943DA /* MyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8230213113F0166DE0F /* MyCameraDriver.h */; };
+		F535ED0908DB3970007943DA /* MyCameraInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8250213113F0166DE0F /* MyCameraInfo.h */; };
+		F535ED0A08DB3970007943DA /* MyDummyCameraDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F55DD8270213113F0166DE0F /* MyDummyCameraDriver.h */; };
+		F535ED0B08DB3970007943DA /* MySTV680Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F589EB0E02268A6901D99A1F /* MySTV680Driver.h */; };
+		F535ED0C08DB3970007943DA /* BayerConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = F58530E10229AAB601479C37 /* BayerConverter.h */; };
+		F535ED0D08DB3970007943DA /* MySPCA504Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F511081E0241794801599652 /* MySPCA504Driver.h */; };
+		F535ED0E08DB3970007943DA /* MyPB0100Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C102572BFE014CA2B1 /* MyPB0100Sensor.h */; };
+		F535ED0F08DB3970007943DA /* MySTV600Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F55A58C302572BFE014CA2B1 /* MySTV600Sensor.h */; };
+		F535ED1008DB3970007943DA /* MyQX3Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5376F35026C66D30166DE1F /* MyQX3Driver.h */; };
+		F535ED1108DB3970007943DA /* MyQCExpressBDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEB70271ACF80166DE1F /* MyQCExpressBDriver.h */; };
+		F535ED1208DB3970007943DA /* MyHDCS1000Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F533EEC20271B72D0166DE1F /* MyHDCS1000Sensor.h */; };
+		F535ED1308DB3970007943DA /* MyHDCS1020Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F53480CC027240FB013AF9AD /* MyHDCS1020Sensor.h */; };
+		F535ED1408DB3970007943DA /* MyQCExpressADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A153160274D3D501C56AC3 /* MyQCExpressADriver.h */; };
+		F535ED1508DB3970007943DA /* MyQCWebDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F1D02834E82015925D2 /* MyQCWebDriver.h */; };
+		F535ED1608DB3970007943DA /* MyVV6410Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FC0F23028351A7015925D2 /* MyVV6410Sensor.h */; };
+		F535ED1708DB3970007943DA /* MyVicamDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4373E02D278D6018D4F8C /* MyVicamDriver.h */; };
+		F535ED1808DB3970007943DA /* RGBScaler.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F4374E02D52947018D4F8C /* RGBScaler.h */; };
+		F535ED1908DB3970007943DA /* MyIntelPCCameraPro.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5790603049095010B006D /* MyIntelPCCameraPro.h */; };
+		F535ED1A08DB3970007943DA /* JFIFHeaderTemplate.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BB387E0342871601E62307 /* JFIFHeaderTemplate.h */; };
+		F535ED1B08DB3970007943DA /* MyOV511Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EDFAD6036876210166D062 /* MyOV511Driver.h */; };
+		F535ED1C08DB3970007943DA /* MySonix2028Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F53F6637039ACC3F01C3DF00 /* MySonix2028Driver.h */; };
+		F535ED1D08DB3970007943DA /* MySE401Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5A5077403BBC69501A78977 /* MySE401Driver.h */; };
+		F535ED1E08DB3970007943DA /* MyQCProBeigeDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39185ABA03C8B5570066DE75 /* MyQCProBeigeDriver.h */; };
+		F535ED1F08DB3970007943DA /* MySPCA500Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = 3973A6F303CDF44E0066D062 /* MySPCA500Driver.h */; };
+		F535ED2008DB3970007943DA /* MyKiaraFlippedDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = 39CBD65003DC0D79000F7EFC /* MyKiaraFlippedDriver.h */; };
+		F535ED2108DB3970007943DA /* ICD_CameraCalls.h in Headers */ = {isa = PBXBuildFile; fileRef = 39FE214904030BB800BAABE7 /* ICD_CameraCalls.h */; };
+		F535ED2208DB3970007943DA /* USB_VendorProductIDs.h in Headers */ = {isa = PBXBuildFile; fileRef = F522580908725639002023A4 /* USB_VendorProductIDs.h */; };
+		F535ED2308DB3970007943DA /* MyQCOrbitDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */; };
+		F535ED2508DB3970007943DA /* app.icns in Resources */ = {isa = PBXBuildFile; fileRef = 391D4A92059280DF00ADF722 /* app.icns */; };
+		F535ED2608DB3970007943DA /* DownloadToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB6E022FB1BD01369AA6 /* DownloadToolbarItem.tiff */; };
+		F535ED2708DB3970007943DA /* NextCamToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB6F022FB1BD01369AA6 /* NextCamToolbarItem.tiff */; };
+		F535ED2808DB3970007943DA /* PauseToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB70022FB1BD01369AA6 /* PauseToolbarItem.tiff */; };
+		F535ED2908DB3970007943DA /* PlayToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB71022FB1BD01369AA6 /* PlayToolbarItem.tiff */; };
+		F535ED2A08DB3970007943DA /* SettingsToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB72022FB1BD01369AA6 /* SettingsToolbarItem.tiff */; };
+		F535ED2B08DB3970007943DA /* SnapshotToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F500FB73022FB1BD01369AA6 /* SnapshotToolbarItem.tiff */; };
+		F535ED2C08DB3970007943DA /* DriverLocalizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = F5285DAA0248103E01AEB99D /* DriverLocalizable.strings */; };
+		F535ED2D08DB3970007943DA /* RotateCWToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F52D2ED4025A9425016EC628 /* RotateCWToolbarItem.tiff */; };
+		F535ED2E08DB3970007943DA /* RotateCCWToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F52D2ED5025A9425016EC628 /* RotateCCWToolbarItem.tiff */; };
+		F535ED2F08DB3970007943DA /* QX3-3.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B6C5B26FF6010B00CC /* QX3-3.tiff */; };
+		F535ED3008DB3970007943DA /* QX3-2.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B7C5B26FF6010B00CC /* QX3-2.tiff */; };
+		F535ED3108DB3970007943DA /* QX3-1.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B8C5B26FF6010B00CC /* QX3-1.tiff */; };
+		F535ED3208DB3970007943DA /* QX3-0.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11BDC5B26FF6010B00CC /* QX3-0.tiff */; };
+		F535ED3308DB3970007943DA /* QX3-4.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F57D11B5C5B26FF6010B00CC /* QX3-4.tiff */; };
+		F535ED3408DB3970007943DA /* QX3-5.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F5794DDF0285B922010B00CC /* QX3-5.tiff */; };
+		F535ED3508DB3970007943DA /* RecordMovieToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F589724A0374636B01159FE2 /* RecordMovieToolbarItem.tiff */; };
+		F535ED3608DB3970007943DA /* RecordMovieActiveToolbarItem.tiff in Resources */ = {isa = PBXBuildFile; fileRef = F5B1CC460375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff */; };
+		F535ED3708DB3970007943DA /* MainMenu.nib in Resources */ = {isa = PBXBuildFile; fileRef = 39663A690403091700435B6F /* MainMenu.nib */; };
+		F535ED3808DB3970007943DA /* plugin.icns in Resources */ = {isa = PBXBuildFile; fileRef = 3950233F040A55A70066D062 /* plugin.icns */; };
+		F535ED3A08DB3970007943DA /* MiniGraphicsTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A930212038E01E152CA /* MiniGraphicsTools.c */; };
+		F535ED3B08DB3970007943DA /* MiscTools.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A950212038E01E152CA /* MiscTools.c */; };
+		F535ED3C08DB3970007943DA /* yuv2rgb.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A990212038E01E152CA /* yuv2rgb.c */; };
+		F535ED3D08DB3970007943DA /* MyCPIACameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A820212038E01E152CA /* MyCPIACameraDriver.m */; };
+		F535ED3E08DB3970007943DA /* MyKiaraFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A840212038E01E152CA /* MyKiaraFamilyDriver.m */; };
+		F535ED3F08DB3970007943DA /* MyPhilipsCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A860212038E01E152CA /* MyPhilipsCameraDriver.m */; };
+		F535ED4008DB3970007943DA /* MyTimonFamilyDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A880212038E01E152CA /* MyTimonFamilyDriver.m */; };
+		F535ED4108DB3970007943DA /* MyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8240213113F0166DE0F /* MyCameraDriver.m */; };
+		F535ED4208DB3970007943DA /* MyCameraInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8260213113F0166DE0F /* MyCameraInfo.m */; };
+		F535ED4308DB3970007943DA /* MyDummyCameraDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F55DD8280213113F0166DE0F /* MyDummyCameraDriver.m */; };
+		F535ED4408DB3970007943DA /* MySTV680Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F589EB0F02268A6901D99A1F /* MySTV680Driver.m */; };
+		F535ED4508DB3970007943DA /* BayerConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = F58530E20229AAB601479C37 /* BayerConverter.m */; };
+		F535ED4608DB3970007943DA /* MySPCA504Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F511081D0241794801599652 /* MySPCA504Driver.m */; };
+		F535ED4708DB3970007943DA /* MyCameraCentral.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B9568C0250D31A0166DE1F /* MyCameraCentral.m */; };
+		F535ED4808DB3970007943DA /* MyPB0100Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C202572BFE014CA2B1 /* MyPB0100Sensor.m */; };
+		F535ED4908DB3970007943DA /* MySTV600Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F55A58C402572BFE014CA2B1 /* MySTV600Sensor.m */; };
+		F535ED4A08DB3970007943DA /* MyQX3Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5376F36026C66D30166DE1F /* MyQX3Driver.m */; };
+		F535ED4B08DB3970007943DA /* MyQCExpressBDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEB90271ACF80166DE1F /* MyQCExpressBDriver.m */; };
+		F535ED4C08DB3970007943DA /* MyHDCS1000Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F533EEC30271B72D0166DE1F /* MyHDCS1000Sensor.m */; };
+		F535ED4D08DB3970007943DA /* MyHDCS1020Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F53480CD027240FB013AF9AD /* MyHDCS1020Sensor.m */; };
+		F535ED4E08DB3970007943DA /* MyQCExpressADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A153170274D3D501C56AC3 /* MyQCExpressADriver.m */; };
+		F535ED4F08DB3970007943DA /* MyQCWebDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F1E02834E82015925D2 /* MyQCWebDriver.m */; };
+		F535ED5008DB3970007943DA /* MyVV6410Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F5FC0F24028351A7015925D2 /* MyVV6410Sensor.m */; };
+		F535ED5108DB3970007943DA /* MyVicamDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */; };
+		F535ED5208DB3970007943DA /* RGBScaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F4374C02D52947018D4F8C /* RGBScaler.m */; };
+		F535ED5308DB3970007943DA /* MyIntelPCCameraPro.m in Sources */ = {isa = PBXBuildFile; fileRef = F5C5790703049095010B006D /* MyIntelPCCameraPro.m */; };
+		F535ED5408DB3970007943DA /* JFIFHeaderTemplate.c in Sources */ = {isa = PBXBuildFile; fileRef = F5EF7FFB0364C3BD01E9B502 /* JFIFHeaderTemplate.c */; };
+		F535ED5508DB3970007943DA /* MyOV511Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EDFAD5036876210166D062 /* MyOV511Driver.m */; };
+		F535ED5608DB3970007943DA /* MySonix2028Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F53F6636039ACC3F01C3DF00 /* MySonix2028Driver.m */; };
+		F535ED5708DB3970007943DA /* MySE401Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5A5077303BBC69501A78977 /* MySE401Driver.m */; };
+		F535ED5808DB3970007943DA /* MyQCProBeigeDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39185ABB03C8B5570066DE75 /* MyQCProBeigeDriver.m */; };
+		F535ED5908DB3970007943DA /* Resolvers.c in Sources */ = {isa = PBXBuildFile; fileRef = F5F79A970212038E01E152CA /* Resolvers.c */; };
+		F535ED5A08DB3970007943DA /* MySPCA500Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = 3973A6F203CDF44E0066D062 /* MySPCA500Driver.m */; };
+		F535ED5B08DB3970007943DA /* ov511_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = 397B163C03CED9B900153FEE /* ov511_decomp.c */; };
+		F535ED5C08DB3970007943DA /* MyKiaraFlippedDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = 39CBD64F03DC0D79000F7EFC /* MyKiaraFlippedDriver.m */; };
+		F535ED5D08DB3970007943DA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 39663A670403023400435B6F /* main.m */; };
+		F535ED5E08DB3970007943DA /* MyQCOrbitDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */; };
+		F535ED6008DB3970007943DA /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		F535ED6108DB3970007943DA /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417601DA8EF70157C38C /* CoreFoundation.framework */; };
+		F535ED6208DB3970007943DA /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417801DA8F350157C38C /* IOKit.framework */; };
+		F535ED6308DB3970007943DA /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1D01E5D0440166DE0F /* QuickTime.framework */; };
+		F535ED6408DB3970007943DA /* ICACameraPriv.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE215504030E7E00BAABE7 /* ICACameraPriv.framework */; };
+		F535ED6508DB3970007943DA /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1B01E5D03A0166DE0F /* Carbon.framework */; };
+		F535F1E308DF2703007943DA /* SPCA5XX.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1DB08DF2703007943DA /* SPCA5XX.h */; };
+		F535F1E408DF2703007943DA /* SPCA5XX.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XX.m */; };
+		F535F1E508DF2703007943DA /* SPCA5XX.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1DB08DF2703007943DA /* SPCA5XX.h */; };
+		F535F1E608DF2703007943DA /* SPCA5XX.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XX.m */; };
+		F535F1E708DF2703007943DA /* SPCA5XX.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1DB08DF2703007943DA /* SPCA5XX.h */; };
+		F535F1EF08DF2730007943DA /* SQ905.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1EB08DF2730007943DA /* SQ905.h */; };
+		F535F1F008DF2730007943DA /* SQ905.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1EC08DF2730007943DA /* SQ905.m */; };
+		F535F1F508DF2730007943DA /* SQ905.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1EB08DF2730007943DA /* SQ905.h */; };
+		F535F1F608DF2730007943DA /* SQ905.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1EC08DF2730007943DA /* SQ905.m */; };
+		F535F1F708DF2730007943DA /* SQ905.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1EB08DF2730007943DA /* SQ905.h */; };
+		F535F1F808DF2730007943DA /* SQ905.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1EC08DF2730007943DA /* SQ905.m */; };
+		F54C765A09089861000BB928 /* SPCA5XX.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XX.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -660,103 +395,35 @@
 		};
 /* End PBXBuildStyle section */
 
-/* Begin PBXBundleTarget section */
-		F538BD2301E5D23F0166DE0F /* component */ = {
-			isa = PBXBundleTarget;
-			buildConfigurationList = F5E3BBB308A9C910009E490F /* Build configuration list for PBXBundleTarget "component" */;
-			buildPhases = (
-				F538BD2401E5D23F0166DE0F /* Headers */,
-				F538BD2501E5D23F0166DE0F /* Resources */,
-				F538BD2601E5D23F0166DE0F /* Sources */,
-				F538BD2701E5D23F0166DE0F /* Frameworks */,
-				F538BD2801E5D23F0166DE0F /* Rez */,
-			);
-			buildSettings = {
-				DEBUGGING_SYMBOLS = NO;
-				INSTALL_PATH = /Library/Components;
-				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
-				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-bundle";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = macam;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = component;
-			};
-			dependencies = (
-			);
-			name = component;
-			productInstallPath = /Library/Components;
-			productName = component;
-			productReference = F538BD2201E5D23F0166DE0F /* macam.component */;
-			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<!DOCTYPE plist PUBLIC \"-//Apple Computer//DTD PLIST 1.0//EN\" \"http://www.apple.com/DTDs/PropertyList-1.0.dtd\">
-<plist version=\"1.0\">
-<dict>
-	<key>CFBundleDevelopmentRegion</key>
-	<string>English</string>
-	<key>CFBundleExecutable</key>
-	<string>macam</string>
-	<key>CFBundleGetInfoString</key>
-	<string>macam 0.8.3 © 2005 the macam project (http://webcam-osx.sourceforge.net)</string>
-	<key>CFBundleIconFile</key>
-	<string></string>
-	<key>CFBundleIdentifier</key>
-	<string>net.sourceforge.webcam-osx.common</string>
-	<key>CFBundleInfoDictionaryVersion</key>
-	<string>6.0</string>
-	<key>CFBundleName</key>
-	<string>macam</string>
-	<key>CFBundlePackageType</key>
-	<string>thng</string>
-	<key>CFBundleShortVersionString</key>
-	<string>0.8.3</string>
-	<key>CFBundleSignature</key>
-	<string>wCam</string>
-	<key>CFBundleVersion</key>
-	<string>0.8.3</string>
-</dict>
-</plist>
-";
-		};
-/* End PBXBundleTarget section */
-
 /* Begin PBXContainerItemProxy section */
-		391D477005921F4200ADF722 /* PBXContainerItemProxy */ = {
+		F535ED7808DB3971007943DA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 396639D80402FCF000435B6F;
-			remoteInfo = "ica module";
+			remoteGlobalIDString = F535EC9708DB3970007943DA;
+			remoteInfo = "component (Upgraded)";
 		};
-		391D477105921F4200ADF722 /* PBXContainerItemProxy */ = {
+		F535ED7A08DB3971007943DA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = F538BD2301E5D23F0166DE0F;
-			remoteInfo = component;
+			remoteGlobalIDString = F535EC0808DB3970007943DA;
+			remoteInfo = "app (Upgraded)";
 		};
-		391D477205921F4200ADF722 /* PBXContainerItemProxy */ = {
+		F535ED7C08DB3971007943DA /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 29B97326FDCFA39411CA2CEA;
-			remoteInfo = app;
+			remoteGlobalIDString = F535ECFC08DB3970007943DA;
+			remoteInfo = "ica module (Upgraded)";
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
-		17587328FF379C6511CA2CBB /* macam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = macam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39185ABA03C8B5570066DE75 /* MyQCProBeigeDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyQCProBeigeDriver.h; sourceTree = "<group>"; };
 		39185ABB03C8B5570066DE75 /* MyQCProBeigeDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyQCProBeigeDriver.m; sourceTree = "<group>"; };
 		3950233F040A55A70066D062 /* plugin.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = plugin.icns; sourceTree = "<group>"; };
-		39663A570402FCF000435B6F /* macamDSC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; path = macamDSC.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39663A670403023400435B6F /* main.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		39663A690403091700435B6F /* MainMenu.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = MainMenu.nib; sourceTree = "<group>"; };
 		3973A6F203CDF44E0066D062 /* MySPCA500Driver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MySPCA500Driver.m; sourceTree = "<group>"; };
@@ -793,11 +460,17 @@
 		F533EEC30271B72D0166DE1F /* MyHDCS1000Sensor.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyHDCS1000Sensor.m; sourceTree = "<group>"; };
 		F53480CC027240FB013AF9AD /* MyHDCS1020Sensor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyHDCS1020Sensor.h; sourceTree = "<group>"; };
 		F53480CD027240FB013AF9AD /* MyHDCS1020Sensor.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyHDCS1020Sensor.m; sourceTree = "<group>"; };
+		F535EC9508DB3970007943DA /* macam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F535ECFB08DB3970007943DA /* macam.component */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = macam.component; sourceTree = BUILT_PRODUCTS_DIR; };
+		F535ED6B08DB3971007943DA /* macamDSC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macamDSC.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F535F1DB08DF2703007943DA /* SPCA5XX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPCA5XX.h; sourceTree = "<group>"; };
+		F535F1DC08DF2703007943DA /* SPCA5XX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCA5XX.m; sourceTree = "<group>"; };
+		F535F1EB08DF2730007943DA /* SQ905.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQ905.h; sourceTree = "<group>"; };
+		F535F1EC08DF2730007943DA /* SQ905.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQ905.m; sourceTree = "<group>"; };
 		F5376F35026C66D30166DE1F /* MyQX3Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyQX3Driver.h; sourceTree = "<group>"; };
 		F5376F36026C66D30166DE1F /* MyQX3Driver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyQX3Driver.m; sourceTree = "<group>"; };
 		F538BD1B01E5D03A0166DE0F /* Carbon.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Carbon.framework; path = /System/Library/Frameworks/Carbon.framework; sourceTree = "<absolute>"; };
 		F538BD1D01E5D0440166DE0F /* QuickTime.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuickTime.framework; path = /System/Library/Frameworks/QuickTime.framework; sourceTree = "<absolute>"; };
-		F538BD2201E5D23F0166DE0F /* macam.component */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = macam.component; sourceTree = BUILT_PRODUCTS_DIR; };
 		F53B90550240CDFF0166DE75 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MyImageDocument.nib; sourceTree = "<group>"; };
 		F53B90580240CE2B0166DE75 /* MyImageDocument.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyImageDocument.h; sourceTree = "<group>"; };
 		F53B90590240CE2B0166DE75 /* MyImageDocument.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyImageDocument.m; sourceTree = "<group>"; };
@@ -810,7 +483,7 @@
 		F55A58C302572BFE014CA2B1 /* MySTV600Sensor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MySTV600Sensor.h; sourceTree = "<group>"; };
 		F55A58C402572BFE014CA2B1 /* MySTV600Sensor.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MySTV600Sensor.m; sourceTree = "<group>"; };
 		F55DD8210213113F0166DE0F /* MyCameraCentral.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyCameraCentral.h; sourceTree = "<group>"; wrapsLines = 1; };
-		F55DD8230213113F0166DE0F /* MyCameraDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyCameraDriver.h; sourceTree = "<group>"; };
+		F55DD8230213113F0166DE0F /* MyCameraDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyCameraDriver.h; sourceTree = "<group>"; wrapsLines = 1; };
 		F55DD8240213113F0166DE0F /* MyCameraDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyCameraDriver.m; sourceTree = "<group>"; };
 		F55DD8250213113F0166DE0F /* MyCameraInfo.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyCameraInfo.h; sourceTree = "<group>"; wrapsLines = 1; };
 		F55DD8260213113F0166DE0F /* MyCameraInfo.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyCameraInfo.m; sourceTree = "<group>"; };
@@ -882,6 +555,9 @@
 		F5C5790703049095010B006D /* MyIntelPCCameraPro.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyIntelPCCameraPro.m; sourceTree = "<group>"; };
 		F5C80D8D02417A800166DE75 /* MyScrollView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyScrollView.h; sourceTree = "<group>"; };
 		F5C80D8E02417A800166DE75 /* MyScrollView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyScrollView.m; sourceTree = "<group>"; };
+		F5CD7018092AEBF600E9EEE3 /* generate_app.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_app.plist; sourceTree = "<group>"; };
+		F5CD701A092AEC1000E9EEE3 /* generate_ica_module.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_ica_module.plist; sourceTree = "<group>"; };
+		F5CD701C092AEC2600E9EEE3 /* generate_component.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_component.plist; sourceTree = "<group>"; };
 		F5E6AA660371F8920166D062 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6B0371F8B00166D062 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6C0371F8B90166D062 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
@@ -894,7 +570,7 @@
 		F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyQCOrbitDriver.m; sourceTree = "<group>"; };
 		F5EDFAD2036875F00166D062 /* yuv2rgbOV420.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = yuv2rgbOV420.c; sourceTree = "<group>"; };
 		F5EDFAD5036876210166D062 /* MyOV511Driver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyOV511Driver.m; sourceTree = "<group>"; };
-		F5EDFAD6036876210166D062 /* MyOV511Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyOV511Driver.h; sourceTree = "<group>"; };
+		F5EDFAD6036876210166D062 /* MyOV511Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyOV511Driver.h; sourceTree = "<group>"; wrapsLines = 1; };
 		F5EF7FFB0364C3BD01E9B502 /* JFIFHeaderTemplate.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = JFIFHeaderTemplate.c; sourceTree = "<group>"; };
 		F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyVicamDriver.m; sourceTree = "<group>"; };
 		F5F4373D02D278D6018D4F8C /* vicamurbs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = vicamurbs.h; sourceTree = "<group>"; };
@@ -929,39 +605,39 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		29B9732DFDCFA39411CA2CEA /* Frameworks */ = {
+		F535EC8A08DB3970007943DA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1058C7A3FEA54F0111CA2CBB /* Cocoa.framework in Frameworks */,
-				F5AA417701DA8EF70157C38C /* CoreFoundation.framework in Frameworks */,
-				F5AA417901DA8F350157C38C /* IOKit.framework in Frameworks */,
-				F5E9C93A036489100181E072 /* QuickTime.framework in Frameworks */,
+				F535EC8B08DB3970007943DA /* Cocoa.framework in Frameworks */,
+				F535EC8C08DB3970007943DA /* CoreFoundation.framework in Frameworks */,
+				F535EC8D08DB3970007943DA /* IOKit.framework in Frameworks */,
+				F535EC8E08DB3970007943DA /* QuickTime.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		39663A520402FCF000435B6F /* Frameworks */ = {
+		F535ECEE08DB3970007943DA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39663A530402FCF000435B6F /* Cocoa.framework in Frameworks */,
-				39663A540402FCF000435B6F /* CoreFoundation.framework in Frameworks */,
-				39663A550402FCF000435B6F /* IOKit.framework in Frameworks */,
-				39663A560402FCF000435B6F /* QuickTime.framework in Frameworks */,
-				39FE215604030E7E00BAABE7 /* ICACameraPriv.framework in Frameworks */,
-				395E9AD704044198007E00C6 /* Carbon.framework in Frameworks */,
+				F535ECEF08DB3970007943DA /* CoreFoundation.framework in Frameworks */,
+				F535ECF008DB3970007943DA /* Cocoa.framework in Frameworks */,
+				F535ECF108DB3970007943DA /* IOKit.framework in Frameworks */,
+				F535ECF208DB3970007943DA /* QuickTime.framework in Frameworks */,
+				F535ECF308DB3970007943DA /* Carbon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F538BD2701E5D23F0166DE0F /* Frameworks */ = {
+		F535ED5F08DB3970007943DA /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F538BD3501E5D2DF0166DE0F /* CoreFoundation.framework in Frameworks */,
-				F538BD3601E5D2DF0166DE0F /* Cocoa.framework in Frameworks */,
-				F538BD3701E5D2DF0166DE0F /* IOKit.framework in Frameworks */,
-				F538BD3801E5D2DF0166DE0F /* QuickTime.framework in Frameworks */,
-				F538BD3901E5D2DF0166DE0F /* Carbon.framework in Frameworks */,
+				F535ED6008DB3970007943DA /* Cocoa.framework in Frameworks */,
+				F535ED6108DB3970007943DA /* CoreFoundation.framework in Frameworks */,
+				F535ED6208DB3970007943DA /* IOKit.framework in Frameworks */,
+				F535ED6308DB3970007943DA /* QuickTime.framework in Frameworks */,
+				F535ED6408DB3970007943DA /* ICACameraPriv.framework in Frameworks */,
+				F535ED6508DB3970007943DA /* Carbon.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -971,9 +647,9 @@
 		19C28FACFE9D520D11CA2CBB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				17587328FF379C6511CA2CBB /* macam.app */,
-				F538BD2201E5D23F0166DE0F /* macam.component */,
-				39663A570402FCF000435B6F /* macamDSC.app */,
+				F535EC9508DB3970007943DA /* macam.app */,
+				F535ECFB08DB3970007943DA /* macam.component */,
+				F535ED6B08DB3971007943DA /* macamDSC.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1011,6 +687,7 @@
 		39663A620402FEAC00435B6F /* ica_specific */ = {
 			isa = PBXGroup;
 			children = (
+				F5CD701A092AEC1000E9EEE3 /* generate_ica_module.plist */,
 				39FE214904030BB800BAABE7 /* ICD_CameraCalls.h */,
 				39663A670403023400435B6F /* main.m */,
 				39663A690403091700435B6F /* MainMenu.nib */,
@@ -1079,6 +756,7 @@
 		F55DD839021311680166DE0F /* app_specific */ = {
 			isa = PBXGroup;
 			children = (
+				F5CD7018092AEBF600E9EEE3 /* generate_app.plist */,
 				F5EB6B0F08B304BE0099821A /* MyQCOrbitCameraInspector.nib */,
 				F5EB6B0708B304960099821A /* MyQCOrbitCameraInspector.h */,
 				F5EB6B0808B304960099821A /* MyQCOrbitCameraInspector.m */,
@@ -1122,6 +800,7 @@
 		F55DD83F021311680166DE0F /* component_specific */ = {
 			isa = PBXGroup;
 			children = (
+				F5CD701C092AEC2600E9EEE3 /* generate_component.plist */,
 				F55DD840021311680166DE0F /* MyBridge.h */,
 				F55DD841021311680166DE0F /* MyBridge.m */,
 				F55DD842021311680166DE0F /* QTComponent.r */,
@@ -1151,6 +830,10 @@
 		F5F79A800212038E01E152CA /* cameras */ = {
 			isa = PBXGroup;
 			children = (
+				F535F1EB08DF2730007943DA /* SQ905.h */,
+				F535F1EC08DF2730007943DA /* SQ905.m */,
+				F535F1DB08DF2703007943DA /* SPCA5XX.h */,
+				F535F1DC08DF2703007943DA /* SPCA5XX.m */,
 				F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */,
 				F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */,
 				3973A6F303CDF44E0066D062 /* MySPCA500Driver.h */,
@@ -1229,158 +912,278 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		29B97327FDCFA39411CA2CEA /* Headers */ = {
+		F535EC0908DB3970007943DA /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F5F79AB10212038E01E152CA /* GlobalDefs.h in Headers */,
-				F5F79AB20212038E01E152CA /* MiniGraphicsTools.h in Headers */,
-				F5F79AB30212038E01E152CA /* MiscTools.h in Headers */,
-				F5F79AB40212038E01E152CA /* Resolvers.h in Headers */,
-				F5F79AB50212038E01E152CA /* yuv2rgb.h in Headers */,
-				F5F79AB60212038E01E152CA /* MyCPIACameraDriver.h in Headers */,
-				F5F79AB70212038E01E152CA /* MyKiaraFamilyDriver.h in Headers */,
-				F5F79AB80212038E01E152CA /* MyPhilipsCameraDriver.h in Headers */,
-				F5F79AB90212038E01E152CA /* MyTimonFamilyDriver.h in Headers */,
-				F55DD8290213113F0166DE0F /* MyCameraCentral.h in Headers */,
-				F55DD82A0213113F0166DE0F /* MyCameraDriver.h in Headers */,
-				F55DD82B0213113F0166DE0F /* MyCameraInfo.h in Headers */,
-				F55DD82C0213113F0166DE0F /* MyDummyCameraDriver.h in Headers */,
-				F55DD847021311680166DE0F /* MyController.h in Headers */,
-				F589EB1002268A6901D99A1F /* MySTV680Driver.h in Headers */,
-				F58530E30229AAB601479C37 /* BayerConverter.h in Headers */,
-				F53B905A0240CE2B0166DE75 /* MyImageDocument.h in Headers */,
-				F5C80D8F02417A800166DE75 /* MyScrollView.h in Headers */,
-				F511081F0241794801599652 /* MySPCA504Driver.h in Headers */,
-				F58DB23A024E9804019A97FC /* MyImageWindowController.h in Headers */,
-				F55A58C502572BFE014CA2B1 /* MyPB0100Sensor.h in Headers */,
-				F55A58C602572BFE014CA2B1 /* MySTV600Sensor.h in Headers */,
-				F5376F37026C66D30166DE1F /* MyQX3Driver.h in Headers */,
-				F533EEBB0271ACF80166DE1F /* MyQCExpressBDriver.h in Headers */,
-				F533EEC40271B72D0166DE1F /* MyHDCS1000Sensor.h in Headers */,
-				F53480CE027240FB013AF9AD /* MyHDCS1020Sensor.h in Headers */,
-				F5A153180274D3D501C56AC3 /* MyQCExpressADriver.h in Headers */,
-				F5FC0F1F02834E83015925D2 /* MyQCWebDriver.h in Headers */,
-				F5FC0F25028351A7015925D2 /* MyVV6410Sensor.h in Headers */,
-				F51EEE590284B73A01B888F7 /* MyCameraInspector.h in Headers */,
-				F57D11B1C5B26FF6010B00CC /* MyQX3CameraInspector.h in Headers */,
-				F5F4374202D27B4B018D4F8C /* MyVicamDriver.h in Headers */,
-				F5F4375402D5299C018D4F8C /* RGBScaler.h in Headers */,
-				F5A4FBC6031E34E00166D062 /* MyIntelPCCameraPro.h in Headers */,
-				F5BB387F0342871601E62307 /* JFIFHeaderTemplate.h in Headers */,
-				F5EDFAD8036876210166D062 /* MyOV511Driver.h in Headers */,
-				F5E78BF60371F3990166D062 /* MyMovieDocument.h in Headers */,
-				F589770003758BEE01159FE2 /* MyMovieRecorder.h in Headers */,
-				F589770203758BEE01159FE2 /* MyMovieWindowController.h in Headers */,
-				F589770403758BEE01159FE2 /* MyNSMovieExtensions.h in Headers */,
-				F5A6652E037B256401C96C8F /* MyPrefsWindowController.h in Headers */,
-				F53F6639039ACC3F01C3DF00 /* MySonix2028Driver.h in Headers */,
-				F5A5077603BBC69501A78977 /* MySE401Driver.h in Headers */,
-				39185ABC03C8B5570066DE75 /* MyQCProBeigeDriver.h in Headers */,
-				3973A6F503CDF44E0066D062 /* MySPCA500Driver.h in Headers */,
-				39CBD65203DC0D79000F7EFC /* MyKiaraFlippedDriver.h in Headers */,
-				39A2B45E0593E297009C5934 /* QTDummyPanel.h in Headers */,
-				F522580B08725639002023A4 /* USB_VendorProductIDs.h in Headers */,
-				F5EB6B0B08B304960099821A /* MyQCOrbitCameraInspector.h in Headers */,
-				F5EB6B1B08B304DB0099821A /* MyQCOrbitDriver.h in Headers */,
+				F535EC0A08DB3970007943DA /* GlobalDefs.h in Headers */,
+				F535EC0B08DB3970007943DA /* MiniGraphicsTools.h in Headers */,
+				F535EC0C08DB3970007943DA /* MiscTools.h in Headers */,
+				F535EC0D08DB3970007943DA /* Resolvers.h in Headers */,
+				F535EC0E08DB3970007943DA /* yuv2rgb.h in Headers */,
+				F535EC0F08DB3970007943DA /* MyCPIACameraDriver.h in Headers */,
+				F535EC1008DB3970007943DA /* MyKiaraFamilyDriver.h in Headers */,
+				F535EC1108DB3970007943DA /* MyPhilipsCameraDriver.h in Headers */,
+				F535EC1208DB3970007943DA /* MyTimonFamilyDriver.h in Headers */,
+				F535EC1308DB3970007943DA /* MyCameraCentral.h in Headers */,
+				F535EC1408DB3970007943DA /* MyCameraDriver.h in Headers */,
+				F535EC1508DB3970007943DA /* MyCameraInfo.h in Headers */,
+				F535EC1608DB3970007943DA /* MyDummyCameraDriver.h in Headers */,
+				F535EC1708DB3970007943DA /* MyController.h in Headers */,
+				F535EC1808DB3970007943DA /* MySTV680Driver.h in Headers */,
+				F535EC1908DB3970007943DA /* BayerConverter.h in Headers */,
+				F535EC1A08DB3970007943DA /* MyImageDocument.h in Headers */,
+				F535EC1B08DB3970007943DA /* MyScrollView.h in Headers */,
+				F535EC1C08DB3970007943DA /* MySPCA504Driver.h in Headers */,
+				F535EC1D08DB3970007943DA /* MyImageWindowController.h in Headers */,
+				F535EC1E08DB3970007943DA /* MyPB0100Sensor.h in Headers */,
+				F535EC1F08DB3970007943DA /* MySTV600Sensor.h in Headers */,
+				F535EC2008DB3970007943DA /* MyQX3Driver.h in Headers */,
+				F535EC2108DB3970007943DA /* MyQCExpressBDriver.h in Headers */,
+				F535EC2208DB3970007943DA /* MyHDCS1000Sensor.h in Headers */,
+				F535EC2308DB3970007943DA /* MyHDCS1020Sensor.h in Headers */,
+				F535EC2408DB3970007943DA /* MyQCExpressADriver.h in Headers */,
+				F535EC2508DB3970007943DA /* MyQCWebDriver.h in Headers */,
+				F535EC2608DB3970007943DA /* MyVV6410Sensor.h in Headers */,
+				F535EC2708DB3970007943DA /* MyCameraInspector.h in Headers */,
+				F535EC2808DB3970007943DA /* MyQX3CameraInspector.h in Headers */,
+				F535EC2908DB3970007943DA /* MyVicamDriver.h in Headers */,
+				F535EC2A08DB3970007943DA /* RGBScaler.h in Headers */,
+				F535EC2B08DB3970007943DA /* MyIntelPCCameraPro.h in Headers */,
+				F535EC2C08DB3970007943DA /* JFIFHeaderTemplate.h in Headers */,
+				F535EC2D08DB3970007943DA /* MyOV511Driver.h in Headers */,
+				F535EC2E08DB3970007943DA /* MyMovieDocument.h in Headers */,
+				F535EC2F08DB3970007943DA /* MyMovieRecorder.h in Headers */,
+				F535EC3008DB3970007943DA /* MyMovieWindowController.h in Headers */,
+				F535EC3108DB3970007943DA /* MyNSMovieExtensions.h in Headers */,
+				F535EC3208DB3970007943DA /* MyPrefsWindowController.h in Headers */,
+				F535EC3308DB3970007943DA /* MySonix2028Driver.h in Headers */,
+				F535EC3408DB3970007943DA /* MySE401Driver.h in Headers */,
+				F535EC3508DB3970007943DA /* MyQCProBeigeDriver.h in Headers */,
+				F535EC3608DB3970007943DA /* MySPCA500Driver.h in Headers */,
+				F535EC3708DB3970007943DA /* MyKiaraFlippedDriver.h in Headers */,
+				F535EC3808DB3970007943DA /* QTDummyPanel.h in Headers */,
+				F535EC3908DB3970007943DA /* USB_VendorProductIDs.h in Headers */,
+				F535EC3A08DB3970007943DA /* MyQCOrbitCameraInspector.h in Headers */,
+				F535EC3B08DB3970007943DA /* MyQCOrbitDriver.h in Headers */,
+				F535F1E708DF2703007943DA /* SPCA5XX.h in Headers */,
+				F535F1F508DF2730007943DA /* SQ905.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		396639D90402FCF000435B6F /* Headers */ = {
+		F535EC9808DB3970007943DA /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				396639DA0402FCF000435B6F /* GlobalDefs.h in Headers */,
-				396639DB0402FCF000435B6F /* MiniGraphicsTools.h in Headers */,
-				396639DC0402FCF000435B6F /* MiscTools.h in Headers */,
-				396639DD0402FCF000435B6F /* Resolvers.h in Headers */,
-				396639DE0402FCF000435B6F /* yuv2rgb.h in Headers */,
-				396639DF0402FCF000435B6F /* MyCPIACameraDriver.h in Headers */,
-				396639E00402FCF000435B6F /* MyKiaraFamilyDriver.h in Headers */,
-				396639E10402FCF000435B6F /* MyPhilipsCameraDriver.h in Headers */,
-				396639E20402FCF000435B6F /* MyTimonFamilyDriver.h in Headers */,
-				396639E30402FCF000435B6F /* MyCameraCentral.h in Headers */,
-				396639E40402FCF000435B6F /* MyCameraDriver.h in Headers */,
-				396639E50402FCF000435B6F /* MyCameraInfo.h in Headers */,
-				396639E60402FCF000435B6F /* MyDummyCameraDriver.h in Headers */,
-				396639E80402FCF000435B6F /* MySTV680Driver.h in Headers */,
-				396639E90402FCF000435B6F /* BayerConverter.h in Headers */,
-				396639EC0402FCF000435B6F /* MySPCA504Driver.h in Headers */,
-				396639EE0402FCF000435B6F /* MyPB0100Sensor.h in Headers */,
-				396639EF0402FCF000435B6F /* MySTV600Sensor.h in Headers */,
-				396639F00402FCF000435B6F /* MyQX3Driver.h in Headers */,
-				396639F10402FCF000435B6F /* MyQCExpressBDriver.h in Headers */,
-				396639F20402FCF000435B6F /* MyHDCS1000Sensor.h in Headers */,
-				396639F30402FCF000435B6F /* MyHDCS1020Sensor.h in Headers */,
-				396639F40402FCF000435B6F /* MyQCExpressADriver.h in Headers */,
-				396639F50402FCF000435B6F /* MyQCWebDriver.h in Headers */,
-				396639F60402FCF000435B6F /* MyVV6410Sensor.h in Headers */,
-				396639F90402FCF000435B6F /* MyVicamDriver.h in Headers */,
-				396639FA0402FCF000435B6F /* RGBScaler.h in Headers */,
-				396639FB0402FCF000435B6F /* MyIntelPCCameraPro.h in Headers */,
-				396639FC0402FCF000435B6F /* JFIFHeaderTemplate.h in Headers */,
-				396639FD0402FCF000435B6F /* MyOV511Driver.h in Headers */,
-				39663A030402FCF000435B6F /* MySonix2028Driver.h in Headers */,
-				39663A040402FCF000435B6F /* MySE401Driver.h in Headers */,
-				39663A050402FCF000435B6F /* MyQCProBeigeDriver.h in Headers */,
-				39663A060402FCF000435B6F /* MySPCA500Driver.h in Headers */,
-				39663A070402FCF000435B6F /* MyKiaraFlippedDriver.h in Headers */,
-				39FE214A04030BB800BAABE7 /* ICD_CameraCalls.h in Headers */,
-				F522580A08725639002023A4 /* USB_VendorProductIDs.h in Headers */,
-				F5EB6B1908B304DB0099821A /* MyQCOrbitDriver.h in Headers */,
+				F535EC9908DB3970007943DA /* GlobalDefs.h in Headers */,
+				F535EC9A08DB3970007943DA /* MiniGraphicsTools.h in Headers */,
+				F535EC9B08DB3970007943DA /* MiscTools.h in Headers */,
+				F535EC9C08DB3970007943DA /* Resolvers.h in Headers */,
+				F535EC9D08DB3970007943DA /* yuv2rgb.h in Headers */,
+				F535EC9E08DB3970007943DA /* MyTimonFamilyDriver.h in Headers */,
+				F535EC9F08DB3970007943DA /* MyPhilipsCameraDriver.h in Headers */,
+				F535ECA008DB3970007943DA /* MyKiaraFamilyDriver.h in Headers */,
+				F535ECA108DB3970007943DA /* MyCPIACameraDriver.h in Headers */,
+				F535ECA208DB3970007943DA /* MyCameraCentral.h in Headers */,
+				F535ECA308DB3970007943DA /* MyCameraDriver.h in Headers */,
+				F535ECA408DB3970007943DA /* MyCameraInfo.h in Headers */,
+				F535ECA508DB3970007943DA /* MyDummyCameraDriver.h in Headers */,
+				F535ECA608DB3970007943DA /* MyBridge.h in Headers */,
+				F535ECA708DB3970007943DA /* QTPanel.h in Headers */,
+				F535ECA808DB3970007943DA /* QTVideoDigitizer.h in Headers */,
+				F535ECA908DB3970007943DA /* BayerConverter.h in Headers */,
+				F535ECAA08DB3970007943DA /* MySPCA504Driver.h in Headers */,
+				F535ECAB08DB3970007943DA /* MyPB0100Sensor.h in Headers */,
+				F535ECAC08DB3970007943DA /* MySTV600Sensor.h in Headers */,
+				F535ECAD08DB3970007943DA /* RGB888Scaler.h in Headers */,
+				F535ECAE08DB3970007943DA /* MyQX3Driver.h in Headers */,
+				F535ECAF08DB3970007943DA /* MyQCExpressBDriver.h in Headers */,
+				F535ECB008DB3970007943DA /* MyHDCS1000Sensor.h in Headers */,
+				F535ECB108DB3970007943DA /* MyHDCS1020Sensor.h in Headers */,
+				F535ECB208DB3970007943DA /* MyQCExpressADriver.h in Headers */,
+				F535ECB308DB3970007943DA /* MyQCWebDriver.h in Headers */,
+				F535ECB408DB3970007943DA /* MyVV6410Sensor.h in Headers */,
+				F535ECB508DB3970007943DA /* MyVicamDriver.h in Headers */,
+				F535ECB608DB3970007943DA /* RGBScalerIncluded.h in Headers */,
+				F535ECB708DB3970007943DA /* RGBScaler.h in Headers */,
+				F535ECB808DB3970007943DA /* MyIntelPCCameraPro.h in Headers */,
+				F535ECB908DB3970007943DA /* MySTV680Driver.h in Headers */,
+				F535ECBA08DB3970007943DA /* JFIFHeaderTemplate.h in Headers */,
+				F535ECBB08DB3970007943DA /* MyOV511Driver.h in Headers */,
+				F535ECBC08DB3970007943DA /* MySonix2028Driver.h in Headers */,
+				F535ECBD08DB3970007943DA /* MySE401Driver.h in Headers */,
+				F535ECBE08DB3970007943DA /* MyQCProBeigeDriver.h in Headers */,
+				F535ECBF08DB3970007943DA /* MySPCA500Driver.h in Headers */,
+				F535ECC008DB3970007943DA /* MyKiaraFlippedDriver.h in Headers */,
+				F535ECC108DB3970007943DA /* USB_VendorProductIDs.h in Headers */,
+				F535ECC208DB3970007943DA /* MyQCOrbitDriver.h in Headers */,
+				F535F1E508DF2703007943DA /* SPCA5XX.h in Headers */,
+				F535F1F708DF2730007943DA /* SQ905.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F538BD2401E5D23F0166DE0F /* Headers */ = {
+		F535ECFD08DB3970007943DA /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F5F79ADB0212038E01E152CA /* GlobalDefs.h in Headers */,
-				F5F79ADC0212038E01E152CA /* MiniGraphicsTools.h in Headers */,
-				F5F79ADD0212038E01E152CA /* MiscTools.h in Headers */,
-				F5F79ADE0212038E01E152CA /* Resolvers.h in Headers */,
-				F5F79ADF0212038E01E152CA /* yuv2rgb.h in Headers */,
-				F5F79AE40212038E01E152CA /* MyTimonFamilyDriver.h in Headers */,
-				F5F79AE50212038E01E152CA /* MyPhilipsCameraDriver.h in Headers */,
-				F5F79AE60212038E01E152CA /* MyKiaraFamilyDriver.h in Headers */,
-				F5F79AE70212038E01E152CA /* MyCPIACameraDriver.h in Headers */,
-				F55DD8310213113F0166DE0F /* MyCameraCentral.h in Headers */,
-				F55DD8320213113F0166DE0F /* MyCameraDriver.h in Headers */,
-				F55DD8330213113F0166DE0F /* MyCameraInfo.h in Headers */,
-				F55DD8340213113F0166DE0F /* MyDummyCameraDriver.h in Headers */,
-				F55DD84B021311680166DE0F /* MyBridge.h in Headers */,
-				F55DD84C021311680166DE0F /* QTPanel.h in Headers */,
-				F55DD84D021311680166DE0F /* QTVideoDigitizer.h in Headers */,
-				F58530E50229AAB601479C37 /* BayerConverter.h in Headers */,
-				F51108210241794801599652 /* MySPCA504Driver.h in Headers */,
-				F55A58C902572BFE014CA2B1 /* MyPB0100Sensor.h in Headers */,
-				F55A58CA02572BFE014CA2B1 /* MySTV600Sensor.h in Headers */,
-				F59E4B7C0264A7910166DE1F /* RGB888Scaler.h in Headers */,
-				F5376F39026C66D30166DE1F /* MyQX3Driver.h in Headers */,
-				F533EEBF0271ACF80166DE1F /* MyQCExpressBDriver.h in Headers */,
-				F533EEC60271B72D0166DE1F /* MyHDCS1000Sensor.h in Headers */,
-				F53480D0027240FB013AF9AD /* MyHDCS1020Sensor.h in Headers */,
-				F5A1531A0274D3D501C56AC3 /* MyQCExpressADriver.h in Headers */,
-				F5FC0F2102834E83015925D2 /* MyQCWebDriver.h in Headers */,
-				F5FC0F27028351A7015925D2 /* MyVV6410Sensor.h in Headers */,
-				F5F4374102D278D6018D4F8C /* MyVicamDriver.h in Headers */,
-				F5F4375002D52947018D4F8C /* RGBScalerIncluded.h in Headers */,
-				F5F4375102D52947018D4F8C /* RGBScaler.h in Headers */,
-				F5A4FBC7031E34E50166D062 /* MyIntelPCCameraPro.h in Headers */,
-				F5A4FBC9031E34E70166D062 /* MySTV680Driver.h in Headers */,
-				F5BB38800342871601E62307 /* JFIFHeaderTemplate.h in Headers */,
-				F5EDFADA036876210166D062 /* MyOV511Driver.h in Headers */,
-				F53F663B039ACC3F01C3DF00 /* MySonix2028Driver.h in Headers */,
-				F5A5077803BBC69501A78977 /* MySE401Driver.h in Headers */,
-				39185ABE03C8B5570066DE75 /* MyQCProBeigeDriver.h in Headers */,
-				3973A6F703CDF44E0066D062 /* MySPCA500Driver.h in Headers */,
-				39CBD65403DC0D79000F7EFC /* MyKiaraFlippedDriver.h in Headers */,
-				F522580C08725639002023A4 /* USB_VendorProductIDs.h in Headers */,
-				F5EB6B1D08B304DB0099821A /* MyQCOrbitDriver.h in Headers */,
+				F535ECFE08DB3970007943DA /* GlobalDefs.h in Headers */,
+				F535ECFF08DB3970007943DA /* MiniGraphicsTools.h in Headers */,
+				F535ED0008DB3970007943DA /* MiscTools.h in Headers */,
+				F535ED0108DB3970007943DA /* Resolvers.h in Headers */,
+				F535ED0208DB3970007943DA /* yuv2rgb.h in Headers */,
+				F535ED0308DB3970007943DA /* MyCPIACameraDriver.h in Headers */,
+				F535ED0408DB3970007943DA /* MyKiaraFamilyDriver.h in Headers */,
+				F535ED0508DB3970007943DA /* MyPhilipsCameraDriver.h in Headers */,
+				F535ED0608DB3970007943DA /* MyTimonFamilyDriver.h in Headers */,
+				F535ED0708DB3970007943DA /* MyCameraCentral.h in Headers */,
+				F535ED0808DB3970007943DA /* MyCameraDriver.h in Headers */,
+				F535ED0908DB3970007943DA /* MyCameraInfo.h in Headers */,
+				F535ED0A08DB3970007943DA /* MyDummyCameraDriver.h in Headers */,
+				F535ED0B08DB3970007943DA /* MySTV680Driver.h in Headers */,
+				F535ED0C08DB3970007943DA /* BayerConverter.h in Headers */,
+				F535ED0D08DB3970007943DA /* MySPCA504Driver.h in Headers */,
+				F535ED0E08DB3970007943DA /* MyPB0100Sensor.h in Headers */,
+				F535ED0F08DB3970007943DA /* MySTV600Sensor.h in Headers */,
+				F535ED1008DB3970007943DA /* MyQX3Driver.h in Headers */,
+				F535ED1108DB3970007943DA /* MyQCExpressBDriver.h in Headers */,
+				F535ED1208DB3970007943DA /* MyHDCS1000Sensor.h in Headers */,
+				F535ED1308DB3970007943DA /* MyHDCS1020Sensor.h in Headers */,
+				F535ED1408DB3970007943DA /* MyQCExpressADriver.h in Headers */,
+				F535ED1508DB3970007943DA /* MyQCWebDriver.h in Headers */,
+				F535ED1608DB3970007943DA /* MyVV6410Sensor.h in Headers */,
+				F535ED1708DB3970007943DA /* MyVicamDriver.h in Headers */,
+				F535ED1808DB3970007943DA /* RGBScaler.h in Headers */,
+				F535ED1908DB3970007943DA /* MyIntelPCCameraPro.h in Headers */,
+				F535ED1A08DB3970007943DA /* JFIFHeaderTemplate.h in Headers */,
+				F535ED1B08DB3970007943DA /* MyOV511Driver.h in Headers */,
+				F535ED1C08DB3970007943DA /* MySonix2028Driver.h in Headers */,
+				F535ED1D08DB3970007943DA /* MySE401Driver.h in Headers */,
+				F535ED1E08DB3970007943DA /* MyQCProBeigeDriver.h in Headers */,
+				F535ED1F08DB3970007943DA /* MySPCA500Driver.h in Headers */,
+				F535ED2008DB3970007943DA /* MyKiaraFlippedDriver.h in Headers */,
+				F535ED2108DB3970007943DA /* ICD_CameraCalls.h in Headers */,
+				F535ED2208DB3970007943DA /* USB_VendorProductIDs.h in Headers */,
+				F535ED2308DB3970007943DA /* MyQCOrbitDriver.h in Headers */,
+				F535F1E308DF2703007943DA /* SPCA5XX.h in Headers */,
+				F535F1EF08DF2730007943DA /* SQ905.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		F535EC0808DB3970007943DA /* app */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F535EC9008DB3970007943DA /* Build configuration list for PBXNativeTarget "app" */;
+			buildPhases = (
+				F535EC0908DB3970007943DA /* Headers */,
+				F535EC3C08DB3970007943DA /* Resources */,
+				F535EC5708DB3970007943DA /* Sources */,
+				F535EC8A08DB3970007943DA /* Frameworks */,
+				F535EC8F08DB3970007943DA /* Rez */,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "-O0";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = macam;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			dependencies = (
+			);
+			name = app;
+			productInstallPath = "$(HOME)/Applications";
+			productName = wc;
+			productReference = F535EC9508DB3970007943DA /* macam.app */;
+			productType = "com.apple.product-type.application";
+		};
+		F535EC9708DB3970007943DA /* component */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F535ECF608DB3970007943DA /* Build configuration list for PBXNativeTarget "component" */;
+			buildPhases = (
+				F535EC9808DB3970007943DA /* Headers */,
+				F535ECC308DB3970007943DA /* Resources */,
+				F535ECC508DB3970007943DA /* Sources */,
+				F535ECEE08DB3970007943DA /* Frameworks */,
+				F535ECF408DB3970007943DA /* Rez */,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
+				INSTALL_PATH = /Library/Components;
+				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "-bundle";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = macam;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = component;
+			};
+			dependencies = (
+			);
+			name = component;
+			productInstallPath = /Library/Components;
+			productName = component;
+			productReference = F535ECFB08DB3970007943DA /* macam.component */;
+			productType = "com.apple.product-type.bundle";
+		};
+		F535ECFC08DB3970007943DA /* ica module */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F535ED6608DB3970007943DA /* Build configuration list for PBXNativeTarget "ica module" */;
+			buildPhases = (
+				F535ECFD08DB3970007943DA /* Headers */,
+				F535ED2408DB3970007943DA /* Resources */,
+				F535ED3908DB3970007943DA /* Sources */,
+				F535ED5F08DB3970007943DA /* Frameworks */,
+			);
+			buildRules = (
+			);
+			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
+				HEADER_SEARCH_PATHS = "";
+				INSTALL_PATH = "$(HOME)/Applications";
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "-O2";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				PRODUCT_NAME = macamDSC;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = (
+					"-Wmost",
+					"-Wno-four-char-constants",
+					"-Wno-unknown-pragmas",
+				);
+				WRAPPER_EXTENSION = app;
+			};
+			dependencies = (
+			);
+			name = "ica module";
+			productInstallPath = "$(HOME)/Applications";
+			productName = wc;
+			productReference = F535ED6B08DB3971007943DA /* macamDSC.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
@@ -1396,269 +1199,275 @@
 			mainGroup = 29B97314FDCFA39411CA2CEA /* wc */;
 			projectDirPath = "";
 			targets = (
-				29B97326FDCFA39411CA2CEA /* app */,
-				F538BD2301E5D23F0166DE0F /* component */,
-				396639D80402FCF000435B6F /* ica module */,
-				39AE92CB03C5131B0066D062 /* all */,
+				F535EC0808DB3970007943DA /* app */,
+				F535EC9708DB3970007943DA /* component */,
+				F535ECFC08DB3970007943DA /* ica module */,
+				F535ED6D08DB3971007943DA /* all */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		29B97328FDCFA39411CA2CEA /* Resources */ = {
+		F535EC3C08DB3970007943DA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F55DD848021311680166DE0F /* MainMenu.nib in Resources */,
-				391D4A93059280DF00ADF722 /* app.icns in Resources */,
-				F500FB75022FB1BD01369AA6 /* DownloadToolbarItem.tiff in Resources */,
-				F500FB76022FB1BD01369AA6 /* NextCamToolbarItem.tiff in Resources */,
-				F500FB77022FB1BD01369AA6 /* PauseToolbarItem.tiff in Resources */,
-				F500FB78022FB1BD01369AA6 /* PlayToolbarItem.tiff in Resources */,
-				F500FB79022FB1BD01369AA6 /* SettingsToolbarItem.tiff in Resources */,
-				F500FB7A022FB1BD01369AA6 /* SnapshotToolbarItem.tiff in Resources */,
-				F53B90560240CDFF0166DE75 /* MyImageDocument.nib in Resources */,
-				F563AB4D0247FDC601BF65F7 /* Localizable.strings in Resources */,
-				F5285DAC0248103E01AEB99D /* DriverLocalizable.strings in Resources */,
-				F52D2ED3025A7383016EC628 /* WebcamHelp in Resources */,
-				F52D2ED6025A9425016EC628 /* RotateCWToolbarItem.tiff in Resources */,
-				F52D2ED7025A9425016EC628 /* RotateCCWToolbarItem.tiff in Resources */,
-				F51EEE5E0284BC9601B888F7 /* DefaultCameraInspector.nib in Resources */,
-				F57D11B4C5B26FF6010B00CC /* MyQX3CameraInspector.nib in Resources */,
-				F57D11BAC5B26FF6010B00CC /* QX3-3.tiff in Resources */,
-				F57D11BBC5B26FF6010B00CC /* QX3-2.tiff in Resources */,
-				F57D11BCC5B26FF6010B00CC /* QX3-1.tiff in Resources */,
-				F57D11BEC5B26FF6010B00CC /* QX3-0.tiff in Resources */,
-				F57D11BFC5B26FF6010B00CC /* QX3-4.tiff in Resources */,
-				F5794DE00285B922010B00CC /* QX3-5.tiff in Resources */,
-				F5E6AA670371F8920166D062 /* MyMovieDocument.nib in Resources */,
-				F589724B0374636B01159FE2 /* RecordMovieToolbarItem.tiff in Resources */,
-				F5B1CC470375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff in Resources */,
-				F5EB6B1508B304BE0099821A /* MyQCOrbitCameraInspector.nib in Resources */,
+				F535EC3D08DB3970007943DA /* MainMenu.nib in Resources */,
+				F535EC3E08DB3970007943DA /* app.icns in Resources */,
+				F535EC3F08DB3970007943DA /* DownloadToolbarItem.tiff in Resources */,
+				F535EC4008DB3970007943DA /* NextCamToolbarItem.tiff in Resources */,
+				F535EC4108DB3970007943DA /* PauseToolbarItem.tiff in Resources */,
+				F535EC4208DB3970007943DA /* PlayToolbarItem.tiff in Resources */,
+				F535EC4308DB3970007943DA /* SettingsToolbarItem.tiff in Resources */,
+				F535EC4408DB3970007943DA /* SnapshotToolbarItem.tiff in Resources */,
+				F535EC4508DB3970007943DA /* MyImageDocument.nib in Resources */,
+				F535EC4608DB3970007943DA /* Localizable.strings in Resources */,
+				F535EC4708DB3970007943DA /* DriverLocalizable.strings in Resources */,
+				F535EC4808DB3970007943DA /* WebcamHelp in Resources */,
+				F535EC4908DB3970007943DA /* RotateCWToolbarItem.tiff in Resources */,
+				F535EC4A08DB3970007943DA /* RotateCCWToolbarItem.tiff in Resources */,
+				F535EC4B08DB3970007943DA /* DefaultCameraInspector.nib in Resources */,
+				F535EC4C08DB3970007943DA /* MyQX3CameraInspector.nib in Resources */,
+				F535EC4D08DB3970007943DA /* QX3-3.tiff in Resources */,
+				F535EC4E08DB3970007943DA /* QX3-2.tiff in Resources */,
+				F535EC4F08DB3970007943DA /* QX3-1.tiff in Resources */,
+				F535EC5008DB3970007943DA /* QX3-0.tiff in Resources */,
+				F535EC5108DB3970007943DA /* QX3-4.tiff in Resources */,
+				F535EC5208DB3970007943DA /* QX3-5.tiff in Resources */,
+				F535EC5308DB3970007943DA /* MyMovieDocument.nib in Resources */,
+				F535EC5408DB3970007943DA /* RecordMovieToolbarItem.tiff in Resources */,
+				F535EC5508DB3970007943DA /* RecordMovieActiveToolbarItem.tiff in Resources */,
+				F535EC5608DB3970007943DA /* MyQCOrbitCameraInspector.nib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		39663A080402FCF000435B6F /* Resources */ = {
+		F535ECC308DB3970007943DA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				391D4A94059280DF00ADF722 /* app.icns in Resources */,
-				39663A0B0402FCF000435B6F /* DownloadToolbarItem.tiff in Resources */,
-				39663A0C0402FCF000435B6F /* NextCamToolbarItem.tiff in Resources */,
-				39663A0D0402FCF000435B6F /* PauseToolbarItem.tiff in Resources */,
-				39663A0E0402FCF000435B6F /* PlayToolbarItem.tiff in Resources */,
-				39663A0F0402FCF000435B6F /* SettingsToolbarItem.tiff in Resources */,
-				39663A100402FCF000435B6F /* SnapshotToolbarItem.tiff in Resources */,
-				39663A130402FCF000435B6F /* DriverLocalizable.strings in Resources */,
-				39663A150402FCF000435B6F /* RotateCWToolbarItem.tiff in Resources */,
-				39663A160402FCF000435B6F /* RotateCCWToolbarItem.tiff in Resources */,
-				39663A190402FCF000435B6F /* QX3-3.tiff in Resources */,
-				39663A1A0402FCF000435B6F /* QX3-2.tiff in Resources */,
-				39663A1B0402FCF000435B6F /* QX3-1.tiff in Resources */,
-				39663A1C0402FCF000435B6F /* QX3-0.tiff in Resources */,
-				39663A1D0402FCF000435B6F /* QX3-4.tiff in Resources */,
-				39663A1E0402FCF000435B6F /* QX3-5.tiff in Resources */,
-				39663A200402FCF000435B6F /* RecordMovieToolbarItem.tiff in Resources */,
-				39663A210402FCF000435B6F /* RecordMovieActiveToolbarItem.tiff in Resources */,
-				39663A6A0403091700435B6F /* MainMenu.nib in Resources */,
-				39502340040A55A70066D062 /* plugin.icns in Resources */,
+				F535ECC408DB3970007943DA /* DriverLocalizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F538BD2501E5D23F0166DE0F /* Resources */ = {
+		F535ED2408DB3970007943DA /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F5285DAD0248103E01AEB99D /* DriverLocalizable.strings in Resources */,
+				F535ED2508DB3970007943DA /* app.icns in Resources */,
+				F535ED2608DB3970007943DA /* DownloadToolbarItem.tiff in Resources */,
+				F535ED2708DB3970007943DA /* NextCamToolbarItem.tiff in Resources */,
+				F535ED2808DB3970007943DA /* PauseToolbarItem.tiff in Resources */,
+				F535ED2908DB3970007943DA /* PlayToolbarItem.tiff in Resources */,
+				F535ED2A08DB3970007943DA /* SettingsToolbarItem.tiff in Resources */,
+				F535ED2B08DB3970007943DA /* SnapshotToolbarItem.tiff in Resources */,
+				F535ED2C08DB3970007943DA /* DriverLocalizable.strings in Resources */,
+				F535ED2D08DB3970007943DA /* RotateCWToolbarItem.tiff in Resources */,
+				F535ED2E08DB3970007943DA /* RotateCCWToolbarItem.tiff in Resources */,
+				F535ED2F08DB3970007943DA /* QX3-3.tiff in Resources */,
+				F535ED3008DB3970007943DA /* QX3-2.tiff in Resources */,
+				F535ED3108DB3970007943DA /* QX3-1.tiff in Resources */,
+				F535ED3208DB3970007943DA /* QX3-0.tiff in Resources */,
+				F535ED3308DB3970007943DA /* QX3-4.tiff in Resources */,
+				F535ED3408DB3970007943DA /* QX3-5.tiff in Resources */,
+				F535ED3508DB3970007943DA /* RecordMovieToolbarItem.tiff in Resources */,
+				F535ED3608DB3970007943DA /* RecordMovieActiveToolbarItem.tiff in Resources */,
+				F535ED3708DB3970007943DA /* MainMenu.nib in Resources */,
+				F535ED3808DB3970007943DA /* plugin.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXRezBuildPhase section */
-		39A2B4820593E4A8009C5934 /* Rez */ = {
+		F535EC8F08DB3970007943DA /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F538BD2801E5D23F0166DE0F /* Rez */ = {
+		F535ECF408DB3970007943DA /* Rez */ = {
 			isa = PBXRezBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F55DD851021311680166DE0F /* QTComponent.r in Rez */,
+				F535ECF508DB3970007943DA /* QTComponent.r in Rez */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXRezBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		29B9732BFDCFA39411CA2CEA /* Sources */ = {
+		F535EC5708DB3970007943DA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F5F79AC50212038E01E152CA /* MiniGraphicsTools.c in Sources */,
-				F5F79AC60212038E01E152CA /* MiscTools.c in Sources */,
-				F5F79AC80212038E01E152CA /* yuv2rgb.c in Sources */,
-				F5F79ACC0212038E01E152CA /* MyCPIACameraDriver.m in Sources */,
-				F5F79ACD0212038E01E152CA /* MyKiaraFamilyDriver.m in Sources */,
-				F5F79ACE0212038E01E152CA /* MyPhilipsCameraDriver.m in Sources */,
-				F5F79ACF0212038E01E152CA /* MyTimonFamilyDriver.m in Sources */,
-				F55DD82E0213113F0166DE0F /* MyCameraDriver.m in Sources */,
-				F55DD82F0213113F0166DE0F /* MyCameraInfo.m in Sources */,
-				F55DD8300213113F0166DE0F /* MyDummyCameraDriver.m in Sources */,
-				F55DD849021311680166DE0F /* main.m in Sources */,
-				F55DD84A021311680166DE0F /* MyController.m in Sources */,
-				F589EB1102268A6901D99A1F /* MySTV680Driver.m in Sources */,
-				F58530E40229AAB601479C37 /* BayerConverter.m in Sources */,
-				F53B905B0240CE2B0166DE75 /* MyImageDocument.m in Sources */,
-				F5C80D9002417A800166DE75 /* MyScrollView.m in Sources */,
-				F51108200241794801599652 /* MySPCA504Driver.m in Sources */,
-				F58DB23B024E9804019A97FC /* MyImageWindowController.m in Sources */,
-				F5B9568D0250D31A0166DE1F /* MyCameraCentral.m in Sources */,
-				F55A58C702572BFE014CA2B1 /* MyPB0100Sensor.m in Sources */,
-				F55A58C802572BFE014CA2B1 /* MySTV600Sensor.m in Sources */,
-				F5376F38026C66D30166DE1F /* MyQX3Driver.m in Sources */,
-				F533EEBD0271ACF80166DE1F /* MyQCExpressBDriver.m in Sources */,
-				F533EEC50271B72D0166DE1F /* MyHDCS1000Sensor.m in Sources */,
-				F53480CF027240FB013AF9AD /* MyHDCS1020Sensor.m in Sources */,
-				F5A153190274D3D501C56AC3 /* MyQCExpressADriver.m in Sources */,
-				F5FC0F2002834E83015925D2 /* MyQCWebDriver.m in Sources */,
-				F5FC0F26028351A7015925D2 /* MyVV6410Sensor.m in Sources */,
-				F51EEE5A0284B73A01B888F7 /* MyCameraInspector.m in Sources */,
-				F57D11B2C5B26FF6010B00CC /* MyQX3CameraInspector.m in Sources */,
-				F5F4374302D27B4C018D4F8C /* MyVicamDriver.m in Sources */,
-				F5F4375202D5294A018D4F8C /* RGBScaler.m in Sources */,
-				F5C5790903049095010B006D /* MyIntelPCCameraPro.m in Sources */,
-				F5E501500366072501987CBE /* JFIFHeaderTemplate.c in Sources */,
-				F5EDFAD7036876210166D062 /* MyOV511Driver.m in Sources */,
-				F5E78BF30371F3990166D062 /* MyMovieDocument.m in Sources */,
-				F58976FF03758BEE01159FE2 /* MyMovieRecorder.m in Sources */,
-				F589770103758BEE01159FE2 /* MyMovieWindowController.m in Sources */,
-				F589770303758BEE01159FE2 /* MyNSMovieExtensions.m in Sources */,
-				F5A6652D037B256401C96C8F /* MyPrefsWindowController.m in Sources */,
-				F53F6638039ACC3F01C3DF00 /* MySonix2028Driver.m in Sources */,
-				F5A5077503BBC69501A78977 /* MySE401Driver.m in Sources */,
-				39185ABD03C8B5570066DE75 /* MyQCProBeigeDriver.m in Sources */,
-				39186EC903C8FF7B0066DE75 /* Resolvers.c in Sources */,
-				3973A6F403CDF44E0066D062 /* MySPCA500Driver.m in Sources */,
-				397B163D03CED9B900153FEE /* ov511_decomp.c in Sources */,
-				39CBD65103DC0D79000F7EFC /* MyKiaraFlippedDriver.m in Sources */,
-				39A2B45D0593E297009C5934 /* QTDummyPanel.m in Sources */,
-				F5EB6B0C08B304960099821A /* MyQCOrbitCameraInspector.m in Sources */,
-				F5EB6B1C08B304DB0099821A /* MyQCOrbitDriver.m in Sources */,
+				F535EC5808DB3970007943DA /* MiniGraphicsTools.c in Sources */,
+				F535EC5908DB3970007943DA /* MiscTools.c in Sources */,
+				F535EC5A08DB3970007943DA /* yuv2rgb.c in Sources */,
+				F535EC5B08DB3970007943DA /* MyCPIACameraDriver.m in Sources */,
+				F535EC5C08DB3970007943DA /* MyKiaraFamilyDriver.m in Sources */,
+				F535EC5D08DB3970007943DA /* MyPhilipsCameraDriver.m in Sources */,
+				F535EC5E08DB3970007943DA /* MyTimonFamilyDriver.m in Sources */,
+				F535EC5F08DB3970007943DA /* MyCameraDriver.m in Sources */,
+				F535EC6008DB3970007943DA /* MyCameraInfo.m in Sources */,
+				F535EC6108DB3970007943DA /* MyDummyCameraDriver.m in Sources */,
+				F535EC6208DB3970007943DA /* main.m in Sources */,
+				F535EC6308DB3970007943DA /* MyController.m in Sources */,
+				F535EC6408DB3970007943DA /* MySTV680Driver.m in Sources */,
+				F535EC6508DB3970007943DA /* BayerConverter.m in Sources */,
+				F535EC6608DB3970007943DA /* MyImageDocument.m in Sources */,
+				F535EC6708DB3970007943DA /* MyScrollView.m in Sources */,
+				F535EC6808DB3970007943DA /* MySPCA504Driver.m in Sources */,
+				F535EC6908DB3970007943DA /* MyImageWindowController.m in Sources */,
+				F535EC6A08DB3970007943DA /* MyCameraCentral.m in Sources */,
+				F535EC6B08DB3970007943DA /* MyPB0100Sensor.m in Sources */,
+				F535EC6C08DB3970007943DA /* MySTV600Sensor.m in Sources */,
+				F535EC6D08DB3970007943DA /* MyQX3Driver.m in Sources */,
+				F535EC6E08DB3970007943DA /* MyQCExpressBDriver.m in Sources */,
+				F535EC6F08DB3970007943DA /* MyHDCS1000Sensor.m in Sources */,
+				F535EC7008DB3970007943DA /* MyHDCS1020Sensor.m in Sources */,
+				F535EC7108DB3970007943DA /* MyQCExpressADriver.m in Sources */,
+				F535EC7208DB3970007943DA /* MyQCWebDriver.m in Sources */,
+				F535EC7308DB3970007943DA /* MyVV6410Sensor.m in Sources */,
+				F535EC7408DB3970007943DA /* MyCameraInspector.m in Sources */,
+				F535EC7508DB3970007943DA /* MyQX3CameraInspector.m in Sources */,
+				F535EC7608DB3970007943DA /* MyVicamDriver.m in Sources */,
+				F535EC7708DB3970007943DA /* RGBScaler.m in Sources */,
+				F535EC7808DB3970007943DA /* MyIntelPCCameraPro.m in Sources */,
+				F535EC7908DB3970007943DA /* JFIFHeaderTemplate.c in Sources */,
+				F535EC7A08DB3970007943DA /* MyOV511Driver.m in Sources */,
+				F535EC7B08DB3970007943DA /* MyMovieDocument.m in Sources */,
+				F535EC7C08DB3970007943DA /* MyMovieRecorder.m in Sources */,
+				F535EC7D08DB3970007943DA /* MyMovieWindowController.m in Sources */,
+				F535EC7E08DB3970007943DA /* MyNSMovieExtensions.m in Sources */,
+				F535EC7F08DB3970007943DA /* MyPrefsWindowController.m in Sources */,
+				F535EC8008DB3970007943DA /* MySonix2028Driver.m in Sources */,
+				F535EC8108DB3970007943DA /* MySE401Driver.m in Sources */,
+				F535EC8208DB3970007943DA /* MyQCProBeigeDriver.m in Sources */,
+				F535EC8308DB3970007943DA /* Resolvers.c in Sources */,
+				F535EC8408DB3970007943DA /* MySPCA500Driver.m in Sources */,
+				F535EC8508DB3970007943DA /* ov511_decomp.c in Sources */,
+				F535EC8608DB3970007943DA /* MyKiaraFlippedDriver.m in Sources */,
+				F535EC8708DB3970007943DA /* QTDummyPanel.m in Sources */,
+				F535EC8808DB3970007943DA /* MyQCOrbitCameraInspector.m in Sources */,
+				F535EC8908DB3970007943DA /* MyQCOrbitDriver.m in Sources */,
+				F535F1F608DF2730007943DA /* SQ905.m in Sources */,
+				F54C765A09089861000BB928 /* SPCA5XX.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		39663A220402FCF000435B6F /* Sources */ = {
+		F535ECC508DB3970007943DA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39663A230402FCF000435B6F /* MiniGraphicsTools.c in Sources */,
-				39663A240402FCF000435B6F /* MiscTools.c in Sources */,
-				39663A250402FCF000435B6F /* yuv2rgb.c in Sources */,
-				39663A260402FCF000435B6F /* MyCPIACameraDriver.m in Sources */,
-				39663A270402FCF000435B6F /* MyKiaraFamilyDriver.m in Sources */,
-				39663A280402FCF000435B6F /* MyPhilipsCameraDriver.m in Sources */,
-				39663A290402FCF000435B6F /* MyTimonFamilyDriver.m in Sources */,
-				39663A2A0402FCF000435B6F /* MyCameraDriver.m in Sources */,
-				39663A2B0402FCF000435B6F /* MyCameraInfo.m in Sources */,
-				39663A2C0402FCF000435B6F /* MyDummyCameraDriver.m in Sources */,
-				39663A2F0402FCF000435B6F /* MySTV680Driver.m in Sources */,
-				39663A300402FCF000435B6F /* BayerConverter.m in Sources */,
-				39663A330402FCF000435B6F /* MySPCA504Driver.m in Sources */,
-				39663A350402FCF000435B6F /* MyCameraCentral.m in Sources */,
-				39663A360402FCF000435B6F /* MyPB0100Sensor.m in Sources */,
-				39663A370402FCF000435B6F /* MySTV600Sensor.m in Sources */,
-				39663A380402FCF000435B6F /* MyQX3Driver.m in Sources */,
-				39663A390402FCF000435B6F /* MyQCExpressBDriver.m in Sources */,
-				39663A3A0402FCF000435B6F /* MyHDCS1000Sensor.m in Sources */,
-				39663A3B0402FCF000435B6F /* MyHDCS1020Sensor.m in Sources */,
-				39663A3C0402FCF000435B6F /* MyQCExpressADriver.m in Sources */,
-				39663A3D0402FCF000435B6F /* MyQCWebDriver.m in Sources */,
-				39663A3E0402FCF000435B6F /* MyVV6410Sensor.m in Sources */,
-				39663A410402FCF000435B6F /* MyVicamDriver.m in Sources */,
-				39663A420402FCF000435B6F /* RGBScaler.m in Sources */,
-				39663A430402FCF000435B6F /* MyIntelPCCameraPro.m in Sources */,
-				39663A440402FCF000435B6F /* JFIFHeaderTemplate.c in Sources */,
-				39663A450402FCF000435B6F /* MyOV511Driver.m in Sources */,
-				39663A4B0402FCF000435B6F /* MySonix2028Driver.m in Sources */,
-				39663A4C0402FCF000435B6F /* MySE401Driver.m in Sources */,
-				39663A4D0402FCF000435B6F /* MyQCProBeigeDriver.m in Sources */,
-				39663A4E0402FCF000435B6F /* Resolvers.c in Sources */,
-				39663A4F0402FCF000435B6F /* MySPCA500Driver.m in Sources */,
-				39663A500402FCF000435B6F /* ov511_decomp.c in Sources */,
-				39663A510402FCF000435B6F /* MyKiaraFlippedDriver.m in Sources */,
-				39663A680403023400435B6F /* main.m in Sources */,
-				F5EB6B1A08B304DB0099821A /* MyQCOrbitDriver.m in Sources */,
+				F535ECC608DB3970007943DA /* MiniGraphicsTools.c in Sources */,
+				F535ECC708DB3970007943DA /* MiscTools.c in Sources */,
+				F535ECC808DB3970007943DA /* Resolvers.c in Sources */,
+				F535ECC908DB3970007943DA /* yuv2rgb.c in Sources */,
+				F535ECCA08DB3970007943DA /* MyTimonFamilyDriver.m in Sources */,
+				F535ECCB08DB3970007943DA /* MyPhilipsCameraDriver.m in Sources */,
+				F535ECCC08DB3970007943DA /* MyKiaraFamilyDriver.m in Sources */,
+				F535ECCD08DB3970007943DA /* MyCPIACameraDriver.m in Sources */,
+				F535ECCE08DB3970007943DA /* MyCameraDriver.m in Sources */,
+				F535ECCF08DB3970007943DA /* MyCameraInfo.m in Sources */,
+				F535ECD008DB3970007943DA /* MyDummyCameraDriver.m in Sources */,
+				F535ECD108DB3970007943DA /* MyBridge.m in Sources */,
+				F535ECD208DB3970007943DA /* QTPanel.m in Sources */,
+				F535ECD308DB3970007943DA /* QTVideoDigitizer.m in Sources */,
+				F535ECD408DB3970007943DA /* MySTV680Driver.m in Sources */,
+				F535ECD508DB3970007943DA /* BayerConverter.m in Sources */,
+				F535ECD608DB3970007943DA /* MySPCA504Driver.m in Sources */,
+				F535ECD708DB3970007943DA /* MyCameraCentral.m in Sources */,
+				F535ECD808DB3970007943DA /* MyPB0100Sensor.m in Sources */,
+				F535ECD908DB3970007943DA /* MySTV600Sensor.m in Sources */,
+				F535ECDA08DB3970007943DA /* RGB888Scaler.m in Sources */,
+				F535ECDB08DB3970007943DA /* MyQX3Driver.m in Sources */,
+				F535ECDC08DB3970007943DA /* MyQCExpressBDriver.m in Sources */,
+				F535ECDD08DB3970007943DA /* MyHDCS1000Sensor.m in Sources */,
+				F535ECDE08DB3970007943DA /* MyHDCS1020Sensor.m in Sources */,
+				F535ECDF08DB3970007943DA /* MyQCExpressADriver.m in Sources */,
+				F535ECE008DB3970007943DA /* MyQCWebDriver.m in Sources */,
+				F535ECE108DB3970007943DA /* MyVV6410Sensor.m in Sources */,
+				F535ECE208DB3970007943DA /* MyVicamDriver.m in Sources */,
+				F535ECE308DB3970007943DA /* RGBScaler.m in Sources */,
+				F535ECE408DB3970007943DA /* MyIntelPCCameraPro.m in Sources */,
+				F535ECE508DB3970007943DA /* MyOV511Driver.m in Sources */,
+				F535ECE608DB3970007943DA /* JFIFHeaderTemplate.c in Sources */,
+				F535ECE708DB3970007943DA /* MySonix2028Driver.m in Sources */,
+				F535ECE808DB3970007943DA /* MySE401Driver.m in Sources */,
+				F535ECE908DB3970007943DA /* MyQCProBeigeDriver.m in Sources */,
+				F535ECEA08DB3970007943DA /* MySPCA500Driver.m in Sources */,
+				F535ECEB08DB3970007943DA /* ov511_decomp.c in Sources */,
+				F535ECEC08DB3970007943DA /* MyKiaraFlippedDriver.m in Sources */,
+				F535ECED08DB3970007943DA /* MyQCOrbitDriver.m in Sources */,
+				F535F1E608DF2703007943DA /* SPCA5XX.m in Sources */,
+				F535F1F808DF2730007943DA /* SQ905.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		F538BD2601E5D23F0166DE0F /* Sources */ = {
+		F535ED3908DB3970007943DA /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F5F79AEF0212038E01E152CA /* MiniGraphicsTools.c in Sources */,
-				F5F79AF00212038E01E152CA /* MiscTools.c in Sources */,
-				F5F79AF10212038E01E152CA /* Resolvers.c in Sources */,
-				F5F79AF20212038E01E152CA /* yuv2rgb.c in Sources */,
-				F5F79AF70212038E01E152CA /* MyTimonFamilyDriver.m in Sources */,
-				F5F79AF80212038E01E152CA /* MyPhilipsCameraDriver.m in Sources */,
-				F5F79AF90212038E01E152CA /* MyKiaraFamilyDriver.m in Sources */,
-				F5F79AFA0212038E01E152CA /* MyCPIACameraDriver.m in Sources */,
-				F55DD8360213113F0166DE0F /* MyCameraDriver.m in Sources */,
-				F55DD8370213113F0166DE0F /* MyCameraInfo.m in Sources */,
-				F55DD8380213113F0166DE0F /* MyDummyCameraDriver.m in Sources */,
-				F55DD84E021311680166DE0F /* MyBridge.m in Sources */,
-				F55DD84F021311680166DE0F /* QTPanel.m in Sources */,
-				F55DD850021311680166DE0F /* QTVideoDigitizer.m in Sources */,
-				F589EB1302268A6901D99A1F /* MySTV680Driver.m in Sources */,
-				F58530E60229AAB601479C37 /* BayerConverter.m in Sources */,
-				F51108220241794801599652 /* MySPCA504Driver.m in Sources */,
-				F5B9568E0250D31A0166DE1F /* MyCameraCentral.m in Sources */,
-				F55A58CB02572BFE014CA2B1 /* MyPB0100Sensor.m in Sources */,
-				F55A58CC02572BFE014CA2B1 /* MySTV600Sensor.m in Sources */,
-				F59E4B7D0264A7910166DE1F /* RGB888Scaler.m in Sources */,
-				F5376F3A026C66D30166DE1F /* MyQX3Driver.m in Sources */,
-				F533EEC10271ACF80166DE1F /* MyQCExpressBDriver.m in Sources */,
-				F533EEC70271B72D0166DE1F /* MyHDCS1000Sensor.m in Sources */,
-				F53480D1027240FB013AF9AD /* MyHDCS1020Sensor.m in Sources */,
-				F5A1531B0274D3D501C56AC3 /* MyQCExpressADriver.m in Sources */,
-				F5FC0F2202834E83015925D2 /* MyQCWebDriver.m in Sources */,
-				F5FC0F28028351A7015925D2 /* MyVV6410Sensor.m in Sources */,
-				F5F4373F02D278D6018D4F8C /* MyVicamDriver.m in Sources */,
-				F5F4374F02D52947018D4F8C /* RGBScaler.m in Sources */,
-				F5A4FBC8031E34E50166D062 /* MyIntelPCCameraPro.m in Sources */,
-				F5EDFAD9036876210166D062 /* MyOV511Driver.m in Sources */,
-				F5CBE0D003807F2301260355 /* JFIFHeaderTemplate.c in Sources */,
-				F53F663A039ACC3F01C3DF00 /* MySonix2028Driver.m in Sources */,
-				F5A5077703BBC69501A78977 /* MySE401Driver.m in Sources */,
-				39185ABF03C8B5570066DE75 /* MyQCProBeigeDriver.m in Sources */,
-				3973A6F603CDF44E0066D062 /* MySPCA500Driver.m in Sources */,
-				397B163E03CED9B900153FEE /* ov511_decomp.c in Sources */,
-				39CBD65303DC0D79000F7EFC /* MyKiaraFlippedDriver.m in Sources */,
-				F5EB6B1E08B304DB0099821A /* MyQCOrbitDriver.m in Sources */,
+				F535ED3A08DB3970007943DA /* MiniGraphicsTools.c in Sources */,
+				F535ED3B08DB3970007943DA /* MiscTools.c in Sources */,
+				F535ED3C08DB3970007943DA /* yuv2rgb.c in Sources */,
+				F535ED3D08DB3970007943DA /* MyCPIACameraDriver.m in Sources */,
+				F535ED3E08DB3970007943DA /* MyKiaraFamilyDriver.m in Sources */,
+				F535ED3F08DB3970007943DA /* MyPhilipsCameraDriver.m in Sources */,
+				F535ED4008DB3970007943DA /* MyTimonFamilyDriver.m in Sources */,
+				F535ED4108DB3970007943DA /* MyCameraDriver.m in Sources */,
+				F535ED4208DB3970007943DA /* MyCameraInfo.m in Sources */,
+				F535ED4308DB3970007943DA /* MyDummyCameraDriver.m in Sources */,
+				F535ED4408DB3970007943DA /* MySTV680Driver.m in Sources */,
+				F535ED4508DB3970007943DA /* BayerConverter.m in Sources */,
+				F535ED4608DB3970007943DA /* MySPCA504Driver.m in Sources */,
+				F535ED4708DB3970007943DA /* MyCameraCentral.m in Sources */,
+				F535ED4808DB3970007943DA /* MyPB0100Sensor.m in Sources */,
+				F535ED4908DB3970007943DA /* MySTV600Sensor.m in Sources */,
+				F535ED4A08DB3970007943DA /* MyQX3Driver.m in Sources */,
+				F535ED4B08DB3970007943DA /* MyQCExpressBDriver.m in Sources */,
+				F535ED4C08DB3970007943DA /* MyHDCS1000Sensor.m in Sources */,
+				F535ED4D08DB3970007943DA /* MyHDCS1020Sensor.m in Sources */,
+				F535ED4E08DB3970007943DA /* MyQCExpressADriver.m in Sources */,
+				F535ED4F08DB3970007943DA /* MyQCWebDriver.m in Sources */,
+				F535ED5008DB3970007943DA /* MyVV6410Sensor.m in Sources */,
+				F535ED5108DB3970007943DA /* MyVicamDriver.m in Sources */,
+				F535ED5208DB3970007943DA /* RGBScaler.m in Sources */,
+				F535ED5308DB3970007943DA /* MyIntelPCCameraPro.m in Sources */,
+				F535ED5408DB3970007943DA /* JFIFHeaderTemplate.c in Sources */,
+				F535ED5508DB3970007943DA /* MyOV511Driver.m in Sources */,
+				F535ED5608DB3970007943DA /* MySonix2028Driver.m in Sources */,
+				F535ED5708DB3970007943DA /* MySE401Driver.m in Sources */,
+				F535ED5808DB3970007943DA /* MyQCProBeigeDriver.m in Sources */,
+				F535ED5908DB3970007943DA /* Resolvers.c in Sources */,
+				F535ED5A08DB3970007943DA /* MySPCA500Driver.m in Sources */,
+				F535ED5B08DB3970007943DA /* ov511_decomp.c in Sources */,
+				F535ED5C08DB3970007943DA /* MyKiaraFlippedDriver.m in Sources */,
+				F535ED5D08DB3970007943DA /* main.m in Sources */,
+				F535ED5E08DB3970007943DA /* MyQCOrbitDriver.m in Sources */,
+				F535F1E408DF2703007943DA /* SPCA5XX.m in Sources */,
+				F535F1F008DF2730007943DA /* SQ905.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		39663A5A0402FD1400435B6F /* PBXTargetDependency */ = {
+		F535ED7908DB3971007943DA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 396639D80402FCF000435B6F /* ica module */;
-			targetProxy = 391D477005921F4200ADF722 /* PBXContainerItemProxy */;
+			target = F535EC9708DB3970007943DA /* component */;
+			targetProxy = F535ED7808DB3971007943DA /* PBXContainerItemProxy */;
 		};
-		39AE92CC03C513420066D062 /* PBXTargetDependency */ = {
+		F535ED7B08DB3971007943DA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 29B97326FDCFA39411CA2CEA /* app */;
-			targetProxy = 391D477205921F4200ADF722 /* PBXContainerItemProxy */;
+			target = F535EC0808DB3970007943DA /* app */;
+			targetProxy = F535ED7A08DB3971007943DA /* PBXContainerItemProxy */;
 		};
-		39AE92CD03C513490066D062 /* PBXTargetDependency */ = {
+		F535ED7D08DB3971007943DA /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = F538BD2301E5D23F0166DE0F /* component */;
-			targetProxy = 391D477105921F4200ADF722 /* PBXContainerItemProxy */;
+			target = F535ECFC08DB3970007943DA /* ica module */;
+			targetProxy = F535ED7C08DB3971007943DA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -1734,7 +1543,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		F5E3BBB008A9C910009E490F /* Debug */ = {
+		F535EC9108DB3970007943DA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -1744,9 +1553,9 @@
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = app_specific/generate_app.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = macam;
@@ -1761,16 +1570,17 @@
 			};
 			name = Debug;
 		};
-		F5E3BBB108A9C910009E490F /* Release */ = {
+		F535EC9208DB3970007943DA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				FRAMEWORK_SEARCH_PATHS = "";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
 				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = app_specific/generate_app.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O2";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = macam;
@@ -1785,14 +1595,15 @@
 			};
 			name = Release;
 		};
-		F5E3BBB208A9C910009E490F /* Default */ = {
+		F535EC9308DB3970007943DA /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				FRAMEWORK_SEARCH_PATHS = "";
+				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = app_specific/generate_app.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = macam;
@@ -1806,18 +1617,17 @@
 			};
 			name = Default;
 		};
-		F5E3BBB408A9C910009E490F /* Debug */ = {
+		F535ECF708DB3970007943DA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				DEBUGGING_SYMBOLS = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = component_specific/generate_component.plist;
 				INSTALL_PATH = /Library/Components;
 				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
-				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-bundle";
 				OTHER_REZFLAGS = "";
@@ -1833,15 +1643,16 @@
 			};
 			name = Debug;
 		};
-		F5E3BBB508A9C910009E490F /* Release */ = {
+		F535ECF808DB3970007943DA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				DEBUGGING_SYMBOLS = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
+				INFOPLIST_FILE = component_specific/generate_component.plist;
 				INSTALL_PATH = /Library/Components;
 				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
-				OPTIMIZATION_CFLAGS = "-O2";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-bundle";
 				OTHER_REZFLAGS = "";
@@ -1857,13 +1668,14 @@
 			};
 			name = Release;
 		};
-		F5E3BBB608A9C910009E490F /* Default */ = {
+		F535ECF908DB3970007943DA /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEBUGGING_SYMBOLS = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INFOPLIST_FILE = component_specific/generate_component.plist;
 				INSTALL_PATH = /Library/Components;
 				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
-				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "-bundle";
 				OTHER_REZFLAGS = "";
@@ -1878,20 +1690,19 @@
 			};
 			name = Default;
 		};
-		F5E3BBB808A9C910009E490F /* Debug */ = {
+		F535ED6708DB3970007943DA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = ica_specific/generate_ica_module.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = macamDSC;
@@ -1906,17 +1717,18 @@
 			};
 			name = Debug;
 		};
-		F5E3BBB908A9C910009E490F /* Release */ = {
+		F535ED6808DB3970007943DA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
-				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
 				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = ica_specific/generate_ica_module.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O2";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = macamDSC;
@@ -1931,15 +1743,16 @@
 			};
 			name = Release;
 		};
-		F5E3BBBA08A9C910009E490F /* Default */ = {
+		F535ED6908DB3970007943DA /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_OPTIMIZATION_LEVEL = 2;
 				HEADER_SEARCH_PATHS = "";
+				INFOPLIST_FILE = ica_specific/generate_ica_module.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O2";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = macamDSC;
@@ -1953,7 +1766,7 @@
 			};
 			name = Default;
 		};
-		F5E3BBBC08A9C910009E490F /* Debug */ = {
+		F535ED7508DB3971007943DA /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
@@ -1976,7 +1789,7 @@
 			};
 			name = Debug;
 		};
-		F5E3BBBD08A9C910009E490F /* Release */ = {
+		F535ED7608DB3971007943DA /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
@@ -1996,7 +1809,7 @@
 			};
 			name = Release;
 		};
-		F5E3BBBE08A9C910009E490F /* Default */ = {
+		F535ED7708DB3971007943DA /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				OTHER_CFLAGS = "";
@@ -2019,6 +1832,9 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				OTHER_LDFLAGS = "-lSystem";
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				ZERO_LINK = NO;
 			};
 			name = Debug;
@@ -2026,55 +1842,65 @@
 		F5E3BBC108A9C910009E490F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				MACOSX_DEPLOYMENT_TARGET = 10.1;
+				OTHER_LDFLAGS = "-lSystem";
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Release;
 		};
 		F5E3BBC208A9C910009E490F /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				MACOSX_DEPLOYMENT_TARGET = 10.4;
+				OTHER_LDFLAGS = "-lSystem";
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Default;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		F5E3BBAF08A9C910009E490F /* Build configuration list for PBXApplicationTarget "app" */ = {
+		F535EC9008DB3970007943DA /* Build configuration list for PBXNativeTarget "app" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F5E3BBB008A9C910009E490F /* Debug */,
-				F5E3BBB108A9C910009E490F /* Release */,
-				F5E3BBB208A9C910009E490F /* Default */,
+				F535EC9108DB3970007943DA /* Debug */,
+				F535EC9208DB3970007943DA /* Release */,
+				F535EC9308DB3970007943DA /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F5E3BBB308A9C910009E490F /* Build configuration list for PBXBundleTarget "component" */ = {
+		F535ECF608DB3970007943DA /* Build configuration list for PBXNativeTarget "component" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F5E3BBB408A9C910009E490F /* Debug */,
-				F5E3BBB508A9C910009E490F /* Release */,
-				F5E3BBB608A9C910009E490F /* Default */,
+				F535ECF708DB3970007943DA /* Debug */,
+				F535ECF808DB3970007943DA /* Release */,
+				F535ECF908DB3970007943DA /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F5E3BBB708A9C910009E490F /* Build configuration list for PBXApplicationTarget "ica module" */ = {
+		F535ED6608DB3970007943DA /* Build configuration list for PBXNativeTarget "ica module" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F5E3BBB808A9C910009E490F /* Debug */,
-				F5E3BBB908A9C910009E490F /* Release */,
-				F5E3BBBA08A9C910009E490F /* Default */,
+				F535ED6708DB3970007943DA /* Debug */,
+				F535ED6808DB3970007943DA /* Release */,
+				F535ED6908DB3970007943DA /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
 		};
-		F5E3BBBB08A9C910009E490F /* Build configuration list for PBXAggregateTarget "all" */ = {
+		F535ED7408DB3971007943DA /* Build configuration list for PBXAggregateTarget "all" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F5E3BBBC08A9C910009E490F /* Debug */,
-				F5E3BBBD08A9C910009E490F /* Release */,
-				F5E3BBBE08A9C910009E490F /* Default */,
+				F535ED7508DB3971007943DA /* Debug */,
+				F535ED7608DB3971007943DA /* Release */,
+				F535ED7708DB3971007943DA /* Default */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Default;
