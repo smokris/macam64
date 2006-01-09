@@ -32,6 +32,7 @@
 #define PRODUCT_WEBCAM_5                0x400c
 #define PRODUCT_WEBCAM_5_NEW            0x400d
 #define PRODUCT_WEBCAM_PRO_EX           0x4011
+#define PRODUCT_VISTA_PLUS              0x4028      // PAC207
 
 #define VENDOR_CONNECTIX		0x0478
 #define PRODUCT_QUICKCAM_VC             0x0001      // uses USS720 USB <-> parallel converter
@@ -70,6 +71,8 @@
 #define PRODUCT_QUICKCAM_NOTEBOOKS_B    0x08ae      // round one, zc0302
 
 #define VENDOR_PHILIPS          0x0471
+#define PRODUCT_PCA645VC                0x0302
+#define PRODUCT_PCA646VC                0x0303
 #define PRODUCT_VESTA                   0x0307
 #define PRODUCT_VESTA_PRO               0x0308
 #define PRODUCT_VESTA_SCAN              0x030c
@@ -115,6 +118,10 @@
 
 #define VENDOR_AME_CO           0x06BE
 #define PRODUCT_AFINA_EYE               0x8116
+
+#define VENDOR_PIXART           0x093a
+#define PRODUCT_PAC207_BASE             0x2460      // PAC207 obviously
+#define PRODUCT_CIF_SINGLE_CHIP         0x2468      // Most common PAC207 camera Product ID
 
 #define VENDOR_VISIONITE        0x0d81
 #define PRODUCT_VCS_UC300               0x1900
