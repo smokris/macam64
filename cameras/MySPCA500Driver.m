@@ -120,7 +120,7 @@ extern UInt8 QTables[];
 	NSDictionary* dict7=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:PRODUCT_S_CAM_F5],@"idProduct",
         [NSNumber numberWithUnsignedShort:VENDOR_MINTON],@"idVendor",
-        @"Minton S-Cam F5 (experimental)",@"name",NULL];
+        @"Minton S-Cam F5 or D-Link DSC-350F",@"name",NULL];
 	
 	return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,dict7,NULL];
 }
