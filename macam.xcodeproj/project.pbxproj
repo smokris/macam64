@@ -367,6 +367,18 @@
 		F535F1F708DF2730007943DA /* SQ905.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1EB08DF2730007943DA /* SQ905.h */; };
 		F535F1F808DF2730007943DA /* SQ905.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1EC08DF2730007943DA /* SQ905.m */; };
 		F54C765A09089861000BB928 /* SPCA5XX.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XX.m */; };
+		F5994D58096ED76E004F6807 /* pac207.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994D57096ED76E004F6807 /* pac207.h */; };
+		F5994D59096ED76E004F6807 /* pac207.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994D57096ED76E004F6807 /* pac207.h */; };
+		F5994D5A096ED76E004F6807 /* pac207.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994D57096ED76E004F6807 /* pac207.h */; };
+		F5994D6A096F1224004F6807 /* spca5xx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994D69096F1223004F6807 /* spca5xx.h */; };
+		F5994D6B096F1224004F6807 /* spca5xx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994D69096F1223004F6807 /* spca5xx.h */; };
+		F5994D6C096F1224004F6807 /* spca5xx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994D69096F1223004F6807 /* spca5xx.h */; };
+		F5994DD80971A85E004F6807 /* MyPixartDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994DD60971A85E004F6807 /* MyPixartDriver.h */; };
+		F5994DD90971A85E004F6807 /* MyPixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5994DD70971A85E004F6807 /* MyPixartDriver.m */; };
+		F5994DDA0971A85E004F6807 /* MyPixartDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994DD60971A85E004F6807 /* MyPixartDriver.h */; };
+		F5994DDB0971A85E004F6807 /* MyPixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5994DD70971A85E004F6807 /* MyPixartDriver.m */; };
+		F5994DDC0971A85E004F6807 /* MyPixartDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994DD60971A85E004F6807 /* MyPixartDriver.h */; };
+		F5994DDD0971A85E004F6807 /* MyPixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5994DD70971A85E004F6807 /* MyPixartDriver.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -529,6 +541,10 @@
 		F589EB0F02268A6901D99A1F /* MySTV680Driver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MySTV680Driver.m; sourceTree = "<group>"; };
 		F58DB238024E9803019A97FC /* MyImageWindowController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyImageWindowController.h; sourceTree = "<group>"; };
 		F58DB239024E9803019A97FC /* MyImageWindowController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyImageWindowController.m; sourceTree = "<group>"; };
+		F5994D57096ED76E004F6807 /* pac207.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pac207.h; path = spca5xx_files/pac207.h; sourceTree = "<group>"; };
+		F5994D69096F1223004F6807 /* spca5xx.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca5xx.h; path = spca5xx_files/spca5xx.h; sourceTree = "<group>"; };
+		F5994DD60971A85E004F6807 /* MyPixartDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyPixartDriver.h; sourceTree = "<group>"; };
+		F5994DD70971A85E004F6807 /* MyPixartDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyPixartDriver.m; sourceTree = "<group>"; };
 		F5995F30029B5BB80126DA0B /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = TODO.txt; path = texts/TODO.txt; sourceTree = "<group>"; };
 		F59E4B7A0264A7910166DE1F /* RGB888Scaler.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = RGB888Scaler.m; sourceTree = "<group>"; };
 		F59E4B7B0264A7910166DE1F /* RGB888Scaler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RGB888Scaler.h; sourceTree = "<group>"; };
@@ -812,6 +828,15 @@
 			path = component_specific;
 			sourceTree = "<group>";
 		};
+		F5994D54096ED733004F6807 /* spca5xx_files */ = {
+			isa = PBXGroup;
+			children = (
+				F5994D69096F1223004F6807 /* spca5xx.h */,
+				F5994D57096ED76E004F6807 /* pac207.h */,
+			);
+			name = spca5xx_files;
+			sourceTree = "<group>";
+		};
 		F5BFF535029B598301B6CBC8 /* Information and READMEs */ = {
 			isa = PBXGroup;
 			children = (
@@ -830,6 +855,9 @@
 		F5F79A800212038E01E152CA /* cameras */ = {
 			isa = PBXGroup;
 			children = (
+				F5994DD60971A85E004F6807 /* MyPixartDriver.h */,
+				F5994DD70971A85E004F6807 /* MyPixartDriver.m */,
+				F5994D54096ED733004F6807 /* spca5xx_files */,
 				F535F1EB08DF2730007943DA /* SQ905.h */,
 				F535F1EC08DF2730007943DA /* SQ905.m */,
 				F535F1DB08DF2703007943DA /* SPCA5XX.h */,
@@ -968,6 +996,9 @@
 				F535EC3B08DB3970007943DA /* MyQCOrbitDriver.h in Headers */,
 				F535F1E708DF2703007943DA /* SPCA5XX.h in Headers */,
 				F535F1F508DF2730007943DA /* SQ905.h in Headers */,
+				F5994D59096ED76E004F6807 /* pac207.h in Headers */,
+				F5994D6B096F1224004F6807 /* spca5xx.h in Headers */,
+				F5994DDA0971A85E004F6807 /* MyPixartDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1019,6 +1050,9 @@
 				F535ECC208DB3970007943DA /* MyQCOrbitDriver.h in Headers */,
 				F535F1E508DF2703007943DA /* SPCA5XX.h in Headers */,
 				F535F1F708DF2730007943DA /* SQ905.h in Headers */,
+				F5994D58096ED76E004F6807 /* pac207.h in Headers */,
+				F5994D6A096F1224004F6807 /* spca5xx.h in Headers */,
+				F5994DD80971A85E004F6807 /* MyPixartDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1066,6 +1100,9 @@
 				F535ED2308DB3970007943DA /* MyQCOrbitDriver.h in Headers */,
 				F535F1E308DF2703007943DA /* SPCA5XX.h in Headers */,
 				F535F1EF08DF2730007943DA /* SQ905.h in Headers */,
+				F5994D5A096ED76E004F6807 /* pac207.h in Headers */,
+				F5994D6C096F1224004F6807 /* spca5xx.h in Headers */,
+				F5994DDC0971A85E004F6807 /* MyPixartDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1353,6 +1390,7 @@
 				F535EC8908DB3970007943DA /* MyQCOrbitDriver.m in Sources */,
 				F535F1F608DF2730007943DA /* SQ905.m in Sources */,
 				F54C765A09089861000BB928 /* SPCA5XX.m in Sources */,
+				F5994DDB0971A85E004F6807 /* MyPixartDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1402,6 +1440,7 @@
 				F535ECED08DB3970007943DA /* MyQCOrbitDriver.m in Sources */,
 				F535F1E608DF2703007943DA /* SPCA5XX.m in Sources */,
 				F535F1F808DF2730007943DA /* SQ905.m in Sources */,
+				F5994DD90971A85E004F6807 /* MyPixartDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1448,6 +1487,7 @@
 				F535ED5E08DB3970007943DA /* MyQCOrbitDriver.m in Sources */,
 				F535F1E408DF2703007943DA /* SPCA5XX.m in Sources */,
 				F535F1F008DF2730007943DA /* SQ905.m in Sources */,
+				F5994DDD0971A85E004F6807 /* MyPixartDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1557,7 +1597,10 @@
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lSystem";
+				OTHER_LDFLAGS = (
+					"-read_only_relocs",
+					suppress,
+				);
 				PRODUCT_NAME = macam;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
