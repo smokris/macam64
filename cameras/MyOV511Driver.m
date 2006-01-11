@@ -22,12 +22,16 @@
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOCFPlugIn.h>
 #include <IOKit/usb/IOUSBLib.h>
+
 #import "MyCameraCentral.h"
 #import "MyOV511Driver.h"
 #import "Resolvers.h"
 #import "yuv2rgb.h"
 #import "MiscTools.h"
 #include "unistd.h"
+
+#include "USB_VendorProductIDs.h"
+
 
 #define OV511_DEBUG
 #define USE_COMPRESS
@@ -68,10 +72,25 @@ int Decompress420(unsigned char *pIn, unsigned char *pOut, unsigned char *pTmp, 
 
 @implementation MyOV511PlusDriver
 
-//Class methods needed
-+ (unsigned short) cameraUsbProductID { return PRODUCT_OV511PLUS; }
-+ (unsigned short) cameraUsbVendorID { return VENDOR_OVT; }
-+ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"OV511Plus-based camera"]; }
+// Class methods needed
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_OV511PLUS], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
+            @"OV511Plus-based camera", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_PLAY_ME2CAM], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_MATTEL], @"idVendor",
+            @"Intel Play Me2Cam", @"name", NULL], 
+        
+        NULL];
+}
+
 
 - (short) defaultAltInterface {
     return 7;
@@ -120,10 +139,20 @@ int Decompress420(unsigned char *pIn, unsigned char *pOut, unsigned char *pTmp, 
 
 @implementation MyOV511Driver
 
-//Class methods needed
-+ (unsigned short) cameraUsbProductID { return PRODUCT_OV511; }
-+ (unsigned short) cameraUsbVendorID { return VENDOR_OVT; }
-+ (NSString*) cameraName {return [MyCameraCentral localizedStringFor:@"OV511-based camera"];}
+// Class methods needed
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_OV511], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
+            @"OV511-based camera", @"name", NULL], 
+        
+        NULL];
+}
+
 
 void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int width, int height);
 void tmpcopy32(u_char *buffer, int offset, int size, u_char *tmpbuf, long *tmpsize);
@@ -1472,3 +1501,104 @@ int b, in = 0, allzero;
 }
 
 @end
+
+#pragma mark ===================
+
+@implementation OV518Driver
+
+// Class methods needed
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_OV518], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
+            @"OV518-based camera", @"name", NULL], 
+        
+        NULL];
+}
+
+@end
+
+#pragma mark ===================
+
+@implementation OV518PlusDriver
+
+// Class methods needed
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_OV518PLUS], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
+            @"OV518Plus-based camera", @"name", NULL], 
+        
+        NULL];
+}
+
+@end
+
+#pragma mark ===================
+
+@implementation OV519Driver
+
+// Class methods needed
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_OV530], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
+            @"OV530-based camera", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_OV519], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
+            @"OV519-based camera", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_OV519_AKA1], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
+            @"OV519-based camera", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_OV519_AKA2], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
+            @"OV519-based camera", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_EYE_TOY], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONY], @"idVendor",
+            @"OV519-based camera", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_EYE_TOY_AKA1], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONY], @"idVendor",
+            @"OV519-based camera (1)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_EYE_TOY_AKA2], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONY], @"idVendor",
+            @"OV519-based camera (2)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_EYE_TOY_AKA3], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONY], @"idVendor",
+            @"OV519-based camera (3)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_XBOX_VIDEO_CHAT], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_MICROSOFT], @"idVendor",
+            @"Microsoft Xbox Video Chat", @"name", NULL], 
+        
+        NULL];
+}
+
+@end
+
