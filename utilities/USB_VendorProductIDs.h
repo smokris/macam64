@@ -34,6 +34,9 @@
 #define PRODUCT_WEBCAM_PRO_EX           0x4011
 #define PRODUCT_VISTA_PLUS              0x4028      // PAC207
 
+#define VENDOR_MICROSOFT        0x045e
+#define PRODUCT_XBOX_VIDEO_CHAT         0x028c      // in Japan only?
+
 #define VENDOR_CONNECTIX		0x0478
 #define PRODUCT_QUICKCAM_VC             0x0001      // uses USS720 USB <-> parallel converter
 #define PRODUCT_QUICKCLIP               0x0002
@@ -81,6 +84,12 @@
 #define PRODUCT_TOUCAM_PRO_3D           0x0312
 #define PRODUCT_TOUCAM_XS               0x0313      // Philips PCVC720K/40 (ToUCam XS)
 
+#define VENDOR_SONY             0x054C
+#define PRODUCT_EYE_TOY                 0x0154
+#define PRODUCT_EYE_TOY_AKA1            0x0155
+#define PRODUCT_EYE_TOY_AKA2            0x0156
+#define PRODUCT_EYE_TOY_AKA3            0x0157
+
 #define VENDOR_STM              0x0553
 #define PRODUCT_STV0680                 0x0202
 
@@ -88,8 +97,22 @@
 #define PRODUCT_MPC_C10                 0x9000
 #define PRODUCT_MPC_C30                 0x9001
 
+#define VENDOR_OVT              0x05A9
+#define PRODUCT_OV511                   0x0511
+#define PRODUCT_OV511PLUS               0xA511
+#define PRODUCT_OV518                   0x0518
+#define PRODUCT_OV518PLUS               0xA518
+#define PRODUCT_OV519                   0x0519
+#define PRODUCT_OV519_AKA1              0x8519
+#define PRODUCT_OV519_AKA2              0x4519
+#define PRODUCT_OV530                   0x0530
+
 #define VENDOR_VIEWQUEST		0x0733
 #define	PRODUCT_M318B                   0x0402		// SPCA500A ?
+
+#define	VENDOR_MATTEL			0x0813              // Products acutally labeled "Intel"
+#define	PRODUCT_PLAY_QX3MICROSCOPE      0x0001
+#define	PRODUCT_PLAY_ME2CAM             0x0002
 
 #define	VENDOR_MINTON			0x084d
 #define	PRODUCT_S_CAM_F5                0x0003		// SPCA500A
