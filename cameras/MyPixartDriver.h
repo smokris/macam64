@@ -65,6 +65,8 @@ struct code_table_t {
 	BayerConverter* bayerConverter;	// Our decoder for Bayer Matrix sensors
 }
 
++ (NSArray *) cameraUsbDescriptions;
+
 // private
 - (BOOL) startTransfer;
 - (void) cleanupGrabContext;

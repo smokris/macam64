@@ -133,9 +133,24 @@ static int pac_decompress_row(struct code_table_t *table, unsigned char *inp, un
 
 @implementation MyPixartDriver
 
-+ (unsigned short) cameraUsbProductID { return PRODUCT_CIF_SINGLE_CHIP; }
-+ (unsigned short) cameraUsbVendorID { return VENDOR_PIXART; }
-+ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"Pixart CIF Single Chip"]; }
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_CIF_SINGLE_CHIP], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
+            @"Pixart CIF Single Chip", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_VISTA_PLUS], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Creative Vista Plus", @"name", NULL], 
+        
+        NULL];
+}
+
 
 // ---------------------------------------------------------------------------------
 
