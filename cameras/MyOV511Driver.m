@@ -67,6 +67,21 @@ int Decompress420(unsigned char *pIn, unsigned char *pOut, unsigned char *pTmp, 
 	4, 4, 4, 4, 4, 4, 4, 4  \
 }
 
+#define OV518_YQUANTABLE { \
+	5, 4, 5, 6, 6, 7, 7, 7, \
+	5, 5, 5, 5, 6, 7, 7, 7, \
+	6, 6, 6, 6, 7, 7, 7, 8, \
+	7, 7, 6, 7, 7, 7, 8, 8  \
+}
+
+#define OV518_UVQUANTABLE { \
+	6, 6, 6, 7, 7, 7, 7, 7, \
+	6, 6, 6, 7, 7, 7, 7, 7, \
+	6, 6, 6, 7, 7, 7, 7, 8, \
+	7, 7, 7, 7, 7, 7, 8, 8  \
+}
+
+
 #define ENABLE_Y_QUANTABLE 1
 #define ENABLE_UV_QUANTABLE 1
 
@@ -96,6 +111,9 @@ int Decompress420(unsigned char *pIn, unsigned char *pOut, unsigned char *pTmp, 
         
         NULL];
 }
+
+
+// use better name!
 
 
 void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int width, int height);
@@ -1141,6 +1159,9 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
 }
 
 
+//
+//  Set the value of a register
+//
 - (int) regWrite:(UInt8) reg val:(UInt8) val
 {
     UInt8 buf[16];
@@ -1159,6 +1180,12 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
 }
 
 
+//
+//  Get the value of a register
+//
+//  return - negative is error
+//         - zero or positive is data
+//
 - (int) regRead:(UInt8) reg
 {
     UInt8 buf[16];
@@ -1223,76 +1250,74 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
     return 0;
 }
 
+
 /*
     byte read from i2c spesfic id on ov511 bus
 */
-
-- (int) i2cRead:(UInt8) reg {
-    UInt8 buf[16];
+- (int) i2cRead:(UInt8) reg 
+{
     UInt8 val;
     int retries = 3;
-
-    while(--retries >= 0) {
-
-        /* wait until bus idle */
+    
+    while (--retries >= 0) 
+    {
+        // wait until bus idle
         do {
-            [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
-        } while((buf[0] & 0x01) == 0);
+            val = [self regRead:OV511_REG_I2C_CONTROL];
+        } while ((val & 0x01) == 0);
+        
+        // perform a dummy write cycle to set the register
+        [self regWrite:OV511_REG_SMA val:reg];
+        
+        // initiate the dummy write
+        [self regWrite:OV511_REG_I2C_CONTROL val:0x03];
 
-        /* perform a dummy write cycle to set the register */
-        buf[0] = reg;
-        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SMA buf:buf len:1];
-
-        /* initiate the dummy write */
-        buf[0] = 0x03;
-        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
-
-        /* wait until bus idle */
+        // wait until bus idle
         do {
-            [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
-        } while((buf[0] & 0x01) == 0);
+            val = [self regRead:OV511_REG_I2C_CONTROL];
+        } while ((val & 0x01) == 0);
 
-        /* no retries */
-        if((buf[0] & 0x02) == 0)
+        // no retries
+        if ((val & 0x02) == 0)
             break;
     }
 
-    if(retries < 0)
+    if (retries < 0)
         return -1;
 
     retries = 3;
-    while(--retries >= 0) {
-        /* initiate read */
-        buf[0] = 0x05;
-        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+    
+    while (--retries >= 0) 
+    {
+        // initiate read
+        [self regWrite:OV511_REG_I2C_CONTROL val:0x05];
 
-        /* wait until bus idle */
+        // wait until bus idle
         do {
-            [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
-        } while((buf[0] & 0x01) == 0);
+            val = [self regRead:OV511_REG_I2C_CONTROL];
+        } while ((val & 0x01) == 0);
 
-        if((buf[0] & 0x02) == 0)
+        if ((val & 0x02) == 0)
             break;
 
-        /* abort I2C bus before retrying */
-        buf[0] = 0x05;
-        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+        // abort I2C bus before retrying
+        [self regWrite:OV511_REG_I2C_CONTROL val:0x05];
     }
- 
-    if(retries < 0)
+    
+    if (retries < 0) 
         return -1;
-
-    /* retrieve data */
-    [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SDA buf:buf len:1];
-    val = buf[0];
-
-    buf[0] = 0x05;
-    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
-
+    
+    // retrieve data
+    val = [self regRead:OV511_REG_SDA];
+    
+    [self regWrite:OV511_REG_I2C_CONTROL val:0x05];
+    
     return val;
 }
 
-- (int) i2cRead2 {
+
+- (int) i2cRead2 
+{
     UInt8 buf[16];
     UInt8 val;
     int retries = 3;
@@ -1328,16 +1353,16 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
     return val;
 }
 
-- (void) seti2cid {
-    UInt8 buf[16];
-    /* set I2C write slave ID */
-    buf[0] = sensorWrite;
-    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
 
-    /* set I2C read slave ID */
-    buf[0] = sensorRead;
-    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SRA buf:buf len:1];
+- (void) seti2cid 
+{
+    // set I2C write slave ID
+    [self regWrite:OV511_REG_SID val:sensorWrite];
+
+    // set I2C read slave ID
+    [self regWrite:OV511_REG_SRA val:sensorRead];
 }
+
 
 - (int) ov511_upload_quan_tables{
 	unsigned char *pYTable = yQuanTable511;
@@ -1483,11 +1508,12 @@ int b, in = 0, allzero;
 
 @end
 
+
 #pragma mark ===================
+
 
 @implementation MyOV511PlusDriver
 
-// Class methods needed
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -1507,15 +1533,20 @@ int b, in = 0, allzero;
 }
 
 
-- (short) defaultAltInterface {
+- (short) defaultAltInterface 
+{
     return 7;
 }
 
-- (short) packetSize:(short)altInterface {
+
+- (short) packetSize:(short) altInterface 
+{
     short size;
-    switch(altInterface) {
-        case 7:
+    
+    switch (altInterface) 
+    {
 		default:
+        case 7:
             size = 961;
             break;
         case 6:
@@ -1537,16 +1568,19 @@ int b, in = 0, allzero;
             size = 22;
             break;
     }
+    
     return size;
 }
 
+
 @end
+
 
 #pragma mark ===================
 
+
 @implementation OV518Driver
 
-// Class methods needed
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -1565,6 +1599,7 @@ int b, in = 0, allzero;
 {
     return 7;
 }
+
 
 - (short) packetSize:(short) altInterface 
 {
@@ -1603,9 +1638,9 @@ int b, in = 0, allzero;
 }
 
 
-/*
- *  Set the value of a register
- */
+//
+//  Set the value of a register
+//
 - (int) regWrite:(UInt8) reg val:(UInt8) val
 {
     UInt8 buf[16];
@@ -1624,12 +1659,12 @@ int b, in = 0, allzero;
 }
 
 
-/*
- *  Get the value of a register
- *
- *  return - negative is error
- *         - zero or positive is data
- */
+//
+//  Get the value of a register
+//
+//  return - negative is error
+//         - zero or positive is data
+//
 - (int) regRead:(UInt8) reg
 {
     UInt8 buf[16];
@@ -1646,9 +1681,9 @@ int b, in = 0, allzero;
 }
 
 
-/*
- *  2 bytes write to i2c on ov518 bus
- */
+//
+//  Set a register on the sensor using the i2c bus
+//
 - (int) i2cWrite:(UInt8) reg val:(UInt8) val
 {
     if ([self regWrite:OV511_REG_SWA val:reg] < 0) 
@@ -1664,87 +1699,53 @@ int b, in = 0, allzero;
 }
 
 
-/*
- *  byte read from i2c spesfic id on ov518 bus
- */
+//
+//  Get a register on the sensor using the i2c bus
+//
 - (int) i2cRead:(UInt8) reg 
 {
     UInt8 val;
     
-    /* perform a dummy write cycle to set the register */
+    // perform a dummy write cycle to set the register
     [self regWrite:OV511_REG_SMA val:reg];
     
-    /* initiate the dummy write */
+    // initiate the dummy write
     [self regWrite:OV518_REG_I2C_CONTROL val:0x03];
     
-    /* initiate read */
+    // initiate read
     [self regWrite:OV518_REG_I2C_CONTROL val:0x05];
     
-    /* retrieve data */
+    // retrieve data
     val = [self regRead:OV511_REG_SDA];
 
     return val;
 }
 
 
+//  Not sure what this is for
+//  Read after setting the register, why not just a regular read???
 - (int) i2cRead2 
 {
-    UInt8 buf[16];
     UInt8 val;
-    int retries = 3;
     
-    while(--retries >= 0) {
-        /* initiate read */
-        buf[0] = 0x05;
-        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
-        
-        /* wait until bus idle */
-        do {
-            [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
-        } while((buf[0] & 0x01) == 0);
-        
-        if((buf[0] & 0x02) == 0)
-            break;
-        
-        /* abort I2C bus before retrying */
-        buf[0] = 0x05;
-        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
-    }
+    // initiate read
+    [self regWrite:OV518_REG_I2C_CONTROL val:0x05];
     
-    if(retries < 0)
-        return -1;
-    
-    /* retrieve data */
-    [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SDA buf:buf len:1];
-    val = buf[0];
-    
-    buf[0] = 0x05;
-    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+    // retrieve data
+    val = [self regRead:OV511_REG_SDA];
     
     return val;
 }
 
 
-- (void) seti2cid 
-{
-    UInt8 buf[16];
-    /* set I2C write slave ID */
-    buf[0] = sensorWrite;
-    [self usbWriteCmdWithBRequest:1 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
-    
-    /* set I2C read slave ID */
-    buf[0] = sensorRead;
-    [self usbWriteCmdWithBRequest:1 wValue:0 wIndex:OV511_REG_SRA buf:buf len:1];
-}
-
-
 @end
+
 
 #pragma mark ===================
 
+
 @implementation OV518PlusDriver
 
-// Class methods needed
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -1758,13 +1759,15 @@ int b, in = 0, allzero;
         NULL];
 }
 
+
 @end
+
 
 #pragma mark ===================
 
+
 @implementation OV519Driver
 
-// Class methods needed
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -1824,6 +1827,7 @@ int b, in = 0, allzero;
     return 4;
 }
 
+
 - (short) packetSize:(short) altInterface 
 {
     short size;
@@ -1853,4 +1857,3 @@ int b, in = 0, allzero;
 
 
 @end
-
