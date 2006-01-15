@@ -126,46 +126,31 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 - (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId 
 {
     UInt8 buf[16], cid;
+    int val;
     long i;
-    CameraError err=[self usbConnectToCam:usbLocationId configIdx:0];
-//setup connection to camera
-     if (err!=CameraErrorOK) return err;
-
+    
+    // Setup connection to camera
+    CameraError err = [self usbConnectToCam:usbLocationId configIdx:0];
+    if (err != CameraErrorOK) 
+        return err;
+    
     /* reset the OV511 */
-    buf[0] = 0x7f;
-    if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1]) {
-#ifdef VERBOSE
-        NSLog(@"OV511:startupGrabbing: error : OV511_REG_RST");
-#endif
+     if ([self regWrite:OV511_REG_RST val:0x7f] < 0) 
+         return CameraErrorUSBProblem;
+    
+    if ([self regWrite:OV511_REG_RST val:0x00] < 0) 
         return CameraErrorUSBProblem;
-    }
-
-    buf[0] = 0x00;
-    if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1]) {
-#ifdef VERBOSE
-        NSLog(@"OV511:startupGrabbing: error : OV511_REG_RST");
-#endif
-        return CameraErrorUSBProblem;
-    }
-
+    
     /* initialize system */
-    buf[0] = 0x01;
-    if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_EN_SYS buf:buf len:1]) {
-#ifdef VERBOSE
-        NSLog(@"OV511:startupGrabbing: error : OV511_REG_EN_SYS");
-#endif
+    if ([self regWrite:OV511_REG_EN_SYS val:0x01] < 0) 
         return CameraErrorUSBProblem;
-    }
-
-    if (![self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_CID buf:buf len:1]) {
-#ifdef VERBOSE
-        NSLog(@"OV511:startupGrabbing: error : OV511_REG_CID");
-#endif
+    
+    if ((val = [self regRead:OV511_REG_CID]) < 0) 
         return CameraErrorUSBProblem;
-    }
-
-    cid = buf[0];
-    switch(cid) {
+    
+    cid = val;
+    switch (cid) 
+    {
         case 6:
             sensorType = SENS_SAA7111A_WITH_FI1236MK2;
             sensorWrite = SAA7111A_I2C_WRITE_ID;
@@ -186,7 +171,7 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
             break;
         case 0:
         default:
-            // detect i2c id
+            // must detect i2c id
             for(i = 0; i <= 7; ++i) {
                 buf[0] = OV7610_I2C_WRITE_ID + i * 4;
                 [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
