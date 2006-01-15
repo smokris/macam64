@@ -150,9 +150,12 @@
 #define PRODUCT_VCS_UC300               0x1900
 #define PRODUCT_VCS_UM100               0x1910
 
+#define VENDOR_SQ               0x2770
 #define VENDOR_SQ905            0x2770
 #define PRODUCT_SQ905                   0x9120      // common for many SQ905 cameras
+#define PRODUCT_SQ905C                  0x905c      // uses 905C chip
 #define PRODUCT_SQ913C                  0x913c      // uses 913C chip
+#define PRODUCT_SQ930C                  0x930c      // uses 930C chip
 
 // do we need these?
 
