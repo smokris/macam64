@@ -47,7 +47,9 @@
 #import "MySPCA500Driver.h"
 #import "MyQCOrbitDriver.h"
 #import "SQ905.h"
+#import "SQ930C.h"
 #import "MyPixartDriver.h"
+#import "PAC7311.h"
 #include "unistd.h"
     
 
@@ -211,7 +213,9 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[MyQCVCDriver class]];
     [self registerCameraDriver:[MyQCOrbitDriver class]];
     [self registerCameraDriver:[SQ905 class]];
+    [self registerCameraDriver:[SQ930C class]];
     [self registerCameraDriver:[MyPixartDriver class]];
+    [self registerCameraDriver:[PAC7311 class]];
     [self registerCameraDriver:[OV518Driver class]];
     [self registerCameraDriver:[OV518PlusDriver class]];
     [self registerCameraDriver:[OV519Driver class]];
