@@ -28,7 +28,7 @@
 #include "SQ905.h"
 
 
-@interface SQ930C : MyCameraDriver 
+@interface SQ930C : SQ905 
 {
 }
 
