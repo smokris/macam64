@@ -1533,7 +1533,7 @@ get_qt_dynamic(unsigned char *pIn, struct comp_info *cinfo)
 static 
 #endif
 int 
-Decompress400(unsigned char *pIn,
+Decompress400_OV518(unsigned char *pIn,
 	      unsigned char *pOut,
 	      unsigned char *pTmp,
 	      int	     w,
@@ -1582,7 +1582,7 @@ Decompress400(unsigned char *pIn,
 static 
 #endif
 int 
-Decompress420(unsigned char *pIn,
+Decompress420_OV518(unsigned char *pIn,
 	      unsigned char *pOut,
 	      unsigned char *pTmp,
 	      int	     w,
