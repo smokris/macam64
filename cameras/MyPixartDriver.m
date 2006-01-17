@@ -139,7 +139,7 @@ static int pac_decompress_row(struct code_table_t *table, unsigned char *inp, un
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_CIF_SINGLE_CHIP], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_PIXART_CIF_SINGLE_CHIP], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
             @"Pixart CIF Single Chip", @"name", NULL], 
         
