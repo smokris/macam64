@@ -23,9 +23,9 @@
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_SQ930C], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SQ], @"idVendor",
-            @"SQ930C based camera", @"name", NULL], 
+            [NSNumber numberWithUnsignedShort:PRODUCT_PAC7311], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
+            @"PixArt PAC7311 based camera", @"name", NULL], 
         
         NULL];
 }
