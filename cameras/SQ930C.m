@@ -91,7 +91,16 @@
     
     // Do the remaining, usual connection stuff
     
-    error = [super startupWithUsbLocationId:usbLocationId];
+    {
+        short fr;
+        CameraResolution r = [self defaultResolutionAndRate:&fr];
+        WhiteBalanceMode wb = [self defaultWhiteBalanceMode];
+        [self setResolution:r fps:fr];
+        [self setWhiteBalanceMode:wb];
+        isStarted = YES;
+    }
+    
+//  error = [super startupWithUsbLocationId:usbLocationId];
     
     return error;
 }
