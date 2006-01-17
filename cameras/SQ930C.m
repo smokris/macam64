@@ -46,6 +46,57 @@
 }
 
 
+- (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId 
+{
+    CameraError error;
+    
+    // Setup the connection to the camera
+    
+    error = [self usbConnectToCam:usbLocationId configIdx:0];
+    
+    if (error != CameraErrorOK) 
+    {
+        printf("Trying to connect with configuration = 1");
+        error = [self usbConnectToCam:usbLocationId configIdx:1];
+    }
+    
+    if (error != CameraErrorOK) 
+    {
+        printf("Trying to connect with configuration = -1");
+        error = [self usbConnectToCam:usbLocationId configIdx:-1];
+    }
+    
+    if (error != CameraErrorOK) 
+        return error;
+    
+    // Get the ID from the camera
+    // This will allow more precise idetification of abilities
+/*    
+    [self reset];
+    [self accessRegister:REGISTER_GET_ID];
+    
+    [self readData:modelID len:4];
+    [self reset];
+    
+    sqModel = [self decodeModelID];
+    sqModelName = [self getModelName];
+*/    
+    // Set some default parameters
+    
+    [self setBrightness:0.5];
+    [self setContrast:0.5];
+    [self setSaturation:0.5];
+    [self setSharpness:0.5];
+    [self setGamma: 0.5];
+    
+    // Do the remaining, usual connection stuff
+    
+    error = [super startupWithUsbLocationId:usbLocationId];
+    
+    return error;
+}
+
+
 /////////////////////////////////////////////
 //
 //  Digital Still Camera (DSC) functionality
