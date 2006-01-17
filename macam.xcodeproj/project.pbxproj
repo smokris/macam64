@@ -367,6 +367,12 @@
 		F535F1F708DF2730007943DA /* SQ905.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1EB08DF2730007943DA /* SQ905.h */; };
 		F535F1F808DF2730007943DA /* SQ905.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1EC08DF2730007943DA /* SQ905.m */; };
 		F54C765A09089861000BB928 /* SPCA5XX.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XX.m */; };
+		F592C8E30974504700183A7D /* spcausb.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E20974504700183A7D /* spcausb.h */; };
+		F592C8E40974504700183A7D /* spcausb.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E20974504700183A7D /* spcausb.h */; };
+		F592C8E50974504700183A7D /* spcausb.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E20974504700183A7D /* spcausb.h */; };
+		F592C8EA0974520E00183A7D /* sonix.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E90974520E00183A7D /* sonix.h */; };
+		F592C8EB0974520E00183A7D /* sonix.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E90974520E00183A7D /* sonix.h */; };
+		F592C8EC0974520E00183A7D /* sonix.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E90974520E00183A7D /* sonix.h */; };
 		F5994D58096ED76E004F6807 /* pac207.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994D57096ED76E004F6807 /* pac207.h */; };
 		F5994D59096ED76E004F6807 /* pac207.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994D57096ED76E004F6807 /* pac207.h */; };
 		F5994D5A096ED76E004F6807 /* pac207.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994D57096ED76E004F6807 /* pac207.h */; };
@@ -379,6 +385,57 @@
 		F5994DDB0971A85E004F6807 /* MyPixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5994DD70971A85E004F6807 /* MyPixartDriver.m */; };
 		F5994DDC0971A85E004F6807 /* MyPixartDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994DD60971A85E004F6807 /* MyPixartDriver.h */; };
 		F5994DDD0971A85E004F6807 /* MyPixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5994DD70971A85E004F6807 /* MyPixartDriver.m */; };
+		F5AEA374097A154400D45891 /* SQ930C.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA372097A154300D45891 /* SQ930C.h */; };
+		F5AEA375097A154400D45891 /* SQ930C.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA373097A154400D45891 /* SQ930C.m */; };
+		F5AEA376097A154400D45891 /* SQ930C.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA372097A154300D45891 /* SQ930C.h */; };
+		F5AEA377097A154400D45891 /* SQ930C.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA373097A154400D45891 /* SQ930C.m */; };
+		F5AEA378097A154400D45891 /* SQ930C.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA372097A154300D45891 /* SQ930C.h */; };
+		F5AEA379097A154400D45891 /* SQ930C.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA373097A154400D45891 /* SQ930C.m */; };
+		F5AEA392097A1D0700D45891 /* PAC7311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA390097A1D0600D45891 /* PAC7311.h */; };
+		F5AEA393097A1D0700D45891 /* PAC7311.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA391097A1D0700D45891 /* PAC7311.m */; };
+		F5AEA394097A1D0700D45891 /* PAC7311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA390097A1D0600D45891 /* PAC7311.h */; };
+		F5AEA395097A1D0700D45891 /* PAC7311.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA391097A1D0700D45891 /* PAC7311.m */; };
+		F5AEA396097A1D0700D45891 /* PAC7311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA390097A1D0600D45891 /* PAC7311.h */; };
+		F5AEA397097A1D0700D45891 /* PAC7311.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA391097A1D0700D45891 /* PAC7311.m */; };
+		F5AEA6F8097D805400D45891 /* cx11646.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EC097D805400D45891 /* cx11646.h */; };
+		F5AEA6F9097D805400D45891 /* et61xx51.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6ED097D805400D45891 /* et61xx51.h */; };
+		F5AEA6FA097D805400D45891 /* mr97311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EE097D805400D45891 /* mr97311.h */; };
+		F5AEA6FB097D805400D45891 /* sn9cxxx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EF097D805400D45891 /* sn9cxxx.h */; };
+		F5AEA6FC097D805400D45891 /* spca500_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F0097D805400D45891 /* spca500_init.h */; };
+		F5AEA6FD097D805400D45891 /* spca501_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F1097D805400D45891 /* spca501_init.h */; };
+		F5AEA6FE097D805400D45891 /* spca505_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F2097D805400D45891 /* spca505_init.h */; };
+		F5AEA6FF097D805400D45891 /* spca506.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F3097D805400D45891 /* spca506.h */; };
+		F5AEA700097D805400D45891 /* spca508_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F4097D805400D45891 /* spca508_init.h */; };
+		F5AEA701097D805400D45891 /* spca561.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F5097D805400D45891 /* spca561.h */; };
+		F5AEA702097D805400D45891 /* tv8532.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F6097D805400D45891 /* tv8532.h */; };
+		F5AEA703097D805400D45891 /* zc3xx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F7097D805400D45891 /* zc3xx.h */; };
+		F5AEA704097D805400D45891 /* cx11646.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EC097D805400D45891 /* cx11646.h */; };
+		F5AEA705097D805400D45891 /* et61xx51.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6ED097D805400D45891 /* et61xx51.h */; };
+		F5AEA706097D805400D45891 /* mr97311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EE097D805400D45891 /* mr97311.h */; };
+		F5AEA707097D805400D45891 /* sn9cxxx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EF097D805400D45891 /* sn9cxxx.h */; };
+		F5AEA708097D805400D45891 /* spca500_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F0097D805400D45891 /* spca500_init.h */; };
+		F5AEA709097D805400D45891 /* spca501_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F1097D805400D45891 /* spca501_init.h */; };
+		F5AEA70A097D805400D45891 /* spca505_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F2097D805400D45891 /* spca505_init.h */; };
+		F5AEA70B097D805400D45891 /* spca506.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F3097D805400D45891 /* spca506.h */; };
+		F5AEA70C097D805400D45891 /* spca508_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F4097D805400D45891 /* spca508_init.h */; };
+		F5AEA70D097D805400D45891 /* spca561.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F5097D805400D45891 /* spca561.h */; };
+		F5AEA70E097D805400D45891 /* tv8532.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F6097D805400D45891 /* tv8532.h */; };
+		F5AEA70F097D805400D45891 /* zc3xx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F7097D805400D45891 /* zc3xx.h */; };
+		F5AEA710097D805400D45891 /* cx11646.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EC097D805400D45891 /* cx11646.h */; };
+		F5AEA711097D805400D45891 /* et61xx51.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6ED097D805400D45891 /* et61xx51.h */; };
+		F5AEA712097D805400D45891 /* mr97311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EE097D805400D45891 /* mr97311.h */; };
+		F5AEA713097D805400D45891 /* sn9cxxx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EF097D805400D45891 /* sn9cxxx.h */; };
+		F5AEA714097D805400D45891 /* spca500_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F0097D805400D45891 /* spca500_init.h */; };
+		F5AEA715097D805400D45891 /* spca501_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F1097D805400D45891 /* spca501_init.h */; };
+		F5AEA716097D805400D45891 /* spca505_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F2097D805400D45891 /* spca505_init.h */; };
+		F5AEA717097D805400D45891 /* spca506.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F3097D805400D45891 /* spca506.h */; };
+		F5AEA718097D805400D45891 /* spca508_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F4097D805400D45891 /* spca508_init.h */; };
+		F5AEA719097D805400D45891 /* spca561.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F5097D805400D45891 /* spca561.h */; };
+		F5AEA71A097D805400D45891 /* tv8532.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F6097D805400D45891 /* tv8532.h */; };
+		F5AEA71B097D805400D45891 /* zc3xx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F7097D805400D45891 /* zc3xx.h */; };
+		F5D1DDFF0976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
+		F5D1DE000976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
+		F5D1DE010976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -541,6 +598,8 @@
 		F589EB0F02268A6901D99A1F /* MySTV680Driver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MySTV680Driver.m; sourceTree = "<group>"; };
 		F58DB238024E9803019A97FC /* MyImageWindowController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyImageWindowController.h; sourceTree = "<group>"; };
 		F58DB239024E9803019A97FC /* MyImageWindowController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyImageWindowController.m; sourceTree = "<group>"; };
+		F592C8E20974504700183A7D /* spcausb.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spcausb.h; path = spca5xx_files/spcausb.h; sourceTree = "<group>"; };
+		F592C8E90974520E00183A7D /* sonix.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = sonix.h; path = spca5xx_files/sonix.h; sourceTree = "<group>"; };
 		F5994D57096ED76E004F6807 /* pac207.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pac207.h; path = spca5xx_files/pac207.h; sourceTree = "<group>"; };
 		F5994D69096F1223004F6807 /* spca5xx.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca5xx.h; path = spca5xx_files/spca5xx.h; sourceTree = "<group>"; };
 		F5994DD60971A85E004F6807 /* MyPixartDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyPixartDriver.h; sourceTree = "<group>"; };
@@ -556,6 +615,22 @@
 		F5A6652C037B256401C96C8F /* MyPrefsWindowController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyPrefsWindowController.h; sourceTree = "<group>"; };
 		F5AA417601DA8EF70157C38C /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
 		F5AA417801DA8F350157C38C /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		F5AEA372097A154300D45891 /* SQ930C.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQ930C.h; sourceTree = "<group>"; };
+		F5AEA373097A154400D45891 /* SQ930C.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQ930C.m; sourceTree = "<group>"; };
+		F5AEA390097A1D0600D45891 /* PAC7311.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PAC7311.h; sourceTree = "<group>"; };
+		F5AEA391097A1D0700D45891 /* PAC7311.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PAC7311.m; sourceTree = "<group>"; };
+		F5AEA6EC097D805400D45891 /* cx11646.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = cx11646.h; path = spca5xx_files/cx11646.h; sourceTree = "<group>"; };
+		F5AEA6ED097D805400D45891 /* et61xx51.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = et61xx51.h; path = spca5xx_files/et61xx51.h; sourceTree = "<group>"; };
+		F5AEA6EE097D805400D45891 /* mr97311.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mr97311.h; path = spca5xx_files/mr97311.h; sourceTree = "<group>"; };
+		F5AEA6EF097D805400D45891 /* sn9cxxx.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = sn9cxxx.h; path = spca5xx_files/sn9cxxx.h; sourceTree = "<group>"; };
+		F5AEA6F0097D805400D45891 /* spca500_init.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca500_init.h; path = spca5xx_files/spca500_init.h; sourceTree = "<group>"; };
+		F5AEA6F1097D805400D45891 /* spca501_init.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca501_init.h; path = spca5xx_files/spca501_init.h; sourceTree = "<group>"; };
+		F5AEA6F2097D805400D45891 /* spca505_init.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca505_init.h; path = spca5xx_files/spca505_init.h; sourceTree = "<group>"; };
+		F5AEA6F3097D805400D45891 /* spca506.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca506.h; path = spca5xx_files/spca506.h; sourceTree = "<group>"; };
+		F5AEA6F4097D805400D45891 /* spca508_init.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca508_init.h; path = spca5xx_files/spca508_init.h; sourceTree = "<group>"; };
+		F5AEA6F5097D805400D45891 /* spca561.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca561.h; path = spca5xx_files/spca561.h; sourceTree = "<group>"; };
+		F5AEA6F6097D805400D45891 /* tv8532.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tv8532.h; path = spca5xx_files/tv8532.h; sourceTree = "<group>"; };
+		F5AEA6F7097D805400D45891 /* zc3xx.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = zc3xx.h; path = spca5xx_files/zc3xx.h; sourceTree = "<group>"; };
 		F5B1CC460375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RecordMovieActiveToolbarItem.tiff; sourceTree = "<group>"; };
 		F5B9568C0250D31A0166DE1F /* MyCameraCentral.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyCameraCentral.m; sourceTree = "<group>"; };
 		F5BB387E0342871601E62307 /* JFIFHeaderTemplate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JFIFHeaderTemplate.h; sourceTree = "<group>"; };
@@ -574,6 +649,7 @@
 		F5CD7018092AEBF600E9EEE3 /* generate_app.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_app.plist; sourceTree = "<group>"; };
 		F5CD701A092AEC1000E9EEE3 /* generate_ica_module.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_ica_module.plist; sourceTree = "<group>"; };
 		F5CD701C092AEC2600E9EEE3 /* generate_component.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_component.plist; sourceTree = "<group>"; };
+		F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ov518_decomp.c; sourceTree = "<group>"; };
 		F5E6AA660371F8920166D062 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6B0371F8B00166D062 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6C0371F8B90166D062 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
@@ -831,6 +907,20 @@
 		F5994D54096ED733004F6807 /* spca5xx_files */ = {
 			isa = PBXGroup;
 			children = (
+				F5AEA6EC097D805400D45891 /* cx11646.h */,
+				F5AEA6ED097D805400D45891 /* et61xx51.h */,
+				F5AEA6EE097D805400D45891 /* mr97311.h */,
+				F5AEA6EF097D805400D45891 /* sn9cxxx.h */,
+				F5AEA6F0097D805400D45891 /* spca500_init.h */,
+				F5AEA6F1097D805400D45891 /* spca501_init.h */,
+				F5AEA6F2097D805400D45891 /* spca505_init.h */,
+				F5AEA6F3097D805400D45891 /* spca506.h */,
+				F5AEA6F4097D805400D45891 /* spca508_init.h */,
+				F5AEA6F5097D805400D45891 /* spca561.h */,
+				F5AEA6F6097D805400D45891 /* tv8532.h */,
+				F5AEA6F7097D805400D45891 /* zc3xx.h */,
+				F592C8E90974520E00183A7D /* sonix.h */,
+				F592C8E20974504700183A7D /* spcausb.h */,
 				F5994D69096F1223004F6807 /* spca5xx.h */,
 				F5994D57096ED76E004F6807 /* pac207.h */,
 			);
@@ -857,11 +947,19 @@
 			children = (
 				F5994DD60971A85E004F6807 /* MyPixartDriver.h */,
 				F5994DD70971A85E004F6807 /* MyPixartDriver.m */,
-				F5994D54096ED733004F6807 /* spca5xx_files */,
-				F535F1EB08DF2730007943DA /* SQ905.h */,
-				F535F1EC08DF2730007943DA /* SQ905.m */,
+				F5AEA390097A1D0600D45891 /* PAC7311.h */,
+				F5AEA391097A1D0700D45891 /* PAC7311.m */,
 				F535F1DB08DF2703007943DA /* SPCA5XX.h */,
 				F535F1DC08DF2703007943DA /* SPCA5XX.m */,
+				F5994D54096ED733004F6807 /* spca5xx_files */,
+				F5EDFAD6036876210166D062 /* MyOV511Driver.h */,
+				F5EDFAD5036876210166D062 /* MyOV511Driver.m */,
+				397B163C03CED9B900153FEE /* ov511_decomp.c */,
+				F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */,
+				F535F1EB08DF2730007943DA /* SQ905.h */,
+				F535F1EC08DF2730007943DA /* SQ905.m */,
+				F5AEA372097A154300D45891 /* SQ930C.h */,
+				F5AEA373097A154400D45891 /* SQ930C.m */,
 				F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */,
 				F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */,
 				3973A6F303CDF44E0066D062 /* MySPCA500Driver.h */,
@@ -872,9 +970,6 @@
 				F5A5077303BBC69501A78977 /* MySE401Driver.m */,
 				F53F6637039ACC3F01C3DF00 /* MySonix2028Driver.h */,
 				F53F6636039ACC3F01C3DF00 /* MySonix2028Driver.m */,
-				F5EDFAD6036876210166D062 /* MyOV511Driver.h */,
-				F5EDFAD5036876210166D062 /* MyOV511Driver.m */,
-				397B163C03CED9B900153FEE /* ov511_decomp.c */,
 				F511081E0241794801599652 /* MySPCA504Driver.h */,
 				F511081D0241794801599652 /* MySPCA504Driver.m */,
 				F5BB387E0342871601E62307 /* JFIFHeaderTemplate.h */,
@@ -999,6 +1094,22 @@
 				F5994D59096ED76E004F6807 /* pac207.h in Headers */,
 				F5994D6B096F1224004F6807 /* spca5xx.h in Headers */,
 				F5994DDA0971A85E004F6807 /* MyPixartDriver.h in Headers */,
+				F592C8E40974504700183A7D /* spcausb.h in Headers */,
+				F592C8EB0974520E00183A7D /* sonix.h in Headers */,
+				F5AEA374097A154400D45891 /* SQ930C.h in Headers */,
+				F5AEA392097A1D0700D45891 /* PAC7311.h in Headers */,
+				F5AEA6F8097D805400D45891 /* cx11646.h in Headers */,
+				F5AEA6F9097D805400D45891 /* et61xx51.h in Headers */,
+				F5AEA6FA097D805400D45891 /* mr97311.h in Headers */,
+				F5AEA6FB097D805400D45891 /* sn9cxxx.h in Headers */,
+				F5AEA6FC097D805400D45891 /* spca500_init.h in Headers */,
+				F5AEA6FD097D805400D45891 /* spca501_init.h in Headers */,
+				F5AEA6FE097D805400D45891 /* spca505_init.h in Headers */,
+				F5AEA6FF097D805400D45891 /* spca506.h in Headers */,
+				F5AEA700097D805400D45891 /* spca508_init.h in Headers */,
+				F5AEA701097D805400D45891 /* spca561.h in Headers */,
+				F5AEA702097D805400D45891 /* tv8532.h in Headers */,
+				F5AEA703097D805400D45891 /* zc3xx.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1053,6 +1164,22 @@
 				F5994D58096ED76E004F6807 /* pac207.h in Headers */,
 				F5994D6A096F1224004F6807 /* spca5xx.h in Headers */,
 				F5994DD80971A85E004F6807 /* MyPixartDriver.h in Headers */,
+				F592C8E30974504700183A7D /* spcausb.h in Headers */,
+				F592C8EA0974520E00183A7D /* sonix.h in Headers */,
+				F5AEA378097A154400D45891 /* SQ930C.h in Headers */,
+				F5AEA396097A1D0700D45891 /* PAC7311.h in Headers */,
+				F5AEA710097D805400D45891 /* cx11646.h in Headers */,
+				F5AEA711097D805400D45891 /* et61xx51.h in Headers */,
+				F5AEA712097D805400D45891 /* mr97311.h in Headers */,
+				F5AEA713097D805400D45891 /* sn9cxxx.h in Headers */,
+				F5AEA714097D805400D45891 /* spca500_init.h in Headers */,
+				F5AEA715097D805400D45891 /* spca501_init.h in Headers */,
+				F5AEA716097D805400D45891 /* spca505_init.h in Headers */,
+				F5AEA717097D805400D45891 /* spca506.h in Headers */,
+				F5AEA718097D805400D45891 /* spca508_init.h in Headers */,
+				F5AEA719097D805400D45891 /* spca561.h in Headers */,
+				F5AEA71A097D805400D45891 /* tv8532.h in Headers */,
+				F5AEA71B097D805400D45891 /* zc3xx.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1103,6 +1230,22 @@
 				F5994D5A096ED76E004F6807 /* pac207.h in Headers */,
 				F5994D6C096F1224004F6807 /* spca5xx.h in Headers */,
 				F5994DDC0971A85E004F6807 /* MyPixartDriver.h in Headers */,
+				F592C8E50974504700183A7D /* spcausb.h in Headers */,
+				F592C8EC0974520E00183A7D /* sonix.h in Headers */,
+				F5AEA376097A154400D45891 /* SQ930C.h in Headers */,
+				F5AEA394097A1D0700D45891 /* PAC7311.h in Headers */,
+				F5AEA704097D805400D45891 /* cx11646.h in Headers */,
+				F5AEA705097D805400D45891 /* et61xx51.h in Headers */,
+				F5AEA706097D805400D45891 /* mr97311.h in Headers */,
+				F5AEA707097D805400D45891 /* sn9cxxx.h in Headers */,
+				F5AEA708097D805400D45891 /* spca500_init.h in Headers */,
+				F5AEA709097D805400D45891 /* spca501_init.h in Headers */,
+				F5AEA70A097D805400D45891 /* spca505_init.h in Headers */,
+				F5AEA70B097D805400D45891 /* spca506.h in Headers */,
+				F5AEA70C097D805400D45891 /* spca508_init.h in Headers */,
+				F5AEA70D097D805400D45891 /* spca561.h in Headers */,
+				F5AEA70E097D805400D45891 /* tv8532.h in Headers */,
+				F5AEA70F097D805400D45891 /* zc3xx.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1391,6 +1534,9 @@
 				F535F1F608DF2730007943DA /* SQ905.m in Sources */,
 				F54C765A09089861000BB928 /* SPCA5XX.m in Sources */,
 				F5994DDB0971A85E004F6807 /* MyPixartDriver.m in Sources */,
+				F5D1DE000976CF6D00992686 /* ov518_decomp.c in Sources */,
+				F5AEA375097A154400D45891 /* SQ930C.m in Sources */,
+				F5AEA393097A1D0700D45891 /* PAC7311.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1441,6 +1587,9 @@
 				F535F1E608DF2703007943DA /* SPCA5XX.m in Sources */,
 				F535F1F808DF2730007943DA /* SQ905.m in Sources */,
 				F5994DD90971A85E004F6807 /* MyPixartDriver.m in Sources */,
+				F5D1DDFF0976CF6D00992686 /* ov518_decomp.c in Sources */,
+				F5AEA379097A154400D45891 /* SQ930C.m in Sources */,
+				F5AEA397097A1D0700D45891 /* PAC7311.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1488,6 +1637,9 @@
 				F535F1E408DF2703007943DA /* SPCA5XX.m in Sources */,
 				F535F1F008DF2730007943DA /* SQ905.m in Sources */,
 				F5994DDD0971A85E004F6807 /* MyPixartDriver.m in Sources */,
+				F5D1DE010976CF6D00992686 /* ov518_decomp.c in Sources */,
+				F5AEA377097A154400D45891 /* SQ930C.m in Sources */,
+				F5AEA395097A1D0700D45891 /* PAC7311.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1609,7 +1761,7 @@
 					"-Wno-unknown-pragmas",
 				);
 				WRAPPER_EXTENSION = app;
-				ZERO_LINK = YES;
+				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
