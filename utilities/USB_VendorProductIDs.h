@@ -144,7 +144,8 @@
 
 #define VENDOR_PIXART           0x093a
 #define PRODUCT_PAC207_BASE             0x2460      // PAC207 obviously
-#define PRODUCT_CIF_SINGLE_CHIP         0x2468      // Most common PAC207 camera Product ID
+#define PRODUCT_PIXART_CIF_SINGLE_CHIP  0x2468      // Most common PAC207 camera Product ID
+#define PRODUCT_PAC7311                 0x2600      // PAC7311 probably
 
 #define VENDOR_VISIONITE        0x0d81
 #define PRODUCT_VCS_UC300               0x1900
