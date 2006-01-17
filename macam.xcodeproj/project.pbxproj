@@ -25,9 +25,8 @@
 				);
 			};
 			dependencies = (
-				F535ED7908DB3971007943DA /* PBXTargetDependency */,
 				F535ED7B08DB3971007943DA /* PBXTargetDependency */,
-				F535ED7D08DB3971007943DA /* PBXTargetDependency */,
+				F535ED7908DB3971007943DA /* PBXTargetDependency */,
 			);
 			name = all;
 			productName = all;
@@ -478,13 +477,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = F535EC0808DB3970007943DA;
 			remoteInfo = "app (Upgraded)";
-		};
-		F535ED7C08DB3971007943DA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 29B97313FDCFA39411CA2CEA /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = F535ECFC08DB3970007943DA;
-			remoteInfo = "ica module (Upgraded)";
 		};
 /* End PBXContainerItemProxy section */
 
@@ -1655,11 +1647,6 @@
 			isa = PBXTargetDependency;
 			target = F535EC0808DB3970007943DA /* app */;
 			targetProxy = F535ED7A08DB3971007943DA /* PBXContainerItemProxy */;
-		};
-		F535ED7D08DB3971007943DA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = F535ECFC08DB3970007943DA /* ica module */;
-			targetProxy = F535ED7C08DB3971007943DA /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
