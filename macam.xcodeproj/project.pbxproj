@@ -1740,6 +1740,7 @@
 					"-read_only_relocs",
 					suppress,
 				);
+				PREBINDING = NO;
 				PRODUCT_NAME = macam;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -1816,6 +1817,7 @@
 					"-lSystem",
 				);
 				OTHER_REZFLAGS = "";
+				PREBINDING = NO;
 				PRODUCT_NAME = macam;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
@@ -1824,7 +1826,7 @@
 					"-Wno-unknown-pragmas",
 				);
 				WRAPPER_EXTENSION = component;
-				ZERO_LINK = YES;
+				ZERO_LINK = NO;
 			};
 			name = Debug;
 		};
