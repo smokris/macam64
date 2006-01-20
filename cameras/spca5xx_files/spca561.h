@@ -545,7 +545,7 @@ static void spca561_start(struct usb_spca50x *spca50x)
 			Clck = 0x25;
 	 	break;
 	}
-	if(compress && spca50x->mode <= 1){
+	if(spca50x->compress && spca50x->mode <= 1){
 		// this is correct for 320x240; it also works at 352x288
 		// hell, I don't even know what this value means :)
 		Clck = 0x83; 
