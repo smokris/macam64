@@ -23,6 +23,9 @@
 //
 
 #import "SPCA5XX.h"
+
+#include <unistd.h>
+
 #include "USB_VendorProductIDs.h"
 
 
@@ -35,6 +38,119 @@
 
 
 @implementation SPCA5XX
+
+
+void spca5xxRegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length) 
+{
+    SPCA5XX * driver = (SPCA5XX *) dev->driver;
+    
+    [driver usbReadCmdWithBRequest:reg 
+                            wValue:value 
+                            wIndex:index 
+                               buf:buffer 
+                               len:length];
+}
+
+
+void spca5xxRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length) 
+{
+    SPCA5XX * driver = (SPCA5XX *) dev->driver;
+    
+    [driver usbWriteCmdWithBRequest:reg 
+                             wValue:value 
+                             wIndex:index 
+                                buf:buffer 
+                                len:length];
+}
+
+
+int spca50x_reg_write(struct usb_device * dev, __u16 reg, __u16 index, __u16 value)
+{
+    __u8 buf[16]; // not sure this is needed, but I'm hesitant to pass NULL
+    SPCA5XX * driver = (SPCA5XX *) dev->driver;
+    
+    // No USB_DIR_OUT in original code!
+    
+    BOOL ok = [driver usbWriteCmdWithBRequest:reg 
+                                       wValue:value 
+                                       wIndex:index 
+                                          buf:buf 
+                                          len:0];
+    
+    return (ok) ? 0 : -1;
+}
+
+
+int spca50x_reg_read_with_value(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u16 length)
+{
+    __u8 buf[16]; // originally 4, should really check against length
+    SPCA5XX * driver = (SPCA5XX *) dev->driver;
+    
+    BOOL ok = [driver usbReadCmdWithBRequest:reg 
+                                       wValue:value 
+                                       wIndex:index 
+                                          buf:buf 
+                                          len:0];
+    
+    return (ok) ? buf[0] + 256 * buf[1] + 256 * 256 * buf[2] + 256 * 256 * 256 * buf[3] : -1;
+//    return *(int *)&buffer[0]; //  original code, non-portable because ofbyte ordering assumptions
+}
+
+
+/* 
+ *   returns: negative is error, pos or zero is data
+ */
+int spca50x_reg_read(struct usb_device * dev, __u16 reg, __u16 index, __u16 length)
+{
+	return spca50x_reg_read_with_value(dev, reg, 0, index, length);
+}
+
+
+/*
+ * Simple function to wait for a given 8-bit value to be returned from
+ * a spca50x_reg_read call.
+ * Returns: negative is error or timeout, zero is success.
+ */
+int spca50x_reg_readwait(struct usb_device * dev, __u16 reg, __u16 index, __u16 value)
+{
+	int count = 0;
+	int result = 0;
+    
+	while (count < 20)
+	{
+		result = spca50x_reg_read(dev, reg, index, 1);
+		if (result == value) 
+            return 0;
+        
+//		wait_ms(50);
+        usleep(50);
+        
+		count++;
+	}
+    
+	return -1;
+}
+
+
+int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
+{
+	struct usb_device * dev = spca50x->dev;
+	int err_code;
+    
+	int I = 0;
+	while ((data[I][0]) != (__u16) 0 || (data[I][1]) != (__u16) 0 || (data[I][2]) != (__u16) 0) 
+	{
+		err_code = spca50x_reg_write(dev, data[I][0], (__u16) (data[I][2]), (__u16) (data[I][1]));
+		if (err_code < 0) 
+		{ 
+//			PDEBUG(1, "Register write failed for 0x%x,0x%x,0x%x", data[I][0], data[I][1], data[I][2]); 
+			return -1; 
+		}
+		I++;
+	}
+    
+	return 0;
+}
 
 
 // need meat here
@@ -417,6 +533,12 @@
 
 
 - (CameraError) spca5xx_setbrightness
+{
+    return CameraErrorUnimplemented;
+}
+
+
+- (CameraError) spca5xx_setAutobright
 {
     return CameraErrorUnimplemented;
 }

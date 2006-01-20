@@ -120,8 +120,19 @@ struct usb_spca50x {
     int sensor;
     int compress;
     int mode;
+    int chip_revision;
+    int exposure;
+    int customid;
 };
 
+
+void spca5xxRegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length);
+void spca5xxRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length);
+int spca50x_reg_write(struct usb_device * dev, __u16 reg, __u16 index, __u16 value);
+int spca50x_reg_read_with_value(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u16 length);
+int spca50x_reg_read(struct usb_device * dev, __u16 reg, __u16 index, __u16 length);
+int spca50x_reg_readwait(struct usb_device * dev, __u16 reg, __u16 index, __u16 value);
+int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3]);
 
 
 
