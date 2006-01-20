@@ -45,32 +45,39 @@
 #define PRODUCT_QUICKCAM_HOME           0x0801
 #define PRODUCT_QUICKCAM_PRO_BEIGE      0x0810      // uses USS720 USB <-> parallel converter
 #define PRODUCT_QUICKCAM_PRO_DARK       0xd001      // DIVIO NW801 controller
+
 #define PRODUCT_QUICKCAM_PRO_3000       0x08b0
 #define PRODUCT_QUICKCAM_NOTEBOOK_PRO   0x08b1      // 740 (CCD)
 #define PRODUCT_QUICKCAM_PRO_4000       0x08b2
 #define PRODUCT_QUICKCAM_ZOOM           0x08b3
 #define PRODUCT_QUICKCAM_ZOOM_NEW       0x08b4
 #define PRODUCT_QUICKCAM_ORBIT          0x08b5
+
 #define	PRODUCT_CLICKSMART_310          0x0900
 #define	PRODUCT_CLICKSMART_510          0x0901		// SPCA500A
 #define	PRODUCT_CLICKSMART_820_A        0x0903
 #define	PRODUCT_CLICKSMART_820_B        0x0905
+
 #define PRODUCT_QUICKCAM_EXPRESS_A      0x0840
 #define PRODUCT_QUICKCAM_WEB            0x0850
 #define PRODUCT_QUICKCAM_EXPRESS_B      0x0870
 #define PRODUCT_QUICKCAM_TRAVELER       0x0890
+
 #define PRODUCT_QUICKCAM_EXPRESS_C      0x0920
 #define PRODUCT_LABTEC_WEBCAM           0x0921
 #define PRODUCT_QUICKCAM_EXPRESS_D      0x0928
 #define PRODUCT_LABTEC_WEBCAM_B         0x0929
 #define PRODUCT_QUICKCAM_NOTEBOOKS_A    0x092a      // square one, SPCA561A
+#define PRODUCT_QUICKCAM_CHAT_B         0x092c      // SPCA561A
+
 #define PRODUCT_POCKET_CAMERA           0x0950
 #define PRODUCT_CLICKSMART_420          0x0960
 #define PRODUCT_POCKET_750              0x0970
+
 #define PRODUCT_QUICKCAM_IM             0x08a0
 #define PRODUCT_QUICKCAM_IM_MIC         0x08a1
 #define PRODUCT_LABTEC_WEBCAM_PRO       0x08a2
-#define PRODUCT_QUICKCAM_CHAT           0x08a3
+#define PRODUCT_QUICKCAM_CHAT_A         0x08a3
 #define PRODUCT_QUICKCAM_NOTEBOOKS_B    0x08ae      // round one, zc0302
 
 #define VENDOR_PHILIPS          0x0471
