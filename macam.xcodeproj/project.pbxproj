@@ -432,6 +432,12 @@
 		F5AEA719097D805400D45891 /* spca561.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F5097D805400D45891 /* spca561.h */; };
 		F5AEA71A097D805400D45891 /* tv8532.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F6097D805400D45891 /* tv8532.h */; };
 		F5AEA71B097D805400D45891 /* zc3xx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F7097D805400D45891 /* zc3xx.h */; };
+		F5AEAE2A0980992B00D45891 /* SPCA561ADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEAE280980992B00D45891 /* SPCA561ADriver.h */; };
+		F5AEAE2B0980992B00D45891 /* SPCA561ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAE290980992B00D45891 /* SPCA561ADriver.m */; };
+		F5AEAE2C0980992B00D45891 /* SPCA561ADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEAE280980992B00D45891 /* SPCA561ADriver.h */; };
+		F5AEAE2D0980992B00D45891 /* SPCA561ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAE290980992B00D45891 /* SPCA561ADriver.m */; };
+		F5AEAE2E0980992B00D45891 /* SPCA561ADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEAE280980992B00D45891 /* SPCA561ADriver.h */; };
+		F5AEAE2F0980992B00D45891 /* SPCA561ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAE290980992B00D45891 /* SPCA561ADriver.m */; };
 		F5D1DDFF0976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
 		F5D1DE000976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
 		F5D1DE010976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
@@ -491,7 +497,7 @@
 		3973A6F303CDF44E0066D062 /* MySPCA500Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MySPCA500Driver.h; sourceTree = "<group>"; };
 		397B163C03CED9B900153FEE /* ov511_decomp.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ov511_decomp.c; sourceTree = "<group>"; };
 		39A2B45A0593E296009C5934 /* QTDummyPanel.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; name = QTDummyPanel.m; path = app_specific/QTDummyPanel.m; sourceTree = SOURCE_ROOT; };
-		39A2B45B0593E297009C5934 /* QTDummyPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QTDummyPanel.h; path = app_specific/QTDummyPanel.h; sourceTree = SOURCE_ROOT; };
+		39A2B45B0593E297009C5934 /* QTDummyPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = QTDummyPanel.h; path = app_specific/QTDummyPanel.h; sourceTree = SOURCE_ROOT; wrapsLines = 1; };
 		39CBD64F03DC0D79000F7EFC /* MyKiaraFlippedDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyKiaraFlippedDriver.m; sourceTree = "<group>"; };
 		39CBD65003DC0D79000F7EFC /* MyKiaraFlippedDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyKiaraFlippedDriver.h; sourceTree = "<group>"; };
 		39FE214904030BB800BAABE7 /* ICD_CameraCalls.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ICD_CameraCalls.h; sourceTree = "<group>"; };
@@ -623,6 +629,8 @@
 		F5AEA6F5097D805400D45891 /* spca561.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca561.h; path = spca5xx_files/spca561.h; sourceTree = "<group>"; };
 		F5AEA6F6097D805400D45891 /* tv8532.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tv8532.h; path = spca5xx_files/tv8532.h; sourceTree = "<group>"; };
 		F5AEA6F7097D805400D45891 /* zc3xx.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = zc3xx.h; path = spca5xx_files/zc3xx.h; sourceTree = "<group>"; };
+		F5AEAE280980992B00D45891 /* SPCA561ADriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPCA561ADriver.h; sourceTree = "<group>"; };
+		F5AEAE290980992B00D45891 /* SPCA561ADriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCA561ADriver.m; sourceTree = "<group>"; };
 		F5B1CC460375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RecordMovieActiveToolbarItem.tiff; sourceTree = "<group>"; };
 		F5B9568C0250D31A0166DE1F /* MyCameraCentral.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyCameraCentral.m; sourceTree = "<group>"; };
 		F5BB387E0342871601E62307 /* JFIFHeaderTemplate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JFIFHeaderTemplate.h; sourceTree = "<group>"; };
@@ -943,6 +951,8 @@
 				F5AEA391097A1D0700D45891 /* PAC7311.m */,
 				F535F1DB08DF2703007943DA /* SPCA5XX.h */,
 				F535F1DC08DF2703007943DA /* SPCA5XX.m */,
+				F5AEAE280980992B00D45891 /* SPCA561ADriver.h */,
+				F5AEAE290980992B00D45891 /* SPCA561ADriver.m */,
 				F5994D54096ED733004F6807 /* spca5xx_files */,
 				F5EDFAD6036876210166D062 /* MyOV511Driver.h */,
 				F5EDFAD5036876210166D062 /* MyOV511Driver.m */,
@@ -1102,6 +1112,7 @@
 				F5AEA701097D805400D45891 /* spca561.h in Headers */,
 				F5AEA702097D805400D45891 /* tv8532.h in Headers */,
 				F5AEA703097D805400D45891 /* zc3xx.h in Headers */,
+				F5AEAE2A0980992B00D45891 /* SPCA561ADriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1172,6 +1183,7 @@
 				F5AEA719097D805400D45891 /* spca561.h in Headers */,
 				F5AEA71A097D805400D45891 /* tv8532.h in Headers */,
 				F5AEA71B097D805400D45891 /* zc3xx.h in Headers */,
+				F5AEAE2E0980992B00D45891 /* SPCA561ADriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1238,6 +1250,7 @@
 				F5AEA70D097D805400D45891 /* spca561.h in Headers */,
 				F5AEA70E097D805400D45891 /* tv8532.h in Headers */,
 				F5AEA70F097D805400D45891 /* zc3xx.h in Headers */,
+				F5AEAE2C0980992B00D45891 /* SPCA561ADriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1529,6 +1542,7 @@
 				F5D1DE000976CF6D00992686 /* ov518_decomp.c in Sources */,
 				F5AEA375097A154400D45891 /* SQ930C.m in Sources */,
 				F5AEA393097A1D0700D45891 /* PAC7311.m in Sources */,
+				F5AEAE2B0980992B00D45891 /* SPCA561ADriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1582,6 +1596,7 @@
 				F5D1DDFF0976CF6D00992686 /* ov518_decomp.c in Sources */,
 				F5AEA379097A154400D45891 /* SQ930C.m in Sources */,
 				F5AEA397097A1D0700D45891 /* PAC7311.m in Sources */,
+				F5AEAE2F0980992B00D45891 /* SPCA561ADriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1632,6 +1647,7 @@
 				F5D1DE010976CF6D00992686 /* ov518_decomp.c in Sources */,
 				F5AEA377097A154400D45891 /* SQ930C.m in Sources */,
 				F5AEA395097A1D0700D45891 /* PAC7311.m in Sources */,
+				F5AEAE2D0980992B00D45891 /* SPCA561ADriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2040,9 +2056,16 @@
 					i386,
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_VERSION_i386 = 4.0;
+				GCC_VERSION_ppc = 3.3;
 				MACOSX_DEPLOYMENT_TARGET = 10.1;
-				OTHER_LDFLAGS = "-lSystem";
+				MACOSX_DEPLOYMENT_TARGET_i386 = 10.4;
+				MACOSX_DEPLOYMENT_TARGET_ppc = 10.1;
+				OTHER_LDFLAGS = "";
+				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 			};
 			name = Release;
 		};
