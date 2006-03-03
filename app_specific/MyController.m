@@ -774,7 +774,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
 {
     BOOL problem = NO;
     NSData * mediaData = NULL;
-    NSString * fileExtension;
+    NSString * fileExtension = NULL;
     NSString * clipType = NULL;
     
     // If the camera stores images in jpeg format, then this wil be used for the file;
