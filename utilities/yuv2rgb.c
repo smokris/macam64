@@ -20,6 +20,7 @@
 
 #include "yuv2rgb.h"
 #include <stdio.h>
+#include <CoreFoundation/CFByteOrder.h>
 
 //Lazy preprocessor generation of blitter code. For documentation, see "yuv2rgbPhilips.c".
 
