@@ -145,6 +145,20 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3]);
     // bayer or jpeg??
 }
 
+
+#pragma mark -> Subclass Must Implement! <-
+// The follwing must be implemented by subclasses of the SPCA5XX driver
+- (CameraError) spca5xx_init; // return int?
+- (CameraError) spca5xx_config; // return int?
+- (CameraError) spca5xx_start;
+- (CameraError) spca5xx_stop;
+- (CameraError) spca5xx_shutdown;
+- (CameraError) spca5xx_getbrightness; // return brightness??
+- (CameraError) spca5xx_setbrightness;
+- (CameraError) spca5xx_setAutobright;
+- (CameraError) spca5xx_getcontrast; // return contrast??
+- (CameraError) spca5xx_setcontrast;
+
 @end
 
 
