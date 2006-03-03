@@ -700,9 +700,9 @@
     IOUSBDevRequest req;
     req.bmRequestType=bReqType;
     req.bRequest=bReq;
-    req.wValue=wVal;
-    req.wIndex=wIdx;
-    req.wLength=len;
+    req.wValue=wVal; // no need to swap, in host endianness
+    req.wIndex=wIdx; // no need to swap, in host endianness
+    req.wLength=len; // no need to swap, in host endianness
     req.pData=buf;
     if ((!isUSBOK)||(!intf)) return NO;
     err=(*intf)->ControlRequest(intf,0,&req);
