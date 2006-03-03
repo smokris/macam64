@@ -435,6 +435,7 @@ Here is a table of sniffed data. I have no idea what this means
     *b_16 = TO_LEDON(v);
     c =TO_LEDON(LEDon);
     if (*b_16 != c) {
+        *b_16 = CFSwapInt16BigToHost(*b_16); // Data format was developed in BigEndian format, whether correct or not, make sure it is swapped if necessary
         [self usbWriteCmdWithBRequest:GRP_SET_STATUS wValue:SEL_LED wIndex:INTF_CONTROL buf:b len:2];
     }
     [super setLed:v];
