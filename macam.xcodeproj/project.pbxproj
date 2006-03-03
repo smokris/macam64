@@ -1323,6 +1323,7 @@
 				);
 				WRAPPER_EXTENSION = component;
 			};
+			comments = "Must use 10.2.8 beacause\n\nkVDGetUniqueIDsSelect\nuppVDGetUniqueIDsProcInfo\n\nare not defined for 10.1.5\n\nThey could be defined and used anyway, it wouldn't hurt anything..";
 			dependencies = (
 			);
 			name = component;
@@ -1780,9 +1781,11 @@
 				INFOPLIST_FILE = app_specific/generate_app.plist;
 				INSTALL_PATH = "$(HOME)/Applications";
 				LIBRARY_SEARCH_PATHS = "";
+				LINK_WITH_STANDARD_LIBRARIES = YES;
 				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-lSystem";
+				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = macam;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.1.5.sdk;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -1863,6 +1866,7 @@
 				);
 				OTHER_REZFLAGS = "";
 				PRODUCT_NAME = macam;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
@@ -1941,6 +1945,7 @@
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				PRODUCT_NAME = macamDSC;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.1.5.sdk;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = (
 					"-Wmost",
