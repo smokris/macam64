@@ -1,5 +1,7 @@
 
 #import "MyMovieRecorder.h"
+#import "Resolvers.h"
+
 
 #define ToFix(A) ((Fixed)(((long)(A))<<16))
 
