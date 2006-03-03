@@ -238,6 +238,7 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 
 - (void) setBrightness:(float) v 
 {
+    [self spca5xx_setbrightness];
     [super setBrightness:v];
     [bayerConverter setBrightness:brightness - 0.5f];
 }
@@ -251,6 +252,7 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 
 - (void) setContrast:(float) v
 {
+    [self spca5xx_setcontrast];
     [super setContrast:v];
     [bayerConverter setContrast:contrast + 0.5f];
 }
@@ -347,8 +349,24 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 }
 
 
+// use mode array from "config"
 - (BOOL) supportsResolution:(CameraResolution) res fps:(short) rate 
 {
+//    spca5xx_struct;
+    int mode;
+    
+    for (mode = QCIF; mode < TOTMODE; mode++) 
+    {
+        /*
+         spca50x->mode_cam[CIF].width = 320;
+         spca50x->mode_cam[CIF].height = 240;
+         spca50x->mode_cam[CIF].t_palette = P_YUV420 | P_RGB32 | P_RGB24 | P_RGB16;
+         spca50x->mode_cam[CIF].pipe = 1023;
+         spca50x->mode_cam[CIF].method = 1;
+         spca50x->mode_cam[CIF].mode = 0;
+*/         
+    }
+    
     if (rate > 30 || rate < 1) 
         return NO;
     
@@ -496,17 +514,30 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 // The follwing must be implemented by subclasses of the SPCA5XX driver
 // And hopefully it is simple, a simple call to a routine for each
 
+
+// return int?
+// turn off LED
+// verify sensor
 - (CameraError) spca5xx_init
 {
     return CameraErrorUnimplemented;
 }
 
 
+// return int?
+// get sensor and set up sensor mode array
+// turn off power
+// set bias
 - (CameraError) spca5xx_config
 {
     return CameraErrorUnimplemented;
 }
 
+
+// turn on power
+// turn on LED
+// initialize sensor
+// setup image formats and compression
 
 - (CameraError) spca5xx_start
 {
@@ -514,18 +545,24 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 }
 
 
+// stop sending
+// turn off LED
+// turn off power
 - (CameraError) spca5xx_stop
 {
     return CameraErrorUnimplemented;
 }
 
 
+// turn off LED
+// turn off power
 - (CameraError) spca5xx_shutdown
 {
     return CameraErrorUnimplemented;
 }
 
 
+// return brightness
 - (CameraError) spca5xx_getbrightness
 {
     return CameraErrorUnimplemented;
@@ -544,6 +581,7 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 }
 
 
+// return contrast??
 - (CameraError) spca5xx_getcontrast
 {
     return CameraErrorUnimplemented;
