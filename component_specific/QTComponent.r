@@ -98,6 +98,7 @@ resource 'thng' (258) {
     +componentAutoVersionIncludeFlags,
     0,
     {
+#if defined(__ppc__)
         componentHasMultiplePlatforms
         +cmpWantsRegisterMessage
         +componentDoAutoVersion
@@ -105,6 +106,17 @@ resource 'thng' (258) {
         'dlle',
         258,
         platformPowerPCNativeEntryPoint,
+#endif
+        
+#if defined(__i386__)
+        componentHasMultiplePlatforms
+        +cmpWantsRegisterMessage
+        +componentDoAutoVersion
+        +componentAutoVersionIncludeFlags,
+        'dlle',
+        258,
+        platformIA32NativeEntryPoint,
+#endif
     };
 };
     
