@@ -5,10 +5,10 @@
 //Common scaler macros - reading, writing etc.
 
 #define READ_RGB(buf,into) { into=(buf[0]<<16)+(buf[1]<<8)+buf[2]; buf+=3; }
-#define READ_RGBA(buf,into) { into=(*((unsigned long*)buf))>>8; buf+=4; }
+#define READ_RGBA(buf,into) { into=CFSwapInt32HostToBig((*((unsigned long*)buf)))>>8; buf+=4; }
 
 #define WRITE_RGB(from,buf) { buf[0]=(from>>16)&0xff; buf[1]=(from>>8)&0xff; buf[2]=from&0xff; buf+=3; }
-#define WRITE_RGBA(from,buf) { *((unsigned long*)buf)=(from<<8)|0xff; buf+=4; }
+#define WRITE_RGBA(from,buf) { *((unsigned long*)buf)=CFSwapInt32BigToHost((from<<8)|0xff); buf+=4; }
 
 #define BLEND(c1,c2,w1,w2,ws,d) { d=\
     ((w1*((c1)&0x000000ff)+w2*((c2)&0x000000ff))/ws)+\
