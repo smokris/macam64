@@ -50,6 +50,7 @@
 #import "SQ930C.h"
 #import "MyPixartDriver.h"
 #import "PAC7311.h"
+#import "SPCA5XX.h"
 #include "unistd.h"
     
 
@@ -219,6 +220,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[OV518Driver class]];
     [self registerCameraDriver:[OV518PlusDriver class]];
     [self registerCameraDriver:[OV519Driver class]];
+//    [self registerCameraDriver:[PAC207 class]];
+    
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];
 //    [self registerCameraDriver:[MyIntelPCCamera class]];
 //    [self registerCameraDriver:[MyGrandtecVcap class]];
