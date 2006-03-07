@@ -141,6 +141,7 @@ extern UInt8 QTables[];
         [self setGain:0.5f];
         [self setCompression:0];
         [self setHFlip:NO];
+        horizontallyFlipped = YES;
         pccamImgDesc=(ImageDescriptionHandle)NewHandle(sizeof(ImageDescription));
         if (pccamImgDesc==NULL) err=CameraErrorNoMem;
     }
@@ -712,7 +713,8 @@ static bool StartNextIsochRead(SPCA500GrabContext* gCtx, int transferIdx) {
                         [self decode420Uncompressed:currBuffer.buffer];
                     }
                 }
-                if (!hFlip) [self flipImage:nextImageBuffer
+                BOOL flip = (hFlip) ? !horizontallyFlipped : horizontallyFlipped;
+                if (flip) [self flipImage:nextImageBuffer
                                       width:[self width]
                                      height:[self height]
                                         bpp:nextImageBufferBPP
@@ -1315,6 +1317,16 @@ static inline void decode420Block(SInt8* srcy,SInt8* srcu,SInt8* srcv,UInt8* dst
         @"AIPTEK Pocket DV",@"name",NULL];
 		
 	return [NSArray arrayWithObjects:dict1,NULL];
+}
+
+
+- (CameraError) startupWithUsbLocationId: (UInt32) usbLocationId 
+{
+    CameraError error = [super startupWithUsbLocationId:usbLocationId];
+    
+    horizontallyFlipped = NO;
+    
+    return error;
 }
 
 @end
