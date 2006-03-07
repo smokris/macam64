@@ -46,6 +46,17 @@
 #define PRODUCT_QUICKCAM_PRO_BEIGE      0x0810      // uses USS720 USB <-> parallel converter
 #define PRODUCT_QUICKCAM_PRO_DARK       0xd001      // DIVIO NW801 controller
 
+#define PRODUCT_QUICKCAM_EXPRESS_A      0x0840
+#define PRODUCT_QUICKCAM_WEB            0x0850
+#define PRODUCT_QUICKCAM_EXPRESS_B      0x0870
+#define PRODUCT_QUICKCAM_TRAVELER       0x0890
+
+#define PRODUCT_QUICKCAM_IM             0x08a0
+#define PRODUCT_QUICKCAM_IM_MIC         0x08a1
+#define PRODUCT_LABTEC_WEBCAM_PRO       0x08a2
+#define PRODUCT_QUICKCAM_CHAT_A         0x08a3
+#define PRODUCT_QUICKCAM_NOTEBOOKS_B    0x08ae      // round one, zc0302
+
 #define PRODUCT_QUICKCAM_PRO_3000       0x08b0
 #define PRODUCT_QUICKCAM_NOTEBOOK_PRO   0x08b1      // 740 (CCD)
 #define PRODUCT_QUICKCAM_PRO_4000       0x08b2
@@ -54,15 +65,21 @@
 #define PRODUCT_QUICKCAM_ORBIT          0x08b5
 #define PRODUCT_CISCO_VT_ADVANTAGE      0x08b6
 
+//#define PRODUCT_QUICKAM_NEW0            0x08c0
+#define PRODUCT_QUICKAM_FUSION          0x08c1
+#define PRODUCT_QUICKAM_ORBIT_MP        0x08c2
+#define PRODUCT_QUICKAM_PRO_NOTEBOOKS   0x08c3
+//#define PRODUCT_QUICKAM_NEW4            0x08c4
+#define PRODUCT_QUICKAM_PRO_5000        0x08c5
+
+#define PRODUCT_QUICKCAM_MESSENGER      0x08f0      // QCMessengerDriver
+#define PRODUCT_QUICKCAM_COMMUNICATE_PLUS 0x08f5    // QCMessengerDriver
+#define PRODUCT_QUICKCAM_MESSENGER_PLUS 0x08f6      // QCMessengerDriver
+
 #define	PRODUCT_CLICKSMART_310          0x0900
 #define	PRODUCT_CLICKSMART_510          0x0901		// SPCA500A
 #define	PRODUCT_CLICKSMART_820_A        0x0903
 #define	PRODUCT_CLICKSMART_820_B        0x0905
-
-#define PRODUCT_QUICKCAM_EXPRESS_A      0x0840
-#define PRODUCT_QUICKCAM_WEB            0x0850
-#define PRODUCT_QUICKCAM_EXPRESS_B      0x0870
-#define PRODUCT_QUICKCAM_TRAVELER       0x0890
 
 #define PRODUCT_QUICKCAM_EXPRESS_C      0x0920
 #define PRODUCT_LABTEC_WEBCAM           0x0921
@@ -74,12 +91,6 @@
 #define PRODUCT_POCKET_CAMERA           0x0950
 #define PRODUCT_CLICKSMART_420          0x0960
 #define PRODUCT_POCKET_750              0x0970
-
-#define PRODUCT_QUICKCAM_IM             0x08a0
-#define PRODUCT_QUICKCAM_IM_MIC         0x08a1
-#define PRODUCT_LABTEC_WEBCAM_PRO       0x08a2
-#define PRODUCT_QUICKCAM_CHAT_A         0x08a3
-#define PRODUCT_QUICKCAM_NOTEBOOKS_B    0x08ae      // round one, zc0302
 
 #define VENDOR_PHILIPS          0x0471
 #define PRODUCT_PCA645VC                0x0302
