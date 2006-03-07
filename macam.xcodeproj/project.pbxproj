@@ -354,18 +354,18 @@
 		F535ED6308DB3970007943DA /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1D01E5D0440166DE0F /* QuickTime.framework */; };
 		F535ED6408DB3970007943DA /* ICACameraPriv.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE215504030E7E00BAABE7 /* ICACameraPriv.framework */; };
 		F535ED6508DB3970007943DA /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1B01E5D03A0166DE0F /* Carbon.framework */; };
-		F535F1E308DF2703007943DA /* SPCA5XX.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1DB08DF2703007943DA /* SPCA5XX.h */; };
-		F535F1E408DF2703007943DA /* SPCA5XX.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XX.m */; };
-		F535F1E508DF2703007943DA /* SPCA5XX.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1DB08DF2703007943DA /* SPCA5XX.h */; };
-		F535F1E608DF2703007943DA /* SPCA5XX.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XX.m */; };
-		F535F1E708DF2703007943DA /* SPCA5XX.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1DB08DF2703007943DA /* SPCA5XX.h */; };
+		F535F1E308DF2703007943DA /* SPCA5XXDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1DB08DF2703007943DA /* SPCA5XXDriver.h */; };
+		F535F1E408DF2703007943DA /* SPCA5XXDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XXDriver.m */; };
+		F535F1E508DF2703007943DA /* SPCA5XXDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1DB08DF2703007943DA /* SPCA5XXDriver.h */; };
+		F535F1E608DF2703007943DA /* SPCA5XXDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XXDriver.m */; };
+		F535F1E708DF2703007943DA /* SPCA5XXDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1DB08DF2703007943DA /* SPCA5XXDriver.h */; };
 		F535F1EF08DF2730007943DA /* SQ905.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1EB08DF2730007943DA /* SQ905.h */; };
 		F535F1F008DF2730007943DA /* SQ905.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1EC08DF2730007943DA /* SQ905.m */; };
 		F535F1F508DF2730007943DA /* SQ905.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1EB08DF2730007943DA /* SQ905.h */; };
 		F535F1F608DF2730007943DA /* SQ905.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1EC08DF2730007943DA /* SQ905.m */; };
 		F535F1F708DF2730007943DA /* SQ905.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1EB08DF2730007943DA /* SQ905.h */; };
 		F535F1F808DF2730007943DA /* SQ905.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1EC08DF2730007943DA /* SQ905.m */; };
-		F54C765A09089861000BB928 /* SPCA5XX.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XX.m */; };
+		F54C765A09089861000BB928 /* SPCA5XXDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XXDriver.m */; };
 		F592C8E30974504700183A7D /* spcausb.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E20974504700183A7D /* spcausb.h */; };
 		F592C8E40974504700183A7D /* spcausb.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E20974504700183A7D /* spcausb.h */; };
 		F592C8E50974504700183A7D /* spcausb.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E20974504700183A7D /* spcausb.h */; };
@@ -390,12 +390,12 @@
 		F5AEA377097A154400D45891 /* SQ930C.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA373097A154400D45891 /* SQ930C.m */; };
 		F5AEA378097A154400D45891 /* SQ930C.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA372097A154300D45891 /* SQ930C.h */; };
 		F5AEA379097A154400D45891 /* SQ930C.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA373097A154400D45891 /* SQ930C.m */; };
-		F5AEA392097A1D0700D45891 /* PAC7311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA390097A1D0600D45891 /* PAC7311.h */; };
-		F5AEA393097A1D0700D45891 /* PAC7311.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA391097A1D0700D45891 /* PAC7311.m */; };
-		F5AEA394097A1D0700D45891 /* PAC7311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA390097A1D0600D45891 /* PAC7311.h */; };
-		F5AEA395097A1D0700D45891 /* PAC7311.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA391097A1D0700D45891 /* PAC7311.m */; };
-		F5AEA396097A1D0700D45891 /* PAC7311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA390097A1D0600D45891 /* PAC7311.h */; };
-		F5AEA397097A1D0700D45891 /* PAC7311.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA391097A1D0700D45891 /* PAC7311.m */; };
+		F5AEA392097A1D0700D45891 /* PAC7311Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA390097A1D0600D45891 /* PAC7311Driver.h */; };
+		F5AEA393097A1D0700D45891 /* PAC7311Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA391097A1D0700D45891 /* PAC7311Driver.m */; };
+		F5AEA394097A1D0700D45891 /* PAC7311Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA390097A1D0600D45891 /* PAC7311Driver.h */; };
+		F5AEA395097A1D0700D45891 /* PAC7311Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA391097A1D0700D45891 /* PAC7311Driver.m */; };
+		F5AEA396097A1D0700D45891 /* PAC7311Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA390097A1D0600D45891 /* PAC7311Driver.h */; };
+		F5AEA397097A1D0700D45891 /* PAC7311Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA391097A1D0700D45891 /* PAC7311Driver.m */; };
 		F5AEA6F8097D805400D45891 /* cx11646.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EC097D805400D45891 /* cx11646.h */; };
 		F5AEA6F9097D805400D45891 /* et61xx51.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6ED097D805400D45891 /* et61xx51.h */; };
 		F5AEA6FA097D805400D45891 /* mr97311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EE097D805400D45891 /* mr97311.h */; };
@@ -407,7 +407,7 @@
 		F5AEA700097D805400D45891 /* spca508_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F4097D805400D45891 /* spca508_init.h */; };
 		F5AEA701097D805400D45891 /* spca561.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F5097D805400D45891 /* spca561.h */; };
 		F5AEA702097D805400D45891 /* tv8532.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F6097D805400D45891 /* tv8532.h */; };
-		F5AEA703097D805400D45891 /* zc3xx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F7097D805400D45891 /* zc3xx.h */; };
+		F5AEA703097D805400D45891 /* zc3xxusb.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F7097D805400D45891 /* zc3xxusb.h */; };
 		F5AEA704097D805400D45891 /* cx11646.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EC097D805400D45891 /* cx11646.h */; };
 		F5AEA705097D805400D45891 /* et61xx51.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6ED097D805400D45891 /* et61xx51.h */; };
 		F5AEA706097D805400D45891 /* mr97311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EE097D805400D45891 /* mr97311.h */; };
@@ -419,7 +419,7 @@
 		F5AEA70C097D805400D45891 /* spca508_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F4097D805400D45891 /* spca508_init.h */; };
 		F5AEA70D097D805400D45891 /* spca561.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F5097D805400D45891 /* spca561.h */; };
 		F5AEA70E097D805400D45891 /* tv8532.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F6097D805400D45891 /* tv8532.h */; };
-		F5AEA70F097D805400D45891 /* zc3xx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F7097D805400D45891 /* zc3xx.h */; };
+		F5AEA70F097D805400D45891 /* zc3xxusb.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F7097D805400D45891 /* zc3xxusb.h */; };
 		F5AEA710097D805400D45891 /* cx11646.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EC097D805400D45891 /* cx11646.h */; };
 		F5AEA711097D805400D45891 /* et61xx51.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6ED097D805400D45891 /* et61xx51.h */; };
 		F5AEA712097D805400D45891 /* mr97311.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6EE097D805400D45891 /* mr97311.h */; };
@@ -431,7 +431,7 @@
 		F5AEA718097D805400D45891 /* spca508_init.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F4097D805400D45891 /* spca508_init.h */; };
 		F5AEA719097D805400D45891 /* spca561.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F5097D805400D45891 /* spca561.h */; };
 		F5AEA71A097D805400D45891 /* tv8532.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F6097D805400D45891 /* tv8532.h */; };
-		F5AEA71B097D805400D45891 /* zc3xx.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F7097D805400D45891 /* zc3xx.h */; };
+		F5AEA71B097D805400D45891 /* zc3xxusb.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA6F7097D805400D45891 /* zc3xxusb.h */; };
 		F5AEAE2A0980992B00D45891 /* SPCA561ADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEAE280980992B00D45891 /* SPCA561ADriver.h */; };
 		F5AEAE2B0980992B00D45891 /* SPCA561ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAE290980992B00D45891 /* SPCA561ADriver.m */; };
 		F5AEAE2C0980992B00D45891 /* SPCA561ADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEAE280980992B00D45891 /* SPCA561ADriver.h */; };
@@ -441,6 +441,20 @@
 		F5D1DDFF0976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
 		F5D1DE000976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
 		F5D1DE010976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
+		F5F17B6F09BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
+		F5F17B7009BCD671000AEB63 /* GenericDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17B6E09BCD671000AEB63 /* GenericDriver.m */; };
+		F5F17B7109BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
+		F5F17B7209BCD671000AEB63 /* GenericDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17B6E09BCD671000AEB63 /* GenericDriver.m */; };
+		F5F17B7309BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
+		F5F17B7409BCD671000AEB63 /* GenericDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17B6E09BCD671000AEB63 /* GenericDriver.m */; };
+		F5F17BB009BD0B10000AEB63 /* QCMessengerDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17BAE09BD0B10000AEB63 /* QCMessengerDriver.h */; };
+		F5F17BB109BD0B11000AEB63 /* QCMessengerDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17BAF09BD0B10000AEB63 /* QCMessengerDriver.m */; };
+		F5F17BB209BD0B11000AEB63 /* QCMessengerDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17BAE09BD0B10000AEB63 /* QCMessengerDriver.h */; };
+		F5F17BB309BD0B11000AEB63 /* QCMessengerDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17BAF09BD0B10000AEB63 /* QCMessengerDriver.m */; };
+		F5F17BB409BD0B11000AEB63 /* QCMessengerDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17BAE09BD0B10000AEB63 /* QCMessengerDriver.h */; };
+		F5F17BB509BD0B11000AEB63 /* QCMessengerDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17BAF09BD0B10000AEB63 /* QCMessengerDriver.m */; };
+		F5F17C6E09BD39A7000AEB63 /* RGB888Scaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F59E4B7A0264A7910166DE1F /* RGB888Scaler.m */; };
+		F5F17C6F09BD39A9000AEB63 /* RGB888Scaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F59E4B7A0264A7910166DE1F /* RGB888Scaler.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -530,8 +544,8 @@
 		F535EC9508DB3970007943DA /* macam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F535ECFB08DB3970007943DA /* macam.component */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = macam.component; sourceTree = BUILT_PRODUCTS_DIR; };
 		F535ED6B08DB3971007943DA /* macamDSC.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macamDSC.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F535F1DB08DF2703007943DA /* SPCA5XX.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPCA5XX.h; sourceTree = "<group>"; };
-		F535F1DC08DF2703007943DA /* SPCA5XX.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCA5XX.m; sourceTree = "<group>"; };
+		F535F1DB08DF2703007943DA /* SPCA5XXDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPCA5XXDriver.h; sourceTree = "<group>"; };
+		F535F1DC08DF2703007943DA /* SPCA5XXDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCA5XXDriver.m; sourceTree = "<group>"; };
 		F535F1EB08DF2730007943DA /* SQ905.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQ905.h; sourceTree = "<group>"; };
 		F535F1EC08DF2730007943DA /* SQ905.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQ905.m; sourceTree = "<group>"; };
 		F5376F35026C66D30166DE1F /* MyQX3Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyQX3Driver.h; sourceTree = "<group>"; };
@@ -615,8 +629,8 @@
 		F5AA417801DA8F350157C38C /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
 		F5AEA372097A154300D45891 /* SQ930C.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQ930C.h; sourceTree = "<group>"; };
 		F5AEA373097A154400D45891 /* SQ930C.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQ930C.m; sourceTree = "<group>"; };
-		F5AEA390097A1D0600D45891 /* PAC7311.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PAC7311.h; sourceTree = "<group>"; };
-		F5AEA391097A1D0700D45891 /* PAC7311.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PAC7311.m; sourceTree = "<group>"; };
+		F5AEA390097A1D0600D45891 /* PAC7311Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PAC7311Driver.h; sourceTree = "<group>"; };
+		F5AEA391097A1D0700D45891 /* PAC7311Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PAC7311Driver.m; sourceTree = "<group>"; };
 		F5AEA6EC097D805400D45891 /* cx11646.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = cx11646.h; path = spca5xx_files/cx11646.h; sourceTree = "<group>"; };
 		F5AEA6ED097D805400D45891 /* et61xx51.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = et61xx51.h; path = spca5xx_files/et61xx51.h; sourceTree = "<group>"; };
 		F5AEA6EE097D805400D45891 /* mr97311.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mr97311.h; path = spca5xx_files/mr97311.h; sourceTree = "<group>"; };
@@ -628,7 +642,7 @@
 		F5AEA6F4097D805400D45891 /* spca508_init.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca508_init.h; path = spca5xx_files/spca508_init.h; sourceTree = "<group>"; };
 		F5AEA6F5097D805400D45891 /* spca561.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca561.h; path = spca5xx_files/spca561.h; sourceTree = "<group>"; };
 		F5AEA6F6097D805400D45891 /* tv8532.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tv8532.h; path = spca5xx_files/tv8532.h; sourceTree = "<group>"; };
-		F5AEA6F7097D805400D45891 /* zc3xx.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = zc3xx.h; path = spca5xx_files/zc3xx.h; sourceTree = "<group>"; };
+		F5AEA6F7097D805400D45891 /* zc3xxusb.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = zc3xxusb.h; path = spca5xx_files/zc3xxusb.h; sourceTree = "<group>"; };
 		F5AEAE280980992B00D45891 /* SPCA561ADriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPCA561ADriver.h; sourceTree = "<group>"; };
 		F5AEAE290980992B00D45891 /* SPCA561ADriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCA561ADriver.m; sourceTree = "<group>"; };
 		F5B1CC460375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RecordMovieActiveToolbarItem.tiff; sourceTree = "<group>"; };
@@ -664,6 +678,12 @@
 		F5EDFAD5036876210166D062 /* MyOV511Driver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyOV511Driver.m; sourceTree = "<group>"; };
 		F5EDFAD6036876210166D062 /* MyOV511Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyOV511Driver.h; sourceTree = "<group>"; wrapsLines = 1; };
 		F5EF7FFB0364C3BD01E9B502 /* JFIFHeaderTemplate.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = JFIFHeaderTemplate.c; sourceTree = "<group>"; };
+		F5F17B2F09BCD2FF000AEB63 /* zc3xx.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = zc3xx.h; path = spca5xx_files/zc3xx.h; sourceTree = "<group>"; };
+		F5F17B6D09BCD671000AEB63 /* GenericDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericDriver.h; sourceTree = "<group>"; };
+		F5F17B6E09BCD671000AEB63 /* GenericDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GenericDriver.m; sourceTree = "<group>"; };
+		F5F17BAE09BD0B10000AEB63 /* QCMessengerDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = QCMessengerDriver.h; sourceTree = "<group>"; };
+		F5F17BAF09BD0B10000AEB63 /* QCMessengerDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = QCMessengerDriver.m; sourceTree = "<group>"; };
+		F5F17CBA09BD4C30000AEB63 /* PAC7311Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PAC7311Driver.h; path = spca5xx_files/PAC7311Driver.h; sourceTree = "<group>"; };
 		F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyVicamDriver.m; sourceTree = "<group>"; };
 		F5F4373D02D278D6018D4F8C /* vicamurbs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = vicamurbs.h; sourceTree = "<group>"; };
 		F5F4373E02D278D6018D4F8C /* MyVicamDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyVicamDriver.h; sourceTree = "<group>"; };
@@ -918,7 +938,9 @@
 				F5AEA6F4097D805400D45891 /* spca508_init.h */,
 				F5AEA6F5097D805400D45891 /* spca561.h */,
 				F5AEA6F6097D805400D45891 /* tv8532.h */,
-				F5AEA6F7097D805400D45891 /* zc3xx.h */,
+				F5F17B2F09BCD2FF000AEB63 /* zc3xx.h */,
+				F5F17CBA09BD4C30000AEB63 /* PAC7311Driver.h */,
+				F5AEA6F7097D805400D45891 /* zc3xxusb.h */,
 				F592C8E90974520E00183A7D /* sonix.h */,
 				F592C8E20974504700183A7D /* spcausb.h */,
 				F5994D69096F1223004F6807 /* spca5xx.h */,
@@ -945,12 +967,16 @@
 		F5F79A800212038E01E152CA /* cameras */ = {
 			isa = PBXGroup;
 			children = (
+				F5F17BAE09BD0B10000AEB63 /* QCMessengerDriver.h */,
+				F5F17BAF09BD0B10000AEB63 /* QCMessengerDriver.m */,
+				F5F17B6D09BCD671000AEB63 /* GenericDriver.h */,
+				F5F17B6E09BCD671000AEB63 /* GenericDriver.m */,
 				F5994DD60971A85E004F6807 /* MyPixartDriver.h */,
 				F5994DD70971A85E004F6807 /* MyPixartDriver.m */,
-				F5AEA390097A1D0600D45891 /* PAC7311.h */,
-				F5AEA391097A1D0700D45891 /* PAC7311.m */,
-				F535F1DB08DF2703007943DA /* SPCA5XX.h */,
-				F535F1DC08DF2703007943DA /* SPCA5XX.m */,
+				F5AEA390097A1D0600D45891 /* PAC7311Driver.h */,
+				F5AEA391097A1D0700D45891 /* PAC7311Driver.m */,
+				F535F1DB08DF2703007943DA /* SPCA5XXDriver.h */,
+				F535F1DC08DF2703007943DA /* SPCA5XXDriver.m */,
 				F5AEAE280980992B00D45891 /* SPCA561ADriver.h */,
 				F5AEAE290980992B00D45891 /* SPCA561ADriver.m */,
 				F5994D54096ED733004F6807 /* spca5xx_files */,
@@ -1091,7 +1117,7 @@
 				F535EC3908DB3970007943DA /* USB_VendorProductIDs.h in Headers */,
 				F535EC3A08DB3970007943DA /* MyQCOrbitCameraInspector.h in Headers */,
 				F535EC3B08DB3970007943DA /* MyQCOrbitDriver.h in Headers */,
-				F535F1E708DF2703007943DA /* SPCA5XX.h in Headers */,
+				F535F1E708DF2703007943DA /* SPCA5XXDriver.h in Headers */,
 				F535F1F508DF2730007943DA /* SQ905.h in Headers */,
 				F5994D59096ED76E004F6807 /* pac207.h in Headers */,
 				F5994D6B096F1224004F6807 /* spca5xx.h in Headers */,
@@ -1099,7 +1125,7 @@
 				F592C8E40974504700183A7D /* spcausb.h in Headers */,
 				F592C8EB0974520E00183A7D /* sonix.h in Headers */,
 				F5AEA374097A154400D45891 /* SQ930C.h in Headers */,
-				F5AEA392097A1D0700D45891 /* PAC7311.h in Headers */,
+				F5AEA392097A1D0700D45891 /* PAC7311Driver.h in Headers */,
 				F5AEA6F8097D805400D45891 /* cx11646.h in Headers */,
 				F5AEA6F9097D805400D45891 /* et61xx51.h in Headers */,
 				F5AEA6FA097D805400D45891 /* mr97311.h in Headers */,
@@ -1111,8 +1137,10 @@
 				F5AEA700097D805400D45891 /* spca508_init.h in Headers */,
 				F5AEA701097D805400D45891 /* spca561.h in Headers */,
 				F5AEA702097D805400D45891 /* tv8532.h in Headers */,
-				F5AEA703097D805400D45891 /* zc3xx.h in Headers */,
+				F5AEA703097D805400D45891 /* zc3xxusb.h in Headers */,
 				F5AEAE2A0980992B00D45891 /* SPCA561ADriver.h in Headers */,
+				F5F17B7109BCD671000AEB63 /* GenericDriver.h in Headers */,
+				F5F17BB209BD0B11000AEB63 /* QCMessengerDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1162,7 +1190,7 @@
 				F535ECC008DB3970007943DA /* MyKiaraFlippedDriver.h in Headers */,
 				F535ECC108DB3970007943DA /* USB_VendorProductIDs.h in Headers */,
 				F535ECC208DB3970007943DA /* MyQCOrbitDriver.h in Headers */,
-				F535F1E508DF2703007943DA /* SPCA5XX.h in Headers */,
+				F535F1E508DF2703007943DA /* SPCA5XXDriver.h in Headers */,
 				F535F1F708DF2730007943DA /* SQ905.h in Headers */,
 				F5994D58096ED76E004F6807 /* pac207.h in Headers */,
 				F5994D6A096F1224004F6807 /* spca5xx.h in Headers */,
@@ -1170,7 +1198,7 @@
 				F592C8E30974504700183A7D /* spcausb.h in Headers */,
 				F592C8EA0974520E00183A7D /* sonix.h in Headers */,
 				F5AEA378097A154400D45891 /* SQ930C.h in Headers */,
-				F5AEA396097A1D0700D45891 /* PAC7311.h in Headers */,
+				F5AEA396097A1D0700D45891 /* PAC7311Driver.h in Headers */,
 				F5AEA710097D805400D45891 /* cx11646.h in Headers */,
 				F5AEA711097D805400D45891 /* et61xx51.h in Headers */,
 				F5AEA712097D805400D45891 /* mr97311.h in Headers */,
@@ -1182,8 +1210,10 @@
 				F5AEA718097D805400D45891 /* spca508_init.h in Headers */,
 				F5AEA719097D805400D45891 /* spca561.h in Headers */,
 				F5AEA71A097D805400D45891 /* tv8532.h in Headers */,
-				F5AEA71B097D805400D45891 /* zc3xx.h in Headers */,
+				F5AEA71B097D805400D45891 /* zc3xxusb.h in Headers */,
 				F5AEAE2E0980992B00D45891 /* SPCA561ADriver.h in Headers */,
+				F5F17B6F09BCD671000AEB63 /* GenericDriver.h in Headers */,
+				F5F17BB009BD0B10000AEB63 /* QCMessengerDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1229,7 +1259,7 @@
 				F535ED2108DB3970007943DA /* ICD_CameraCalls.h in Headers */,
 				F535ED2208DB3970007943DA /* USB_VendorProductIDs.h in Headers */,
 				F535ED2308DB3970007943DA /* MyQCOrbitDriver.h in Headers */,
-				F535F1E308DF2703007943DA /* SPCA5XX.h in Headers */,
+				F535F1E308DF2703007943DA /* SPCA5XXDriver.h in Headers */,
 				F535F1EF08DF2730007943DA /* SQ905.h in Headers */,
 				F5994D5A096ED76E004F6807 /* pac207.h in Headers */,
 				F5994D6C096F1224004F6807 /* spca5xx.h in Headers */,
@@ -1237,7 +1267,7 @@
 				F592C8E50974504700183A7D /* spcausb.h in Headers */,
 				F592C8EC0974520E00183A7D /* sonix.h in Headers */,
 				F5AEA376097A154400D45891 /* SQ930C.h in Headers */,
-				F5AEA394097A1D0700D45891 /* PAC7311.h in Headers */,
+				F5AEA394097A1D0700D45891 /* PAC7311Driver.h in Headers */,
 				F5AEA704097D805400D45891 /* cx11646.h in Headers */,
 				F5AEA705097D805400D45891 /* et61xx51.h in Headers */,
 				F5AEA706097D805400D45891 /* mr97311.h in Headers */,
@@ -1249,8 +1279,10 @@
 				F5AEA70C097D805400D45891 /* spca508_init.h in Headers */,
 				F5AEA70D097D805400D45891 /* spca561.h in Headers */,
 				F5AEA70E097D805400D45891 /* tv8532.h in Headers */,
-				F5AEA70F097D805400D45891 /* zc3xx.h in Headers */,
+				F5AEA70F097D805400D45891 /* zc3xxusb.h in Headers */,
 				F5AEAE2C0980992B00D45891 /* SPCA561ADriver.h in Headers */,
+				F5F17B7309BCD671000AEB63 /* GenericDriver.h in Headers */,
+				F5F17BB409BD0B11000AEB63 /* QCMessengerDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1538,12 +1570,15 @@
 				F535EC8808DB3970007943DA /* MyQCOrbitCameraInspector.m in Sources */,
 				F535EC8908DB3970007943DA /* MyQCOrbitDriver.m in Sources */,
 				F535F1F608DF2730007943DA /* SQ905.m in Sources */,
-				F54C765A09089861000BB928 /* SPCA5XX.m in Sources */,
+				F54C765A09089861000BB928 /* SPCA5XXDriver.m in Sources */,
 				F5994DDB0971A85E004F6807 /* MyPixartDriver.m in Sources */,
 				F5D1DE000976CF6D00992686 /* ov518_decomp.c in Sources */,
 				F5AEA375097A154400D45891 /* SQ930C.m in Sources */,
-				F5AEA393097A1D0700D45891 /* PAC7311.m in Sources */,
+				F5AEA393097A1D0700D45891 /* PAC7311Driver.m in Sources */,
 				F5AEAE2B0980992B00D45891 /* SPCA561ADriver.m in Sources */,
+				F5F17B7209BCD671000AEB63 /* GenericDriver.m in Sources */,
+				F5F17BB309BD0B11000AEB63 /* QCMessengerDriver.m in Sources */,
+				F5F17C6E09BD39A7000AEB63 /* RGB888Scaler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1591,13 +1626,15 @@
 				F535ECEB08DB3970007943DA /* ov511_decomp.c in Sources */,
 				F535ECEC08DB3970007943DA /* MyKiaraFlippedDriver.m in Sources */,
 				F535ECED08DB3970007943DA /* MyQCOrbitDriver.m in Sources */,
-				F535F1E608DF2703007943DA /* SPCA5XX.m in Sources */,
+				F535F1E608DF2703007943DA /* SPCA5XXDriver.m in Sources */,
 				F535F1F808DF2730007943DA /* SQ905.m in Sources */,
 				F5994DD90971A85E004F6807 /* MyPixartDriver.m in Sources */,
 				F5D1DDFF0976CF6D00992686 /* ov518_decomp.c in Sources */,
 				F5AEA379097A154400D45891 /* SQ930C.m in Sources */,
-				F5AEA397097A1D0700D45891 /* PAC7311.m in Sources */,
+				F5AEA397097A1D0700D45891 /* PAC7311Driver.m in Sources */,
 				F5AEAE2F0980992B00D45891 /* SPCA561ADriver.m in Sources */,
+				F5F17B7009BCD671000AEB63 /* GenericDriver.m in Sources */,
+				F5F17BB109BD0B11000AEB63 /* QCMessengerDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1642,13 +1679,16 @@
 				F535ED5C08DB3970007943DA /* MyKiaraFlippedDriver.m in Sources */,
 				F535ED5D08DB3970007943DA /* main.m in Sources */,
 				F535ED5E08DB3970007943DA /* MyQCOrbitDriver.m in Sources */,
-				F535F1E408DF2703007943DA /* SPCA5XX.m in Sources */,
+				F535F1E408DF2703007943DA /* SPCA5XXDriver.m in Sources */,
 				F535F1F008DF2730007943DA /* SQ905.m in Sources */,
 				F5994DDD0971A85E004F6807 /* MyPixartDriver.m in Sources */,
 				F5D1DE010976CF6D00992686 /* ov518_decomp.c in Sources */,
 				F5AEA377097A154400D45891 /* SQ930C.m in Sources */,
-				F5AEA395097A1D0700D45891 /* PAC7311.m in Sources */,
+				F5AEA395097A1D0700D45891 /* PAC7311Driver.m in Sources */,
 				F5AEAE2D0980992B00D45891 /* SPCA561ADriver.m in Sources */,
+				F5F17B7409BCD671000AEB63 /* GenericDriver.m in Sources */,
+				F5F17BB509BD0B11000AEB63 /* QCMessengerDriver.m in Sources */,
+				F5F17C6F09BD39A9000AEB63 /* RGB888Scaler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
