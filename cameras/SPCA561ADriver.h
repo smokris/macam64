@@ -8,10 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-#include "SPCA5XX.h"
+#include "SPCA5XXDriver.h"
 
 
-@interface SPCA561ADriver : SPCA5XX 
+@interface SPCA561ADriver : SPCA5XXDriver
 {
 
 }
