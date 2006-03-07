@@ -67,6 +67,8 @@ typedef struct SPCA500GrabContext {
     ImageDescriptionHandle pccamImgDesc;		//Image Description for JFIF decompress (PC Cam video)
 
     NSMutableArray* storedFileInfo;
+    
+    BOOL horizontallyFlipped;
 }
 
 //Get info about the camera specifics
