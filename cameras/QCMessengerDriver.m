@@ -21,34 +21,12 @@
 //
 
 #import "QCMessengerDriver.h"
-//#import "MyVV6450Sensor.h"
+#import "VV6450Sensor.h"
+
 #include "USB_VendorProductIDs.h"
 #include "Resolvers.h"
 #include "MiscTools.h"
 #include "unistd.h"
-
-
-@interface MyVV6450Sensor : NSObject
-
-- (id) initWithCamera: (MyCameraDriver *) driver;
-- (BOOL) checkSensor;
-
-@end
-
-
-@implementation MyVV6450Sensor
-
-- (id) initWithCamera: (MyCameraDriver *) driver
-{
-    return self;
-}
-
-- (BOOL) checkSensor
-{
-    return YES;
-}
-
-@end
 
 
 #define USE_SCALER
@@ -513,7 +491,7 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
 
 - (BOOL) camBoot {
     if (![self writeSTVRegister:0x1440 value:0]) return NO;
-    sensor = [[MyVV6450Sensor alloc] initWithCamera:self];
+    sensor = [[VV6450Sensor alloc] initWithCamera:self];
     if ([sensor checkSensor]) return YES;		//Sensor found and ok
     [sensor release];
     return NO;

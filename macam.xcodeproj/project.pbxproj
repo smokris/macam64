@@ -455,6 +455,12 @@
 		F5F17BB509BD0B11000AEB63 /* QCMessengerDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17BAF09BD0B10000AEB63 /* QCMessengerDriver.m */; };
 		F5F17C6E09BD39A7000AEB63 /* RGB888Scaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F59E4B7A0264A7910166DE1F /* RGB888Scaler.m */; };
 		F5F17C6F09BD39A9000AEB63 /* RGB888Scaler.m in Sources */ = {isa = PBXBuildFile; fileRef = F59E4B7A0264A7910166DE1F /* RGB888Scaler.m */; };
+		F5F1809209BF37EC000AEB63 /* VV6450Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F1809009BF37EB000AEB63 /* VV6450Sensor.h */; };
+		F5F1809309BF37EC000AEB63 /* VV6450Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F1809109BF37EB000AEB63 /* VV6450Sensor.m */; };
+		F5F1809409BF37EC000AEB63 /* VV6450Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F1809009BF37EB000AEB63 /* VV6450Sensor.h */; };
+		F5F1809509BF37EC000AEB63 /* VV6450Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F1809109BF37EB000AEB63 /* VV6450Sensor.m */; };
+		F5F1809609BF37EC000AEB63 /* VV6450Sensor.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F1809009BF37EB000AEB63 /* VV6450Sensor.h */; };
+		F5F1809709BF37EC000AEB63 /* VV6450Sensor.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F1809109BF37EB000AEB63 /* VV6450Sensor.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXBuildStyle section */
@@ -684,6 +690,8 @@
 		F5F17BAE09BD0B10000AEB63 /* QCMessengerDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = QCMessengerDriver.h; sourceTree = "<group>"; };
 		F5F17BAF09BD0B10000AEB63 /* QCMessengerDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = QCMessengerDriver.m; sourceTree = "<group>"; };
 		F5F17CBA09BD4C30000AEB63 /* PAC7311Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PAC7311Driver.h; path = spca5xx_files/PAC7311Driver.h; sourceTree = "<group>"; };
+		F5F1809009BF37EB000AEB63 /* VV6450Sensor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VV6450Sensor.h; sourceTree = "<group>"; };
+		F5F1809109BF37EB000AEB63 /* VV6450Sensor.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VV6450Sensor.m; sourceTree = "<group>"; };
 		F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyVicamDriver.m; sourceTree = "<group>"; };
 		F5F4373D02D278D6018D4F8C /* vicamurbs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = vicamurbs.h; sourceTree = "<group>"; };
 		F5F4373E02D278D6018D4F8C /* MyVicamDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyVicamDriver.h; sourceTree = "<group>"; };
@@ -835,6 +843,8 @@
 		F55A58C002572BFE014CA2B1 /* stv600_sensors */ = {
 			isa = PBXGroup;
 			children = (
+				F5F1809009BF37EB000AEB63 /* VV6450Sensor.h */,
+				F5F1809109BF37EB000AEB63 /* VV6450Sensor.m */,
 				F55A58C102572BFE014CA2B1 /* MyPB0100Sensor.h */,
 				F55A58C202572BFE014CA2B1 /* MyPB0100Sensor.m */,
 				F533EEC20271B72D0166DE1F /* MyHDCS1000Sensor.h */,
@@ -1141,6 +1151,7 @@
 				F5AEAE2A0980992B00D45891 /* SPCA561ADriver.h in Headers */,
 				F5F17B7109BCD671000AEB63 /* GenericDriver.h in Headers */,
 				F5F17BB209BD0B11000AEB63 /* QCMessengerDriver.h in Headers */,
+				F5F1809409BF37EC000AEB63 /* VV6450Sensor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1214,6 +1225,7 @@
 				F5AEAE2E0980992B00D45891 /* SPCA561ADriver.h in Headers */,
 				F5F17B6F09BCD671000AEB63 /* GenericDriver.h in Headers */,
 				F5F17BB009BD0B10000AEB63 /* QCMessengerDriver.h in Headers */,
+				F5F1809209BF37EC000AEB63 /* VV6450Sensor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1283,6 +1295,7 @@
 				F5AEAE2C0980992B00D45891 /* SPCA561ADriver.h in Headers */,
 				F5F17B7309BCD671000AEB63 /* GenericDriver.h in Headers */,
 				F5F17BB409BD0B11000AEB63 /* QCMessengerDriver.h in Headers */,
+				F5F1809609BF37EC000AEB63 /* VV6450Sensor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1579,6 +1592,7 @@
 				F5F17B7209BCD671000AEB63 /* GenericDriver.m in Sources */,
 				F5F17BB309BD0B11000AEB63 /* QCMessengerDriver.m in Sources */,
 				F5F17C6E09BD39A7000AEB63 /* RGB888Scaler.m in Sources */,
+				F5F1809509BF37EC000AEB63 /* VV6450Sensor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1635,6 +1649,7 @@
 				F5AEAE2F0980992B00D45891 /* SPCA561ADriver.m in Sources */,
 				F5F17B7009BCD671000AEB63 /* GenericDriver.m in Sources */,
 				F5F17BB109BD0B11000AEB63 /* QCMessengerDriver.m in Sources */,
+				F5F1809309BF37EC000AEB63 /* VV6450Sensor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1689,6 +1704,7 @@
 				F5F17B7409BCD671000AEB63 /* GenericDriver.m in Sources */,
 				F5F17BB509BD0B11000AEB63 /* QCMessengerDriver.m in Sources */,
 				F5F17C6F09BD39A9000AEB63 /* RGB888Scaler.m in Sources */,
+				F5F1809709BF37EC000AEB63 /* VV6450Sensor.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
