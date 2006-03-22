@@ -147,7 +147,7 @@ static int pac_decompress_row(struct code_table_t *table, unsigned char *inp, un
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_VISTA_PLUS], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
-            @"Creative Vista Plus", @"name", NULL], 
+            @"Creative Vista Plus (old driver)", @"name", NULL], 
         
         NULL];
 }
@@ -560,8 +560,9 @@ static int pac_decompress_row(struct code_table_t *table, unsigned char *inp, un
 	}
 	if(sof){
 		if(fillingChunk){ // We were filling -> chunk done
-			if(pos != 0){
-				[fillingChunk appendBytes:&(buffer[pos]) length:pos]; // append remaining data
+			if(pos > 0){
+//				[fillingChunk appendBytes:&(buffer[pos]) length:pos]; // append remaining data
+				[fillingChunk appendBytes:&(buffer[0]) length:pos]; // append remaining data
 			}
 			// Pass the complete chunk to the full list
 			[fullChunkLock lock];		//Append our full chunk to the list
@@ -607,7 +608,8 @@ static int pac_decompress_row(struct code_table_t *table, unsigned char *inp, un
 	switch(result){
 	case 0:						// No error -> alright
 	case kIOReturnUnderrun:		// not so serious
-		break;
+        break;
+    case kIOReturnNoBandwidth:
 	default:
 		shouldBeGrabbing = NO;
 		if(!grabbingError) grabbingError = CameraErrorUSBProblem;
@@ -629,12 +631,13 @@ static int pac_decompress_row(struct code_table_t *table, unsigned char *inp, un
 
 	if(shouldBeGrabbing) [self startTransfer]; // Initiate new transfer
 
-    UInt8* frameBase;
+    UInt8* frameBase = transferBuffer;
 	int i;
 	for(i=0; i<FRAMES_PER_TRANSFER; i++){
 		if(!shouldBeGrabbing) break;
-		frameBase = transferBuffer + bytesPerFrame * i;
+//		frameBase = transferBuffer + bytesPerFrame * i;
 		[self usbIsocFrame:&(frameList[i]) buffer:frameBase];
+        frameBase += frameList[i].frReqCount;
 	//	frameBase = transfers[filledTransfer].buffer + bytesPerFrame * i;
 	//	[self usbIsocFrame:&(transfers[filledTransfer].frameList[i]) buffer:frameBase];
 	}
@@ -697,6 +700,7 @@ static void transferComplete(void *refcon, IOReturn result, void *arg0)
     // Get usb timing info
     if(shouldBeGrabbing){
 		if(![self usbGetSoon:&(initiatedUntil)]){
+            initiatedUntil += 100;
 			if(!grabbingError) grabbingError = CameraErrorUSBProblem;	// Stall or so?
 			shouldBeGrabbing = NO;
 		}
@@ -884,7 +888,8 @@ static void transferComplete(void *refcon, IOReturn result, void *arg0)
 		[fullChunks removeObjectAtIndex:0];
 		[fullChunkLock unlock];
 
-		[self decode:currChunk];
+        if ([fullChunks count] < 5) 
+            [self decode:currChunk];
 
 		[currChunk setLength:0];
 		[emptyChunkLock lock];						//recycle our chunk - it's empty again
