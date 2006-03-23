@@ -2,7 +2,7 @@
 //  GenericDriver.m
 //
 //  macam - webcam app and QuickTime driver component
-//  GenericDriver - generic driver for many cameras
+//  GenericDriver - base driver code for many cameras
 //
 //  Created by HXR on 3/6/06.
 //  Copyright (C) 2006 HXR (hxr@users.sourceforge.net). 
@@ -22,7 +22,6 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 //
 
-
 #import "GenericDriver.h"
 
 #include "MiscTools.h"
@@ -30,140 +29,180 @@
 
 #include <unistd.h>
 
-
-#define JFIF_HEADER_LENGTH 0
-
+// 
+// This driver provides more of the common code that most drivers need, while 
+// separating out the code that make cameras different into smaller routines. 
+//
+// To implement a new driver, subclass this class (GenericDriver) and implement
+// all the required methods and any other methods that are necessary for the 
+// specific camera. See the ExampleDriver for an example.
+//
 
 @implementation GenericDriver
 
-
-- (BOOL) startupGrabStream 
+//
+// Avoid subclassing this method if possible
+// Instead put functionality into [startupCamera]
+//
+- (CameraError) startupWithUsbLocationId: (UInt32) usbLocationId
 {
-    // make the proper USB calls
-    // if anything goes wrong, return NO
+	CameraError error;
     
+    if (error = [self usbConnectToCam:usbLocationId configIdx:0]) 
+        return error; // setup connection to camera
+    
+    [self startupCamera];
+    
+	return [super startupWithUsbLocationId:usbLocationId];
+}
+
+//
+// Subclass this for more functionality
+//
+- (void) startupCamera
+{
+	[self setBrightness:0.5];
+	[self setContrast:0.5];
+	[self setGamma:0.5];
+	[self setSaturation:0.5];
+	[self setSharpness:0.5];
+}
+
+//
+// Subclass if needed, don't forget to call [super]
+//
+- (void) dealloc 
+{
+	if (bayerConverter) 
+        [bayerConverter release];
+	bayerConverter = NULL;
+    
+	[self cleanupGrabContext];
+    
+	[super dealloc];
+}
+
+//
+// Returns the pipe used for grabbing
+// Subclass if necessary
+//
+- (UInt8) getGrabbingPipe
+{
+    return 1;
+}
+
+//
+// Setup the alt-interface and pipe to use for grabbing
+// This *must* be subclassed
+//
+// Return YES if everything is ok
+//
+- (BOOL) setGrabInterfacePipe
+{
+//  return [self usbSetAltInterfaceTo:7 testPipe:[self getGrabbingPipe]]; // copy and change the alt-interface
     return NO;
 }
 
+//
+// Make the right sequence of USB calls to get the stream going
+// If anything goes wrong, return NO
+// This *must* be subclassed
+//
+- (BOOL) startupGrabStream 
+{
+    return NO;
+}
 
+//
+// Make the right sequence of USB calls to shut the stream down
+// This *must* be subclassed
+//
 - (void) shutdownGrabStream 
 {
-    // make any necessary USB calls
 }
 
-
-- (void) cleanupGrabContext 
+//
+// A new function for scanning the isochronous frames must be provided if a suitable 
+// one does not already exist. 
+//
+IsocFrameResult  genericIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
+                                         UInt32 * dataStart, UInt32 * dataLength, 
+                                         UInt32 * tailStart, UInt32 * tailLength)
 {
-    int i;
-    
-    if (grabContext.chunkReadyLock) // cleanup chunk ready lock
-    {
-        [grabContext.chunkReadyLock release];
-        grabContext.chunkReadyLock = NULL;
-    }
-    
-    if (grabContext.chunkListLock) // cleanup chunk list lock
-    {
-        [grabContext.chunkListLock release];
-        grabContext.chunkListLock = NULL;
-    }
-    
-    for (i = 0; i < GENERIC_NUM_TRANSFERS; i++) // cleanup isoc buffers
-    {
-        if (grabContext.transferContexts[i].buffer) 
-        {
-            FREE(grabContext.transferContexts[i].buffer, "isoc data buffer");
-            grabContext.transferContexts[i].buffer = NULL;
-        }
-    }
-    for (i = grabContext.numEmptyBuffers-1; i>= 0; i--) // cleanup empty chunk buffers
-    {
-        if (grabContext.emptyChunkBuffers[i].buffer) 
-        {
-            FREE(grabContext.emptyChunkBuffers[i].buffer - JFIF_HEADER_LENGTH, "empty chunk buffer");
-            grabContext.emptyChunkBuffers[i].buffer = NULL;
-        }
-    }
-    
-    grabContext.numEmptyBuffers = 0;
-    
-    for (i = grabContext.numFullBuffers-1; i >= 0; i--) // cleanup full chunk buffers
-    {
-        if (grabContext.fullChunkBuffers[i].buffer) 
-        {
-            FREE(grabContext.fullChunkBuffers[i].buffer - JFIF_HEADER_LENGTH, "full chunk buffer");
-            grabContext.fullChunkBuffers[i].buffer = NULL;
-        }
-    }
-    
-    grabContext.numFullBuffers = 0;
-    
-    if (grabContext.fillingChunk) // cleanup filling chunk buffer
-    {
-        if (grabContext.fillingChunkBuffer.buffer) 
-        {
-            FREE(grabContext.fillingChunkBuffer.buffer - JFIF_HEADER_LENGTH, "filling chunk buffer");
-            grabContext.fillingChunkBuffer.buffer = NULL;
-        }
-        grabContext.fillingChunk = false;
-    }
+    return invalidFrame;
 }
 
+//
+// This version can probably be used by most cameras
+// Headers and footers can be skipped by specifying the proper start and lengths in the scanner
+//
+// If data needs to be modified (and it cannot be [efficiently] done in the decoder) 
+// then this is place to make those modifications
+//
+int  genericIsocDataCopier(void * destination, const void * source, size_t length, size_t available)
+{
+    if (length > available) 
+        length = available;
+    
+    memcpy(destination, source, length);
+    
+    return length;
+}
 
+//
+// This *must* be subclassed
+// Provide the correct functions for the camera
+//
+- (void) setIsocFrameFunctions
+{
+    grabContext.isocFrameScanner = genericIsocFrameScanner;
+    grabContext.isocDataCopier = genericIsocDataCopier;
+}
+
+//
+// Avoid subclassing this method if possible
+// Instead put functionality into [setIsocFrameFunctions]
+// and of course [startupGrabStream] and [shutdownGrabStream]
+//
 - (BOOL) setupGrabContext 
 {
     BOOL ok = YES;
     int i, j;
+    
+    grabContext.numberOfTransfers = GENERIC_NUM_TRANSFERS;
+    grabContext.numberOfFramesPerTransfer = GENERIC_FRAMES_PER_TRANSFER;
+    grabContext.numberOfChunkBuffers = GENERIC_NUM_CHUNK_BUFFERS;
     
     // Clear things that have to be set back if init() fails
     
     grabContext.chunkReadyLock = NULL;
     grabContext.chunkListLock = NULL;
     
-    for (i = 0; i < GENERIC_NUM_TRANSFERS; i++) 
-    {
+    for (i = 0; i < grabContext.numberOfTransfers; i++) 
         grabContext.transferContexts[i].buffer = NULL;
-    }
     
     // Setup simple things
     
-    grabContext.bytesPerFrame = 1023;
-    grabContext.finishedTransfers = 0;
+    [self setIsocFrameFunctions];
+    
     grabContext.intf = intf;
-    grabContext.initiatedUntil = 0; // Will be set later (directly before start)
+    grabContext.grabbingPipe = [self getGrabbingPipe];
+    grabContext.bytesPerFrame = kUSBMaxFSIsocEndpointReqCount; // Seems like the maximum size of a frame (payload) kUSBMaxHSIsocEndpointReqCount for USB2 high-speed
+    
     grabContext.shouldBeGrabbing = &shouldBeGrabbing;
     grabContext.contextError = CameraErrorOK;
+    
+    grabContext.initiatedUntil = 0; // Will be set later (directly before start)
+    grabContext.finishedTransfers = 0;
     grabContext.framesSinceLastChunk = 0;
-    grabContext.chunkBufferLength = 2000000; // Should be safe for now. *** FIXME: Make a better estimate...
-    grabContext.numEmptyBuffers = 0;
+    
     grabContext.numFullBuffers = 0;
+    grabContext.numEmptyBuffers = 0;
     grabContext.fillingChunk = false;
+    grabContext.chunkBufferLength = [self width] * [self height] * 4 + 10000; // That should be more than enough, but should include any JPEG header
     
-    // Setup JFIF header
-/*    
-    memcpy(pccamJfifHeader, JFIFHeaderTemplate, JFIF_HEADER_LENGTH);
+    // Setup JPEG header stuff here in the future
     
-    pccamJfifHeader[JFIF_HEIGHT_WIDTH_OFFSET+0] = 480 / 256;
-    pccamJfifHeader[JFIF_HEIGHT_WIDTH_OFFSET+1] = 480 % 256;
-    pccamJfifHeader[JFIF_HEIGHT_WIDTH_OFFSET+2] = 640 / 256;
-    pccamJfifHeader[JFIF_HEIGHT_WIDTH_OFFSET+3] = 640 % 256;
-    pccamJfifHeader[JFIF_YUVTYPE_OFFSET] = 0x22;
-*/
-/* 
-    Set up the quantizing tables. 
-    To be honest, this is unnecessary since we copy other quantizing tables later on 
-    (in startupGrabStream). The reason for this is that different cameras have different 
-    built-in quantizing table sets (for some really strange reason). 
-    Think of this as a fallback - having a wrong quantizing table is better than
-    having none at all...) 
- */
-/*
-    for (i = 0; i < 64; i++) 
-    {
-        pccamJfifHeader[JFIF_QTABLE0_OFFSET+i] = ZigZagY(pccamQTabIdx, i);
-        pccamJfifHeader[JFIF_QTABLE1_OFFSET+i] = ZigZagUV(pccamQTabIdx, i);
-    }
-*/    
     // Setup things that have to be set back if init fails
     
     if (ok) 
@@ -180,40 +219,41 @@
             ok = NO;
     }
     
+    // Initialize transfer contexts
+    
     if (ok) 
     {
-        for (i = 0; ok && (i < GENERIC_NUM_TRANSFERS); i++) 
+        for (i = 0; ok && (i < grabContext.numberOfTransfers); i++) 
         {
-            for (j = 0; j < GENERIC_FRAMES_PER_TRANSFER; j++) 
+            for (j = 0; j < grabContext.numberOfFramesPerTransfer; j++) 
             {
                 grabContext.transferContexts[i].frameList[j].frStatus = 0;
                 grabContext.transferContexts[i].frameList[j].frReqCount = grabContext.bytesPerFrame;
                 grabContext.transferContexts[i].frameList[j].frActCount = 0;
             }
-            MALLOC(grabContext.transferContexts[i].buffer,
-                   UInt8*,
-                   GENERIC_FRAMES_PER_TRANSFER*grabContext.bytesPerFrame,
-                   "isoc transfer buffer");
+            
+            MALLOC(grabContext.transferContexts[i].buffer, UInt8 *,
+                   grabContext.numberOfFramesPerTransfer * grabContext.bytesPerFrame, "isoc transfer buffer");
+            
             if (grabContext.transferContexts[i].buffer == NULL) 
                 ok = NO;
         }
     }
     
-    for (i = 0; ok && (i < GENERIC_NUM_CHUNK_BUFFERS); i++) 
+    // Initialize chunk buffers
+    
+    for (i = 0; ok && (i < grabContext.numberOfChunkBuffers); i++) 
     {
-        MALLOC(grabContext.emptyChunkBuffers[i].buffer, UInt8*, grabContext.chunkBufferLength + JFIF_HEADER_LENGTH, "Chunk buffer");
+        MALLOC(grabContext.emptyChunkBuffers[i].buffer, UInt8 *, grabContext.chunkBufferLength, "Chunk buffer");
+        
         if (grabContext.emptyChunkBuffers[i].buffer == NULL) 
             ok = NO;
         else 
-            grabContext.numEmptyBuffers = i+1;
+            grabContext.numEmptyBuffers = i + 1;
     }
     
-/* 
-    The chunk buffers will later be prefilled with the JPEG header. 
-    We cannot do this here since we don't have the exact JPEG header yet. 
-    We obtain the correct quantizing tables at the end of [startupGrabStream].
-    But we can make sure that nothing bad can happen then...
-*/
+    // Cleanup if anything went wrong
+    
     if (!ok) 
     {
         NSLog(@"setupGrabContext failed");
@@ -223,52 +263,130 @@
     return ok;
 }
 
-
-// Forward declaration
-static bool StartNextIsochRead(GenericGrabContext * gCtx, int transferIdx);
-
-
-static void isocComplete(void * refcon, IOReturn result, void * arg0) 
+//
+// Avoid subclassing this method if possible
+//
+- (void) cleanupGrabContext 
 {
     int i;
+    
+    // Cleanup chunk ready lock
+    
+    if (grabContext.chunkReadyLock != NULL) 
+    {
+        [grabContext.chunkReadyLock release];
+        grabContext.chunkReadyLock = NULL;
+    }
+    
+    // Cleanup chunk list lock
+    
+    if (grabContext.chunkListLock != NULL) 
+    {
+        [grabContext.chunkListLock release];
+        grabContext.chunkListLock = NULL;
+    }
+    
+    // Cleanup isoc buffers
+    
+    for (i = 0; i < grabContext.numberOfTransfers; i++) 
+    {
+        if (grabContext.transferContexts[i].buffer) 
+        {
+            FREE(grabContext.transferContexts[i].buffer, "isoc data buffer");
+            grabContext.transferContexts[i].buffer = NULL;
+        }
+    }
+    
+    // Cleanup empty chunk buffers
+    
+    for (i = grabContext.numEmptyBuffers - 1; i >= 0; i--) 
+    {
+        if (grabContext.emptyChunkBuffers[i].buffer != NULL) 
+        {
+            FREE(grabContext.emptyChunkBuffers[i].buffer, "empty chunk buffer");
+            grabContext.emptyChunkBuffers[i].buffer = NULL;
+        }
+    }
+    
+    grabContext.numEmptyBuffers = 0;
+    
+    // Cleanup full chunk buffers
+    
+    for (i = grabContext.numFullBuffers - 1; i >= 0; i--) 
+    {
+        if (grabContext.fullChunkBuffers[i].buffer != NULL) 
+        {
+            FREE(grabContext.fullChunkBuffers[i].buffer, "full chunk buffer");
+            grabContext.fullChunkBuffers[i].buffer = NULL;
+        }
+    }
+    
+    grabContext.numFullBuffers = 0;
+    
+    // Cleanup filling chunk buffer
+    
+    if (grabContext.fillingChunk) 
+    {
+        if (grabContext.fillingChunkBuffer.buffer != NULL) 
+        {
+            FREE(grabContext.fillingChunkBuffer.buffer, "filling chunk buffer");
+            grabContext.fillingChunkBuffer.buffer = NULL;
+        }
+        
+        grabContext.fillingChunk = false;
+    }
+}
+
+//
+// Forward declaration because both isocComplete() and startNextIsochRead() refer to each other
+//
+static bool startNextIsochRead(GenericGrabContext * grabbingContext, int transferIndex);
+
+//
+// Avoid recreating this function if possible
+//
+static void isocComplete(void * refcon, IOReturn result, void * arg0) 
+{
     GenericGrabContext * gCtx = (GenericGrabContext *) refcon;
     IOUSBIsocFrame * myFrameList = (IOUSBIsocFrame *) arg0;
     short transferIdx = 0;
     bool frameListFound = false;
-    long currFrameLength;
     UInt8 * frameBase;
+    int i;
+    
+    static int droppedFrames = 0;
     
     // Handle result from isoc transfer
     
     switch (result) 
     {
-        case 0: // No error -> alright
+        case kIOReturnSuccess: // No error -> alright
         case kIOReturnUnderrun: // Data hickup - not so serious
             result = 0;
             break;
             
         case kIOReturnOverrun:
         case kIOReturnTimeout:
-            *(gCtx->shouldBeGrabbing) = NO;
-            if (!(gCtx->contextError)) 
+            *gCtx->shouldBeGrabbing = NO;
+            if (gCtx->contextError == CameraErrorOK) 
                 gCtx->contextError = CameraErrorTimeout;
-                break;
+            break;
             
         default:
-            *(gCtx->shouldBeGrabbing) = NO;
-            if (!(gCtx->contextError)) 
+            *gCtx->shouldBeGrabbing = NO;
+            if (gCtx->contextError == CameraErrorOK) 
                 gCtx->contextError = CameraErrorUSBProblem;
-                break;
+            break;
     }
-    CheckError(result, "isocComplete"); // Show errors (really needed here?)
+    CheckError(result, "isocComplete"); // Show errors (really needed here? -- actually yes!)
 
     // Look up which transfer we are
     
-    if (*(gCtx->shouldBeGrabbing)) 
+    if (*gCtx->shouldBeGrabbing) 
     {
-        while ((!frameListFound) && (transferIdx < GENERIC_NUM_TRANSFERS)) 
+        while (!frameListFound && (transferIdx < gCtx->numberOfTransfers)) 
         {
-            if ((gCtx->transferContexts[transferIdx].frameList) == myFrameList) 
+            if (gCtx->transferContexts[transferIdx].frameList == myFrameList) 
                 frameListFound = true;
             else 
                 transferIdx++;
@@ -276,169 +394,184 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
         
         if (!frameListFound) 
         {
-            NSLog(@"isocComplete: Didn't find my frameList");
-            *(gCtx->shouldBeGrabbing) = NO;
-            if (!(gCtx->contextError)) 
+            NSLog(@"isocComplete: Didn't find my frameList, very strange.");
+            *gCtx->shouldBeGrabbing = NO;
+            if (gCtx->contextError == CameraErrorOK) 
                 gCtx->contextError = CameraErrorInternal;
         }
     }
 
     // Parse returned data
     
-    if (*(gCtx->shouldBeGrabbing)) 
+    if (*gCtx->shouldBeGrabbing) 
     {
-        for (i = 0; i < GENERIC_FRAMES_PER_TRANSFER; i++) // Let's have a look into the usb frames we got
+        for (i = 0; i < gCtx->numberOfFramesPerTransfer; i++) // Let's have a look into the usb frames we got
         {
-            currFrameLength = myFrameList[i].frActCount; // Cache this - it won't change and we need it several times
-            if (currFrameLength > 0) // If there is data in this frame
+            UInt32 dataStart, dataLength, tailStart, tailLength;
+            
+            frameBase = gCtx->transferContexts[transferIdx].buffer + gCtx->bytesPerFrame * i; // Is this right? It assumes possibly non-contiguous writing, if actual count < requested count [yes, seems to work, look at USB spec?]
+            
+            IsocFrameResult frameResult = (*gCtx->isocFrameScanner)(&myFrameList[i], frameBase, 
+                                                &dataStart, &dataLength, &tailStart, &tailLength);
+            
+            if (frameResult == invalidFrame || myFrameList[i].frActCount == 0) 
             {
-                frameBase = gCtx->transferContexts[transferIdx].buffer + gCtx->bytesPerFrame * i;
-                if (frameBase[0] == 0xff) // Invalid chunk?
+                droppedFrames++;
+            }
+            else if (frameResult == newChunkFrame) 
+            {
+                droppedFrames = 0;
+                
+                // When the new chunk starts in the middle of a frame, we must copy the tail
+                
+                if (gCtx->fillingChunk && tailLength > 0) 
                 {
-                    currFrameLength = 0;
-                } 
-                else if (frameBase[0]==0xfe) // Start of new chunk (image) ?
-                {
-                    if (gCtx->fillingChunk) // We were filling -> chunk done
-                    {
-                        // Pass the complete chunk to the full list
-                        int j;
-                        [gCtx->chunkListLock lock]; // Get access to the chunk buffers
-                        for (j = gCtx->numFullBuffers-1; j >= 0; j--) // Move full buffers one up
-                        {
-                            gCtx->fullChunkBuffers[j+1] = gCtx->fullChunkBuffers[j];
-                        }
-                        gCtx->fullChunkBuffers[0] = gCtx->fillingChunkBuffer;	//Insert the filling one as newest
-                        gCtx->numFullBuffers++;				//We have inserted one buffer
-                        gCtx->fillingChunk = false;			//Now we're not filling (still in the lock to be sure no buffer is lost)
-                        [gCtx->chunkReadyLock unlock];			//Wake up decoding thread
-                        gCtx->framesSinceLastChunk = 0;			//reset watchdog
-                    } 
-                    else {						//There was no current filling chunk. Just get a new one.
-                        [gCtx->chunkListLock lock];			//Get access to the chunk buffers
-                    }
-                    //We have the list access lock. Get a new buffer to fill.
-                    if (gCtx->numEmptyBuffers>0) {			//There's an empty buffer to use
-                        gCtx->numEmptyBuffers--;
-                        gCtx->fillingChunkBuffer=gCtx->emptyChunkBuffers[gCtx->numEmptyBuffers];
-                    } else {						//No empty buffer: discard a full one (there are enough, both can't be empty)
-                        gCtx->numFullBuffers--;
-                        gCtx->fillingChunkBuffer=gCtx->fullChunkBuffers[gCtx->numFullBuffers];
-                    }
-                    gCtx->fillingChunk = true;				//Now we're filling (still in the lock to be sure no buffer is lost)
-                    gCtx->fillingChunkBuffer.numBytes = 0;		//Start with empty buffer
-                    [gCtx->chunkListLock unlock];			//Free access to the chunk buffers
-                    frameBase += 10;					//Skip past header
-                    currFrameLength -= 10;
-                } 
-                else // No new chunk start
-                {
-                    frameBase += 1; // Skip past header
-                    currFrameLength -= 1;
+                    int add = (*gCtx->isocDataCopier)(gCtx->fillingChunkBuffer.buffer + gCtx->fillingChunkBuffer.numBytes, frameBase + tailStart, tailLength, gCtx->chunkBufferLength - gCtx->fillingChunkBuffer.numBytes);
+                    gCtx->fillingChunkBuffer.numBytes += add;
                 }
                 
-                if ((gCtx->fillingChunk) && (currFrameLength > 0)) 
+                // Now we need to get a new chunk
+                // Wait for access to the chunk buffers
+                
+                [gCtx->chunkListLock lock];
+                
+                // We were filling, first deal with the old chunk that is now full
+                
+                if (gCtx->fillingChunk) 
                 {
-                    if (gCtx->chunkBufferLength-gCtx->fillingChunkBuffer.numBytes>(2*currFrameLength+2)) {	//There's plenty of space to receive data (*2 beacuse of escaping, +2 because of end tag)
-                        // Copy and add 0x00 after each 0xff
-                        int x,y;
-                        UInt8 ch;
-                        UInt8 * blitDst = gCtx->fillingChunkBuffer.buffer + gCtx->fillingChunkBuffer.numBytes;
-                        
-                        x = y = 0;
-                        while (x<currFrameLength) 
-                        {
-                            ch=frameBase[x++];
-                            blitDst[y++]=ch;
-                            if (ch==0xff) blitDst[y++]=0x00;
-                        }
-                        gCtx->fillingChunkBuffer.numBytes+=y;
-                    } 
-                    else 
-                    {						//Buffer is already full -> expect broken chunk -> discard
-                        [gCtx->chunkListLock lock];			//Get access to the chunk buffers
-                        gCtx->emptyChunkBuffers[gCtx->numEmptyBuffers]=gCtx->fillingChunkBuffer;
-                        gCtx->numEmptyBuffers++;
-                        gCtx->fillingChunk=false;			//Now we're not filling (still in the lock to be sure no buffer is lost)
-                        [gCtx->chunkListLock unlock];			//Free access to the chunk buffers
-                    }
+                    int j;
+                    
+                    // Pass the complete chunk to the full list
+                    // Move full buffers one up
+                    
+                    for (j = gCtx->numFullBuffers - 1; j >= 0; j--) 
+                        gCtx->fullChunkBuffers[j + 1] = gCtx->fullChunkBuffers[j];
+                    
+                    gCtx->fullChunkBuffers[0] = gCtx->fillingChunkBuffer; // Insert the filling one as newest
+                    gCtx->numFullBuffers++;				// We have inserted one buffer
+                                                        //  What if the list was already full? - That is not possible
+                    gCtx->fillingChunk = false;			// Now we're not filling (still in the lock to be sure no buffer is lost)
+                    [gCtx->chunkReadyLock unlock];		// Wake up the decoding thread
+                    gCtx->framesSinceLastChunk = 0;     // Reset watchdog
+                } 
+                // else // There was no current filling chunk. Just get a new one.
+                
+                // We still have the list access lock. Get a new buffer to fill.
+                
+                if (gCtx->numEmptyBuffers > 0) 			// There's an empty buffer to use
+                {
+                    gCtx->numEmptyBuffers--;
+                    gCtx->fillingChunkBuffer = gCtx->emptyChunkBuffers[gCtx->numEmptyBuffers];
+                } 
+                else // No empty buffer: discard a full one (there are enough, both lists can't be empty)
+                {
+                    gCtx->numFullBuffers--;             // Use the oldest one
+                    gCtx->fillingChunkBuffer = gCtx->fullChunkBuffers[gCtx->numFullBuffers];
                 }
+                gCtx->fillingChunk = true;				// Now we're filling (still in the lock to be sure no buffer is lost)
+                gCtx->fillingChunkBuffer.numBytes = 0;	// Start with empty buffer
+                [gCtx->chunkListLock unlock];			// Free access to the chunk buffers
+            }
+            // else // validFrame 
+            
+            if (gCtx->fillingChunk && (dataLength > 0)) 
+            {
+                int add = (*gCtx->isocDataCopier)(gCtx->fillingChunkBuffer.buffer + gCtx->fillingChunkBuffer.numBytes, 
+                                                  frameBase + dataStart, dataLength, gCtx->chunkBufferLength - gCtx->fillingChunkBuffer.numBytes);
+                gCtx->fillingChunkBuffer.numBytes += add;
             }
         }
         
-        gCtx->framesSinceLastChunk += GENERIC_FRAMES_PER_TRANSFER;	//Count frames (not necessary to be too precise here...)
-        if ((gCtx->framesSinceLastChunk) > 1000) //One second without a frame?
+        gCtx->framesSinceLastChunk += gCtx->numberOfFramesPerTransfer; // Count frames (not necessary to be too precise here...)
+        
+        if (gCtx->framesSinceLastChunk > 1000) // One second without a frame? That is too long, something is wrong.
         {
-            NSLog(@"SPCA5XX grab aborted because of invalid data stream");
-            *(gCtx->shouldBeGrabbing)=NO;
-            if (!gCtx->contextError) gCtx->contextError=CameraErrorUSBProblem;
-        }
-    }
-
-    //initiate next transfer
-    if (*(gCtx->shouldBeGrabbing)) {
-        if (!StartNextIsochRead(gCtx,transferIdx)) *(gCtx->shouldBeGrabbing)=NO;
-    }
-
-    //Shutdown cleanup: Collect finished transfers and exit if all transfers have ended
-    if (!(*(gCtx->shouldBeGrabbing))) {
-        gCtx->finishedTransfers++;
-        if ((gCtx->finishedTransfers)>=(GENERIC_NUM_TRANSFERS)) {
-            CFRunLoopStop(CFRunLoopGetCurrent());
-        }
-    }
-}
-
-
-static bool StartNextIsochRead(GenericGrabContext * gCtx, int transferIdx) 
-{
-    IOReturn err;
-    err = (* (gCtx->intf))->ReadIsochPipeAsync(gCtx->intf,
-                                               1,
-                                               gCtx->transferContexts[transferIdx].buffer,
-                                               gCtx->initiatedUntil,
-                                               GENERIC_FRAMES_PER_TRANSFER,
-                                               gCtx->transferContexts[transferIdx].frameList,
-                                               (IOAsyncCallback1) (isocComplete),
-                                               gCtx);
-    
-    gCtx->initiatedUntil += GENERIC_FRAMES_PER_TRANSFER;
-    
-    switch (err) 
-    {
-        case 0:
-            break;
-        default:
-            CheckError(err, "StartNextIsochRead-ReadIsochPipeAsync");
-            if (!gCtx->contextError) 
+            NSLog(@"GenericDriver grab aborted because of invalid data stream (too long without a frame)");
+            *gCtx->shouldBeGrabbing = NO;
+            if (gCtx->contextError == CameraErrorOK) 
                 gCtx->contextError = CameraErrorUSBProblem;
-                break;
+        }
     }
     
-    return (err == 0);
+    // Initiate next transfer
+
+    if (*gCtx->shouldBeGrabbing) 
+    {
+        if (!startNextIsochRead(gCtx, transferIdx)) 
+            *gCtx->shouldBeGrabbing = NO;
+    }
+    
+    // Shutdown cleanup: Collect finished transfers and exit if all transfers have ended
+    
+    if (!(*gCtx->shouldBeGrabbing)) 
+    {
+        gCtx->finishedTransfers++;
+        if (gCtx->finishedTransfers >= gCtx->numberOfTransfers) 
+            CFRunLoopStop(CFRunLoopGetCurrent());
+    }
 }
 
+//
+// Avoid recreating this function if possible
+// Return true if everything is OK
+//
+static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx) 
+{
+    IOReturn error;
+    
+    error = (*gCtx->intf)->ReadIsochPipeAsync(gCtx->intf,
+                                                 gCtx->grabbingPipe,
+                                                 gCtx->transferContexts[transferIdx].buffer,
+                                                 gCtx->initiatedUntil,
+                                                 gCtx->numberOfFramesPerTransfer,
+                                                 gCtx->transferContexts[transferIdx].frameList,
+                                                 (IOAsyncCallback1) (isocComplete),
+                                                 gCtx);
+    
+    gCtx->initiatedUntil += gCtx->numberOfFramesPerTransfer;
+    
+    switch (error) 
+    {
+        case kIOReturnSuccess:
+            break;
+            
+        case kIOReturnNoDevice:
+        case kIOReturnNotOpen:
+        default:
+            CheckError(error, "StartNextIsochRead-ReadIsochPipeAsync");
+            if (gCtx->contextError == CameraErrorOK) 
+                gCtx->contextError = CameraErrorUSBProblem;
+            break;
+    }
+    
+    return (error == kIOReturnSuccess);
+}
 
-- (void) grabbingThread:(id) data 
+//
+// Avoid subclassing this method if possible
+// Instead put functionality into [setGrabInterfacePipe], [startupGrabStream] and [shutdownGrabStream]
+//
+- (void) grabbingThread: (id) data 
 {
     NSAutoreleasePool * pool=[[NSAutoreleasePool alloc] init];
-    long i;
-    IOReturn error;
     CFRunLoopSourceRef cfSource;
+    IOReturn error;
     bool ok = true;
+    long i;
     
     ChangeMyThreadPriority(10);	// We need to update the isoch read in time, so timing is important for us
     
-    // Put into startupGrabStream
-    // Try to get as much bandwidth as possible?
+    // Try to get as much bandwidth as possible somehow?
     
-    if (![self usbSetAltInterfaceTo:7 testPipe:1]) // This will be different for different cameras
+    if (![self setGrabInterfacePipe]) 
     {
-        if (!grabContext.contextError) 
-            grabContext.contextError = CameraErrorNoBandwidth; // Probably no bandwidth
+        if (grabContext.contextError == CameraErrorOK) 
+            grabContext.contextError = CameraErrorNoBandwidth; // Probably means not enough bandwidth
         ok = NO;
     }
-
+    
+    // Start the stream
+    
     if (ok) 
         ok = [self startupGrabStream];
     
@@ -449,10 +582,12 @@ static bool StartNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
         if (![self usbGetSoon:&(grabContext.initiatedUntil)]) 
         {
             shouldBeGrabbing = NO;
-            if (!grabContext.contextError) 
-                grabContext.contextError = CameraErrorUSBProblem; // Stall or so?
+            if (grabContext.contextError == CameraErrorOK) 
+                grabContext.contextError = CameraErrorUSBProblem; // Did the pipe stall perhaps?
         }
     }
+    
+    // Set up the asynchronous read calls
     
     if (ok) 
     {
@@ -461,8 +596,10 @@ static bool StartNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
         CFRunLoopAddSource(CFRunLoopGetCurrent(), cfSource, kCFRunLoopDefaultMode); // Add it to our run loop
         
         for (i = 0; ok && (i < GENERIC_NUM_TRANSFERS); i++) // Initiate transfers
-            ok = StartNextIsochRead(&grabContext, i);
+            ok = startNextIsochRead(&grabContext, i);
     }
+    
+    // Go into the RunLoop until we are done
     
     if (ok) 
     {
@@ -473,20 +610,25 @@ static bool StartNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     // Stop the stream, reset the USB, close down 
     
     [self shutdownGrabStream];
-    [self usbSetAltInterfaceTo:0 testPipe:0];
+    [self usbSetAltInterfaceTo:0 testPipe:0]; // Reset to control pipe
     
     shouldBeGrabbing = NO; // Error in grabbingThread or abort? initiate shutdown of everything else
     [grabContext.chunkReadyLock unlock]; // Give the decodingThread a chance to abort
+    
+    // Exit the thread cleanly
+    
     [pool release];
     grabbingThreadRunning = NO;
     [NSThread exit];
 }
 
-
+//
+// Avoid subclassing this method if possible
+// Instead put functionality into [decodeBuffer]
+//
 - (CameraError) decodingThread 
 {
     CameraError error = CameraErrorOK;
-    
     grabbingThreadRunning = NO;
     
     // Initialize
@@ -511,14 +653,14 @@ static bool StartNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     {
         [grabContext.chunkReadyLock lock]; // Wait for chunks to become ready
         
-        while ((grabContext.numFullBuffers > 0) && (shouldBeGrabbing)) 
+        while (shouldBeGrabbing && (grabContext.numFullBuffers > 0)) 
         {
-            GenericChunkBuffer currentBuffer;	// The buffer to decode
+            GenericChunkBuffer currentBuffer;   // The buffer to decode
             
             // Get a full buffer
             
-            [grabContext.chunkListLock lock]; // Get access to the buffer lists
-            grabContext.numFullBuffers--;	// There's always one since no one else can empty it completely
+            [grabContext.chunkListLock lock];   // Get access to the buffer lists
+            grabContext.numFullBuffers--;       // There's always one since no one else can empty it completely
             currentBuffer = grabContext.fullChunkBuffers[grabContext.numFullBuffers];
             [grabContext.chunkListLock unlock]; // Release access to the buffer lists
             
@@ -536,42 +678,43 @@ static bool StartNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
                 lastImageBuffer = nextImageBuffer; // Copy nextBuffer info into lastBuffer
                 lastImageBufferBPP = nextImageBufferBPP;
                 lastImageBufferRowBytes = nextImageBufferRowBytes;
-                nextImageBufferSet = NO; // nextBuffer has been eaten up
+                nextImageBufferSet = NO;  // nextBuffer has been eaten up
                 [imageBufferLock unlock]; // Release lock
                 
-                [self mergeImageReady]; // Notify delegate about the image. Perhaps get a new buffer
+                [self mergeImageReady];   // Notify delegate about the image. Perhaps get a new buffer
             }
             
-            // Put the buffer back to the empty ones
+            // Put the chunk buffer back to the empty ones
             
-            [grabContext.chunkListLock lock]; // Get access to the buffer lists
+            [grabContext.chunkListLock lock];   // Get access to the buffer lists
             grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers] = currentBuffer;
             grabContext.numEmptyBuffers++;
             [grabContext.chunkListLock unlock]; // Release access to the buffer lists            
         }
-
     }
     
-    // Shutdown
+    // Shutdown, but wait for grabbingThread finish first
     
-    while (grabbingThreadRunning) // Wait for grabbingThread finish
+    while (grabbingThreadRunning) 
     {
-        usleep(10000); // We need to sleep here because otherwise the compiler would optimize the loop away
+        usleep(10000); // Sleep for 10 ms, then try again
     }
     
     [self cleanupGrabContext];
     
-    if (error = CameraErrorOK) 
-        error = grabContext.contextError; // Return the error from the context instead
+    if (error == CameraErrorOK) 
+        error = grabContext.contextError; // Return the error from the context if there was one
     
     return error;
 }
 
-
+//
+// Decode the chunk buffer into the nextImageBuffer
+// This *must* be subclassed as the decoding is camera dependent
+//
 - (void) decodeBuffer: (GenericChunkBuffer *) buffer
 {
     NSLog(@"GenericDriver - decodeBuffer must be implemented");
 }
-
 
 @end
