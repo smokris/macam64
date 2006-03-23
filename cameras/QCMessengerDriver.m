@@ -66,12 +66,22 @@ void  DEBUGLOG2(NSString * arg1, unsigned long value)
 {
     return [NSArray arrayWithObjects:
         
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_MESSENGER], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
-            @"Logitech QuickCam Messenger", @"name", NULL], 
-        
-        NULL];
+    [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_MESSENGER], @"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+        @"Logitech QuickCam Messenger", @"name", NULL], 
+    
+    [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_MESSENGER_PLUS], @"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+        @"Logitech QuickCam Messenger (new)", @"name", NULL], 
+    
+    [NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMMUNICATE], @"idProduct",
+        [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+        @"Logitech QuickCam Communicate", @"name", NULL], 
+    
+    NULL];
 }
 
 
@@ -498,7 +508,7 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
 }
 
 - (BOOL) camInit {
-    BOOL ok;
+    BOOL ok = YES;
     UInt8 direction;
     UInt8 number;
     UInt8 transferType;
