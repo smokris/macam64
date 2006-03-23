@@ -1,6 +1,6 @@
 /*
  macam - webcam app and QuickTime driver component
- Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
+ Copyright (C) 2005 Hidekazu UCHIDA.
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
@@ -27,11 +27,13 @@ typedef struct transfer {
 	UInt8*			buffer;			// This is the place the transfer goes to
 } Transfer;
 
+/*
 struct code_table_t {
 	int is_abs;
 	int len;
 	int val;
 };
+*/
 
 @interface MyPixartDriver : MyCameraDriver {
 	BOOL grabbingThreadRunning;		// For active wait until grabbingThread has finished

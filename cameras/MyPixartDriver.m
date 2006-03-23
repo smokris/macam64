@@ -1,6 +1,6 @@
 /*
  macam - webcam app and QuickTime driver component
- Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
+ Copyright (C) 2005 Hidekazu UCHIDA.
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by
