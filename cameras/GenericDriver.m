@@ -34,6 +34,7 @@
 // separating out the code that make cameras different into smaller routines. 
 //
 // The main methods that get called (points of entry, if you will) are:
+//   [initWithCentral]
 //   [startupWithUsbLocationId]
 //   [dealloc]
 //   [decodingThread]
@@ -57,6 +58,22 @@
 //
 
 @implementation GenericDriver
+
+//
+// Initialize the driver
+// This *must* be subclassed
+//
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    grabbingThreadRunning = NO;
+	bayerConverter = NULL;
+    
+	return self;
+}
 
 //
 // Avoid subclassing this method if possible
@@ -99,6 +116,159 @@
     
 	[super dealloc];
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// The following methods work for drivers that use the BayerConverter
+////////////////////////////////////////////////////////////////////////////////
+
+//
+// Brightness
+//
+- (BOOL) canSetBrightness 
+{
+    return (bayerConverter != NULL) ? YES : NO;
+}
+
+- (void) setBrightness: (float) v 
+{
+	[super setBrightness:v];
+    
+    if (bayerConverter != NULL) 
+        [bayerConverter setBrightness:[self brightness] - 0.5f];
+}
+
+//
+// Contrast
+//
+- (BOOL) canSetContrast 
+{ 
+    return (bayerConverter != NULL) ? YES : NO;
+}
+
+- (void) setContrast: (float) v 
+{
+	[super setContrast:v];
+    
+    if (bayerConverter != NULL) 
+        [bayerConverter setContrast:[self contrast] + 0.5f];
+}
+
+//
+// Gamma
+//
+- (BOOL) canSetGamma 
+{ 
+    return (bayerConverter != NULL) ? YES : NO;
+}
+
+- (void) setGamma: (float) v 
+{
+    [super setGamma:v];
+    
+    if (bayerConverter != NULL) 
+        [bayerConverter setGamma:[self gamma] + 0.5f];
+}
+
+//
+// Saturation
+//
+- (BOOL) canSetSaturation 
+{ 
+    return (bayerConverter != NULL) ? YES : NO;
+}
+
+- (void) setSaturation: (float) v 
+{
+    [super setSaturation:v];
+    
+    if (bayerConverter != NULL) 
+        [bayerConverter setSaturation:[self saturation] * 2.0f];
+}
+
+//
+// Sharpness
+//
+- (BOOL) canSetSharpness 
+{ 
+    return (bayerConverter != NULL) ? YES : NO;
+}
+
+- (void) setSharpness: (float) v 
+{
+    [super setSharpness:v];
+    
+    if (bayerConverter != NULL) 
+        [bayerConverter setSharpness:[self sharpness]];
+}
+
+//
+// Horizontal flip (mirror)
+// Remember to pass the hFlip value to [BayerConverter convertFromSrc...]
+//
+- (BOOL) canSetHFlip 
+{
+    return (bayerConverter != NULL) ? YES : NO;
+}
+
+//
+// WhiteBalance
+//
+- (BOOL) canSetWhiteBalanceMode 
+{
+    return (bayerConverter != NULL) ? YES : NO;
+}
+
+- (BOOL) canSetWhiteBalanceModeTo: (WhiteBalanceMode) newMode 
+{
+    BOOL ok = (bayerConverter != NULL) ? YES : NO;
+    
+    switch (newMode) 
+    {
+        case WhiteBalanceLinear:
+        case WhiteBalanceIndoor:
+        case WhiteBalanceOutdoor:
+        case WhiteBalanceAutomatic:
+            break;
+            
+        default:
+            ok = NO;
+            break;
+    }
+    
+    return ok;
+}
+
+- (void) setWhiteBalanceMode: (WhiteBalanceMode) newMode 
+{
+    [super setWhiteBalanceMode:newMode];
+    
+    if (bayerConverter == NULL) 
+        return;
+    
+    switch (whiteBalanceMode) 
+    {
+        case WhiteBalanceLinear:
+            [bayerConverter setGainsDynamic:NO];
+            [bayerConverter setGainsRed:1.0f green:1.0f blue:1.0f];
+            break;
+            
+        case WhiteBalanceIndoor:
+            [bayerConverter setGainsDynamic:NO];
+            [bayerConverter setGainsRed:0.8f green:0.97f blue:1.25f];
+            break;
+            
+        case WhiteBalanceOutdoor:
+            [bayerConverter setGainsDynamic:NO];
+            [bayerConverter setGainsRed:1.1f green:0.95f blue:0.95f];
+            break;
+            
+        case WhiteBalanceAutomatic:
+            [bayerConverter setGainsDynamic:YES];
+            break;
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 //
 // Returns the pipe used for grabbing

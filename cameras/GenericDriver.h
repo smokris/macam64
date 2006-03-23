@@ -57,10 +57,12 @@ typedef enum IsocFrameResult
 
 // The scanner is just a placeholder whereas the copier is fully usable
 
-IsocFrameResult genericIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, UInt32 * dataStart, UInt32 * dataLength, UInt32 * tailStart, UInt32 * tailLength);
-int genericIsocDataCopier(void * destination, const void * source, size_t length, size_t available);
+IsocFrameResult  genericIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, UInt32 * dataStart, UInt32 * dataLength, UInt32 * tailStart, UInt32 * tailLength);
+int  genericIsocDataCopier(void * destination, const void * source, size_t length, size_t available);
 
 // Other versions can be added here in case of commonalities
+
+IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, UInt32 * dataStart, UInt32 * dataLength, UInt32 * tailStart, UInt32 * tailLength);
 
 // ...
 
@@ -125,7 +127,7 @@ typedef struct GenericGrabContext
     BayerConverter * bayerConverter; // Our decoder for Bayer Matrix sensors, will be NULL if not a Bayer image
 }
 
-#pragma mark -> Subclass Unlikely to Implement (generic impementation) <-
+#pragma mark -> Subclass Unlikely to Implement (generic implementation) <-
 
 - (CameraError) startupWithUsbLocationId: (UInt32) usbLocationId;
 - (void) dealloc;
@@ -134,15 +136,32 @@ typedef struct GenericGrabContext
 - (void) grabbingThread: (id) data;
 - (CameraError) decodingThread;
 
-#pragma mark -> Subclass Might Implement (default impementation works) <-
+#pragma mark -> Subclass May Implement (works for BayerConverter) <-
+
+- (BOOL) canSetBrightness;
+- (void) setBrightness: (float) v;
+- (BOOL) canSetContrast;
+- (void) setContrast: (float) v;
+- (BOOL) canSetGamma;
+- (void) setGamma: (float) v;
+- (BOOL) canSetSaturation;
+- (void) setSaturation: (float) v;
+- (BOOL) canSetSharpness;
+- (void) setSharpness: (float) v;
+- (BOOL) canSetWhiteBalanceMode;
+- (BOOL) canSetWhiteBalanceModeTo: (WhiteBalanceMode) newMode;
+- (void) setWhiteBalanceMode: (WhiteBalanceMode) newMode;
+
+#pragma mark -> Subclass May Implement (default implementation works) <-
 
 - (void) startupCamera;
 - (UInt8) getGrabbingPipe;
 // specificIsocDataCopier()   // The existing version should work for most
 // specificIsocFrameScanner() // If a suitable one does not already exist
 
-#pragma mark -> Subclass Must Implement! (No impementation) <-
+#pragma mark -> Subclass Must Implement! (Mostly stub implementations) <-
 
+- (id) initWithCentral: (id) c; // Not a stub, make sure to call super in subclass
 - (BOOL) setGrabInterfacePipe;
 - (BOOL) startupGrabStream;
 - (void) shutdownGrabStream;
