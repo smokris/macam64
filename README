@@ -1,14 +1,14 @@
-2005 (c) The macam project
+2006 (c) The macam project
 
-This directory contains the source code for Macam. A MacOS X
+This directory contains the source code for macam, a Mac OS X
 application and quicktime driver for various types of cameras.
 
-Tested on/build with:
-	MacOS X 	10.4.2
-	Xcode		2.1
+Tested on/built with:
+	MacOS X 	10.4.5
+	Xcode		2.2.1
     
-Should work with 10.1, 10.2, 10.3, and 10.4
-This is a universal binary, but it has not been tested on x86 systems.
+Should work with 10.4.x, 10.3.x, and also 10.2.x and 10.1.x
+This is a universal binary.
 
 For copyright, license conditions on use and the source code; please 
 consult each source file; or the file COPYING.txt in this directory.
