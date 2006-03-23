@@ -66,6 +66,12 @@ typedef struct STV600GrabContext {
     long framesSinceLastChunk;		//Number of frames since the last chunk was completed
 } STV600GrabContext;
 
+
+void DiscardFillingChunk(STV600GrabContext * gCtx);
+void GetFillingChunk(STV600GrabContext * gCtx);
+void FinishFillingChunk(STV600GrabContext * gCtx);
+
+
 @interface MyQCExpressADriver : MyCameraDriver {
 //The context for grabbingThread
     STV600GrabContext grabContext;		//the grab context (everything the async usb read callbacks need)
