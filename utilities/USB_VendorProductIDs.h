@@ -73,7 +73,7 @@
 #define PRODUCT_QUICKAM_PRO_5000        0x08c5
 
 #define PRODUCT_QUICKCAM_MESSENGER      0x08f0      // QCMessengerDriver
-#define PRODUCT_QUICKCAM_COMMUNICATE_PLUS 0x08f5    // QCMessengerDriver
+#define PRODUCT_QUICKCAM_COMMUNICATE    0x08f5      // QCMessengerDriver
 #define PRODUCT_QUICKCAM_MESSENGER_PLUS 0x08f6      // QCMessengerDriver
 
 #define	PRODUCT_CLICKSMART_310          0x0900
