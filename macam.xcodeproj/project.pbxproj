@@ -438,6 +438,12 @@
 		F5AEAE2D0980992B00D45891 /* SPCA561ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAE290980992B00D45891 /* SPCA561ADriver.m */; };
 		F5AEAE2E0980992B00D45891 /* SPCA561ADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEAE280980992B00D45891 /* SPCA561ADriver.h */; };
 		F5AEAE2F0980992B00D45891 /* SPCA561ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAE290980992B00D45891 /* SPCA561ADriver.m */; };
+		F5D04F7F09C601D100E4E12D /* PixartDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D04F7D09C601D100E4E12D /* PixartDriver.h */; };
+		F5D04F8009C601D100E4E12D /* PixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D04F7E09C601D100E4E12D /* PixartDriver.m */; };
+		F5D04F8109C601D100E4E12D /* PixartDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D04F7D09C601D100E4E12D /* PixartDriver.h */; };
+		F5D04F8209C601D100E4E12D /* PixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D04F7E09C601D100E4E12D /* PixartDriver.m */; };
+		F5D04F8309C601D100E4E12D /* PixartDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D04F7D09C601D100E4E12D /* PixartDriver.h */; };
+		F5D04F8409C601D100E4E12D /* PixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D04F7E09C601D100E4E12D /* PixartDriver.m */; };
 		F5D1DDFF0976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
 		F5D1DE000976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
 		F5D1DE010976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
@@ -669,6 +675,10 @@
 		F5CD7018092AEBF600E9EEE3 /* generate_app.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_app.plist; sourceTree = "<group>"; };
 		F5CD701A092AEC1000E9EEE3 /* generate_ica_module.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_ica_module.plist; sourceTree = "<group>"; };
 		F5CD701C092AEC2600E9EEE3 /* generate_component.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_component.plist; sourceTree = "<group>"; };
+		F5CFE5FA09D069DF00C6DB41 /* ExampleDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExampleDriver.h; sourceTree = "<group>"; };
+		F5CFE5FB09D069DF00C6DB41 /* ExampleDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExampleDriver.m; sourceTree = "<group>"; };
+		F5D04F7D09C601D100E4E12D /* PixartDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixartDriver.h; sourceTree = "<group>"; };
+		F5D04F7E09C601D100E4E12D /* PixartDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PixartDriver.m; sourceTree = "<group>"; };
 		F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ov518_decomp.c; sourceTree = "<group>"; };
 		F5E6AA660371F8920166D062 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6B0371F8B00166D062 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
@@ -977,6 +987,10 @@
 		F5F79A800212038E01E152CA /* cameras */ = {
 			isa = PBXGroup;
 			children = (
+				F5CFE5FA09D069DF00C6DB41 /* ExampleDriver.h */,
+				F5CFE5FB09D069DF00C6DB41 /* ExampleDriver.m */,
+				F5D04F7D09C601D100E4E12D /* PixartDriver.h */,
+				F5D04F7E09C601D100E4E12D /* PixartDriver.m */,
 				F5F17BAE09BD0B10000AEB63 /* QCMessengerDriver.h */,
 				F5F17BAF09BD0B10000AEB63 /* QCMessengerDriver.m */,
 				F5F17B6D09BCD671000AEB63 /* GenericDriver.h */,
@@ -1152,6 +1166,7 @@
 				F5F17B7109BCD671000AEB63 /* GenericDriver.h in Headers */,
 				F5F17BB209BD0B11000AEB63 /* QCMessengerDriver.h in Headers */,
 				F5F1809409BF37EC000AEB63 /* VV6450Sensor.h in Headers */,
+				F5D04F8309C601D100E4E12D /* PixartDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1226,6 +1241,7 @@
 				F5F17B6F09BCD671000AEB63 /* GenericDriver.h in Headers */,
 				F5F17BB009BD0B10000AEB63 /* QCMessengerDriver.h in Headers */,
 				F5F1809209BF37EC000AEB63 /* VV6450Sensor.h in Headers */,
+				F5D04F7F09C601D100E4E12D /* PixartDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1296,6 +1312,7 @@
 				F5F17B7309BCD671000AEB63 /* GenericDriver.h in Headers */,
 				F5F17BB409BD0B11000AEB63 /* QCMessengerDriver.h in Headers */,
 				F5F1809609BF37EC000AEB63 /* VV6450Sensor.h in Headers */,
+				F5D04F8109C601D100E4E12D /* PixartDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1593,6 +1610,7 @@
 				F5F17BB309BD0B11000AEB63 /* QCMessengerDriver.m in Sources */,
 				F5F17C6E09BD39A7000AEB63 /* RGB888Scaler.m in Sources */,
 				F5F1809509BF37EC000AEB63 /* VV6450Sensor.m in Sources */,
+				F5D04F8409C601D100E4E12D /* PixartDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1650,6 +1668,7 @@
 				F5F17B7009BCD671000AEB63 /* GenericDriver.m in Sources */,
 				F5F17BB109BD0B11000AEB63 /* QCMessengerDriver.m in Sources */,
 				F5F1809309BF37EC000AEB63 /* VV6450Sensor.m in Sources */,
+				F5D04F8009C601D100E4E12D /* PixartDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1705,6 +1724,7 @@
 				F5F17BB509BD0B11000AEB63 /* QCMessengerDriver.m in Sources */,
 				F5F17C6F09BD39A9000AEB63 /* RGB888Scaler.m in Sources */,
 				F5F1809709BF37EC000AEB63 /* VV6450Sensor.m in Sources */,
+				F5D04F8209C601D100E4E12D /* PixartDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2016,6 +2036,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "REALLY_VERBOSE=1";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_LDFLAGS = "-lSystem";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
@@ -2283,6 +2304,7 @@
 				);
 				COPY_PHASE_STRIP = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = "REALLY_VERBOSE=1";
 				GCC_VERSION_i386 = 4.0;
 				GCC_VERSION_ppc = 3.3;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
