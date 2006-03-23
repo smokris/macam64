@@ -33,9 +33,27 @@
 // This driver provides more of the common code that most drivers need, while 
 // separating out the code that make cameras different into smaller routines. 
 //
+// The main methods that get called (points of entry, if you will) are:
+//   [startupWithUsbLocationId]
+//   [dealloc]
+//   [decodingThread]
+//
 // To implement a new driver, subclass this class (GenericDriver) and implement
 // all the required methods and any other methods that are necessary for the 
 // specific camera. See the ExampleDriver for an example.
+//
+// These methods *must* be implemented by a subclass:
+//  [setGrabInterfacePipe]
+//  [startupGrabStream]
+//  [shutdownGrabStream]
+//  [setIsocFrameFunctions]
+//  [decodeBuffer]
+//
+// The following methods and functions might be implemented by a subclass if necessary:
+//  [startupCamera]
+//  [getGrabbingPipe]
+//  specificIsocDataCopier()   // The existing version should work for most
+//  specificIsocFrameScanner() // If a suitable one does not already exist
 //
 
 @implementation GenericDriver
@@ -187,7 +205,7 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     
     grabContext.intf = intf;
     grabContext.grabbingPipe = [self getGrabbingPipe];
-    grabContext.bytesPerFrame = kUSBMaxFSIsocEndpointReqCount; // Seems like the maximum size of a frame (payload) kUSBMaxHSIsocEndpointReqCount for USB2 high-speed
+    grabContext.bytesPerFrame = 1023; // Seems like the maximum size of a frame (payload) kUSBMaxFSIsocEndpointReqCount / kUSBMaxHSIsocEndpointReqCount for USB2 high-speed
     
     grabContext.shouldBeGrabbing = &shouldBeGrabbing;
     grabContext.contextError = CameraErrorOK;
