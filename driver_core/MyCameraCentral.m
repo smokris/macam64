@@ -49,6 +49,7 @@
 #import "SQ905.h"
 #import "SQ930C.h"
 #import "MyPixartDriver.h"
+#import "PixartDriver.h"
 #import "PAC7311Driver.h"
 #import "SPCA5XXDriver.h"
 #include "unistd.h"
@@ -215,7 +216,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[MyQCOrbitDriver class]];
     [self registerCameraDriver:[SQ905 class]];
     [self registerCameraDriver:[SQ930C class]];
-    [self registerCameraDriver:[MyPixartDriver class]];
+//  [self registerCameraDriver:[MyPixartDriver class]]; // Deprecated in favor of PixartDriver
+    [self registerCameraDriver:[PixartDriver class]];
     [self registerCameraDriver:[PAC7311Driver class]];
     [self registerCameraDriver:[OV518Driver class]];
     [self registerCameraDriver:[OV518PlusDriver class]];
