@@ -39,6 +39,16 @@ typedef enum CameraFeature {
 } CameraFeature;
 
 
+
+struct code_table_t 
+{
+	int is_abs;
+	int len;
+	int val;
+};
+
+
+
 @interface MyCameraDriver : NSObject {
 //General stuff
     id delegate;			//The delegate to notify [imageReady], [grabFinished] and [cameraHasShutDown].
