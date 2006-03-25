@@ -38,6 +38,7 @@
 #import "MyQCExpressADriver.h"
 #import "MyQCExpressBDriver.h"
 #import "MyQCWebDriver.h"
+#import "QCMessengerDriver.h"
 #import "MyVicamDriver.h"
 #import "MySPCA504Driver.h"
 #import "MyOV511Driver.h"
@@ -203,6 +204,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[MyQCExpressADriver class]];
     [self registerCameraDriver:[MyQCExpressBDriver class]];
     [self registerCameraDriver:[MyQCWebDriver class]];
+    [self registerCameraDriver:[QCMessengerDriver class]];
     [self registerCameraDriver:[MyVicamDriver class]];
     [self registerCameraDriver:[MySPCA504Driver class]];
     [self registerCameraDriver:[MyOV511Driver class]];
