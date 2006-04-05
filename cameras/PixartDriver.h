@@ -26,7 +26,7 @@
 
 @interface PixartDriver : GenericDriver 
 {
-	struct code_table_t codeTable[256];
+	struct code_table codeTable[256];
 	UInt8 * decodingBuffer;
 }
 

@@ -34,8 +34,8 @@
 
 // Prototypes for some decoding functions
 
-static void initPixartDecoder(struct code_table_t * table);
-static int pacDecompressRow(struct code_table_t * table, unsigned char * input, unsigned char * output, int width);
+static void initPixartDecoder(struct code_table * table);
+static int pacDecompressRow(struct code_table * table, unsigned char * input, unsigned char * output, int width);
 
 static inline unsigned short getShort(unsigned char *pt)
 {
@@ -440,7 +440,7 @@ IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 // Initialize the decoding table
 //
-static void initPixartDecoder(struct code_table_t * table)
+static void initPixartDecoder(struct code_table * table)
 {
 	int i, is_abs, val, len;
 
@@ -523,7 +523,7 @@ static inline unsigned char getByte(unsigned char * input, unsigned int bitpos)
 //
 // This function decompresses one row of the image
 //
-static int pacDecompressRow(struct code_table_t * table, unsigned char * input, unsigned char * output, int width)
+static int pacDecompressRow(struct code_table * table, unsigned char * input, unsigned char * output, int width)
 {
 	int col, val, bitpos;
 	unsigned char code;

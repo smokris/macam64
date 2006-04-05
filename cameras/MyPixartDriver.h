@@ -46,7 +46,7 @@ struct code_table_t {
 	UInt8*			transferBuffer;	// This is the place the transfer goes to
 	UInt8*			tmpBuffer;
 
-	struct code_table_t codeTable[256];
+	struct code_table codeTable[256];
 
 //	Transfer* transfers;
 	short	fillingTransfer;

@@ -37,7 +37,7 @@
 
 // ---------------------------------------------------------------------------------
 
-void init_pixart_decoder(struct code_table_t *table)
+static void init_pixart_decoder(struct code_table *table)
 {
 	int i;
 	int is_abs, val, len;
@@ -98,7 +98,7 @@ static inline unsigned short getShort(unsigned char *pt)
 
 #define CLIP(color) (unsigned char)(((color)>0xFF)?0xff:(((color)<0)?0:(color)))
 
-static int pac_decompress_row(struct code_table_t *table, unsigned char *inp, unsigned char *outp, int width)
+static int pac_decompress_row(struct code_table *table, unsigned char *inp, unsigned char *outp, int width)
 {
 	int col;
 	int val;
@@ -734,7 +734,7 @@ static void transferComplete(void *refcon, IOReturn result, void *arg0)
 
 // ---------------------------------------------------------------------------------
 
--(BOOL) pixart_decompress:(UInt8*)inp to:(UInt8*)outp width:(short)width height:(short)height table:(struct code_table_t *)table
+-(BOOL) pixart_decompress:(UInt8*)inp to:(UInt8*)outp width:(short)width height:(short)height table:(struct code_table *)table
 {
 	// We should received a whole frame with header and EOL marker in *inp
 	// and return a GBRG pattern in *outp
