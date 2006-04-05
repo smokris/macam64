@@ -703,6 +703,8 @@ static int spca561_config(struct usb_spca50x *spca50x)
 	PDEBUG(1, "Read from GLOBAL: USB Product ID 0x%02x%02x", data2, data1);
 	spca50x->customid = ((data2 << 8) | data1) & 0xffff;
 	switch (spca50x->customid){
+    case 0x0000: // try this
+        spca50x->customid = 0x0561; // fall through
 	case 0x7004:
 	case 0xa001:
 	case 0x0815:
