@@ -3,7 +3,7 @@
  macam
 
  Created by Charles Le Seac'h on 15/08/04.
- Copyright 2004 Charles Le Seac'h (charles@torda.net). All rights reserved.
+ Copyright 2004 Charles Le Seac'h (charles@torda.net). GPL applies.
 
  This program is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

@@ -3,7 +3,7 @@
 //  macam
 //
 //  Created by Charles Le Seac'h on 15/08/04.
-//  Copyright 2004 __MyCompanyName__. All rights reserved.
+//  Copyright 2004 Charles Le Seac'h. GPL
 //
 
 #import "MyQCOrbitCameraInspector.h"
