@@ -82,7 +82,7 @@
 }
 
 - (void) setSourceFormat:(short)fmt {
-    if ((fmt<1)||(fmt>5)) return;
+    if ((fmt<1)||(fmt>6)) return;
     sourceFormat=fmt;
 }
 
@@ -226,7 +226,8 @@
             blue1Run  =src+srcRowBytes+sourceWidth/2;
             green2Run =src+srcRowBytes;
             break;
-        case 2:	//Interleaved data (STV600-style)
+        case 2:	//Interleaved data (STV600-style) // GRBG
+        case 6: // works like 4 then switch R and B at the end // GBRG
             componentStep=2;
             green1Run =src;
             red1Run   =src+1;
@@ -240,8 +241,8 @@
             green2Run =src+1;
             blue1Run  =src+srcRowBytes;
             break;
-        case 4:	// OV7630 style
-        case 5: // works like 4 then switch R and B at the end
+        case 4:	// OV7630 style // BGGR
+        case 5: // works like 4 then switch R and B at the end // RGGB
 			GRBGtype = NO;
             componentStep=2;
             blue1Run  =src;
@@ -412,7 +413,7 @@
     *(dst1Run++)=(GRBGtype)?*green2Run:(*green1Run+*green2Run)/2;
     *(dst1Run++)=*blue1Run;
     
-    if (type == 5) // RGGB
+    if (type == 5 || type == 6) // RGGB or GBRG
     {
         for (y = 0; y < sourceHeight; y++) 
             for (x = 0; x < sourceWidth; x++) 
