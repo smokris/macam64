@@ -3,13 +3,14 @@
  *  macam
  *
  *  Created by HXR on 6/29/05.
- *  Copyright 2005 HXR. All rights reserved. GPL applies.
+ *  Copyright 2005 HXR. GPL applies.
  *
  */
 
 // This file should contain, vendor, product, and a comment with the name of the driver that recognizes the camera
 
 #define VENDOR_SUNPLUS			0x04fc
+#define PRODUCT_GENERIC_SPCA561_CAM     0x0561
 
 #define VENDOR_FINET_TECHNOLOGY 0x04fc
 #define	PRODUCT_PALMPIX_DC_85           0x7333		// SPCA500A
