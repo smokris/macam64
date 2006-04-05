@@ -125,6 +125,12 @@ typedef struct GenericGrabContext
     BOOL grabbingThreadRunning;
     
     BayerConverter * bayerConverter; // Our decoder for Bayer Matrix sensors, will be NULL if not a Bayer image
+    
+    BOOL hardwareBrightness;
+    BOOL hardwareContrast;
+    BOOL hardwareSaturation;
+    BOOL hardwareGamma;
+    BOOL hardwareSharpness;    
 }
 
 #pragma mark -> Subclass Unlikely to Implement (generic implementation) <-
