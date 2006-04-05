@@ -23,11 +23,10 @@
 //
 
 
-#import <Cocoa/Cocoa.h>
-#include "MyPixartDriver.h"
+#import <PixartDriver.h>
 
 
-@interface PAC7311Driver : MyPixartDriver 
+@interface PAC7311Driver : PixartDriver 
 {
 
 }

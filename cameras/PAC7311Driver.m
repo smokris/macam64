@@ -24,6 +24,7 @@
 
 
 #import "PAC7311Driver.h"
+
 #include "USB_VendorProductIDs.h"
 
 
@@ -41,7 +42,7 @@
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC7311], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC7311 based camera", @"name", NULL], 
+            @"PixArt PAC7311 based camera (probably)", @"name", NULL], 
         
         NULL];
 }
