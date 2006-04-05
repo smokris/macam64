@@ -3,7 +3,7 @@
 //  MovieTester
 //
 //  Created by Matthias Krau§ on Fri Nov 01 2002.
-//  Copyright (c) 2002 __MyCompanyName__. All rights reserved.
+//  Copyright (c) 2002 Matthias Krau§. GPL
 //
 
 #import <Cocoa/Cocoa.h>
