@@ -72,6 +72,12 @@
     grabbingThreadRunning = NO;
 	bayerConverter = NULL;
     
+    hardwareBrightness = NO;
+    hardwareContrast = NO;
+    hardwareSaturation = NO;
+    hardwareGamma = NO;
+    hardwareSharpness = NO;   
+    
 	return self;
 }
 
@@ -126,14 +132,14 @@
 //
 - (BOOL) canSetBrightness 
 {
-    return (bayerConverter != NULL) ? YES : NO;
+    return (bayerConverter != NULL || hardwareBrightness) ? YES : NO;
 }
 
 - (void) setBrightness: (float) v 
 {
 	[super setBrightness:v];
     
-    if (bayerConverter != NULL) 
+    if (bayerConverter != NULL && !hardwareBrightness) 
         [bayerConverter setBrightness:[self brightness] - 0.5f];
 }
 
@@ -142,14 +148,14 @@
 //
 - (BOOL) canSetContrast 
 { 
-    return (bayerConverter != NULL) ? YES : NO;
+    return (bayerConverter != NULL || hardwareContrast) ? YES : NO;
 }
 
 - (void) setContrast: (float) v 
 {
 	[super setContrast:v];
     
-    if (bayerConverter != NULL) 
+    if (bayerConverter != NULL && !hardwareContrast) 
         [bayerConverter setContrast:[self contrast] + 0.5f];
 }
 
@@ -158,14 +164,14 @@
 //
 - (BOOL) canSetGamma 
 { 
-    return (bayerConverter != NULL) ? YES : NO;
+    return (bayerConverter != NULL || hardwareGamma) ? YES : NO;
 }
 
 - (void) setGamma: (float) v 
 {
     [super setGamma:v];
     
-    if (bayerConverter != NULL) 
+    if (bayerConverter != NULL && !hardwareGamma) 
         [bayerConverter setGamma:[self gamma] + 0.5f];
 }
 
@@ -174,14 +180,14 @@
 //
 - (BOOL) canSetSaturation 
 { 
-    return (bayerConverter != NULL) ? YES : NO;
+    return (bayerConverter != NULL || hardwareSaturation) ? YES : NO;
 }
 
 - (void) setSaturation: (float) v 
 {
     [super setSaturation:v];
     
-    if (bayerConverter != NULL) 
+    if (bayerConverter != NULL && !hardwareSaturation) 
         [bayerConverter setSaturation:[self saturation] * 2.0f];
 }
 
@@ -190,16 +196,36 @@
 //
 - (BOOL) canSetSharpness 
 { 
-    return (bayerConverter != NULL) ? YES : NO;
+    return (bayerConverter != NULL || hardwareSharpness) ? YES : NO;
 }
 
 - (void) setSharpness: (float) v 
 {
     [super setSharpness:v];
     
-    if (bayerConverter != NULL) 
+    if (bayerConverter != NULL && !hardwareSharpness) 
         [bayerConverter setSharpness:[self sharpness]];
 }
+
+
+// Gain and shutter combined
+- (BOOL) canSetAutoGain 
+{
+    return (bayerConverter != NULL) ? YES : NO;
+}
+
+
+- (void) setAutoGain:(BOOL) v
+{
+    if (v == autoGain) 
+        return;
+    
+    [super setAutoGain:v];
+    
+    if (bayerConverter != NULL) 
+        [bayerConverter setMakeImageStats:v];
+}
+
 
 //
 // Horizontal flip (mirror)
@@ -329,8 +355,8 @@ IsocFrameResult  genericIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 int  genericIsocDataCopier(void * destination, const void * source, size_t length, size_t available)
 {
-    if (length > available) 
-        length = available;
+    if (length > available-1) 
+        length = available-1;
     
     memcpy(destination, source, length);
     
@@ -375,7 +401,7 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     
     grabContext.intf = intf;
     grabContext.grabbingPipe = [self getGrabbingPipe];
-    grabContext.bytesPerFrame = 1023; // Seems like the maximum size of a frame (payload) kUSBMaxFSIsocEndpointReqCount / kUSBMaxHSIsocEndpointReqCount for USB2 high-speed
+    grabContext.bytesPerFrame = [self usbGetIsocFrameSize];
     
     grabContext.shouldBeGrabbing = &shouldBeGrabbing;
     grabContext.contextError = CameraErrorOK;
@@ -664,9 +690,11 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
             
             if (gCtx->fillingChunk && (dataLength > 0)) 
             {
+                [gCtx->chunkListLock lock];
                 int add = (*gCtx->isocDataCopier)(gCtx->fillingChunkBuffer.buffer + gCtx->fillingChunkBuffer.numBytes, 
                                                   frameBase + dataStart, dataLength, gCtx->chunkBufferLength - gCtx->fillingChunkBuffer.numBytes);
                 gCtx->fillingChunkBuffer.numBytes += add;
+                [gCtx->chunkListLock unlock];
             }
         }
         
@@ -674,7 +702,7 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
         
         if (gCtx->framesSinceLastChunk > 1000) // One second without a frame? That is too long, something is wrong.
         {
-            NSLog(@"GenericDriver grab aborted because of invalid data stream (too long without a frame)");
+            NSLog(@"GenericDriver: grab aborted because of invalid data stream (too long without a frame, %i invalid)", droppedFrames);
             *gCtx->shouldBeGrabbing = NO;
             if (gCtx->contextError == CameraErrorOK) 
                 gCtx->contextError = CameraErrorUSBProblem;
@@ -682,7 +710,7 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
     }
     
     // Initiate next transfer
-
+    
     if (*gCtx->shouldBeGrabbing) 
     {
         if (!startNextIsochRead(gCtx, transferIdx)) 
@@ -693,6 +721,7 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
     
     if (!(*gCtx->shouldBeGrabbing)) 
     {
+        droppedFrames = 0;
         gCtx->finishedTransfers++;
         if (gCtx->finishedTransfers >= gCtx->numberOfTransfers) 
             CFRunLoopStop(CFRunLoopGetCurrent());
