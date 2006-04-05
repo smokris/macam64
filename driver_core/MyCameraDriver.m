@@ -930,7 +930,41 @@
     IOObjectRelease(usbInterfaceRef);
     
 //get access to the interface interface
-    err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID), (LPVOID)&intf);
+#if 0
+    interfaceID = 220;
+    err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID220), (LPVOID)&intf);
+    
+    if (err) 
+    {
+        interfaceID = 197;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID197), (LPVOID)&intf);
+    }
+    if (err) 
+    {
+        interfaceID = 197;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID192), (LPVOID)&intf);
+    }
+    if (err) 
+    {
+        interfaceID = 190;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID190), (LPVOID)&intf);
+    }
+    if (err) 
+#endif
+    {
+        interfaceID = 183;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID183), (LPVOID)&intf);
+    }
+    if (err) 
+    {
+        interfaceID = 182;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID182), (LPVOID)&intf);
+    }
+    if (err) 
+    {
+        interfaceID = 0;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID), (LPVOID)&intf);
+    }
     CheckError(err,"usbConnectToCam-QueryInterface2");
     assert(intf);
     (*iodev)->Release(iodev);					// done with this
@@ -977,6 +1011,29 @@
     if (err) return NO;
     *to=frame+100;					//give it a little time to start
     return YES;
+}
+
+// Return the size needed for an isochronous frame
+// Depends on whether it is high-speed device on a high-speed hub
+- (int) usbGetIsocFrameSize
+{
+#if 0
+    IOReturn err;
+    UInt32 microsecondsInFrame = kUSBFullSpeedMicrosecondsInFrame;
+    
+    if (interfaceID >= 197) 
+    {
+        err = (*(IOUSBInterfaceInterface197 **) intf)->GetFrameListTime(intf, &microsecondsInFrame);
+        CheckError(err,"usbGetIsocFrameSize");
+    }
+    
+    if (microsecondsInFrame == kUSBHighSpeedMicrosecondsInFrame) 
+        return kUSBMaxHSIsocEndpointReqCount;
+    
+    return kUSBMaxFSIsocEndpointReqCount;
+#else 
+    return 1023;
+#endif
 }
 
 //Other tool functions
