@@ -601,6 +601,9 @@
     else 
         [bayerConverter setSourceFormat:4];
     
+    if (compressionRatio > 1) 
+        [bayerConverter setSourceFormat:5];
+        
     [bayerConverter setSourceWidth:width height:height];
     [bayerConverter setDestinationWidth:width height:height];
     
@@ -795,6 +798,7 @@
 //
 /////////////////////////////////////
 
+#pragma mark ----- Private Function Implementations
 
 // 
 // 0x09:0x05 = DEFAULT, others are known or unknown
@@ -850,6 +854,31 @@
 }
 
 
+// Still need to identify:
+/*
+ Argus	DC-1512
+ UMAX	AstraNugget
+ Yamada	AstraNugget
+ iConcepts	Digital Camera (dual-mode)
+ Sakar	Kidz Cam
+ Bruneau	Digi Tech
+ Che-ez!	Snap
+ Mitek	CD10
+ Mitek	CD30P
+ Sakar	GearToGo
+ Gaba	CD10B4
+ Volcano	DG640E
+ Trust	Mobile Webcam 100
+ Shuoying	SY-2107C
+ Shark	SDC-513
+ Shark	SDC-519
+ Vivitar	ViviCam 5B
+ Jenoptik	JDC 350
+ Concord	Eye-Q Easy
+ Concord	Eye-Q Duo
+ GTW Electronics	SY-2102
+ GTW Electronics	SY-2107C
+ */
 - (NSString *) getModelName
 {
     NSString * name = NULL;
@@ -858,11 +887,11 @@
     switch (sqModel) 
     {
         case SQ_MODEL_POCK_CAM_ETC:
-            name = @"PockCam or similar";
+            name = @"PockCam 300 or similar";
             break;
             
         case SQ_MODEL_PRECISION_MINI:
-            name = @"Precision mini";
+            name = @"Precision Mini Digital Camera";
             break;
             
         case SQ_MODEL_MAGPIX_B350_BINOCULARS:
@@ -878,7 +907,7 @@
             break;
             
         case SQ_MODEL_DC_N130T:
-            name = @"DC-N130t";
+            name = @"HY Technology DC-N130t";
             break;
             
         case SQ_MODEL_ARGUS_DC_1730:
@@ -902,8 +931,11 @@
         char idStringBuffer[30];
         
         sprintf(idStringBuffer, " (%02x:%02x:%02x:%02x)", modelID[0], modelID[1], modelID[2], modelID[3]);
+        NSString * idString = [NSString stringWithUTF8String:idStringBuffer];
+    /* only in 10.4 and later
         NSString * idString = [NSString stringWithCString:idStringBuffer
                                                  encoding:[NSString defaultCStringEncoding]];
+    */
         name = [name stringByAppendingString:idString];
     }
     
@@ -1044,10 +1076,16 @@
 }
 
 
+//
+// Smoothing helps a lot
+// Bayer order RGGB (format 5) seems better than BGGR (format 4)
+//
 - (NSBitmapImageRep *) decompress:(unsigned char *) data ratio:(int) compressionRatio pixelsWide:(int) width pixelsHigh:(int) height flip:(BOOL) mirror rotate180:(BOOL) rotate
 {
     unsigned char datum, previous;
     unsigned char * outputBuffer = NULL;
+    unsigned char * currentRow = NULL;
+    unsigned char * smoothBuffer = NULL;
     int i, ii, j, jj;
     
     if (compressionRatio != 2) 
@@ -1069,7 +1107,13 @@
     if (outputBuffer == NULL) 
         outputBuffer = (unsigned char *) malloc(width * height);
     
-    if (outputBuffer == NULL) 
+    if (smoothBuffer == NULL) 
+        smoothBuffer = (unsigned char *) malloc(width * height);
+    
+    if (currentRow == NULL) 
+        currentRow = (unsigned char *) malloc(width);
+    
+    if (outputBuffer == NULL || smoothBuffer == NULL || currentRow == NULL) 
         return NULL; // Memory allocation failed
     
     // Do 4 things at once
@@ -1085,8 +1129,8 @@
     // three separate chunks, G, B, R. The G is double the size
     // [this reverse of libphotot sq905 as it is rotated first]
     
-    // put the pixels in Bayer order, BGGR, but 
-    // this image will be rotated, so we really need RGGB!
+    // put the pixels in Bayer order, RGGB, but 
+    // this image will be rotated, so we really need BGGR!
     
     for (i = 0; i < width; i++) 
         for (j = 0; j < height; j++) 
@@ -1096,17 +1140,17 @@
             int low_nibble = (i / 2) % 2;
             int scale, offset;
             
-            if (odd_row && odd_column) // B
-            {
-                jj = j / 2;
-                scale = 4;
-                offset = width * height * 2 / 8;
-            }
-            else if (!odd_row && !odd_column) // R
+            if (odd_row && odd_column) // R
             {
                 jj = j / 2;
                 scale = 4;
                 offset = width * height * 3 / 8;
+            }
+            else if (!odd_row && !odd_column) // B
+            {
+                jj = j / 2;
+                scale = 4;
+                offset = width * height * 2 / 8;
             }
             else // G
             {
@@ -1115,12 +1159,12 @@
                 offset = width * height * 0 / 8;
     	    }
             
-            // scale == 4 because there are trwo pixels in every byte *and* 
+            // scale == 4 because there are two pixels in every byte *and* 
             // we are stuffing into every other pixel (the alternating Bayer)
             
             datum = data[offset + (i + jj * width) / scale];
             
-            if (low_nibble) 
+            if (low_nibble) // this seems best
                 datum = (datum & 0x0f);
             else 
                 datum = (datum >> 4);
@@ -1140,9 +1184,10 @@
     
     // Decompress columns
     
-    for (i = 0; i < width; i += 2) 
-        for (j = 0; j < height; j += 2) 
-            for (jj = 0; jj < 2; jj++) 
+    for (j = 0; j < height; j += 2) 
+        for (jj = 0; jj < 2; jj++) 
+        {
+            for (i = 0; i < width; i += 2) 
                 for (ii = 0; ii < 2; ii++) 
                 {
                     if (j == 0 && (jj == 0 || ii == 1)) 
@@ -1150,7 +1195,7 @@
                         datum = outputBuffer[(ii + i) + (jj) * width];
                         datum = (datum << 4);
                         
-                        outputBuffer[(ii + i) + (jj) * width] = datum;
+                        currentRow[ii + i] = outputBuffer[(ii + i) + (jj) * width] = datum;
                     } 
                     else 
                     {
@@ -1163,13 +1208,112 @@
                         else // thus jj == 0 and ii == 1
                             previous = outputBuffer[(ii + i - 1) + (jj + j - 1) * width];
                         
-                        outputBuffer[(ii + i) + (jj + j) * width] = [self decode_pixel:datum given:previous];
+                        currentRow[ii + i] = outputBuffer[(ii + i) + (jj + j) * width] = [self decode_pixel:datum given:previous];
+                    }
+                    
+                    if (0) 
+                    {
+                        // Now do averaging
+                    
+                        if (i > 0) 
+                        {
+                            outputBuffer[(ii + i) + (jj + j) * width] = (outputBuffer[(ii + i) + (jj + j) * width] + 
+                                                                         outputBuffer[(ii + i - 2) + (jj + j) * width]) / 2;
+                        }
                     }
                 }
+                
+            if (0) // Averaging just after completing each row, and before going on to the next
+            {
+                outputBuffer[0 + (jj + j) * width] = (currentRow[0] + currentRow[2]) / 2;
+                outputBuffer[1 + (jj + j) * width] = (currentRow[1] + currentRow[3]) / 2;
+                
+                for (i = 2; i < width - 2; i++) 
+                    outputBuffer[i + (jj + j) * width] = (currentRow[i - 2] + currentRow[i] + 
+                                                                 currentRow[i + 2]) / 3;
+                
+                outputBuffer[width - 2 + (jj + j) * width] = (currentRow[width - 4] + currentRow[width - 2]) / 2;
+                outputBuffer[width - 1 + (jj + j) * width] = (currentRow[width - 3] + currentRow[width - 1]) / 2;
+            }
+            
+            // Could also avergae pixel and next
+            
+            if (1) // Averaging just after completing each row, and before going on to the next
+            {
+                for (i = 0; i < width - 2; i++) 
+                    outputBuffer[i + (jj + j) * width] = (currentRow[i] + currentRow[i + 2]) / 2;
+                
+                outputBuffer[width - 2 + (jj + j) * width] = (currentRow[width - 4] + currentRow[width - 2]) / 2;
+                outputBuffer[width - 1 + (jj + j) * width] = (currentRow[width - 3] + currentRow[width - 1]) / 2;
+            }
+            
+            // Or pixel and previous
+            
+            // best so far
+                    
+            if (0) // Averaging just after completing each row, and before going on to the next
+            {
+                outputBuffer[0 + (jj + j) * width] = (currentRow[0] + currentRow[2]) / 2;
+                outputBuffer[1 + (jj + j) * width] = (currentRow[1] + currentRow[3]) / 2;
+                
+                for (i = 2; i < width; i++) 
+                    outputBuffer[i + (jj + j) * width] = (currentRow[i - 2] + 2 * currentRow[i]) / 3;
+            }
+                    
+            // Or pixel and previous
+            
+            if (0) // Averaging just after completing each row, and before going on to the next
+            {
+                outputBuffer[0 + (jj + j) * width] = (currentRow[0] + currentRow[2]) / 2;
+                outputBuffer[1 + (jj + j) * width] = (currentRow[1] + currentRow[3]) / 2;
+                
+                for (i = 2; i < width; i++) 
+                    outputBuffer[i + (jj + j) * width] = (currentRow[i - 2] + currentRow[i]) / 2;
+            }
+            
+            // alternate
+            
+            if (0) // not very good
+            {
+                outputBuffer[0 + (jj + j) * width] = (currentRow[0] + currentRow[2]) / 2;
+                outputBuffer[1 + (jj + j) * width] = (currentRow[1] + currentRow[3]) / 2;
+                
+                for (i = 2; i < width - 2; i += 2) 
+                {
+                    outputBuffer[i + 0 + (jj + j) * width] = (currentRow[i + 0] + currentRow[i + 2]) / 2;
+                    outputBuffer[i + 1 + (jj + j) * width] = (currentRow[i + 1] + currentRow[i - 1]) / 2;
+                }
+                
+                outputBuffer[width - 2 + (jj + j) * width] = (currentRow[width - 4] + currentRow[width - 2]) / 2;
+                outputBuffer[width - 1 + (jj + j) * width] = (currentRow[width - 3] + currentRow[width - 1]) / 2;
+            }
+        }
     
+    // Or averaging could be done after column decompression, and even use data outside of row
+    
+    for (j = 0; j < height; j += 2) 
+        for (jj = 0; jj < 2; jj++) 
+        {
+            int w = (jj + j) * width;
+            
+            for (i = 0; i < width; i++) 
+                smoothBuffer[i + w] = outputBuffer[i + w];
+            
+            // lots of vertical striping
+            
+            if (0) // Averaging just after completing each row, and before going on to the next
+            {
+                smoothBuffer[0 + w] = (outputBuffer[0 + w] + outputBuffer[2 + w]) / 2;
+                smoothBuffer[1 + w] = (outputBuffer[1 + w] + outputBuffer[3 + w]) / 2;
+                
+                for (i = 2; i < width; i++) 
+                    smoothBuffer[i + w] = (outputBuffer[i - 2 + w] + outputBuffer[i + w]) / 2;
+            }
+        }
+                    
     // Now perform Bayer decoding and create an imageRep, use [decode]
     
-    return [self decode:outputBuffer pixelsWide:width pixelsHigh:height flip:mirror rotate180:NO];
+    return [self decode:smoothBuffer pixelsWide:width pixelsHigh:height flip:mirror rotate180:NO];
 }
 
 
@@ -1233,7 +1377,7 @@
     next = (next > 255) ? 255 : next;
     next = (next < 0) ? 0 : next;
     
-    if (1) // as the libphoto sq905 driver does...
+    if (1) // as the libphoto sq905 driver does... some type of gamma change
       result = 256 * pow(next / 256.0, 0.95);
     else 
       result = next;
