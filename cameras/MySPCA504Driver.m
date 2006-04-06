@@ -778,6 +778,7 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
     CGrafPtr oldPort;
     GDHandle oldGDev;
     OSErr err;
+    // Fix deprecated calls, is all this really necessary??
     SetRect(&srcBounds,0,0,624,480);
     SetRect(&dstBounds,0,0,[self width],[self height]);
     jfifBuf[jfifLength++]=0xff;	//Add end tag
@@ -792,7 +793,7 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
                              nextImageBuffer,
                              nextImageBufferRowBytes);
     if (err) return;
-    //*** FIXME: Not caching the GWorld is probably a performance killer...
+    //*** FIXME: Not caching the GWorld is probably a performance killer...TODO
     pm=GetGWorldPixMap(gw);
     LockPixels(pm);
     GetGWorld(&oldPort,&oldGDev);
