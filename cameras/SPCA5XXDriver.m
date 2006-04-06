@@ -24,17 +24,10 @@
 
 #import "SPCA5XXDriver.h"
 
+#include "MiscTools.h"
+
 #include <unistd.h>
 
-#include "USB_VendorProductIDs.h"
-
-
-@interface SPCA5XXDriver (Private)
-
-// - (CameraError) startupGrabbing;
-// - (CameraError) shutdownGrabbing;
-
-@end
 
 
 @implementation SPCA5XXDriver
@@ -155,51 +148,27 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 
 // need meat here
 
-
+//
+// Initialize the driver
+//
 - (id) initWithCentral:(id) c 
 {
     self = [super initWithCentral:c];
-    
-    if (!self) 
+	if (self == NULL) 
         return NULL;
     
-    spca5xx_struct = (struct usb_spca50x *) malloc(sizeof(struct usb_spca50x));
-    spca5xx_struct->dev = (struct usb_device *) malloc(sizeof(struct usb_device));
-    spca5xx_struct->dev->driver = self;
+    spca50x = (struct usb_spca50x *) malloc(sizeof(struct usb_spca50x));
+    spca50x->dev = (struct usb_device *) malloc(sizeof(struct usb_device));
+    spca50x->dev->driver = self;
     
-    bayerConverter = [[BayerConverter alloc] init];
-    if (!bayerConverter) 
-        return NULL;
-        
     return self;
 }
 
-
-- (void) dealloc 
+//
+// Subclass this for more functionality
+//
+- (void) startupCamera
 {
-    [self spca5xx_shutdown];
-    
-    if (bayerConverter) 
-    {
-        [bayerConverter release]; 
-        bayerConverter = NULL;
-    }
-    
-    [super dealloc];
-}
-
-
-- (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId 
-{
-    CameraError error;
-    
-    // Setup the connection to the camera
-    
-    error = [self usbConnectToCam:usbLocationId configIdx:0];
-    
-    if (error != CameraErrorOK) 
-        return error;
-    
     // 
     
     [self spca5xx_init];
@@ -207,187 +176,65 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
     
     // Set some default parameters
     
-    [self setBrightness:0.5];
-    [self setContrast:0.5];
-    [self setSaturation:0.5];
-    [self setSharpness:0.5];
-    [self setGamma: 0.5];
-    
-    // Do the remaining, usual connection stuff
-    
-    error = [super startupWithUsbLocationId:usbLocationId];
-    
-    return error;
+    [super startupCamera];
 }
 
 
-//////////////////////////////////////
+- (void) dealloc 
+{
+    [self spca5xx_shutdown];
+    
+    free(spca50x->dev);
+    free(spca50x);
+    
+    [super dealloc];
+}
+
 //
-//  Image / camera properties can/set
+// spca5xx is confused about meaning of CIF and SIF, or we are, whatever...
 //
-//////////////////////////////////////
-
-
-- (BOOL) canSetSharpness 
+short SPCA5xxResolution(CameraResolution res) 
 {
-    return YES; // Perhaps ill-advised
-}
-
-
-- (void) setSharpness:(float) v 
-{
-    [super setSharpness:v];
-    [bayerConverter setSharpness:sharpness];
-}
-
-
-- (BOOL) canSetBrightness 
-{
-     return YES;
-}
-
-
-- (void) setBrightness:(float) v 
-{
-    [self spca5xx_setbrightness];
-    [super setBrightness:v];
-    [bayerConverter setBrightness:brightness - 0.5f];
-}
-
-
-- (BOOL) canSetContrast 
-{
-    return YES;
-}
-
-
-- (void) setContrast:(float) v
-{
-    [self spca5xx_setcontrast];
-    [super setContrast:v];
-    [bayerConverter setContrast:contrast + 0.5f];
-}
-
-
-- (BOOL) canSetSaturation
-{
-    return YES;
-}
-
-
-- (void) setSaturation:(float) v
-{
-    [super setSaturation:v];
-    [bayerConverter setSaturation:saturation * 2.0f];
-}
-
-
-- (BOOL) canSetGamma 
-{
-    return YES; // Perhaps ill-advised
-}
-
-
-- (void) setGamma:(float) v
-{
-    [super setGamma:v];
-    [bayerConverter setGamma:gamma + 0.5f];
-}
-
-
-- (BOOL) canSetGain 
-{
-    return NO;
-}
-
-
-- (BOOL) canSetShutter 
-{
-    return NO;
-}
-
-
-// Gain and shutter combined
-- (BOOL) canSetAutoGain 
-{
-    return NO;
-}
-
-
-- (void) setAutoGain:(BOOL) v
-{
-    if (v == autoGain) 
-        return;
+    short ret;
     
-    [super setAutoGain:v];
-    [bayerConverter setMakeImageStats:v];
-}
-
-
-- (BOOL) canSetHFlip 
-{
-    return YES;
-}
-
-
-- (short) maxCompression 
-{
-    return 0;
-}
-
-
-- (BOOL) canSetWhiteBalanceMode 
-{
-    return NO;
-}
-
-
-- (WhiteBalanceMode) defaultWhiteBalanceMode 
-{
-    return WhiteBalanceLinear;
-}
-
-
-- (BOOL) canBlackWhiteMode 
-{
-    return NO;
-}
-
-
-- (BOOL) canSetLed 
-{
-    return NO;
+    switch (res) 
+    {
+        case ResolutionSQSIF: ret = CUSTOM; break;
+        case ResolutionQSIF:  ret = QCIF; break;
+        case ResolutionQCIF:  ret = QSIF; break;
+        case ResolutionSIF:   ret = CIF; break;
+        case ResolutionCIF:   ret = SIF; break;
+        case ResolutionVGA:   ret = VGA; break;
+        case ResolutionSVGA:  ret = CUSTOM; break;
+        default:              ret =  -1; break;
+    }
+    return ret;
 }
 
 
 // use mode array from "config"
 - (BOOL) supportsResolution:(CameraResolution) res fps:(short) rate 
 {
-//    spca5xx_struct;
-    int mode;
+    int mode = SPCA5xxResolution(res);
     
-    for (mode = QCIF; mode < TOTMODE; mode++) 
-    {
-        /*
-         spca50x->mode_cam[CIF].width = 320;
-         spca50x->mode_cam[CIF].height = 240;
-         spca50x->mode_cam[CIF].t_palette = P_YUV420 | P_RGB32 | P_RGB24 | P_RGB16;
-         spca50x->mode_cam[CIF].pipe = 1023;
-         spca50x->mode_cam[CIF].method = 1;
-         spca50x->mode_cam[CIF].mode = 0;
-*/         
-    }
+    if (mode < 0) 
+        return NO;
+    
+    /*
+     spca50x->mode_cam[CIF].width = 320;
+     spca50x->mode_cam[CIF].height = 240;
+     spca50x->mode_cam[CIF].t_palette = P_YUV420 | P_RGB32 | P_RGB24 | P_RGB16;
+     spca50x->mode_cam[CIF].pipe = 1023;
+     spca50x->mode_cam[CIF].method = 1;
+     spca50x->mode_cam[CIF].mode = 0;
+     */         
     
     if (rate > 30 || rate < 1) 
         return NO;
     
-    if (res == ResolutionQSIF) 
-        return YES;
-    
-    if (res == ResolutionSIF) 
-        return YES;
-    
-    if (res == ResolutionVGA) 
+    if (spca50x->mode_cam[mode].width == WidthOfResolution(res) && 
+        spca50x->mode_cam[mode].height == HeightOfResolution(res) && 
+        spca50x->mode_cam[mode].pipe > 0) 
         return YES;
     
     return NO;
@@ -399,144 +246,103 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
     if (dFps) 
         *dFps = 5;
     
-    return ResolutionSIF;
+    if ([self supportsResolution:ResolutionVGA fps:*dFps]) 
+        return ResolutionVGA;
+    
+    if ([self supportsResolution:ResolutionCIF fps:*dFps]) 
+        return ResolutionCIF;
+    
+    if ([self supportsResolution:ResolutionSIF fps:*dFps]) 
+        return ResolutionSIF;
+    
+    if ([self supportsResolution:ResolutionQCIF fps:*dFps]) 
+        return ResolutionQCIF;
+    
+    if ([self supportsResolution:ResolutionQSIF fps:*dFps]) 
+        return ResolutionQSIF;
+    
+    return ResolutionInvalid;
+}
+
+//
+// Set a resolution and frame rate.
+//
+- (void) setResolution: (CameraResolution) r fps: (short) fr 
+{
+    if (![self supportsResolution:r fps:fr]) 
+        return;
+    
+    [stateLock lock];
+    if (!isGrabbing) 
+    {
+        resolution = r;
+        fps = fr;
+        
+        spca50x->mode = spca50x->mode_cam[SPCA5xxResolution(r)].mode;
+    }
+    [stateLock unlock];
 }
 
 
-
-
-- (BOOL) startupGrabStream 
+- (BOOL) canSetBrightness 
 {
-    // make the proper USB calls
-    // if anything goes wrong, return NO
-    [self spca5xx_start];
-    
     return YES;
 }
 
 
+- (void) setBrightness:(float) v 
+{
+    spca50x->brightness = v * 65535;
+    [self spca5xx_setbrightness];
+    [super setBrightness:v];
+}
+
+
+- (BOOL) canSetContrast 
+{
+    return YES;
+}
+
+
+- (void) setContrast:(float) v
+{
+    spca50x->contrast = v * 65535;
+    [self spca5xx_setcontrast];
+    [super setContrast:v];
+}
+
+
+//
+// Put in the alt-interface with the highest bandwidth (instead of 8)
+// This attempts to provide the highest bandwidth
+//
+- (BOOL) setGrabInterfacePipe
+{
+    return [self usbSetAltInterfaceTo:7 testPipe:[self getGrabbingPipe]];
+}
+
+
+//
+// This is the key method that starts up the stream
+//
+- (BOOL) startupGrabStream 
+{
+    CameraError error = CameraErrorOK;
+    
+    [self spca5xx_start];
+    
+    return error == CameraErrorOK;
+}
+
+//
+// The key routine for shutting down the stream
+//
 - (void) shutdownGrabStream 
 {
-    // make any necessary USB calls
     [self spca5xx_stop];
+    
+    [self usbSetAltInterfaceTo:0 testPipe:[self getGrabbingPipe]];
 }
-
-#if 0
-//
-// Do we really need a separate grabbing thread? Let's try without
-// 
-- (CameraError) decodingThread 
-{
-    CameraError error = CameraErrorOK;
-    BOOL bufferSet, actualFlip;
-    
-    // Initialize grabbing
-    
-    error = [self startupGrabbing];
-    
-    if (error) 
-        shouldBeGrabbing = NO;
-    
-    // Grab until told to stop
-    
-    if (shouldBeGrabbing) 
-    {
-        while (shouldBeGrabbing) 
-        {
-            // Get the data
-            
-//            [self readEntry:chunkBuffer len:chunkLength];
-            
-            // Get the buffer ready
-            
-            [imageBufferLock lock];
-            
-            lastImageBuffer = nextImageBuffer;
-            lastImageBufferBPP = nextImageBufferBPP;
-            lastImageBufferRowBytes = nextImageBufferRowBytes;
-            
-            bufferSet = nextImageBufferSet;
-            nextImageBufferSet = NO;
-            
-            actualFlip = hFlip;
-//          actualFlip = [self flipGrabbedImages] ? !hFlip : hFlip;
-            
-            // Decode into buffer
-            
-            if (bufferSet) 
-            {
-//              unsigned char * imageSource = (unsigned char *) (chunkBuffer + chunkHeader);
-                unsigned char * imageSource = (unsigned char *) NULL;
-                
-                [bayerConverter convertFromSrc:imageSource
-                                        toDest:lastImageBuffer
-                                   srcRowBytes:[self width]
-                                   dstRowBytes:lastImageBufferRowBytes
-                                        dstBPP:lastImageBufferBPP
-                                          flip:actualFlip
-                                     rotate180:YES];
-                
-                [imageBufferLock unlock];
-                [self mergeImageReady];
-            } 
-            else 
-            {
-                [imageBufferLock unlock];
-            }
-        }
-    }
-    
-    // close grabbing
-    
-    [self shutdownGrabbing];
-    
-    return error;
-}    
-    
-
-- (CameraError) startupGrabbing 
-{
-    CameraError error = CameraErrorOK;
-    
-    switch ([self resolution])
-    {
-        case ResolutionQSIF:
-            break;
-            
-        case ResolutionSIF:
-            break;
-            
-        case ResolutionVGA:
-            break;
-            
-        default:
-            break;
-    }
-    
-    // Initialize Bayer decoder
-    
-    if (!error) 
-    {
-        [bayerConverter setSourceWidth:[self width] height:[self height]];
-        [bayerConverter setDestinationWidth:[self width] height:[self height]];
-        [bayerConverter setSourceFormat:4];
-//      [bayerConverter setMakeImageStats:YES];
-    }
-    
-    
-    return error;
-}
-
-
-- (CameraError) shutdownGrabbing 
-{
-    CameraError error = CameraErrorOK;
-    
-//    free(chunkBuffer);
-    
-    return error;
-}
-#endif
 
 
 #pragma mark ----- SPCA5XX Specific -----
@@ -694,299 +500,6 @@ void udelay(int delay_time_probably_micro_seconds)
 }
 
 
-#pragma mark ----- PAC207 -----
-
-@implementation PAC207Driver
-
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_VISTA_PLUS], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
-            @"Creative Vista Plus", @"name", NULL], 
-        
-        // Add more entries here
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x00], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"Q-TEC Webcam 100 USB", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x01], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 01)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x02], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 02)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x03], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 03)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x04], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 04)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x05], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 05)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x06], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 06)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x07], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 07)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x08], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"Common PixArt PAC207 based webcam", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x09], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 09)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x0a], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 0a)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x0b], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 0b)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x0c], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 0c)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x0d], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 0d)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x0e], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 0e)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x0f], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 0f)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x10], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"Genius VideoCAM GE112 (or similar)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x11], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"Genius KYE VideoCAM GE111 (or similar)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x12], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 12)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x13], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 13)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x14], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 14)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x15], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 15)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x16], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 16)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x17], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 17)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x18], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 18)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x19], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 19)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x1a], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 1a)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x1b], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 1b)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x1c], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 1c)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x1d], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 1d)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x1e], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 1e)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x1f], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 1f)", @"name", NULL], 
-        
-        NULL];
-}
-
-
-static void pac207RegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length) 
-{   
-    SPCA5XXDriver * driver = (SPCA5XXDriver *) dev->driver;
-    
-    [driver usbReadVICmdWithBRequest:reg 
-                              wValue:value 
-                              wIndex:index 
-                                 buf:buffer 
-                                 len:length];
-}
-
-
-static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 *buffer, __u16 length)
-{
-    SPCA5XXDriver * driver = (SPCA5XXDriver *) dev->driver;
-    
-    [driver usbWriteVICmdWithBRequest:reg 
-                               wValue:value 
-                               wIndex:index 
-                                  buf:buffer 
-                                  len:length];
-}
-
-
-#include "pac207.h"
-
-// 
-
-
-- (CameraError) spca5xx_init
-{
-    pac207_init(spca5xx_struct);
-    return CameraErrorOK;
-}
-
-
-
-- (CameraError) spca5xx_config
-{
-    pac207_config(spca5xx_struct);
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_start
-{
-    pac207_start(spca5xx_struct);
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_stop
-{
-    pac207_stop(spca5xx_struct);
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_shutdown
-{
-    pac207_shutdown(spca5xx_struct);
-    return CameraErrorOK;
-}
-
-
-// brightness also returned in spca5xx_struct
-
-- (CameraError) spca5xx_getbrightness
-{
-    pac207_getbrightness(spca5xx_struct);
-    return CameraErrorOK;
-}
-
-
-// takes brightness from spca5xx_struct
-
-- (CameraError) spca5xx_setbrightness
-{
-    pac207_setbrightness(spca5xx_struct);
-    return CameraErrorOK;
-}
-
-
-// contrast also return in spca5xx_struct
-
-- (CameraError) spca5xx_getcontrast
-{
-    pac207_getcontrast(spca5xx_struct);
-    return CameraErrorOK;
-}
-
-
-// takes contrast from spca5xx_struct
-
-- (CameraError) spca5xx_setcontrast
-{
-    pac207_setcontrast(spca5xx_struct);
-    return CameraErrorOK;
-}
-
-
-// other stuff, including decompression
-
-
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
-{
-    printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
-    NSLog(@"PAC207 - decodeBuffer must be implemented");
-}
-
-
-
-@end
 
 
 
