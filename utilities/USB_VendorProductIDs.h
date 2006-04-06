@@ -10,9 +10,10 @@
 // This file should contain, vendor, product, and a comment with the name of the driver that recognizes the camera
 
 #define VENDOR_SUNPLUS			0x04fc
-#define PRODUCT_GENERIC_SPCA561_CAM     0x0561
-
 #define VENDOR_FINET_TECHNOLOGY 0x04fc
+#define VENDOR_EZONICS          0x04fc
+#define PRODUCT_GENERIC_SPCA561_CAM     0x0561      // SPCA561
+#define PRODUCT_EZ_CAM_III              0x0561      // SPCA561
 #define	PRODUCT_PALMPIX_DC_85           0x7333		// SPCA500A
 
 #define VENDOR_MUSTEK			0x055f
@@ -33,16 +34,26 @@
 #define PRODUCT_WEBCAM_5                0x400c
 #define PRODUCT_WEBCAM_5_NEW            0x400d
 #define PRODUCT_WEBCAM_PRO_EX           0x4011
+#define PRODUCT_VISTA_A                 0x4018      // SPCA508
+#define PRODUCT_VISTA_B                 0x401a      // SPCA561A
+#define PRODUCT_VISTA_C                 0x403b      // SPCA561A
 #define PRODUCT_VISTA_PLUS              0x4028      // PAC207
+
+#define VENDOR_GENIUS           0x0458
+#define PRODUCT_VIDEOCAM_EXPRESS_V2     0x7004      // SPCA561A
 
 #define VENDOR_MICROSOFT        0x045e
 #define PRODUCT_XBOX_VIDEO_CHAT         0x028c      // in Japan only?
+
+#define VENDOR_MICRO_INNOVATION 0x0461
+#define PRODUCT_IC_150                  0x0815      // SPCA561A
 
 #define VENDOR_CONNECTIX		0x0478
 #define PRODUCT_QUICKCAM_VC             0x0001      // uses USS720 USB <-> parallel converter
 #define PRODUCT_QUICKCLIP               0x0002
 
 #define VENDOR_LOGITECH			0x046d
+#define VENDOR_LABTEC			0x046d
 #define PRODUCT_QUICKCAM_HOME           0x0801
 #define PRODUCT_QUICKCAM_PRO_BEIGE      0x0810      // uses USS720 USB <-> parallel converter
 #define PRODUCT_QUICKCAM_PRO_DARK       0xd001      // DIVIO NW801 controller
@@ -84,9 +95,10 @@
 
 #define PRODUCT_QUICKCAM_EXPRESS_C      0x0920
 #define PRODUCT_LABTEC_WEBCAM           0x0921
-#define PRODUCT_QUICKCAM_EXPRESS_D      0x0928
-#define PRODUCT_LABTEC_WEBCAM_B         0x0929
-#define PRODUCT_QUICKCAM_NOTEBOOKS_A    0x092a      // square one, SPCA561A
+#define PRODUCT_QUICKCAM_EXPRESS_D      0x0928      // SPCA561A [elch2]
+#define PRODUCT_LABTEC_WEBCAM_B         0x0929      // SPCA561A [elch2]
+#define PRODUCT_QUICKCAM_NOTEBOOKS_A    0x092a      // SPCA561A [square one]
+#define PRODUCT_LABTEC_WEBCAM_C         0x092b      // SPCA561A
 #define PRODUCT_QUICKCAM_CHAT_B         0x092c      // SPCA561A
 
 #define PRODUCT_POCKET_CAMERA           0x0950
@@ -126,6 +138,9 @@
 #define PRODUCT_OV519_AKA1              0x8519
 #define PRODUCT_OV519_AKA2              0x4519
 #define PRODUCT_OV530                   0x0530
+
+#define VENDOR_MAXELL           0x060b
+#define PRODUCT_COMPACT_PC_PM3          0xa001      // SPCA561A
 
 #define VENDOR_VIEWQUEST		0x0733
 #define	PRODUCT_M318B                   0x0402		// SPCA500A ?
@@ -171,12 +186,18 @@
 #define PRODUCT_VCS_UC300               0x1900
 #define PRODUCT_VCS_UM100               0x1910
 
+#define VENDOR_FLYCAM           0x10df
+#define PRODUCT_FLYCAM_USB100           0x7e50      // SPCA561A
+
 #define VENDOR_SQ               0x2770
 #define VENDOR_SQ905            0x2770
 #define PRODUCT_SQ905                   0x9120      // common for many SQ905 cameras
 #define PRODUCT_SQ905C                  0x905c      // uses 905C chip
 #define PRODUCT_SQ913C                  0x913c      // uses 913C chip
 #define PRODUCT_SQ930C                  0x930c      // uses 930C chip
+
+#define VENDOR_SIGMA_APO        0xabcd
+#define PRODUCT_PETCAM                  0xcdee      // SPCA561A
 
 // do we need these?
 
