@@ -6,6 +6,7 @@
 //  Copyright 2006 HXR. GPL applies.
 //
 
+
 #import "CTDC1100Driver.h"
 
 #include "USB_VendorProductIDs.h"
