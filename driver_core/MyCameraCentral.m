@@ -57,7 +57,9 @@
 #import "PAC207Driver.h"
 #import "SPCA561ADriver.h"
 #import "SPCA508Driver.h"
+#import "CTDC1100Driver.h"
 #import "KworldTV300UDriver.h"
+
 #include "unistd.h"
 
 
@@ -224,21 +226,22 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SQ905 class]];
     [self registerCameraDriver:[SQ930C class]];
 //  [self registerCameraDriver:[MyPixartDriver class]]; // Deprecated in favor of PixartDriver - has problems
-//    [self registerCameraDriver:[PixartDriver class]]; // Disabled because working on SPCA5XX-based version instead
+//  [self registerCameraDriver:[PixartDriver class]];   // Disabled because working on SPCA5XX-based version instead
     [self registerCameraDriver:[PAC7311Driver class]];
     [self registerCameraDriver:[OV518Driver class]];
     [self registerCameraDriver:[OV518PlusDriver class]];
     [self registerCameraDriver:[OV519Driver class]];
     [self registerCameraDriver:[PAC207Driver class]]; // Based on SPCA5XX - seems to work pretty well
     [self registerCameraDriver:[SPCA561ADriver class]];
-    [self registerCameraDriver:[SPCA508Driver class]];
-//    [self registerCameraDriver:[SPCA508CS110Driver class]]; // add before checkin
+//    [self registerCameraDriver:[SPCA508Driver class]];  // Need decompression for these...
+//    [self registerCameraDriver:[SPCA508CS110Driver class]];
 //    [self registerCameraDriver:[SPCA508SightcamDriver class]];
 //    [self registerCameraDriver:[SPCA508Sightcam2Driver class]];
 //    [self registerCameraDriver:[SPCA508CreativeVistaDriver class]];
-
-//  [self registerCameraDriver:[KworldTV300UDriver class]]; // This is very incomplete st this time
-
+    
+    [self registerCameraDriver:[CTDC1100Driver class]]; // This is incomplete st this time
+    [self registerCameraDriver:[KworldTV300UDriver class]]; // This is very incomplete st this time
+    
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];
 //    [self registerCameraDriver:[MyIntelPCCamera class]];
 //    [self registerCameraDriver:[MyGrandtecVcap class]];
