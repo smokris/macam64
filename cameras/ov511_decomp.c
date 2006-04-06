@@ -1,6 +1,6 @@
 /* OV511 Decompression Support
  *
- * Copyright (c) 1999-2002 Mark W. McClelland. All rights reserved.
+ * Copyright (c) 1999-2002 Mark W. McClelland. GPL applies.
  * http://alpha.dyndns.org/ov511/
  *
  * Original decompression code Copyright 1998-2000 OmniVision Technologies

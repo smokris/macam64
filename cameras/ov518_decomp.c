@@ -1,6 +1,6 @@
 /* OV518 Decompression Support Module (No-MMX version)
  *
- * Copyright (c) 2002-2003 Mark W. McClelland. All rights reserved.
+ * Copyright (c) 2002-2003 Mark W. McClelland. GPL applies.
  * http://alpha.dyndns.org/ov511/
  *
  * Fast integer iDCT by Yuri van Oers <yvanoers AT xs4all.nl>
