@@ -27,7 +27,7 @@
 
 #include "USB_VendorProductIDs.h"
 
-#include "spcadecode.h"
+#include "spcadecoder.h"
 
 
 @implementation SPCA561ADriver
