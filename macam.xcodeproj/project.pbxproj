@@ -384,6 +384,48 @@
 		F5994DDB0971A85E004F6807 /* MyPixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5994DD70971A85E004F6807 /* MyPixartDriver.m */; };
 		F5994DDC0971A85E004F6807 /* MyPixartDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5994DD60971A85E004F6807 /* MyPixartDriver.h */; };
 		F5994DDD0971A85E004F6807 /* MyPixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5994DD70971A85E004F6807 /* MyPixartDriver.m */; };
+		F59B085709D450190036AB97 /* PAC207Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B085509D450190036AB97 /* PAC207Driver.h */; };
+		F59B085809D4501A0036AB97 /* PAC207Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B085609D450190036AB97 /* PAC207Driver.m */; };
+		F59B085909D4501A0036AB97 /* PAC207Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B085509D450190036AB97 /* PAC207Driver.h */; };
+		F59B085A09D4501A0036AB97 /* PAC207Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B085609D450190036AB97 /* PAC207Driver.m */; };
+		F59B085B09D4501A0036AB97 /* PAC207Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B085509D450190036AB97 /* PAC207Driver.h */; };
+		F59B085C09D4501A0036AB97 /* PAC207Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B085609D450190036AB97 /* PAC207Driver.m */; };
+		F59B096B09D506750036AB97 /* TV8532Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B096909D506750036AB97 /* TV8532Driver.h */; };
+		F59B096C09D506750036AB97 /* TV8532Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B096A09D506750036AB97 /* TV8532Driver.m */; };
+		F59B096D09D506750036AB97 /* TV8532Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B096909D506750036AB97 /* TV8532Driver.h */; };
+		F59B096E09D506750036AB97 /* TV8532Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B096A09D506750036AB97 /* TV8532Driver.m */; };
+		F59B096F09D506750036AB97 /* TV8532Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B096909D506750036AB97 /* TV8532Driver.h */; };
+		F59B097009D506750036AB97 /* TV8532Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B096A09D506750036AB97 /* TV8532Driver.m */; };
+		F59B097509D5069F0036AB97 /* ZC030xDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B097309D5069F0036AB97 /* ZC030xDriver.h */; };
+		F59B097609D5069F0036AB97 /* ZC030xDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B097409D5069F0036AB97 /* ZC030xDriver.m */; };
+		F59B097709D5069F0036AB97 /* ZC030xDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B097309D5069F0036AB97 /* ZC030xDriver.h */; };
+		F59B097809D5069F0036AB97 /* ZC030xDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B097409D5069F0036AB97 /* ZC030xDriver.m */; };
+		F59B097909D5069F0036AB97 /* ZC030xDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B097309D5069F0036AB97 /* ZC030xDriver.h */; };
+		F59B097A09D5069F0036AB97 /* ZC030xDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B097409D5069F0036AB97 /* ZC030xDriver.m */; };
+		F59B097F09D506D10036AB97 /* ZR36430Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B097D09D506D10036AB97 /* ZR36430Driver.h */; };
+		F59B098009D506D10036AB97 /* ZR36430Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B097E09D506D10036AB97 /* ZR36430Driver.m */; };
+		F59B098109D506D10036AB97 /* ZR36430Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B097D09D506D10036AB97 /* ZR36430Driver.h */; };
+		F59B098209D506D10036AB97 /* ZR36430Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B097E09D506D10036AB97 /* ZR36430Driver.m */; };
+		F59B098309D506D10036AB97 /* ZR36430Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B097D09D506D10036AB97 /* ZR36430Driver.h */; };
+		F59B098409D506D10036AB97 /* ZR36430Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B097E09D506D10036AB97 /* ZR36430Driver.m */; };
+		F59B098909D50D7E0036AB97 /* MR97311Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B098709D50D7E0036AB97 /* MR97311Driver.h */; };
+		F59B098A09D50D7E0036AB97 /* MR97311Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B098809D50D7E0036AB97 /* MR97311Driver.m */; };
+		F59B098B09D50D7E0036AB97 /* MR97311Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B098709D50D7E0036AB97 /* MR97311Driver.h */; };
+		F59B098C09D50D7E0036AB97 /* MR97311Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B098809D50D7E0036AB97 /* MR97311Driver.m */; };
+		F59B098D09D50D7E0036AB97 /* MR97311Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B098709D50D7E0036AB97 /* MR97311Driver.h */; };
+		F59B098E09D50D7E0036AB97 /* MR97311Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B098809D50D7E0036AB97 /* MR97311Driver.m */; };
+		F59B099309D50E7C0036AB97 /* ET61xx51Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B099109D50E7C0036AB97 /* ET61xx51Driver.h */; };
+		F59B099409D50E7C0036AB97 /* ET61xx51Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B099209D50E7C0036AB97 /* ET61xx51Driver.m */; };
+		F59B099509D50E7C0036AB97 /* ET61xx51Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B099109D50E7C0036AB97 /* ET61xx51Driver.h */; };
+		F59B099609D50E7C0036AB97 /* ET61xx51Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B099209D50E7C0036AB97 /* ET61xx51Driver.m */; };
+		F59B099709D50E7C0036AB97 /* ET61xx51Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B099109D50E7C0036AB97 /* ET61xx51Driver.h */; };
+		F59B099809D50E7C0036AB97 /* ET61xx51Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B099209D50E7C0036AB97 /* ET61xx51Driver.m */; };
+		F59B099D09D50EA00036AB97 /* CX11646Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B099B09D50EA00036AB97 /* CX11646Driver.h */; };
+		F59B099E09D50EA00036AB97 /* CX11646Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B099C09D50EA00036AB97 /* CX11646Driver.m */; };
+		F59B099F09D50EA00036AB97 /* CX11646Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B099B09D50EA00036AB97 /* CX11646Driver.h */; };
+		F59B09A009D50EA00036AB97 /* CX11646Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B099C09D50EA00036AB97 /* CX11646Driver.m */; };
+		F59B09A109D50EA00036AB97 /* CX11646Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F59B099B09D50EA00036AB97 /* CX11646Driver.h */; };
+		F59B09A209D50EA00036AB97 /* CX11646Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F59B099C09D50EA00036AB97 /* CX11646Driver.m */; };
 		F5AEA374097A154400D45891 /* SQ930C.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA372097A154300D45891 /* SQ930C.h */; };
 		F5AEA375097A154400D45891 /* SQ930C.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEA373097A154400D45891 /* SQ930C.m */; };
 		F5AEA376097A154400D45891 /* SQ930C.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEA372097A154300D45891 /* SQ930C.h */; };
@@ -438,15 +480,39 @@
 		F5AEAE2D0980992B00D45891 /* SPCA561ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAE290980992B00D45891 /* SPCA561ADriver.m */; };
 		F5AEAE2E0980992B00D45891 /* SPCA561ADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEAE280980992B00D45891 /* SPCA561ADriver.h */; };
 		F5AEAE2F0980992B00D45891 /* SPCA561ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAE290980992B00D45891 /* SPCA561ADriver.m */; };
+		F5CFB8B009D8804E001FBB48 /* CTDC1100Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5CFB8AE09D8804E001FBB48 /* CTDC1100Driver.h */; };
+		F5CFB8B109D8804E001FBB48 /* CTDC1100Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5CFB8AF09D8804E001FBB48 /* CTDC1100Driver.m */; };
+		F5CFB8B209D8804E001FBB48 /* CTDC1100Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5CFB8AE09D8804E001FBB48 /* CTDC1100Driver.h */; };
+		F5CFB8B309D8804E001FBB48 /* CTDC1100Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5CFB8AF09D8804E001FBB48 /* CTDC1100Driver.m */; };
+		F5CFB8B409D8804E001FBB48 /* CTDC1100Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5CFB8AE09D8804E001FBB48 /* CTDC1100Driver.h */; };
+		F5CFB8B509D8804E001FBB48 /* CTDC1100Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5CFB8AF09D8804E001FBB48 /* CTDC1100Driver.m */; };
 		F5D04F7F09C601D100E4E12D /* PixartDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D04F7D09C601D100E4E12D /* PixartDriver.h */; };
 		F5D04F8009C601D100E4E12D /* PixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D04F7E09C601D100E4E12D /* PixartDriver.m */; };
 		F5D04F8109C601D100E4E12D /* PixartDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D04F7D09C601D100E4E12D /* PixartDriver.h */; };
 		F5D04F8209C601D100E4E12D /* PixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D04F7E09C601D100E4E12D /* PixartDriver.m */; };
 		F5D04F8309C601D100E4E12D /* PixartDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D04F7D09C601D100E4E12D /* PixartDriver.h */; };
 		F5D04F8409C601D100E4E12D /* PixartDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D04F7E09C601D100E4E12D /* PixartDriver.m */; };
+		F5D0BD8209DF965B00757082 /* spcadecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D0BD8009DF965B00757082 /* spcadecoder.c */; };
+		F5D0BD8309DF965B00757082 /* spcadecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D0BD8109DF965B00757082 /* spcadecoder.h */; };
+		F5D0BD8409DF965B00757082 /* spcadecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D0BD8009DF965B00757082 /* spcadecoder.c */; };
+		F5D0BD8509DF965B00757082 /* spcadecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D0BD8109DF965B00757082 /* spcadecoder.h */; };
+		F5D0BD8609DF965B00757082 /* spcadecoder.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D0BD8009DF965B00757082 /* spcadecoder.c */; };
+		F5D0BD8709DF965B00757082 /* spcadecoder.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D0BD8109DF965B00757082 /* spcadecoder.h */; };
 		F5D1DDFF0976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
 		F5D1DE000976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
 		F5D1DE010976CF6D00992686 /* ov518_decomp.c in Sources */ = {isa = PBXBuildFile; fileRef = F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */; };
+		F5D2DA2309DC5EE300139641 /* SPCA508Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D2DA2109DC5EE300139641 /* SPCA508Driver.h */; };
+		F5D2DA2409DC5EE300139641 /* SPCA508Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D2DA2209DC5EE300139641 /* SPCA508Driver.m */; };
+		F5D2DA2509DC5EE300139641 /* SPCA508Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D2DA2109DC5EE300139641 /* SPCA508Driver.h */; };
+		F5D2DA2609DC5EE300139641 /* SPCA508Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D2DA2209DC5EE300139641 /* SPCA508Driver.m */; };
+		F5D2DA2709DC5EE300139641 /* SPCA508Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5D2DA2109DC5EE300139641 /* SPCA508Driver.h */; };
+		F5D2DA2809DC5EE300139641 /* SPCA508Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5D2DA2209DC5EE300139641 /* SPCA508Driver.m */; };
+		F5DB498F09E3677C00FF3230 /* KworldTV300UDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5DB498D09E3677C00FF3230 /* KworldTV300UDriver.h */; };
+		F5DB499009E3677C00FF3230 /* KworldTV300UDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5DB498E09E3677C00FF3230 /* KworldTV300UDriver.m */; };
+		F5DB499109E3677C00FF3230 /* KworldTV300UDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5DB498D09E3677C00FF3230 /* KworldTV300UDriver.h */; };
+		F5DB499209E3677C00FF3230 /* KworldTV300UDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5DB498E09E3677C00FF3230 /* KworldTV300UDriver.m */; };
+		F5DB499309E3677C00FF3230 /* KworldTV300UDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5DB498D09E3677C00FF3230 /* KworldTV300UDriver.h */; };
+		F5DB499409E3677C00FF3230 /* KworldTV300UDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5DB498E09E3677C00FF3230 /* KworldTV300UDriver.m */; };
 		F5F17B6F09BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
 		F5F17B7009BCD671000AEB63 /* GenericDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17B6E09BCD671000AEB63 /* GenericDriver.m */; };
 		F5F17B7109BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
@@ -629,6 +695,20 @@
 		F5994DD60971A85E004F6807 /* MyPixartDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyPixartDriver.h; sourceTree = "<group>"; };
 		F5994DD70971A85E004F6807 /* MyPixartDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyPixartDriver.m; sourceTree = "<group>"; };
 		F5995F30029B5BB80126DA0B /* TODO.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = TODO.txt; path = texts/TODO.txt; sourceTree = "<group>"; };
+		F59B085509D450190036AB97 /* PAC207Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PAC207Driver.h; sourceTree = "<group>"; };
+		F59B085609D450190036AB97 /* PAC207Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PAC207Driver.m; sourceTree = "<group>"; };
+		F59B096909D506750036AB97 /* TV8532Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TV8532Driver.h; sourceTree = "<group>"; };
+		F59B096A09D506750036AB97 /* TV8532Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TV8532Driver.m; sourceTree = "<group>"; };
+		F59B097309D5069F0036AB97 /* ZC030xDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZC030xDriver.h; sourceTree = "<group>"; };
+		F59B097409D5069F0036AB97 /* ZC030xDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZC030xDriver.m; sourceTree = "<group>"; };
+		F59B097D09D506D10036AB97 /* ZR36430Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZR36430Driver.h; sourceTree = "<group>"; };
+		F59B097E09D506D10036AB97 /* ZR36430Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZR36430Driver.m; sourceTree = "<group>"; };
+		F59B098709D50D7E0036AB97 /* MR97311Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MR97311Driver.h; sourceTree = "<group>"; };
+		F59B098809D50D7E0036AB97 /* MR97311Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MR97311Driver.m; sourceTree = "<group>"; };
+		F59B099109D50E7C0036AB97 /* ET61xx51Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ET61xx51Driver.h; sourceTree = "<group>"; };
+		F59B099209D50E7C0036AB97 /* ET61xx51Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ET61xx51Driver.m; sourceTree = "<group>"; };
+		F59B099B09D50EA00036AB97 /* CX11646Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CX11646Driver.h; sourceTree = "<group>"; };
+		F59B099C09D50EA00036AB97 /* CX11646Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CX11646Driver.m; sourceTree = "<group>"; };
 		F59E4B7A0264A7910166DE1F /* RGB888Scaler.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = RGB888Scaler.m; sourceTree = "<group>"; };
 		F59E4B7B0264A7910166DE1F /* RGB888Scaler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RGB888Scaler.h; sourceTree = "<group>"; };
 		F5A153160274D3D501C56AC3 /* MyQCExpressADriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyQCExpressADriver.h; sourceTree = "<group>"; };
@@ -675,11 +755,21 @@
 		F5CD7018092AEBF600E9EEE3 /* generate_app.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_app.plist; sourceTree = "<group>"; };
 		F5CD701A092AEC1000E9EEE3 /* generate_ica_module.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_ica_module.plist; sourceTree = "<group>"; };
 		F5CD701C092AEC2600E9EEE3 /* generate_component.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_component.plist; sourceTree = "<group>"; };
+		F5CFB8AE09D8804E001FBB48 /* CTDC1100Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTDC1100Driver.h; sourceTree = "<group>"; };
+		F5CFB8AF09D8804E001FBB48 /* CTDC1100Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTDC1100Driver.m; sourceTree = "<group>"; };
 		F5CFE5FA09D069DF00C6DB41 /* ExampleDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExampleDriver.h; sourceTree = "<group>"; };
 		F5CFE5FB09D069DF00C6DB41 /* ExampleDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ExampleDriver.m; sourceTree = "<group>"; };
 		F5D04F7D09C601D100E4E12D /* PixartDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PixartDriver.h; sourceTree = "<group>"; };
 		F5D04F7E09C601D100E4E12D /* PixartDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PixartDriver.m; sourceTree = "<group>"; };
+		F5D0BD8009DF965B00757082 /* spcadecoder.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = spcadecoder.c; path = spca5xx_files/spcadecoder.c; sourceTree = "<group>"; };
+		F5D0BD8109DF965B00757082 /* spcadecoder.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spcadecoder.h; path = spca5xx_files/spcadecoder.h; sourceTree = "<group>"; };
 		F5D1DDFE0976CF6D00992686 /* ov518_decomp.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = ov518_decomp.c; sourceTree = "<group>"; };
+		F5D2DA2109DC5EE300139641 /* SPCA508Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPCA508Driver.h; sourceTree = "<group>"; };
+		F5D2DA2209DC5EE300139641 /* SPCA508Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCA508Driver.m; sourceTree = "<group>"; };
+		F5DB498D09E3677C00FF3230 /* KworldTV300UDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KworldTV300UDriver.h; sourceTree = "<group>"; };
+		F5DB498E09E3677C00FF3230 /* KworldTV300UDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KworldTV300UDriver.m; sourceTree = "<group>"; };
+		F5DB4C9309E48D8B00FF3230 /* spcadecode.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = spcadecode.c; path = spca5xx_files/spcadecode.c; sourceTree = "<group>"; };
+		F5DB4C9609E48DCE00FF3230 /* spcadecode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spcadecode.h; path = spca5xx_files/spcadecode.h; sourceTree = "<group>"; };
 		F5E6AA660371F8920166D062 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6B0371F8B00166D062 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6C0371F8B90166D062 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
@@ -699,7 +789,6 @@
 		F5F17B6E09BCD671000AEB63 /* GenericDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GenericDriver.m; sourceTree = "<group>"; };
 		F5F17BAE09BD0B10000AEB63 /* QCMessengerDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = QCMessengerDriver.h; sourceTree = "<group>"; };
 		F5F17BAF09BD0B10000AEB63 /* QCMessengerDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = QCMessengerDriver.m; sourceTree = "<group>"; };
-		F5F17CBA09BD4C30000AEB63 /* PAC7311Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = PAC7311Driver.h; path = spca5xx_files/PAC7311Driver.h; sourceTree = "<group>"; };
 		F5F1809009BF37EB000AEB63 /* VV6450Sensor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VV6450Sensor.h; sourceTree = "<group>"; };
 		F5F1809109BF37EB000AEB63 /* VV6450Sensor.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VV6450Sensor.m; sourceTree = "<group>"; };
 		F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyVicamDriver.m; sourceTree = "<group>"; };
@@ -947,6 +1036,10 @@
 		F5994D54096ED733004F6807 /* spca5xx_files */ = {
 			isa = PBXGroup;
 			children = (
+				F5DB4C9309E48D8B00FF3230 /* spcadecode.c */,
+				F5D0BD8009DF965B00757082 /* spcadecoder.c */,
+				F5DB4C9609E48DCE00FF3230 /* spcadecode.h */,
+				F5D0BD8109DF965B00757082 /* spcadecoder.h */,
 				F5AEA6EC097D805400D45891 /* cx11646.h */,
 				F5AEA6ED097D805400D45891 /* et61xx51.h */,
 				F5AEA6EE097D805400D45891 /* mr97311.h */,
@@ -959,7 +1052,6 @@
 				F5AEA6F5097D805400D45891 /* spca561.h */,
 				F5AEA6F6097D805400D45891 /* tv8532.h */,
 				F5F17B2F09BCD2FF000AEB63 /* zc3xx.h */,
-				F5F17CBA09BD4C30000AEB63 /* PAC7311Driver.h */,
 				F5AEA6F7097D805400D45891 /* zc3xxusb.h */,
 				F592C8E90974520E00183A7D /* sonix.h */,
 				F592C8E20974504700183A7D /* spcausb.h */,
@@ -989,6 +1081,28 @@
 			children = (
 				F5CFE5FA09D069DF00C6DB41 /* ExampleDriver.h */,
 				F5CFE5FB09D069DF00C6DB41 /* ExampleDriver.m */,
+				F5DB498D09E3677C00FF3230 /* KworldTV300UDriver.h */,
+				F5DB498E09E3677C00FF3230 /* KworldTV300UDriver.m */,
+				F5D2DA2109DC5EE300139641 /* SPCA508Driver.h */,
+				F5D2DA2209DC5EE300139641 /* SPCA508Driver.m */,
+				F59B096909D506750036AB97 /* TV8532Driver.h */,
+				F59B096A09D506750036AB97 /* TV8532Driver.m */,
+				F59B097D09D506D10036AB97 /* ZR36430Driver.h */,
+				F59B097E09D506D10036AB97 /* ZR36430Driver.m */,
+				F59B099109D50E7C0036AB97 /* ET61xx51Driver.h */,
+				F59B099209D50E7C0036AB97 /* ET61xx51Driver.m */,
+				F59B099B09D50EA00036AB97 /* CX11646Driver.h */,
+				F59B099C09D50EA00036AB97 /* CX11646Driver.m */,
+				F59B098709D50D7E0036AB97 /* MR97311Driver.h */,
+				F59B098809D50D7E0036AB97 /* MR97311Driver.m */,
+				F59B097309D5069F0036AB97 /* ZC030xDriver.h */,
+				F59B097409D5069F0036AB97 /* ZC030xDriver.m */,
+				F535F1DB08DF2703007943DA /* SPCA5XXDriver.h */,
+				F535F1DC08DF2703007943DA /* SPCA5XXDriver.m */,
+				F59B085509D450190036AB97 /* PAC207Driver.h */,
+				F59B085609D450190036AB97 /* PAC207Driver.m */,
+				F5AEAE280980992B00D45891 /* SPCA561ADriver.h */,
+				F5AEAE290980992B00D45891 /* SPCA561ADriver.m */,
 				F5D04F7D09C601D100E4E12D /* PixartDriver.h */,
 				F5D04F7E09C601D100E4E12D /* PixartDriver.m */,
 				F5F17BAE09BD0B10000AEB63 /* QCMessengerDriver.h */,
@@ -999,10 +1113,6 @@
 				F5994DD70971A85E004F6807 /* MyPixartDriver.m */,
 				F5AEA390097A1D0600D45891 /* PAC7311Driver.h */,
 				F5AEA391097A1D0700D45891 /* PAC7311Driver.m */,
-				F535F1DB08DF2703007943DA /* SPCA5XXDriver.h */,
-				F535F1DC08DF2703007943DA /* SPCA5XXDriver.m */,
-				F5AEAE280980992B00D45891 /* SPCA561ADriver.h */,
-				F5AEAE290980992B00D45891 /* SPCA561ADriver.m */,
 				F5994D54096ED733004F6807 /* spca5xx_files */,
 				F5EDFAD6036876210166D062 /* MyOV511Driver.h */,
 				F5EDFAD5036876210166D062 /* MyOV511Driver.m */,
@@ -1052,6 +1162,8 @@
 				F589EB0F02268A6901D99A1F /* MySTV680Driver.m */,
 				F5C5790603049095010B006D /* MyIntelPCCameraPro.h */,
 				F5C5790703049095010B006D /* MyIntelPCCameraPro.m */,
+				F5CFB8AE09D8804E001FBB48 /* CTDC1100Driver.h */,
+				F5CFB8AF09D8804E001FBB48 /* CTDC1100Driver.m */,
 			);
 			path = cameras;
 			sourceTree = "<group>";
@@ -1167,6 +1279,17 @@
 				F5F17BB209BD0B11000AEB63 /* QCMessengerDriver.h in Headers */,
 				F5F1809409BF37EC000AEB63 /* VV6450Sensor.h in Headers */,
 				F5D04F8309C601D100E4E12D /* PixartDriver.h in Headers */,
+				F59B085709D450190036AB97 /* PAC207Driver.h in Headers */,
+				F59B096B09D506750036AB97 /* TV8532Driver.h in Headers */,
+				F59B097509D5069F0036AB97 /* ZC030xDriver.h in Headers */,
+				F59B098309D506D10036AB97 /* ZR36430Driver.h in Headers */,
+				F59B098909D50D7E0036AB97 /* MR97311Driver.h in Headers */,
+				F59B099309D50E7C0036AB97 /* ET61xx51Driver.h in Headers */,
+				F59B09A109D50EA00036AB97 /* CX11646Driver.h in Headers */,
+				F5CFB8B009D8804E001FBB48 /* CTDC1100Driver.h in Headers */,
+				F5D2DA2309DC5EE300139641 /* SPCA508Driver.h in Headers */,
+				F5D0BD8309DF965B00757082 /* spcadecoder.h in Headers */,
+				F5DB499309E3677C00FF3230 /* KworldTV300UDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1242,6 +1365,17 @@
 				F5F17BB009BD0B10000AEB63 /* QCMessengerDriver.h in Headers */,
 				F5F1809209BF37EC000AEB63 /* VV6450Sensor.h in Headers */,
 				F5D04F7F09C601D100E4E12D /* PixartDriver.h in Headers */,
+				F59B085B09D4501A0036AB97 /* PAC207Driver.h in Headers */,
+				F59B096F09D506750036AB97 /* TV8532Driver.h in Headers */,
+				F59B097909D5069F0036AB97 /* ZC030xDriver.h in Headers */,
+				F59B097F09D506D10036AB97 /* ZR36430Driver.h in Headers */,
+				F59B098D09D50D7E0036AB97 /* MR97311Driver.h in Headers */,
+				F59B099709D50E7C0036AB97 /* ET61xx51Driver.h in Headers */,
+				F59B099D09D50EA00036AB97 /* CX11646Driver.h in Headers */,
+				F5CFB8B209D8804E001FBB48 /* CTDC1100Driver.h in Headers */,
+				F5D2DA2509DC5EE300139641 /* SPCA508Driver.h in Headers */,
+				F5D0BD8509DF965B00757082 /* spcadecoder.h in Headers */,
+				F5DB499109E3677C00FF3230 /* KworldTV300UDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1313,6 +1447,17 @@
 				F5F17BB409BD0B11000AEB63 /* QCMessengerDriver.h in Headers */,
 				F5F1809609BF37EC000AEB63 /* VV6450Sensor.h in Headers */,
 				F5D04F8109C601D100E4E12D /* PixartDriver.h in Headers */,
+				F59B085909D4501A0036AB97 /* PAC207Driver.h in Headers */,
+				F59B096D09D506750036AB97 /* TV8532Driver.h in Headers */,
+				F59B097709D5069F0036AB97 /* ZC030xDriver.h in Headers */,
+				F59B098109D506D10036AB97 /* ZR36430Driver.h in Headers */,
+				F59B098B09D50D7E0036AB97 /* MR97311Driver.h in Headers */,
+				F59B099509D50E7C0036AB97 /* ET61xx51Driver.h in Headers */,
+				F59B099F09D50EA00036AB97 /* CX11646Driver.h in Headers */,
+				F5CFB8B409D8804E001FBB48 /* CTDC1100Driver.h in Headers */,
+				F5D2DA2709DC5EE300139641 /* SPCA508Driver.h in Headers */,
+				F5D0BD8709DF965B00757082 /* spcadecoder.h in Headers */,
+				F5DB498F09E3677C00FF3230 /* KworldTV300UDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1611,6 +1756,17 @@
 				F5F17C6E09BD39A7000AEB63 /* RGB888Scaler.m in Sources */,
 				F5F1809509BF37EC000AEB63 /* VV6450Sensor.m in Sources */,
 				F5D04F8409C601D100E4E12D /* PixartDriver.m in Sources */,
+				F59B085809D4501A0036AB97 /* PAC207Driver.m in Sources */,
+				F59B096C09D506750036AB97 /* TV8532Driver.m in Sources */,
+				F59B097609D5069F0036AB97 /* ZC030xDriver.m in Sources */,
+				F59B098409D506D10036AB97 /* ZR36430Driver.m in Sources */,
+				F59B098A09D50D7E0036AB97 /* MR97311Driver.m in Sources */,
+				F59B099409D50E7C0036AB97 /* ET61xx51Driver.m in Sources */,
+				F59B09A209D50EA00036AB97 /* CX11646Driver.m in Sources */,
+				F5CFB8B109D8804E001FBB48 /* CTDC1100Driver.m in Sources */,
+				F5D2DA2409DC5EE300139641 /* SPCA508Driver.m in Sources */,
+				F5D0BD8209DF965B00757082 /* spcadecoder.c in Sources */,
+				F5DB499409E3677C00FF3230 /* KworldTV300UDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1669,6 +1825,17 @@
 				F5F17BB109BD0B11000AEB63 /* QCMessengerDriver.m in Sources */,
 				F5F1809309BF37EC000AEB63 /* VV6450Sensor.m in Sources */,
 				F5D04F8009C601D100E4E12D /* PixartDriver.m in Sources */,
+				F59B085C09D4501A0036AB97 /* PAC207Driver.m in Sources */,
+				F59B097009D506750036AB97 /* TV8532Driver.m in Sources */,
+				F59B097A09D5069F0036AB97 /* ZC030xDriver.m in Sources */,
+				F59B098009D506D10036AB97 /* ZR36430Driver.m in Sources */,
+				F59B098E09D50D7E0036AB97 /* MR97311Driver.m in Sources */,
+				F59B099809D50E7C0036AB97 /* ET61xx51Driver.m in Sources */,
+				F59B099E09D50EA00036AB97 /* CX11646Driver.m in Sources */,
+				F5CFB8B309D8804E001FBB48 /* CTDC1100Driver.m in Sources */,
+				F5D2DA2609DC5EE300139641 /* SPCA508Driver.m in Sources */,
+				F5D0BD8409DF965B00757082 /* spcadecoder.c in Sources */,
+				F5DB499209E3677C00FF3230 /* KworldTV300UDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1725,6 +1892,17 @@
 				F5F17C6F09BD39A9000AEB63 /* RGB888Scaler.m in Sources */,
 				F5F1809709BF37EC000AEB63 /* VV6450Sensor.m in Sources */,
 				F5D04F8209C601D100E4E12D /* PixartDriver.m in Sources */,
+				F59B085A09D4501A0036AB97 /* PAC207Driver.m in Sources */,
+				F59B096E09D506750036AB97 /* TV8532Driver.m in Sources */,
+				F59B097809D5069F0036AB97 /* ZC030xDriver.m in Sources */,
+				F59B098209D506D10036AB97 /* ZR36430Driver.m in Sources */,
+				F59B098C09D50D7E0036AB97 /* MR97311Driver.m in Sources */,
+				F59B099609D50E7C0036AB97 /* ET61xx51Driver.m in Sources */,
+				F59B09A009D50EA00036AB97 /* CX11646Driver.m in Sources */,
+				F5CFB8B509D8804E001FBB48 /* CTDC1100Driver.m in Sources */,
+				F5D2DA2809DC5EE300139641 /* SPCA508Driver.m in Sources */,
+				F5D0BD8609DF965B00757082 /* spcadecoder.c in Sources */,
+				F5DB499009E3677C00FF3230 /* KworldTV300UDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2036,7 +2214,10 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = "REALLY_VERBOSE=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MACAM=1",
+					"REALLY_VERBOSE=1",
+				);
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_LDFLAGS = "-lSystem";
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
@@ -2052,6 +2233,7 @@
 					i386,
 				);
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_PREPROCESSOR_DEFINITIONS = "MACAM=1 ";
 				GCC_VERSION_i386 = 4.0;
 				GCC_VERSION_ppc = 3.3;
 				MACOSX_DEPLOYMENT_TARGET = 10.1;
@@ -2183,6 +2365,7 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = "MACAM=1 ";
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_LDFLAGS = "-lSystem";
 				PREBINDING = NO;
@@ -2304,7 +2487,10 @@
 				);
 				COPY_PHASE_STRIP = NO;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_PREPROCESSOR_DEFINITIONS = "REALLY_VERBOSE=1";
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"MACAM=1",
+					"REALLY_VERBOSE=1",
+				);
 				GCC_VERSION_i386 = 4.0;
 				GCC_VERSION_ppc = 3.3;
 				GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS = NO;
