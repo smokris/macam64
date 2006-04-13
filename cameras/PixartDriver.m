@@ -194,7 +194,16 @@ IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     *tailLength = 0;
     
     if (frameLength < 6) 
+    {
+#if REALLY_VERBOSE
+        printf("Invalid chunk!\n");
+#endif
         return invalidFrame;
+    }
+    
+#if REALLY_VERBOSE
+    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+#endif
     
     for (position = 0; position < frameLength - 6; position++) 
     {
@@ -204,6 +213,9 @@ IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             (buffer[position+3] == 0xFF) && 
             (buffer[position+4] == 0x96))
         {
+#if REALLY_VERBOSE
+            printf("New chunk!\n");
+#endif
             if (position > 0) 
             {
                 *tailStart = 0;
