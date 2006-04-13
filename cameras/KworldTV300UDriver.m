@@ -98,6 +98,13 @@
 	return ResolutionVGA;
 }
 
+// Return the size needed for an isochronous frame
+// Depends on whether it is high-speed device on a high-speed hub
+- (int) usbGetIsocFrameSize
+{
+    return 3072;
+}
+
 //
 // Returns the pipe used for grabbing
 //
