@@ -28,7 +28,7 @@
 
 @interface TV8532Driver : SPCA5XXDriver 
 {
-
+	UInt8 * decodingBuffer;
 }
 
 @end
