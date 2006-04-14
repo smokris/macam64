@@ -264,6 +264,11 @@ short SPCA5xxResolution(CameraResolution res)
     return ResolutionInvalid;
 }
 
+- (void) spcaSetResolution: (int) spcaRes
+{
+    spca50x->mode = spca50x->mode_cam[spcaRes].mode;
+}
+
 //
 // Set a resolution and frame rate.
 //
@@ -278,7 +283,7 @@ short SPCA5xxResolution(CameraResolution res)
         resolution = r;
         fps = fr;
         
-        spca50x->mode = spca50x->mode_cam[SPCA5xxResolution(r)].mode;
+        [self spcaSetResolution:SPCA5xxResolution(r)];
     }
     [stateLock unlock];
 }
@@ -499,6 +504,11 @@ void udelay(int delay_time_probably_micro_seconds)
     usleep(delay_time_probably_micro_seconds);
 }
 
+
+void wait_ms(int delay_time_in_milli_seconds)
+{
+    usleep(delay_time_in_milli_seconds * 1000);
+}
 
 
 
