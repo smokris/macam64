@@ -28,7 +28,7 @@
 
 @interface ZC030xDriver : SPCA5XXDriver 
 {
-
+	UInt8 * decodingBuffer;
 }
 
 @end
