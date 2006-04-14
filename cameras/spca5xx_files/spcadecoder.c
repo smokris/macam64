@@ -301,7 +301,6 @@ const unsigned char GsmartQTable[][64] = {
 int spca50x_outpicture(struct spca50x_frame *myframe);
 
 static int jpeg_decode411(struct spca50x_frame *myframe, int force_rgb);
-static int jpeg_decode422(struct spca50x_frame *myframe, int force_rgb);
 static int yuv_decode(struct spca50x_frame *myframe, int force_rgb);
 static int bayer_decode(struct spca50x_frame *myframe, int force_rgb);
 static int make_jpeg(struct spca50x_frame *myframe);
@@ -530,7 +529,7 @@ pac_decompress_row(struct code_table_t *table, unsigned char *inp,
 	return 2 * ((bitpos + 15) / 16);
 }
 
-static void tv8532_preprocess(struct spca50x_frame *myframe)
+void tv8532_preprocess(struct spca50x_frame *myframe)
 {
 /* we should received a whole frame with header and EOL marker
 in myframe->data and return a GBRG pattern in frame->tmpbuffer
@@ -2854,7 +2853,7 @@ static int jpeg_decode411(struct spca50x_frame *myframe, int force_rgb)
 	return 0;
 }
 
-static int jpeg_decode422(struct spca50x_frame *myframe, int force_rgb)
+int jpeg_decode422(struct spca50x_frame *myframe, int force_rgb)
 {
 	int mcusx, mcusy, mx, my;
 	int *dcts = myframe->dcts;
