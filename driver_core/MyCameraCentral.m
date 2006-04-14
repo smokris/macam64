@@ -57,6 +57,8 @@
 #import "PAC207Driver.h"
 #import "SPCA561ADriver.h"
 #import "SPCA508Driver.h"
+#import "TV8532Driver.h"
+#import "ZC030xDriver.h"
 #import "CTDC1100Driver.h"
 #import "KworldTV300UDriver.h"
 
@@ -231,16 +233,18 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[OV518Driver class]];
     [self registerCameraDriver:[OV518PlusDriver class]];
     [self registerCameraDriver:[OV519Driver class]];
-    [self registerCameraDriver:[PAC207Driver class]]; // Based on SPCA5XX - seems to work pretty well
-    [self registerCameraDriver:[SPCA561ADriver class]];
-//    [self registerCameraDriver:[SPCA508Driver class]];  // Need decompression for these...
+    [self registerCameraDriver:[PAC207Driver class]];     // Based on SPCA5XX - seems to work pretty well
+    [self registerCameraDriver:[SPCA561ADriver class]];   // Based on SPCA5XX - needs work
+    [self registerCameraDriver:[TV8532Driver class]];     // Based on SPCA5XX - testing!
+    [self registerCameraDriver:[ZC030xDriver class]];     // Based on SPCA5XX - testing!
+//    [self registerCameraDriver:[SPCA508Driver class]];  // Based on SPCA5XX - Need decompression for these...
 //    [self registerCameraDriver:[SPCA508CS110Driver class]];
 //    [self registerCameraDriver:[SPCA508SightcamDriver class]];
 //    [self registerCameraDriver:[SPCA508Sightcam2Driver class]];
 //    [self registerCameraDriver:[SPCA508CreativeVistaDriver class]];
     
-    [self registerCameraDriver:[CTDC1100Driver class]]; // This is incomplete st this time
-    [self registerCameraDriver:[KworldTV300UDriver class]]; // This is very incomplete st this time
+    [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
+    [self registerCameraDriver:[KworldTV300UDriver class]];  // This is very incomplete at this time
     
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];
 //    [self registerCameraDriver:[MyIntelPCCamera class]];
