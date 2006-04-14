@@ -65,8 +65,9 @@ typedef enum ColorMode {
 
 
 //Global build settings. Comment unwanted stuff out
+// set these in the configuration (Debug, Release etc) build settings (preprocessor macros) instead
 
-#define VERBOSE 1
+//#define VERBOSE 1
 
 //#define REALLY_VERBOSE 1
 
