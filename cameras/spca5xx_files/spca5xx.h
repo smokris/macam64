@@ -25,12 +25,14 @@
 typedef unsigned char u8;
 typedef unsigned char __u8;
 typedef unsigned short __u16;
+typedef unsigned int __u32;
 
 typedef struct semaphore {} spinlock_t;
         struct tasklet_struct {};
 typedef struct wait_queue_head_t {} wait_queue_head_t;	
 
 void udelay(int delay_time_probably_micro_seconds);
+void wait_ms(int delay_time_in_milli_seconds);
 
 enum 
 {
