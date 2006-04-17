@@ -25,6 +25,7 @@
 
 #import "TV8532Driver.h"
 
+#include "MiscTools.h"
 #include "USB_VendorProductIDs.h"
 
 #include "spcadecoder.h"
@@ -111,12 +112,21 @@ static __u16 tv8532_ext_modes[][6] = {
 */
 
 
+static int scanningHeight = 0;  // Need this for the scanning function later...
+
+
 - (void) spcaSetResolution: (int) spcaRes
 {
     if (spcaRes == SIF)  // Actually CIF... (spca5xx is confused)
+    {
         spca50x->mode = 0;
+        scanningHeight = HeightOfResolution(ResolutionCIF);
+    }
     else                 // And this is QCIF
+    {
         spca50x->mode = 1;
+        scanningHeight = HeightOfResolution(ResolutionQCIF);
+    }
 }
 
 //
@@ -143,6 +153,56 @@ static __u16 tv8532_ext_modes[][6] = {
     }
 }
 
+/*
+ {
+     iPix = 0;
+     spca50x->header_len = 0;
+     
+     if (cdata[0] == 0x80) 
+     {
+         // counter is limited so we need few header for a frame :) 
+         
+         // header 0x80 0x80 0x80 0x80 0x80 
+         // packet  00   63  127  145  00   
+         // sof     0     1   1    0    0   
+         // update sequence
+         
+         if ((spca50x->packet == 63) || (spca50x->packet == 127))
+             tv8532 = 1;
+         
+         // is there a frame start ?
+         
+         if (spca50x->packet >= ((spca50x->hdrheight >> 1) - 1)) 
+         {
+             if (!tv8532) 
+             {
+                 sequenceNumber = 0;
+                 spca50x->packet = 0;
+             }
+         } 
+         else 
+         {
+             if (!tv8532) 
+             {
+                 // Drop packet frame corrupt
+                 frame->last_packet = sequenceNumber = 0;
+                 spca50x->packet = 0;
+                 continue;
+             }
+             
+             tv8532 = 1;
+             sequenceNumber++;
+             spca50x->packet++;
+         }
+    } 
+     else 
+     {
+         sequenceNumber++;
+         spca50x->packet++;
+     }
+}
+*/
+
 //
 // Scan the frame and return the results
 //
@@ -150,6 +210,8 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                                           UInt32 * dataStart, UInt32 * dataLength, 
                                           UInt32 * tailStart, UInt32 * tailLength)
 {
+    static int packet = 0;
+    
     int frameLength = frame->frActCount;
     
     *dataStart = 0;
@@ -161,6 +223,7 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     if (frameLength < 1) 
     {
+        packet = 0;
 #ifdef REALLY_VERBOSE
         printf("Invalid packet.\n");
 #endif
@@ -171,17 +234,30 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
 #ifdef REALLY_VERBOSE
     printf("buffer[0] = 0x%02x (length = %d) 0x%02x ... [129] = 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
-           buffer[0], frameLength, buffer[1], buffer[129], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
+            buffer[0], frameLength, buffer[1], buffer[129], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
 #endif
     
-    if (frameNumber == 0x80) // start a new image
+    if (frameNumber == 0x80 && packet != 63 && packet != 127) // start a new image
     {
-#ifdef REALLY_VERBOSE
-        printf("New image start!\n");
-#endif
+        packet = 0;
         
-        return newChunkFrame;
+        if (packet >= (scanningHeight >> 1) - 1) 
+        {
+#ifdef REALLY_VERBOSE
+            printf("New image start!\n");
+#endif
+            return newChunkFrame;
+        }
+        else 
+        {
+#ifdef REALLY_VERBOSE
+            printf("Drop current image, invalid!\n");
+#endif
+            return invalidChunk;
+        }
     }
+    
+    packet++;
     
     return validFrame;
 }
