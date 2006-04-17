@@ -387,6 +387,9 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     grabContext.numberOfFramesPerTransfer = GENERIC_FRAMES_PER_TRANSFER;
     grabContext.numberOfChunkBuffers = GENERIC_NUM_CHUNK_BUFFERS;
     
+    grabContext.imageWidth = [self width];
+    grabContext.imageHeight = [self height];
+    
     // Clear things that have to be set back if init() fails
     
     grabContext.chunkReadyLock = NULL;
@@ -569,6 +572,7 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
     int i;
     
     static int droppedFrames = 0;
+    static int droppedChunks = 0;
     
     // Handle result from isoc transfer
     
@@ -632,9 +636,16 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
             {
                 droppedFrames++;
             }
+            else if (frameResult == invalidChunk) 
+            {
+                droppedFrames = 0;
+                droppedChunks++;
+                gCtx->fillingChunkBuffer.numBytes = 0;
+            }
             else if (frameResult == newChunkFrame) 
             {
                 droppedFrames = 0;
+                droppedChunks = 0;
                 
                 // When the new chunk starts in the middle of a frame, we must copy the tail
                 
@@ -702,7 +713,7 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
         
         if (gCtx->framesSinceLastChunk > 1000) // One second without a frame? That is too long, something is wrong.
         {
-            NSLog(@"GenericDriver: grab aborted because of invalid data stream (too long without a frame, %i invalid)", droppedFrames);
+            NSLog(@"GenericDriver: grab aborted because of invalid data stream (too long without a frame, %i invalid frames, %i invalid chunks)", droppedFrames, droppedChunks);
             *gCtx->shouldBeGrabbing = NO;
             if (gCtx->contextError == CameraErrorOK) 
                 gCtx->contextError = CameraErrorUSBProblem;
