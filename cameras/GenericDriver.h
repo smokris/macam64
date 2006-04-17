@@ -51,6 +51,7 @@
 typedef enum IsocFrameResult
 {
     invalidFrame = 0,
+    invalidChunk,
     validFrame,
     newChunkFrame
 } IsocFrameResult;
@@ -85,6 +86,9 @@ typedef struct GenericGrabContext
     int numberOfFramesPerTransfer;
     int numberOfTransfers;
     int numberOfChunkBuffers;
+    
+    int imageWidth;
+    int imageHeight;
     
     IOUSBInterfaceInterface ** intf; // Just a copy of our interface interface so the callback can issue USB
     BOOL* shouldBeGrabbing;          // Ref to the global indicator if the grab should go on
