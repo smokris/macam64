@@ -211,11 +211,12 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                                           UInt32 * tailStart, UInt32 * tailLength)
 {
     static int packet = 0;
+    static int lastWasInvalid = 0;
     
     int frameLength = frame->frActCount;
     
     *dataStart = 0;
-    *dataLength = frameLength - 0;
+    *dataLength = frameLength;
     
     *tailStart = frameLength;
     *tailLength = 0;
@@ -224,6 +225,8 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     if (frameLength < 1) 
     {
         packet = 0;
+        lastWasInvalid = 1;
+        
 #ifdef REALLY_VERBOSE
         printf("Invalid packet.\n");
 #endif
@@ -237,11 +240,12 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             buffer[0], frameLength, buffer[1], buffer[129], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
 #endif
     
-    if (frameNumber == 0x80 && packet != 63 && packet != 127) // start a new image
+    if (frameNumber == 0x80 && lastWasInvalid) // start a new image
+//  if (frameNumber == 0x80 && packet != 63 && packet != 127) // start a new image
     {
         packet = 0;
         
-        if (packet >= (scanningHeight >> 1) - 1) 
+        if (packet >= (scanningHeight / 2) - 1) 
         {
 #ifdef REALLY_VERBOSE
             printf("New image start!\n");
@@ -258,6 +262,7 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     }
     
     packet++;
+    lastWasInvalid = 0;
     
     return validFrame;
 }
