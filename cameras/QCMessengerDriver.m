@@ -111,7 +111,8 @@ void  DEBUGLOG2(NSString * arg1, unsigned long value)
 
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr {
     BOOL rOK;
-    BOOL frOK = (fr == 5);
+//  BOOL frOK = (fr == 5);
+    BOOL frOK = fr > 0 && fr <= 30;
     rOK = (r == ResolutionQSIF || r == ResolutionSIF
 #ifdef USE_SCALER
            || r == ResolutionQCIF || r == ResolutionCIF
