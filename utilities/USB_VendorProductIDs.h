@@ -113,6 +113,7 @@
 #define PRODUCT_TOUCAM_XS               0x0313      // Philips PCVC720K/40 (ToUCam XS)
 #define PRODUCT_SPC_200NC               0x0325      // VC0305
 #define PRODUCT_SPC_300NC               0x0326      // VC0305
+#define PRODUCT_SPC_900NC               0x0329      // Kiara
 
 #define VENDOR_CONNECTIX		0x0478
 #define PRODUCT_QUICKCAM_VC             0x0001      // uses USS720 USB <-> parallel converter
@@ -218,6 +219,7 @@
 #define PRODUCT_GENERIC_TV8532          0x010f      // TV8532
 
 #define VENDOR_PIXART           0x093a
+#define PRODUCT_VIVICAM_55              0x010f      // ??  // Webcam and stillcam [libgphoto2/camlibs/mars]
 #define PRODUCT_PAC207_BASE             0x2460      // PAC207 obviously
 #define PRODUCT_PIXART_CIF_SINGLE_CHIP  0x2468      // Most common PAC207 camera Product ID
 #define PRODUCT_PAC7311                 0x2600      // PAC7311 probably
