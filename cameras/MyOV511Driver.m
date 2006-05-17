@@ -109,6 +109,8 @@ int Decompress420(unsigned char *pIn, unsigned char *pOut, unsigned char *pTmp, 
             [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
             @"OV511-based camera", @"name", NULL], 
         
+        // Intel Play Me2Cam 0813:0002
+        
         NULL];
 }
 

@@ -51,7 +51,7 @@ o Intel Play QX3 Microscope@2100000  <class IOUSBDevice>
   }
 */
 
-#define VENDOR_MATTEL (2067)
+#define VENDOR_MATTEL (2067)  // 0x0813
 #define PRODUCT_QX3_INTEL (1)
 
 @implementation MyQX3Driver
