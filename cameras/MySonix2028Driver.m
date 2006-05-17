@@ -659,13 +659,20 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     else if ((bits&0x000003e0)==0x00000380) { EAT_BITS(5); val+=18; if (val>255) val=255;}\
     else { EAT_BITS(10); val=8*(bits&0x0000001f)+4; }}
 
-
+/*
 #define PUT_PIXEL_PAIR {\
     SInt32 pp;\
     pp=(c1val<<8)+c2val;\
-    *((UInt16*)dst)=pp;\
+    *((UInt16 *) dst) = CFSwapInt16HostToBig(pp); \
     dst+=2; }
+*/
 
+#define PUT_PIXEL_PAIR {\
+    *dst++ = c1val;\
+    *dst++ = c2val;\
+    }
+    
+    
 - (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb {
     UInt8* dst=bayerBuffer+width;
     UInt16 bits;
