@@ -738,6 +738,23 @@
 		F5AEAE280980992B00D45891 /* SPCA561ADriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPCA561ADriver.h; sourceTree = "<group>"; };
 		F5AEAE290980992B00D45891 /* SPCA561ADriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCA561ADriver.m; sourceTree = "<group>"; };
 		F5B1CC460375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RecordMovieActiveToolbarItem.tiff; sourceTree = "<group>"; };
+		F5B2EEF30A1AFD9E001423D7 /* cs2102.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = cs2102.h; path = spca5xx_files/cs2102.h; sourceTree = "<group>"; };
+		F5B2EEF40A1AFD9E001423D7 /* cxlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = cxlib.h; path = spca5xx_files/cxlib.h; sourceTree = "<group>"; };
+		F5B2EEF50A1AFD9E001423D7 /* dummy_cam.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = dummy_cam.h; path = spca5xx_files/dummy_cam.h; sourceTree = "<group>"; };
+		F5B2EEF60A1AFD9E001423D7 /* hdcs2020.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = hdcs2020.h; path = spca5xx_files/hdcs2020.h; sourceTree = "<group>"; };
+		F5B2EEF70A1AFD9E001423D7 /* hv7131b.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = hv7131b.h; path = spca5xx_files/hv7131b.h; sourceTree = "<group>"; };
+		F5B2EEF80A1AFD9E001423D7 /* hv7131c.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = hv7131c.h; path = spca5xx_files/hv7131c.h; sourceTree = "<group>"; };
+		F5B2EEF90A1AFD9E001423D7 /* icm105a.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = icm105a.h; path = spca5xx_files/icm105a.h; sourceTree = "<group>"; };
+		F5B2EEFA0A1AFD9E001423D7 /* jpeg_header.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = jpeg_header.h; path = spca5xx_files/jpeg_header.h; sourceTree = "<group>"; };
+		F5B2EEFB0A1AFD9E001423D7 /* jpeg_qtables.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = jpeg_qtables.h; path = spca5xx_files/jpeg_qtables.h; sourceTree = "<group>"; };
+		F5B2EEFC0A1AFD9E001423D7 /* pas106b.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pas106b.h; path = spca5xx_files/pas106b.h; sourceTree = "<group>"; };
+		F5B2EEFD0A1AFD9E001423D7 /* pb0330.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pb0330.h; path = spca5xx_files/pb0330.h; sourceTree = "<group>"; };
+		F5B2EEFE0A1AFD9E001423D7 /* sp5xxfw2.dat */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = sp5xxfw2.dat; path = spca5xx_files/sp5xxfw2.dat; sourceTree = "<group>"; };
+		F5B2EEFF0A1AFD9E001423D7 /* sp5xxfw2.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = sp5xxfw2.h; path = spca5xx_files/sp5xxfw2.h; sourceTree = "<group>"; };
+		F5B2EF000A1AFD9E001423D7 /* spca5xx.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = spca5xx.c; path = spca5xx_files/spca5xx.c; sourceTree = "<group>"; };
+		F5B2EF010A1AFD9E001423D7 /* spcaCompat.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spcaCompat.h; path = spca5xx_files/spcaCompat.h; sourceTree = "<group>"; };
+		F5B2EF020A1AFD9E001423D7 /* spcagamma.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spcagamma.h; path = spca5xx_files/spcagamma.h; sourceTree = "<group>"; };
+		F5B2EF030A1AFD9E001423D7 /* tas5130c.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tas5130c.h; path = spca5xx_files/tas5130c.h; sourceTree = "<group>"; };
 		F5B9568C0250D31A0166DE1F /* MyCameraCentral.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyCameraCentral.m; sourceTree = "<group>"; };
 		F5BB387E0342871601E62307 /* JFIFHeaderTemplate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JFIFHeaderTemplate.h; sourceTree = "<group>"; };
 		F5BFF536029B59BD01B6CBC8 /* inspector.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = inspector.txt; path = texts/inspector.txt; sourceTree = "<group>"; wrapsLines = 1; };
@@ -768,8 +785,6 @@
 		F5D2DA2209DC5EE300139641 /* SPCA508Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCA508Driver.m; sourceTree = "<group>"; };
 		F5DB498D09E3677C00FF3230 /* KworldTV300UDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KworldTV300UDriver.h; sourceTree = "<group>"; };
 		F5DB498E09E3677C00FF3230 /* KworldTV300UDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KworldTV300UDriver.m; sourceTree = "<group>"; };
-		F5DB4C9309E48D8B00FF3230 /* spcadecode.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = spcadecode.c; path = spca5xx_files/spcadecode.c; sourceTree = "<group>"; };
-		F5DB4C9609E48DCE00FF3230 /* spcadecode.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spcadecode.h; path = spca5xx_files/spcadecode.h; sourceTree = "<group>"; };
 		F5E6AA660371F8920166D062 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6B0371F8B00166D062 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6C0371F8B90166D062 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
@@ -1036,9 +1051,24 @@
 		F5994D54096ED733004F6807 /* spca5xx_files */ = {
 			isa = PBXGroup;
 			children = (
-				F5DB4C9309E48D8B00FF3230 /* spcadecode.c */,
+				F5B2EEF30A1AFD9E001423D7 /* cs2102.h */,
+				F5B2EEF40A1AFD9E001423D7 /* cxlib.h */,
+				F5B2EEF50A1AFD9E001423D7 /* dummy_cam.h */,
+				F5B2EEF60A1AFD9E001423D7 /* hdcs2020.h */,
+				F5B2EEF70A1AFD9E001423D7 /* hv7131b.h */,
+				F5B2EEF80A1AFD9E001423D7 /* hv7131c.h */,
+				F5B2EEF90A1AFD9E001423D7 /* icm105a.h */,
+				F5B2EEFA0A1AFD9E001423D7 /* jpeg_header.h */,
+				F5B2EEFB0A1AFD9E001423D7 /* jpeg_qtables.h */,
+				F5B2EEFC0A1AFD9E001423D7 /* pas106b.h */,
+				F5B2EEFD0A1AFD9E001423D7 /* pb0330.h */,
+				F5B2EEFE0A1AFD9E001423D7 /* sp5xxfw2.dat */,
+				F5B2EEFF0A1AFD9E001423D7 /* sp5xxfw2.h */,
+				F5B2EF000A1AFD9E001423D7 /* spca5xx.c */,
+				F5B2EF010A1AFD9E001423D7 /* spcaCompat.h */,
+				F5B2EF020A1AFD9E001423D7 /* spcagamma.h */,
+				F5B2EF030A1AFD9E001423D7 /* tas5130c.h */,
 				F5D0BD8009DF965B00757082 /* spcadecoder.c */,
-				F5DB4C9609E48DCE00FF3230 /* spcadecode.h */,
 				F5D0BD8109DF965B00757082 /* spcadecoder.h */,
 				F5AEA6EC097D805400D45891 /* cx11646.h */,
 				F5AEA6ED097D805400D45891 /* et61xx51.h */,
