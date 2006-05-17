@@ -374,7 +374,12 @@ Here is a table of sniffed data. I have no idea what this means
         [NSNumber numberWithUnsignedShort:PRODUCT_CISCO_VT_ADVANTAGE],@"idProduct",
         @"Cisco VT Advantage",@"name",NULL];
     
-    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,dict7,dict8,dict9,dict10,NULL];
+    NSDictionary* dict11=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_SPC_900NC],@"idProduct",
+        @"Philips SPC 900NC",@"name",NULL];
+    
+    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,dict7,dict8,dict9,dict10,dict11,NULL];
 }
 
 
