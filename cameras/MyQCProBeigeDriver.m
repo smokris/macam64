@@ -92,8 +92,9 @@
 }
 
 
-- (BOOL) supportsResolution:(CameraResolution)res fps:(short)rate {
-    if (rate!=5) return NO;
+- (BOOL) supportsResolution:(CameraResolution)res fps:(short)rate 
+{
+    if (rate>30) return NO;
     if ((res!=ResolutionSIF)&&(res!=ResolutionVGA)) return NO;
     return YES;
 }
@@ -720,14 +721,21 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 
 @implementation MyQCVCDriver
 
-+ (NSArray*) cameraUsbDescriptions 
++ (NSArray *) cameraUsbDescriptions 
 {
-	NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_VC],@"idProduct",
-        [NSNumber numberWithUnsignedShort:VENDOR_CONNECTIX],@"idVendor",
-        @"Logitech QuickCam VC",@"name",NULL];
-	
-    return [NSArray arrayWithObjects:dict1,NULL];
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_VC], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CONNECTIX], @"idVendor",
+            @"Logitech QuickCam VC (USB)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCLIP], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CONNECTIX], @"idVendor",
+            @"Logitech QuickClip (USB)", @"name", NULL], 
+        
+        NULL];
 }
 
 - (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId 
@@ -740,5 +748,142 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 	
 	return CameraErrorOK;
 }
+
+// fix brightness, exposure, decoding
+
+
+- (void) fillNextChunk2 
+{
+    IOReturn err;
+    //Get an empty chunk
+    if (shouldBeGrabbing) {
+        fillingChunk=[self getEmptyChunkBuffer];
+        if (!fillingChunk) {
+            if (!grabbingError) grabbingError=CameraErrorNoMem;
+            shouldBeGrabbing=NO;
+        }
+    }
+    //1. Reset
+    if (shouldBeGrabbing) {
+        if (![self resetUSS720]) {
+            if (!grabbingError) grabbingError=CameraErrorUSBProblem;
+            shouldBeGrabbing=NO;
+        }
+    }
+    //2. Change settings. If there are no setting to change: Write a zero byte via bulk
+    if (shouldBeGrabbing) 
+    {
+        BOOL changedSetting=NO;
+        float myGain=(autoGain)?aeGain:gain;
+        float myShutter=(autoGain)?aeShutter:shutter;
+        
+        if (myShutter!=lastShutter) 
+        {
+            UInt8 buf[2];
+            int ival = myShutter * 255;
+            
+            ival = ival + 1;
+            ival = (ival < 4) ? ival : ((ival * ival) >> 2); /* linear below 4 */
+            
+            if(ival < 295)
+            {
+                ival = 295 - ival;
+            }
+            else if(ival > 16383)
+            {
+                ival = 16383;
+            }
+            
+            buf[0] = ival;
+            buf[1] = ival >> 8;
+            
+        /*
+            //Shutter values: f001-0001, ff00-0000, (0002-ff02,0003-ff03, ... ,003f-ff3f)
+            if (myShutter<0.3f) {
+                buf[0]=(int)((((0.3f-myShutter)/0.3f))*240.0f);
+                buf[1]=1;
+            } else if (myShutter<0.6f) {
+                buf[0]=(int)((((0.6f-myShutter)/0.3f))*255.0f);
+                buf[1]=0;
+            } else {
+                buf[0]=((int)((((myShutter-0.6f)/0.4f))*12000.0f+512.0f))%0xff;
+                buf[1]=(((int)((((myShutter-0.6f)/0.4f))*12000.0f+512.0f))>>8)%0xff;
+            }
+        */
+            [self writeCameraRegister:0x0004 fromBuffer:buf len:2];	//And do some illogical transfers // EXPOSURE
+            [self writeCameraRegister:0x000d to:0 len:1];		//Don't ask me - ask Creative and Logitech :)
+            lastShutter=myShutter;
+            changedSetting=YES;
+        }
+        
+        if (myGain!=lastGain) 	//Gain changes
+        {			
+            unsigned int iGain=myGain*255.0f;
+            UInt8 buf[21];
+            int i;
+            for (i=18;i>=0;i-=2) {			//Produce a weird buffer (the cam likes it that way...)
+                buf[i]=0x58+(iGain&1);
+                buf[i+1]=0xd8+(iGain&1);
+                iGain/=2;
+            }
+            buf[20]=0x5c;
+            [self writeCameraRegister:0x000f fromBuffer:buf len:21];	//And do some illogical transfers //  BRIGHTNESS
+            [self writeCameraRegister:0x000d to:0 len:1];		//Don't ask me - ask Creative and Logitech :)
+            lastGain=myGain;
+            changedSetting=YES;
+        }
+        
+    
+        if (!changedSetting) 
+        {
+            UInt8 buf=0;
+            IOReturn err=(*intf)->WritePipe(intf, 1, &buf, 1);
+            CheckError(err,"MyQCProBeigeDriver: fillNextChunk: write a zero");
+            if (err) {
+                if (!grabbingError) grabbingError=CameraErrorUSBProblem;
+                shouldBeGrabbing=NO;
+            }
+        }
+    
+    }
+    //3. Start the bulk read
+    if (shouldBeGrabbing) {
+        err=((IOUSBInterfaceInterface182*)(*intf))->ReadPipeAsyncTO(intf,2,
+                                                                    [fillingChunk mutableBytes],
+                                                                    grabBufferSize,2000,3000,
+                                                                    (IOAsyncCallback1)(handleFullChunk),self);	//Read one chunk
+        CheckError(err,"grabbingThread:ReadPipeAsync");
+        if (err) {
+            grabbingError=CameraErrorUSBProblem;
+            shouldBeGrabbing=NO;
+        } else videoBulkReadsPending++;
+    }
+}
+
+
+- (void) decompressBuffer2:(UInt8 *) src 
+{
+    [super decompressBuffer:src];
+    
+    // fix colour space
+    /*
+    int i;
+    UInt32* dst=(UInt32*)[decompressionBuffer mutableBytes];
+    UInt32 bits=0;
+    src+=4;		//Skip past header
+    for (i=[self width]*[self height]/4;i>0;i--) {
+        bits=src[0]+(src[1]<<8)+(src[2]<<16);
+        src+=3;
+        *(dst++)=((bits<<26)&0xfc000000)|((bits<<12)&0x00fc0000)|((bits>>2)&0x0000fc00)|((bits>>16)&0x000000fc);
+    }
+     */
+    
+}
+
+- (BOOL) canSetAutoGain 
+{
+    return NO;
+}
+
 
 @end
