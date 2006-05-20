@@ -838,7 +838,7 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     // Stop the stream, reset the USB, close down 
     
     [self shutdownGrabStream];
-    [self usbSetAltInterfaceTo:0 testPipe:0]; // Reset to control pipe
+//  [self usbSetAltInterfaceTo:0 testPipe:0]; // Reset to control pipe -- should be done in shutdownGrabStream, normal could be a different alt than 0!
     
     shouldBeGrabbing = NO; // Error in grabbingThread or abort? initiate shutdown of everything else
     [grabContext.chunkReadyLock unlock]; // Give the decodingThread a chance to abort

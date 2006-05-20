@@ -186,7 +186,7 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //  More of the same
 //  [self usbWriteVICmdWithBRequest:0x00 wValue:0x00 wIndex:0x40 buf:NULL len:0];
     
-    [self usbSetAltInterfaceTo:0 testPipe:[self getGrabbingPipe]];
+    [self usbSetAltInterfaceTo:0 testPipe:[self getGrabbingPipe]]; // Must set alt interface to normal
 }
 
 //
