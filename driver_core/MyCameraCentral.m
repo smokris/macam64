@@ -61,6 +61,7 @@
 #import "ZC030xDriver.h"
 #import "CTDC1100Driver.h"
 #import "KworldTV300UDriver.h"
+#import "QuickCamVCDriver.h"
 
 #include "unistd.h"
 
@@ -223,7 +224,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
 	[self registerCameraDriver:[MySwedaSSP09BDriver class]];
     [self registerCameraDriver:[MySE401Driver class]];
     [self registerCameraDriver:[MyQCProBeigeDriver class]];
-    [self registerCameraDriver:[MyQCVCDriver class]];
+//    [self registerCameraDriver:[MyQCVCDriver class]]; // Trying a different route
+    [self registerCameraDriver:[QuickCamVCDriver class]];
     [self registerCameraDriver:[MyQCOrbitDriver class]];
     [self registerCameraDriver:[SQ905 class]];
     [self registerCameraDriver:[SQ930C class]];
