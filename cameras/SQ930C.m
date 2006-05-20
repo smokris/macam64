@@ -23,7 +23,21 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 //
 
-#import <Cocoa/Cocoa.h>
+
+// look at http://gkall.hobby.nl/sq930x.html
+
+// SQ930B - CCD and CMOS
+// SQ930C - CMOS only
+
+// 0x041e:0x4038  Creative Live! Pro
+// 0x041e:0x403c  Creative Live! Ultra
+// 0x041e:0x403d  Creative Live! Ultra for Notebooks
+// 0x041e:0x????  Creative Live! Cam for Notebooks Pro
+// 0x041e:0x4038  Joy-IT 318S Live! Pro
+// 0x????:0x????  Trust WB-3500T
+// 0x????:0x????  Intertec Components GmbH ITM-PCS 20-
+// 0x2770:0x930c  TECOM	318S-H (NHJ)
+
 
 #import "SQ930C.h"
 

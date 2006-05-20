@@ -23,18 +23,18 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 //
 
-#import <Cocoa/Cocoa.h>
 
-#include "SQ905.h"
+#import "GenericDriver.h"
+
+//#include "SQ905.h"
 
 
-@interface SQ930C : SQ905 
+@interface SQ930C : GenericDriver 
 {
 }
 
 // Choose which USB Vendor and Product IDs to activate for
 + (NSArray *) cameraUsbDescriptions;
 
-- (BOOL) canStoreMedia;                                 // Does the device support DSC or similar functions
 
 @end
