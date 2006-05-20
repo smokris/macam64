@@ -771,8 +771,8 @@
         if (err) ok=NO;
     }
 #ifdef LOG_USB_CALLS
-    if (ok) NSLog(@"alt interface switch to %i ok");
-    else NSLog(@"alt interface switch to %i failed");
+    if (ok) NSLog(@"alt interface switch to %i ok (pipe = %i)", alt, pipe);
+    else NSLog(@"alt interface switch to %i failed (pipe = %i)", alt, pipe);
 #endif
     return ok;
 }
