@@ -1736,7 +1736,7 @@ int b, in = 0, allzero;
 #pragma mark ===================
 
 
-@implementation OV519Driver
+@implementation TentativeOV519Driver
 
 
 + (NSArray *) cameraUsbDescriptions 

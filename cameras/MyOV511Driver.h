@@ -325,14 +325,14 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
 @end
 
 
-@interface OV519Driver : OV518Driver 
+@interface TentativeOV519Driver : OV518Driver 
 
 + (NSArray *) cameraUsbDescriptions;
 
 @end
 
 
-@interface OV530Driver : OV519Driver 
+@interface OV530Driver : TentativeOV519Driver 
 
 + (NSArray *) cameraUsbDescriptions;
 
