@@ -62,6 +62,7 @@
 #import "CTDC1100Driver.h"
 #import "KworldTV300UDriver.h"
 #import "QuickCamVCDriver.h"
+#import "OV519Driver.h"
 
 #include "unistd.h"
 
