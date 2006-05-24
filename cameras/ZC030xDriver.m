@@ -381,9 +381,20 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 - (void) decodeBuffer: (GenericChunkBuffer *) buffer
 {
+    int i;
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
+    // before jpeg_decode422() is called:
+    //   copy data to tmpbuffer, possibly skippin some header info
+    //   scanlength is the length of data
+    
+    // when jpeg_decode422() is called:
+    //   frame.data - points to output buffer
+    //   frame.scanlength -length of data (tmpbuffer on input, data on output)
+    //   frame.tmpbuffer - points to input buffer
+    
+
 /*  I think these get set in the jpeg-decoding routine
         
     spca50x->frame->dcts ?
@@ -395,11 +406,18 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->frame->width = rawWidth;
     spca50x->frame->height = rawHeight;
      
-    spca50x->frame->data = buffer->buffer;  // output or input???
-    spca50x->frame->scanlength = buffer->numBytes;  // input or output??
-    spca50x->frame->tmpbuffer = decodingBuffer;  // input or output??
+    spca50x->frame->data = decodingBuffer;
+    spca50x->frame->scanlength = buffer->numBytes;
+    spca50x->frame->tmpbuffer = buffer->buffer;
     
     spca50x->frame->decoder = &spca50x->maindecode;  // has the code table, are red, green, blue set up?
+    
+    for (i = 0; i < 256; i++) 
+    {
+        spca50x->frame->decoder->Red[i] = i;
+        spca50x->frame->decoder->Green[i] = i;
+        spca50x->frame->decoder->Blue[i] = i;
+    }
     
     spca50x->frame->format = 0;
     spca50x->frame->cropx1 = 0;
