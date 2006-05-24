@@ -23,7 +23,7 @@
 #include "Resolvers.h"
 #include "MiscTools.h"
 #include "unistd.h"
-#include "JFIFHeaderTemplate.h"
+//#include "JFIFHeaderTemplate.h"
 
 #include "USB_VendorProductIDs.h"
 
