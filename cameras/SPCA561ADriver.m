@@ -165,7 +165,10 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 //  printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
     
     if (frameLength < 1 || buffer[0] == SPCA50X_SEQUENCE_DROP) 
+    {
+        *dataLength = 0;
         return invalidFrame;
+    }
     
     int frameNumber = buffer[SPCA50X_OFFSET_SEQUENCE];
 //  int chunkNumber = buffer[SPCA561_OFFSET_FRAMSEQ];

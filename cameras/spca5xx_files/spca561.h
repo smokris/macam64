@@ -691,6 +691,7 @@ static __u16 spca561_getcontrast(struct usb_spca50x *spca50x)
 static int spca561_config(struct usb_spca50x *spca50x)
 {
 	__u8 data1, data2;
+	int vendorid = 0;
 	// Read frm global register the USB product and vendor IDs, just to	
 	// prove that we can communicate with the device.  This works, which
 	// confirms at we are communicating properly and that the device
@@ -698,10 +699,15 @@ static int spca561_config(struct usb_spca50x *spca50x)
 	spca5xxRegRead(spca50x->dev,0,0,0x8104,&data1,1);
 	spca5xxRegRead(spca50x->dev,0,0,0x8105,&data2,1);
 	PDEBUG(1, "Read from GLOBAL: USB Vendor ID 0x%02x%02x", data2, data1);
+	vendorid = ((data2 << 8) | data1) & 0xffff;
 	spca5xxRegRead(spca50x->dev,0,0,0x8106,&data1,1);
 	spca5xxRegRead(spca50x->dev,0,0,0x8107,&data2,1);
 	PDEBUG(1, "Read from GLOBAL: USB Product ID 0x%02x%02x", data2, data1);
 	spca50x->customid = ((data2 << 8) | data1) & 0xffff;
+	if (spca50x->customid == 0 && vendorid == 0x046d) {
+		// ==> Probably a Logitech QuickCam Express (elch2):
+		spca50x->customid = 0x0928;
+	}
 	switch (spca50x->customid){
     case 0x0000: // try this
         spca50x->customid = 0x0561; // fall through

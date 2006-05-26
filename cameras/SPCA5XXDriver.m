@@ -171,8 +171,8 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 {
     // 
     
-    [self spca5xx_init];
     [self spca5xx_config];
+    [self spca5xx_init];
     
     // Set some default parameters
     
