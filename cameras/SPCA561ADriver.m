@@ -162,24 +162,29 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     *tailStart = frameLength;
     *tailLength = 0;
     
-//  printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+#if REALLY_VERBOSE
+    if (frameLength != 1023) 
+        printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+#endif        
     
     if (frameLength < 1 || buffer[0] == SPCA50X_SEQUENCE_DROP) 
     {
         *dataLength = 0;
+        
         return invalidFrame;
     }
     
     int frameNumber = buffer[SPCA50X_OFFSET_SEQUENCE];
-//  int chunkNumber = buffer[SPCA561_OFFSET_FRAMSEQ];
+    int chunkNumber = buffer[SPCA561_OFFSET_FRAMSEQ];
     
 //    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", 
 //            buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7], buffer[8], buffer[9], buffer[10], buffer[11], buffer[12], buffer[13], buffer[14], buffer[15], buffer[16], buffer[17], buffer[18], buffer[19], buffer[20]);
     
     if (frameNumber == 0x00) 
     {
-//        printf("Chunk number %3d: \n", chunkNumber);
-        
+#if REALLY_VERBOSE
+        printf("Chunk number %3d: \n", chunkNumber);
+#endif        
         return newChunkFrame;
     }
     
@@ -297,25 +302,28 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 //
 - (void) decodeBuffer: (GenericChunkBuffer *) buffer
 {
-//    printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
+//  printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
     
-    int skip = 0;
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
+    UInt8 * decodePtr = decodingBuffer;
+    
 	// Decode the bytes
     
+//  printf("buffer[0] = 0x%02x, buffer[1] =  0x%02x\n", buffer->buffer[0], buffer->buffer[1]);
+    
     if (buffer->buffer[1] & 0x10) 
-        decode_spca561(buffer->buffer, decodingBuffer, rawWidth, rawHeight);
+        decode_spca561(buffer->buffer, decodePtr, rawWidth, rawHeight);
     else 
-        skip = 20;
+        decodePtr = buffer->buffer + 16;
     
     // Turn the Bayer data into an RGB image
     
     [bayerConverter setSourceFormat:6];
     [bayerConverter setSourceWidth:rawWidth height:rawHeight];
     [bayerConverter setDestinationWidth:rawWidth height:rawHeight];
-    [bayerConverter convertFromSrc:decodingBuffer + skip
+    [bayerConverter convertFromSrc:decodePtr
                             toDest:nextImageBuffer
                        srcRowBytes:rawWidth
                        dstRowBytes:nextImageBufferRowBytes
