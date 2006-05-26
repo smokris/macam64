@@ -139,7 +139,24 @@
 - (void) startupCamera
 {   // This init part is taken from ov51x driver for linux
 	// I copied the comments, but some registers are not documented
-
+    
+#if EXPERIMENTAL
+    // [hxr] read sensor ID here? suggested code:
+    {
+        if ([self regWrite:OV519_REG_RESET1 val:0x0f] < 0) return; // Reset
+        
+        UInt8 pid = [self i2cRead:OV7648_REG_PID];
+        UInt8 ver = [self i2cRead:OV7648_REG_VER];
+        
+        printf("The sensor is %2x%2x\n", pid, ver);
+        
+        if (pid == 0x76 && ver == 0x48) 
+            printf("The sensor is OV7648 as expected, thing should work.\n");
+        else 
+            printf("The sensor is unknown things may or may not work! Please report!\n");
+    }
+#endif
+    
 	if ([self regWrite:OV519_REG_RESET1 val:0x0f] < 0) return; // Reset
 	if ([self regWrite:OV519_REG_YS_CTRL val:0x6d] < 0) return; // Enables various things (adds "System Reset Mask" to defaults)
 	if ([self regWrite:OV519_REG_EN_CLK0 val:0x9b] < 0) return; // adds SCCB (I2C) and audio, unset microcontroller
