@@ -162,6 +162,12 @@
 #define PRODUCT_WCAM_300A_B             0xd004      // ZC0301P
 #define PRODUCT_WCAM_300A_C             0xc005      // ZC0302
 
+#define VENDOR_CONEXANT         0x0572
+#define PRODUCT_CN0352P_VERSION1        0x0001      // CN0352P
+#define PRODUCT_CN0352P_VERSION2        0x0002      // CN0352P
+#define PRODUCT_CX11646_VERSION1        0x0040      // CX11646 // Wondereye CP-115
+#define PRODUCT_CX11646_VERSION2        0x0041      // CX11646 // Creative Webcam Notebook [PD1170]
+
 #define VENDOR_OVT              0x05A9
 #define PRODUCT_OV511                   0x0511
 #define PRODUCT_OV511PLUS               0xA511
