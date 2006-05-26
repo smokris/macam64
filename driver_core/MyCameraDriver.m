@@ -706,7 +706,7 @@
     req.pData=buf;
     if ((!isUSBOK)||(!intf)) return NO;
     err=(*intf)->ControlRequest(intf,0,&req);
-#ifdef LOG_USB_CALLS
+#if LOG_USB_CALLS
     NSLog(@"usb command reqType:%i req:%i val:%i idx:%i len:%i ret:%i",bReqType,bReq,wVal,wIdx,len,err);
     if (len>0) DumpMem(buf,len);
 #endif
@@ -770,7 +770,7 @@
         CheckError(err,"getPipeStatus");
         if (err) ok=NO;
     }
-#ifdef LOG_USB_CALLS
+#if LOG_USB_CALLS
     if (ok) NSLog(@"alt interface switch to %i ok (pipe = %i)", alt, pipe);
     else NSLog(@"alt interface switch to %i failed (pipe = %i)", alt, pipe);
 #endif
