@@ -666,6 +666,8 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
                 {
                     int j;
                     
+//                  printf("Chunk filled with %ld bytes\n", gCtx->fillingChunkBuffer.numBytes);
+                    
                     // Pass the complete chunk to the full list
                     // Move full buffers one up
                     
