@@ -25,11 +25,13 @@
 
 #import "CX11646Driver.h"
 
+#include "USB_VendorProductIDs.h"
+
 
 @implementation CX11646Driver
 
-// 572:001 // Zoltrix EagleCam; Ezonics EZCam USB II (Tekom); Dolphin Digital iCam (FASTUSB-001)
-// 572:002 // Ezonics EZCam USB II (Chen-Source)
+
 // 572:041 // Creative Webcam NoteBook PD1170 [CX11646 and CX28490]
+// 572:040 // Wondereye CP-115
 
 @end
