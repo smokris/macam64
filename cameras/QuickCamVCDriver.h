@@ -10,9 +10,9 @@
 #import <GenericDriver.h>
 
 
-/* Addresses */
-#define QCAM_VC_SET_LIGHTSENS_LO     0x02  /* Light Sensitivity decrease */
-#define QCAM_VC_SET_LIGHTSENS_HI     0x03  /* Light Sensitivity increase */
+// Addresses
+#define QCAM_VC_SET_LIGHTSENS_LO     0x02  // Light Sensitivity decrease 
+#define QCAM_VC_SET_LIGHTSENS_HI     0x03  // Light Sensitivity increase 
 
 #define QCAM_VC_SET_EXPOSURE         0x04
 
@@ -26,33 +26,32 @@
 #define QCAM_VC_GET_FRAME            0x0d
 #define QCAM_VC_SET_BRIGHTNESS       0x0f
 
-/*
-	QCAM_VC_SET_MISC Address...
-	
- Bit 0 = Config Mode;
- Bit 1 = Image Mult. Factor;
- Bit 2 = compression??
-	Bit 3 = UNKNOWN Set to 0;
- Bit 4 = Enable Video Stream;
- Bit 5-6 UNKNOWN set to 0;
- Bit 7 = Frame Ready
- */
+// Bit masks for the MISC register
+#define QCAM_VC_BIT_CONFIG_MODE     0x01  // Bit 0 = Config Mode;
+#define QCAM_VC_BIT_MULT_FACTOR     0x02  // Bit 1 = Image Mult. Factor;
+#define QCAM_VC_BIT_COMPRESSION     0x04  // Bit 2 = compression??
+                                          // Bit 3 = UNKNOWN Set to 0;
+#define QCAM_VC_BIT_ENABLE_VIDEO    0x10  // Bit 4 = Enable Video Stream;
+                                          // Bit 5 = UNKNOWN Set to 0;
+                                          // Bit 6 = UNKNOWN Set to 0;
+#define QCAM_VC_BIT_FRAME_READY     0x80  // Bit 7 = Frame Ready
 
-/* USS 720 requests type */
+
+// USS 720 requests type
 #define REQT_GET_DEVICE_ID    0xA1
 #define REQT_GET_PORT_STATUS  0xA1
 #define REQT_SOFT_RESET       0x23
 #define REQT_GET_1284_REG     0xC0
 #define REQT_SET_1284_REG     0x40
 
-/* USS 720 bRequest      */
+// USS 720 bRequest
 #define BREQ_GET_DEVICE_ID    0x00
 #define BREQ_GET_PORT_STATUS  0x01
 #define BREQ_SOFT_RESET       0x02
 #define BREQ_GET_1284_REG     0x03
 #define BREQ_SET_1284_REG     0x04
 
-/* USS 720 registers */
+// USS 720 registers
 #define SET_USS720_DATA    0x00
 #define SET_USS720_STATUS  0x01
 #define SET_USS720_CONTROL 0x02
@@ -70,8 +69,8 @@
 #define GET_USS720_EPP     0x05
 #define GET_USS720_SETUP   0x06
 
-/* USS 720 register 1 STATUS */
-#define EPP_TIMEOUT    0x01 /*Timeout 10us during EPP read/write */
+// USS 720 register 1 STATUS
+#define EPP_TIMEOUT    0x01  // Timeout 10us during EPP read/write
 #define PLH            0x02
 #define RESERVED       0x04
 #define NFAULT         0x08
@@ -80,7 +79,7 @@
 #define NACK           0x40
 #define NBUSY          0x80
 
-/* USS 720 register 2 CONTROL */
+// USS 720 register 2 CONTROL
 #define STROBE         0x01
 #define AUTO_FD        0x02
 #define NINIT          0x04
@@ -90,7 +89,7 @@
 #define EPP_MASK       0x40
 #define HLH            0x80
 
-/* USS 720 register 6 EXTCTRL */
+// USS 720 register 6 EXTCTRL
 #define BULK_OUT_EMPTY 0x01
 #define BULK_IN_EMPTY  0x02
 #define BULK_IN_INT    0x04
@@ -103,7 +102,7 @@
 #define ECR_ECP        0x60
 #define ECR_EPP        0x80
 
-/* USS 720 register 7 USSCTRL */
+// USS 720 register 7 USSCTRL
 #define AUTO_MODE         0x01
 #define COMPRESS_ENABLE   0x02
 #define NFAULT_INT_MASK   0x08
@@ -118,6 +117,9 @@
 {
     UInt8 model;
     UInt8 type;
+    
+    int bpc;
+    int frameCount;
     
 	UInt8 * decodingBuffer;
 }
