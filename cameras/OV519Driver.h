@@ -240,7 +240,9 @@
 #define OV519_ALT_SIZE_768	3
 #define OV519_ALT_SIZE_896	4
 
+
 #import "GenericDriver.h"
+
 
 @interface OV519Driver : GenericDriver 
 {
