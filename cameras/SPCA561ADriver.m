@@ -175,7 +175,6 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     }
     
     int frameNumber = buffer[SPCA50X_OFFSET_SEQUENCE];
-    int chunkNumber = buffer[SPCA561_OFFSET_FRAMSEQ];
     
 //    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", 
 //            buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7], buffer[8], buffer[9], buffer[10], buffer[11], buffer[12], buffer[13], buffer[14], buffer[15], buffer[16], buffer[17], buffer[18], buffer[19], buffer[20]);
@@ -183,6 +182,7 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     if (frameNumber == 0x00) 
     {
 #if REALLY_VERBOSE
+        int chunkNumber = buffer[SPCA561_OFFSET_FRAMSEQ];
         printf("Chunk number %3d: \n", chunkNumber);
 #endif        
         return newChunkFrame;
