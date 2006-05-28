@@ -498,6 +498,9 @@
 		F5B2EF320A1B8861001423D7 /* QuickCamVCDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B2EF2E0A1B8861001423D7 /* QuickCamVCDriver.m */; };
 		F5B2EF330A1B8861001423D7 /* QuickCamVCDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B2EF2D0A1B8861001423D7 /* QuickCamVCDriver.h */; };
 		F5B2EF340A1B8861001423D7 /* QuickCamVCDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B2EF2E0A1B8861001423D7 /* QuickCamVCDriver.m */; };
+		F5C5C2290A26C3CD00737FBB /* CN0352PDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5C2280A26C3CD00737FBB /* CN0352PDriver.h */; };
+		F5C5C22A0A26C3CD00737FBB /* CN0352PDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5C2280A26C3CD00737FBB /* CN0352PDriver.h */; };
+		F5C5C22B0A26C3CD00737FBB /* CN0352PDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5C2280A26C3CD00737FBB /* CN0352PDriver.h */; };
 		F5CFB8B009D8804E001FBB48 /* CTDC1100Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5CFB8AE09D8804E001FBB48 /* CTDC1100Driver.h */; };
 		F5CFB8B109D8804E001FBB48 /* CTDC1100Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5CFB8AF09D8804E001FBB48 /* CTDC1100Driver.m */; };
 		F5CFB8B209D8804E001FBB48 /* CTDC1100Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5CFB8AE09D8804E001FBB48 /* CTDC1100Driver.h */; };
@@ -797,6 +800,7 @@
 		F5BFF548029B5A8801B6CBC8 /* Supported_Cameras.html */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.html; name = Supported_Cameras.html; path = texts/Supported_Cameras.html; sourceTree = "<group>"; };
 		F5C5790603049095010B006D /* MyIntelPCCameraPro.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyIntelPCCameraPro.h; sourceTree = "<group>"; };
 		F5C5790703049095010B006D /* MyIntelPCCameraPro.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyIntelPCCameraPro.m; sourceTree = "<group>"; };
+		F5C5C2280A26C3CD00737FBB /* CN0352PDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CN0352PDriver.h; sourceTree = "<group>"; };
 		F5C80D8D02417A800166DE75 /* MyScrollView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyScrollView.h; sourceTree = "<group>"; };
 		F5C80D8E02417A800166DE75 /* MyScrollView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyScrollView.m; sourceTree = "<group>"; };
 		F5CD7018092AEBF600E9EEE3 /* generate_app.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_app.plist; sourceTree = "<group>"; };
@@ -1141,6 +1145,7 @@
 		F5F79A800212038E01E152CA /* cameras */ = {
 			isa = PBXGroup;
 			children = (
+				F5C5C2280A26C3CD00737FBB /* CN0352PDriver.h */,
 				F553F47D0A22BB1A00591163 /* OV519Driver.h */,
 				F553F47E0A22BB1A00591163 /* OV519Driver.m */,
 				F5FD71E10A1D14B000702950 /* M560xDriver.h */,
@@ -1365,6 +1370,7 @@
 				F5FD71E40A1D14B000702950 /* M560xDriver.h in Headers */,
 				F553F4830A22BB1B00591163 /* OV519Driver.h in Headers */,
 				F553F4960A22BB6300591163 /* JpgDecompress.h in Headers */,
+				F5C5C22B0A26C3CD00737FBB /* CN0352PDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1456,6 +1462,7 @@
 				F5FD71E30A1D14B000702950 /* M560xDriver.h in Headers */,
 				F553F4810A22BB1B00591163 /* OV519Driver.h in Headers */,
 				F553F4940A22BB6300591163 /* JpgDecompress.h in Headers */,
+				F5C5C22A0A26C3CD00737FBB /* CN0352PDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1543,6 +1550,7 @@
 				F5FD71E20A1D14B000702950 /* M560xDriver.h in Headers */,
 				F553F47F0A22BB1B00591163 /* OV519Driver.h in Headers */,
 				F553F4920A22BB6300591163 /* JpgDecompress.h in Headers */,
+				F5C5C2290A26C3CD00737FBB /* CN0352PDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
