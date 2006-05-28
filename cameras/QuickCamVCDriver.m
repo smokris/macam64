@@ -9,6 +9,9 @@
 
 #import "QuickCamVCDriver.h"
 
+#include <unistd.h>
+
+#include "MiscTools.h"
 #include "Resolvers.h"
 #include "USB_VendorProductIDs.h"
 
@@ -18,7 +21,8 @@
 - (BOOL) resetUSS720;
 - (BOOL) getUSS720Register: (UInt8) reg  returning: (UInt8 *) val;
 - (BOOL) setUSS720Register: (UInt8) reg  value: (UInt8) val;
-- (CameraError) setCameraRegister: (UInt8) reg  data: (void *) buffer  size: (UInt32) length;
+- (CameraError) setCameraRegister: (UInt8) reg  data: (UInt8) value;
+- (CameraError) setCameraRegisters: (UInt8) reg  data: (void *) buffer  size: (UInt32) length;
 - (CameraError) getCameraRegister: (UInt8) reg  data: (void *) buffer  size: (UInt32) length;
 - (BOOL) readStream: (void *) buffer  size: (UInt32) length;
 
@@ -59,6 +63,9 @@
 	if (bayerConverter == NULL) 
         return NULL;
     
+    bpc = 8;
+    frameCount = 0;
+    
     // Allocate memory
     // Initialize variable and other structures
     
@@ -68,7 +75,7 @@
 
 - (void) startupCamera
 {
-    UInt8 registers[64];
+    UInt8 registers[1];
     
     [self usbSetAltInterfaceTo:2 testPipe:[self getGrabbingPipe]];
     
@@ -77,9 +84,9 @@
     [self getUSS720Register:2 returning:registers];
     [self getUSS720Register:3 returning:registers];
 
-    [self getCameraRegister:0x00 data:registers size:64];
+    [self getCameraRegister:0x00 data:registers size:1];
     model = registers[0];
-    [self getCameraRegister:0x01 data:registers size:64];
+    [self getCameraRegister:0x01 data:registers size:1];
     type = registers[0];
 	
 	/* 
@@ -95,6 +102,85 @@
 	[self setGamma:0.5];
 	[self setSaturation:0.5];
 	[self setSharpness:0.5];
+    
+#if 0
+	if (!qcamvc) return -1;
+    
+	long i;
+	unsigned char *bigbuffer;
+	unsigned char bitmask;
+    
+	memset(&qcamvc->misc_reg, 0, sizeof(qcamvc->misc_reg));
+	
+	bigbuffer=kmalloc(BIGBUFFER_SIZE, GFP_KERNEL);
+	if (bigbuffer==NULL) 
+	{
+		printk("QuickCam VC: Init bigbuffer kmalloc error.\n");
+		return -1;
+	}
+	
+	qcamvc->camera_init = 1;
+	
+	/* setup a 128KB bit mask for 6bit/8bit per component */
+	bitmask = 0xFF << qcamvc->bpc;
+	for(i=0; i<BIGBUFFER_SIZE ; i+=2)
+	{
+		*(bigbuffer + i) = (unsigned char )(i >> 11);
+		*(bigbuffer + i + 1) = bitmask;
+	}
+	
+	get_camera_model(qcamvc);
+	
+    [self setCameraRegister:QCAM_VC_SET_BRIGHTNESS data:0x38];
+    [self setCameraRegister:QCAM_VC_SET_BRIGHTNESS data:0x78];
+	
+	// clear config bit & disable video streaming
+    [self setCameraRegister:QCAM_VC_SET_MISC data:0x00];
+	
+	// clear 0x0e address (whatever this address actually does?)
+    [self setCameraRegister:0x0E data:0x00];
+	
+	/* write 128KB of 6bit/8bit mask */
+	set_registers(qcamvc, QCAM_VC_GET_FRAME, bigbuffer, BIGBUFFER_SIZE);
+	
+	// set address 0x0e to 0x01
+    [self setCameraRegister:0x0E data:0x01];
+	
+	// this might have somthing to do with setting the amount of compression - don't know how though.
+    [self setCameraRegister:QCAM_VC_SET_BRIGHTNESS data:0x78];
+    [self setCameraRegister:QCAM_VC_SET_BRIGHTNESS data:0x78];
+    [self setCameraRegister:QCAM_VC_SET_BRIGHTNESS data:0x58];
+    
+	/* set brightness & exposure - probably not needed here */
+	qcamvc_set_brightness(qcamvc, qcamvc->brightness);
+	qcamvc_set_exposure(qcamvc, qcamvc->exposure);
+    
+	// set config bit. (whatever this bit actually does?)
+    [self setCameraRegister:QCAM_VC_SET_MISC data:0x01];
+	
+	/* set CCD columns & rows */
+	qcamvc_set_ccd_area(qcamvc);
+    
+	/* set brightness & exposure */
+	qcamvc_set_brightness(qcamvc, qcamvc->brightness);
+	qcamvc_set_exposure(qcamvc, qcamvc->exposure);
+	
+	/* set the Light Sensitivity (no gain/no attenuation = 128 ) */
+	qcamvc_set_light_sensitivity(qcamvc, qcamvc->light_sens);
+    
+	// set Misc options & re-enable video streaming now
+    UInt8 misc = 0;
+    misc |= QCAM_VC_BIT_CONFIG_MODE;
+    if (!multiplier) // odd
+        misc |= QCAM_VC_BIT_MULT_FACTOR;
+    if (compression) 
+        misc |= QCAM_VC_BIT_COMPRESSION;
+    misc |= QCAM_VC_BIT_ENABLE_VIDEO;
+    [self setCameraRegister:QCAM_VC_SET_MISC data:misc];
+	
+	// send a get frame to clear the previous resolution
+    [self setCameraRegister:QCAM_VC_GET_FRAME data:0xFF];
+#endif
 }
 
 
@@ -194,6 +280,10 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     CameraError error = CameraErrorOK;
     
+    frameCount++;
+	
+    [self setCameraRegister:QCAM_VC_GET_FRAME data:frameCount];
+    
     //  Probably will have a lot of statements kind of like this:
     //	[self usbWriteVICmdWithBRequest:0x00 wValue:0x00 wIndex:0x0041 buf:NULL len:0];
     
@@ -209,6 +299,148 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     //  [self usbWriteVICmdWithBRequest:0x00 wValue:0x00 wIndex:0x40 buf:NULL len:0];
     
     [self usbSetAltInterfaceTo:2 testPipe:[self getGrabbingPipe]];
+}
+
+//
+// try a couple of ways:
+// - keep readin until register says empty
+// - precompute size
+- (void) readData
+{
+    //set up
+    
+    // loop while data is available
+    
+    // read in more data
+    
+    [self setCameraRegister:QCAM_VC_GET_FRAME data:frameCount];
+
+    int ready = 0;
+    int readyCount = 0;
+    
+    do 
+    {
+        UInt8 misc = 0;
+        
+        [self getCameraRegister:QCAM_VC_SET_MISC data:&misc size:1];
+        ready = misc & QCAM_VC_BIT_FRAME_READY;
+        
+        if (!ready) 
+        {
+            printf("QuickCam VC image is not ready! [%2x]\n", misc);
+            usleep(20000);
+            
+            if (++readyCount > 10) 
+                ready = 1;
+        }
+    } 
+    while (!ready);
+    
+    UInt32 totalLength = ([self width] * [self height] * bpc / 8) + 64;
+    UInt32 expectedLength = totalLength;
+    
+    void * buf = malloc(totalLength + 1);
+    
+    IOReturn ret = (*intf)->ReadPipe(intf, [self getGrabbingPipe], buf, &totalLength);
+
+    if (ret != kIOReturnSuccess) 
+    {
+        printf("There was a problem reading the chunk\n");
+    }
+    
+    printf("A chunk of length %ld was just read (expected %ld).\n", totalLength, expectedLength);
+        
+#if 0
+	unsigned long oldjif, rate, diff;
+	int err;
+	size_t size;
+    
+	if ( (err=allocate_raw_frame(qcamvc)) )
+		return err;
+    
+	oldjif = jiffies;
+	
+	/* wait for it to become ready */
+	if (!frame_is_ready(qcamvc))
+	{ /* about 2 secounds has elapsed without the camera telling us a frame is ready... */
+		printk("Camera timed-out while grabbing frame #%d.\n", qcamvc->frame_count);
+		return -ENODEV;
+	}
+
+	/* now suck the image data from the camera */
+	if (set_register(qcamvc, QCAM_VC_GET_FRAME, qcamvc->frame_count))
+    return -ENODEV;
+
+	size = qcamvc->ops->qcamvc_stream_read(qcamvc->lowlevel_data, qcamvc->raw_frame, qcamvc->packet_len);
+
+	if (size == 0)
+{
+		printk("Failed to read frame #%d from the camera.\n", qcamvc->frame_count);
+		return -1;
+}
+
+/* calc frame rate */
+rate = qcamvc->packet_len * HZ / 1024;
+diff = jiffies-oldjif;
+qcamvc->transfer_rate = diff==0 ? rate : rate/diff;
+
+return size;
+#endif
+}
+
+// 
+// Bulk read version???
+//
+- (void) grabbingThread: (id) data 
+{
+    NSAutoreleasePool * pool=[[NSAutoreleasePool alloc] init];
+//    IOReturn error;
+    bool ok = true;
+//    long i;
+    
+    ChangeMyThreadPriority(10);	// We need to update the isoch read in time, so timing is important for us
+    
+    // Try to get as much bandwidth as possible somehow?
+    
+    if (![self setGrabInterfacePipe]) 
+    {
+        if (grabContext.contextError == CameraErrorOK) 
+            grabContext.contextError = CameraErrorNoBandwidth; // Probably means not enough bandwidth
+        ok = NO;
+    }
+    
+    // Start the stream
+    
+    if (ok) 
+        ok = [self startupGrabStream];
+    
+    // keep going until we stop ()
+    
+    while (shouldBeGrabbing) 
+    {
+        // ask for frame
+        
+        // read data
+        
+        [self readData];
+        
+        // put it where it goes
+        
+        // prepare to get next frame
+    }
+    
+    // Stop the stream, reset the USB, close down 
+    
+    [self shutdownGrabStream];
+    
+    shouldBeGrabbing = NO; // Error in grabbingThread or abort? initiate shutdown of everything else
+    [grabContext.chunkReadyLock unlock]; // Give the decodingThread a chance to abort
+    
+    // Exit the thread cleanly
+    
+    [pool release];
+    grabbingThreadRunning = NO;
+    [NSThread exit];
 }
 
 //
@@ -280,7 +512,13 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 
-- (CameraError) setCameraRegister: (UInt8) reg  data: (void *) buffer  size: (UInt32) length
+- (CameraError) setCameraRegister: (UInt8) reg  data: (UInt8) value
+{
+    return [self setCameraRegisters:reg data:&value size:1];
+}
+
+
+- (CameraError) setCameraRegisters: (UInt8) reg  data: (void *) buffer  size: (UInt32) length
 {
     BOOL ok = YES;
     
@@ -312,6 +550,8 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     BOOL ok = YES;
     UInt8 registers[7];
+    UInt8 readBuffer[64];
+    UInt32 actualLength = 64;
     
     [self resetUSS720];
     [self getUSS720Register:GET_USS720_CONTROL returning:registers];
@@ -335,11 +575,16 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     if (ok && length > 0 && buffer != NULL) 
     {
-        IOReturn result = (*intf)->ReadPipe(intf, 2, buffer, &length);
+//      IOReturn result = (*intf)->ReadPipe(intf, 2, buffer, &length);
+        IOReturn result = (*intf)->ReadPipe(intf, 2, readBuffer, &actualLength);
         CheckError(result, "QuickCamVCDriver:getCameraRegister");
         ok = (result) ? NO : YES;
         [self resetUSS720];
     }
+    
+    int i;
+    for (i = 0; i < length; i++) 
+        ((UInt8 *) buffer)[i] = readBuffer[i];
     
     return (ok) ? CameraErrorOK : CameraErrorUSBProblem;
 }

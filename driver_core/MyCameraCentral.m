@@ -225,19 +225,26 @@ MyCameraCentral* sharedCameraCentral=NULL;
 	[self registerCameraDriver:[MySwedaSSP09BDriver class]];
     [self registerCameraDriver:[MySE401Driver class]];
     [self registerCameraDriver:[MyQCProBeigeDriver class]];
-//    [self registerCameraDriver:[MyQCVCDriver class]]; // Trying a different route
+#if EXPERIMENTAL
     [self registerCameraDriver:[QuickCamVCDriver class]];
+#else
+    [self registerCameraDriver:[MyQCVCDriver class]]; // Trying a different route
+#endif
     [self registerCameraDriver:[MyQCOrbitDriver class]];
     [self registerCameraDriver:[SQ905 class]];
+#if EXPERIMENTAL
     [self registerCameraDriver:[SQ930C class]];
+#endif
 //  [self registerCameraDriver:[MyPixartDriver class]]; // Deprecated in favor of PixartDriver - has problems
 //  [self registerCameraDriver:[PixartDriver class]];   // Disabled because working on SPCA5XX-based version instead
+#if EXPERIMENTAL
     [self registerCameraDriver:[PAC7311Driver class]];
     [self registerCameraDriver:[OV518Driver class]];
     [self registerCameraDriver:[OV518PlusDriver class]];
+#endif
     [self registerCameraDriver:[OV519Driver class]];
     [self registerCameraDriver:[PAC207Driver class]];     // Based on SPCA5XX - seems to work pretty well
-    [self registerCameraDriver:[SPCA561ADriver class]];   // Based on SPCA5XX - needs work
+    [self registerCameraDriver:[SPCA561ADriver class]];   // Based on SPCA5XX - seems to work now
     [self registerCameraDriver:[TV8532Driver class]];     // Based on SPCA5XX - testing!
     [self registerCameraDriver:[ZC030xDriver class]];     // Based on SPCA5XX - testing!
 //    [self registerCameraDriver:[SPCA508Driver class]];  // Based on SPCA5XX - Need decompression for these...
@@ -246,8 +253,10 @@ MyCameraCentral* sharedCameraCentral=NULL;
 //    [self registerCameraDriver:[SPCA508Sightcam2Driver class]];
 //    [self registerCameraDriver:[SPCA508CreativeVistaDriver class]];
     
+#if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
     [self registerCameraDriver:[KworldTV300UDriver class]];  // This is very incomplete at this time
+#endif
     
 //    [self registerCameraDriver:[MyIntelPCCameraPro class]];
 //    [self registerCameraDriver:[MyIntelPCCamera class]];
