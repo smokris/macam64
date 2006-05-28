@@ -25,6 +25,7 @@
 
 
 // look at http://gkall.hobby.nl/sq930x.html
+// enough info there to get going
 
 // SQ930B - CCD and CMOS
 // SQ930C - CMOS only
@@ -36,7 +37,7 @@
 // 0x041e:0x4038  Joy-IT 318S Live! Pro
 // 0x????:0x????  Trust WB-3500T
 // 0x????:0x????  Intertec Components GmbH ITM-PCS 20-
-// 0x2770:0x930c  TECOM	318S-H (NHJ)
+// 0x2770:0x930c  TECOM	318S-H (NHJ); NGS Robbie 2.0
 
 
 #import "SQ930C.h"
