@@ -61,7 +61,7 @@ static __u16 spcaxxx_getexposure(struct usb_spca50x *spca50x);
 software Autobrightness not need if the webcam 
 have an hardware mode
 @*/
-static void spcaxxx_setAutobright (struct usb_spca50x *spca50x);
+static void spcaxxx_setAutobright(struct usb_spca50x *spca50x);
 
 /*@ spcaxxx_config
 input spca50x->bridge, spca50x->sensor, 
@@ -74,4 +74,4 @@ static int spcaxxx_config(struct usb_spca50x *spca50x);
 Close the gpio output line if possible
 @*/
 static void spcaxxx_shutdown(struct usb_spca50x *spca50x);
-/******************************************************************/ 
+/******************************************************************/
