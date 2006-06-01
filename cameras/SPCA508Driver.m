@@ -22,21 +22,44 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 //
 
+
+// Status:
+//
+// doesn't seem to work in a hub
+//
+// always starts with 5 timeouts:
+// usbCmdWithBRequestType: Error: kIOUSBTransactionTimeout - time out
+//
+// images are way too bright (whitish or light grayish actually)
+// Red is too orange
+// Blue is fine
+// Green is a little too yellow
+//
+// first chunk 4052 bytes is crap
+// CIF works    // 152242 bytes per chunk
+// SIF works    // 115450 bytes per chunk
+// QCIF does *not* work // 38800
+// QSIF works   // 29602 bytes per chunk
+
+
 #import "SPCA508Driver.h"
 
 #include "USB_VendorProductIDs.h"
+#include "spcadecoder.h"
+
 
 // These defines are needed by the spca5xx code
 
 enum 
 {
- ViewQuestVQ110,
- MicroInnovationIC200,
- IntelEasyPCCamera,
- HamaUSBSightcam,
- HamaUSBSightcam2,
- CreativeVista,
+    ViewQuestVQ110,
+    MicroInnovationIC200,
+    IntelEasyPCCamera,
+    HamaUSBSightcam,
+    HamaUSBSightcam2,
+    CreativeVista,
 };
+
 
 // The actual driver
 
@@ -48,8 +71,8 @@ enum
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x0110], @"idProduct",
-            [NSNumber numberWithUnsignedShort:0x0733], @"idVendor",
+            [NSNumber numberWithUnsignedShort:PRODUCT_VQ110], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_VIEWQUEST], @"idVendor",
             @"ViewQuest VQ110", @"name", NULL], 
         
         NULL];
@@ -68,12 +91,6 @@ enum
 	if (self == NULL) 
         return NULL;
     
-    // YUVY - whatever that means
-    
-    bayerConverter = [[BayerConverter alloc] init];
-	if (bayerConverter == NULL) 
-        return NULL;
-    
     spca50x->desc = ViewQuestVQ110;
     spca50x->bridge = BRIDGE_SPCA508;
     spca50x->sensor = SENSOR_INTERNAL;;
@@ -83,16 +100,15 @@ enum
     spca50x->i2c_trigger_on_write = 1;
     spca50x->cameratype = YUVY;
     
+    // YUVY - whatever that means
+    
+    hardwareContrast = NO;
+    
+    cameraOperation = &fspca508;
+    
 	return self;
 }
 
-//
-// This attempts to provide the highest bandwidth
-//
-- (BOOL) setGrabInterfacePipe
-{
-    return [self usbSetAltInterfaceTo:7 testPipe:[self getGrabbingPipe]];
-}
 
 //
 // This is an example that will have to be tailored to the specific camera or chip
@@ -113,18 +129,28 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     *tailStart = frameLength;
     *tailLength = 0;
     
-    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+//  printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
     
     if (frameLength < 1 || buffer[0] == 0xFF) 
+    {
+        *dataLength = 0;
+        
         return invalidFrame;
+    }
+    
+//  printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
     
     if (buffer[0] == 0x00) 
     {
+        *dataStart = SPCA508_OFFSET_DATA;
+        *dataLength = frameLength - SPCA508_OFFSET_DATA;
+        
         return newChunkFrame;
     }
     
     return validFrame;
 }
+
 
 //
 // These are the C functions to be used for scanning the frames
@@ -136,120 +162,52 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 
-- (CameraError) spca5xx_init
-{
-	spca50x_write_vector(spca50x, spca508_open_data);
-    
-//    spca50x_reg_write(dev, 0, 0x8500, ext_modes[index][2]);	// mode
-//    spca50x_reg_write(dev, 0, 0x8700, ext_modes[index][3]);	// clock
-    
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_config
-{
-    int result = config_spca508(spca50x); //  0 is success
-    
-    return (result == 0) ? CameraErrorOK : CameraErrorInternal;
-}
-
-/*  in setMode() ??????
-
-else if (spca50x->bridge == BRIDGE_SPCA508)
-{
-    spca50x_reg_write (dev, 0, 0x8500, ext_modes[index][2]);	// mode
-    spca50x_reg_write (dev, 0, 0x8700, ext_modes[index][3]);	// clock
-}
-*/
-
-- (CameraError) spca5xx_start
-{
-    int error = spca50x_reg_write(spca50x->dev, 0, 0x8112, 0x10 | 0x20);
-    
-    return (error == 0) ? CameraErrorOK : CameraErrorInternal;
-}
-
-
-- (CameraError) spca5xx_stop
-{
-	spca50x_reg_write(spca50x->dev, 0, 0x8112, 0x20);
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_shutdown
-{
-//    spca561_shutdown(spca50x);
-    return CameraErrorOK;
-}
-
-
-// brightness also returned in spca5xx_struct
-
-- (CameraError) spca5xx_getbrightness
-{
-    __u16 brightnessValue = 0;
-    brightnessValue = spca50x_reg_read(spca50x->dev, 0, 0x8651, 1);
-    spca50x->brightness = brightnessValue << 8;
-    
-    return CameraErrorOK;
-}
-
-
-// takes brightness from spca5xx_struct
-
-- (CameraError) spca5xx_setbrightness
-{
-//	spca50x->brightness = brightness << 8;
-    __u8 brightnessValue = spca50x->brightness >> 8;
-    
-    spca50x_reg_write(spca50x->dev, 0, 0x8651, brightnessValue);
-    spca50x_reg_write(spca50x->dev, 0, 0x8652, brightnessValue);
-    spca50x_reg_write(spca50x->dev, 0, 0x8653, brightnessValue);
-    spca50x_reg_write(spca50x->dev, 0, 0x8654, brightnessValue);
-    /* autoadjust is set to 0 to avoid doing repeated brightness
-        calculation on the same frame. autoadjust is set to 0
-        when a new frame is ready. */
-//	    autoadjust = 0;
-    
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_setAutobright
-{
-//    spca561_setAutobright(spca50x);
-    return CameraErrorOK;
-}
-
-
-// contrast also returned in spca5xx_struct
-
-- (CameraError) spca5xx_getcontrast
-{
-//    spca561_getcontrast(spca50x);
-    return CameraErrorOK;
-}
-
-
-// takes contrast from spca5xx_struct
-
-- (CameraError) spca5xx_setcontrast
-{
-//    spca561_setcontrast(spca50x);
-    return CameraErrorOK;
-}
-
-
-
-
+//
 // other stuff, including decompression
-
-
+//
+- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+{
+    int i;
+	short rawWidth  = [self width];
+	short rawHeight = [self height];
+    
+//  printf("decoding buffer with %ld bytes\n", buffer->numBytes);
+    
+    spca50x->frame->hdrwidth = rawWidth;
+    spca50x->frame->hdrheight = rawHeight;
+    spca50x->frame->width = rawWidth;
+    spca50x->frame->height = rawHeight;
+    
+    spca50x->frame->data = nextImageBuffer;
+    spca50x->frame->tmpbuffer = buffer->buffer;
+    spca50x->frame->scanlength = buffer->numBytes;
+    
+    spca50x->frame->decoder = &spca50x->maindecode;  // has the code table
+    
+    // control gamma, contrast, etc right here?
+    
+    for (i = 0; i < 256; i++) 
+    {
+        spca50x->frame->decoder->Red[i] = i;
+        spca50x->frame->decoder->Green[i] = i;
+        spca50x->frame->decoder->Blue[i] = i;
+    }
+    
+    spca50x->frame->cameratype = spca50x->cameratype;
+    
+    spca50x->frame->format = VIDEO_PALETTE_RGB24;
+    
+    spca50x->frame->cropx1 = 0;
+    spca50x->frame->cropx2 = 0;
+    spca50x->frame->cropy1 = 0;
+    spca50x->frame->cropy2 = 0;
+    
+    // do the decoding
+    
+    yuv_decode(spca50x->frame, 1);
+}
 
 @end
-
 
 
 @implementation SPCA508CS110Driver  
@@ -293,7 +251,6 @@ else if (spca50x->bridge == BRIDGE_SPCA508)
 	return self;
 }
 
-
 @end
 
 
@@ -323,10 +280,10 @@ else if (spca50x->bridge == BRIDGE_SPCA508)
         return NULL;
     
     spca50x->desc = HamaUSBSightcam;
-    spca50x->desc = HamaUSBSightcam;
     spca50x->bridge = BRIDGE_SPCA508;
     spca50x->sensor = SENSOR_INTERNAL;
     spca50x->header_len = SPCA508_OFFSET_DATA;
+    
     spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
     spca50x->i2c_base = 0;
     spca50x->i2c_trigger_on_write = 0;
@@ -334,7 +291,6 @@ else if (spca50x->bridge == BRIDGE_SPCA508)
     
 	return self;
 }
-
 
 @end
 
@@ -365,10 +321,10 @@ else if (spca50x->bridge == BRIDGE_SPCA508)
         return NULL;
     
     spca50x->desc = HamaUSBSightcam2;
-    spca50x->desc = HamaUSBSightcam2;
     spca50x->bridge = BRIDGE_SPCA508;
     spca50x->sensor = SENSOR_INTERNAL;
     spca50x->header_len = SPCA508_OFFSET_DATA;
+    
     spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
     spca50x->i2c_base = 0;
     spca50x->i2c_trigger_on_write = 0;
@@ -376,7 +332,6 @@ else if (spca50x->bridge == BRIDGE_SPCA508)
     
 	return self;
 }
-
 
 @end
 
@@ -409,10 +364,10 @@ else if (spca50x->bridge == BRIDGE_SPCA508)
     // header-length = SPCA50X_OFFSET_DATA
     
     spca50x->desc = CreativeVista;
-    spca50x->desc = CreativeVista;
     spca50x->bridge = BRIDGE_SPCA508;
     spca50x->sensor = SENSOR_PB100_BA;
     spca50x->header_len = SPCA50X_OFFSET_DATA;
+    
     spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
     spca50x->i2c_base = 0;
     spca50x->i2c_trigger_on_write = 0;
@@ -420,6 +375,5 @@ else if (spca50x->bridge == BRIDGE_SPCA508)
     
 	return self;
 }
-
 
 @end

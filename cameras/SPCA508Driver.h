@@ -28,8 +28,12 @@
 
 @interface SPCA508Driver : SPCA5XXDriver 
 {
-
 }
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
+- (void) setIsocFrameFunctions;
+- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
 
