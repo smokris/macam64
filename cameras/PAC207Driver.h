@@ -22,6 +22,7 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 //
 
+
 #import <SPCA5XXDriver.h>
 
 
@@ -30,5 +31,14 @@
 	UInt8 * decodingBuffer;
 }
 
++ (NSArray *) cameraUsbDescriptions;
+
+- (id) initWithCentral: (id) c;
+- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
+- (UInt8) getGrabbingPipe;
+- (BOOL) setGrabInterfacePipe;
+- (void) setIsocFrameFunctions;
+- (CameraError) spca5xx_start;
+- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
