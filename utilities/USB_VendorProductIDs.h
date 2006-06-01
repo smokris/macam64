@@ -59,8 +59,10 @@
 #define PRODUCT_LABTEC_WEBCAM_PRO       0x08a2      // ZC0302
 #define PRODUCT_QUICKCAM_CHAT_A         0x08a3      // ZC030x
 #define PRODUCT_QUICKCAM_IM_C           0x08a6      // ZC030x
+#define PRODUCT_QUICKCAM_IMAGE          0x08a7      // ZC030x
 #define PRODUCT_QUICKCAM_NOTEBOOK_DELUXE 0x08a9     // ZC0302
 #define PRODUCT_LABTEC_NOTEBOOKS        0x08aa     // ZC0302
+#define PRODUCT_QUICKCAM_COOL           0x08ac     // ZC030x
 #define PRODUCT_QUICKCAM_COMMUNICATE_STX 0x08ad     // ZC0302
 #define PRODUCT_QUICKCAM_NOTEBOOKS_B    0x08ae      // ZC030x, round one, zc0302
 
@@ -79,6 +81,9 @@
 #define PRODUCT_QUICKAM_PRO_NOTEBOOKS   0x08c3
 //#define PRODUCT_QUICKAM_NEW4            0x08c4
 #define PRODUCT_QUICKAM_PRO_5000        0x08c5
+
+#define PRODUCT_QUICKCAM_IM_CONNECT     0x08d9      // ZC030x
+#define PRODUCT_QUICKCAM_MESSENGER_C    0x08da      // ZC030x
 
 #define PRODUCT_QUICKCAM_MESSENGER      0x08f0      // QCMessengerDriver
 #define PRODUCT_QUICKCAM_COMMUNICATE    0x08f5      // QCMessengerDriver
@@ -194,6 +199,7 @@
 #define PRODUCT_AFINA_EYE               0x8116
 
 #define VENDOR_VIEWQUEST		0x0733
+#define PRODUCT_VQ110                   0x0110      // SPCA508A ?
 #define	PRODUCT_M318B                   0x0402		// SPCA500A ?
 
 #define	VENDOR_MATTEL			0x0813              // Products acutally labeled "Intel"
@@ -246,7 +252,7 @@
 #define PRODUCT_VCS_UC300               0x1900
 #define PRODUCT_VCS_UM100               0x1910
 
-#define VENDOR_FLYCAM           0x10df
+#define VENDOR_FLYCAM           0x10fd
 #define PRODUCT_FLYCAM_USB100           0x7e50      // SPCA561A
 
 #define VENDOR_ANUBIS           0x10fd              // Anubis Electronics, Ltd
