@@ -22,15 +22,14 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 //
 
+
 #import "PAC207Driver.h"
 
 #include "USB_VendorProductIDs.h"
-
 #include "spcadecoder.h"
 
 
 @implementation PAC207Driver
-
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -41,7 +40,7 @@
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative Vista Plus", @"name", NULL], 
         
-        // Add more entries here
+        // Add more entries here if somehow these are not enough ;)
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x00], @"idProduct",
@@ -206,6 +205,34 @@
         NULL];
 }
 
+
+static void pac207RegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length) 
+{   
+    SPCA5XXDriver * driver = (SPCA5XXDriver *) dev->driver;
+    
+    [driver usbReadVICmdWithBRequest:reg 
+                              wValue:value 
+                              wIndex:index 
+                                 buf:buffer 
+                                 len:length];
+}
+
+
+static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length)
+{
+    SPCA5XXDriver * driver = (SPCA5XXDriver *) dev->driver;
+    
+    [driver usbWriteVICmdWithBRequest:reg 
+                               wValue:value 
+                               wIndex:index 
+                                  buf:buffer 
+                                  len:length];
+}
+
+
+#include "pac207.h"
+
+
 //
 // Initialize the driver
 //
@@ -225,6 +252,8 @@
     MALLOC(decodingBuffer, UInt8 *, 356 * 292 + 1000, "decodingBuffer");
     
     init_pixart_decoder(spca50x);
+    
+    cameraOperation = &fpac207;
     
 	return self;
 }
@@ -280,116 +309,14 @@
 }
 
 
-static void pac207RegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length) 
-{   
-    SPCA5XXDriver * driver = (SPCA5XXDriver *) dev->driver;
-    
-    [driver usbReadVICmdWithBRequest:reg 
-                              wValue:value 
-                              wIndex:index 
-                                 buf:buffer 
-                                 len:length];
-}
-
-
-static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 *buffer, __u16 length)
-{
-    SPCA5XXDriver * driver = (SPCA5XXDriver *) dev->driver;
-    
-    [driver usbWriteVICmdWithBRequest:reg 
-                               wValue:value 
-                               wIndex:index 
-                                  buf:buffer 
-                                  len:length];
-}
-
-
-//
-// this file is directly from the spca5xx project, untouched
-//
-#include "pac207.h"
-
-
-- (CameraError) spca5xx_init
-{
-    int error = pac207_init(spca50x);
-    
-    return (error == 0) ? CameraErrorOK : CameraErrorInternal;
-}
-
-
-- (CameraError) spca5xx_config
-{
-    int error = pac207_config(spca50x);
-    
-    return (error == 0) ? CameraErrorOK : CameraErrorInternal;
-}
-
-
 - (CameraError) spca5xx_start
 {
-    pac207_start(spca50x);
+    CameraError error = [super spca5xx_start];
     
     [self spca5xx_setbrightness];
     [self spca5xx_setcontrast];
     
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_stop
-{
-    pac207_stop(spca50x);
-    
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_shutdown
-{
-    pac207_shutdown(spca50x);
-    
-    return CameraErrorOK;
-}
-
-//
-// brightness also returned in spca5xx_struct
-//
-- (CameraError) spca5xx_getbrightness
-{
-    pac207_getbrightness(spca50x);
-    
-    return CameraErrorOK;
-}
-
-//
-// takes brightness from spca5xx_struct
-//
-- (CameraError) spca5xx_setbrightness
-{
-    pac207_setbrightness(spca50x);
-    
-    return CameraErrorOK;
-}
-
-//
-// contrast also returned in spca5xx_struct
-//
-- (CameraError) spca5xx_getcontrast
-{
-    pac207_getcontrast(spca50x);
-    
-    return CameraErrorOK;
-}
-
-//
-// takes contrast from spca5xx_struct
-//
-- (CameraError) spca5xx_setcontrast
-{
-    pac207_setcontrast(spca50x);
-    
-    return CameraErrorOK;
+    return error;
 }
 
 //
@@ -412,7 +339,7 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
     
     // Turn the Bayer data into an RGB image
     
-    [bayerConverter setSourceFormat:6];
+    [bayerConverter setSourceFormat:6];  // GBRG mosaic
     [bayerConverter setSourceWidth:rawWidth height:rawHeight];
     [bayerConverter setDestinationWidth:rawWidth height:rawHeight];
     [bayerConverter convertFromSrc:decodingBuffer
