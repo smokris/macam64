@@ -26,12 +26,10 @@
 #import "SPCA561ADriver.h"
 
 #include "USB_VendorProductIDs.h"
-
 #include "spcadecoder.h"
 
 
 @implementation SPCA561ADriver
-
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -118,6 +116,8 @@
 	if (self == NULL) 
         return NULL;
     
+    cameraOperation = &fspca561;
+    
     bayerConverter = [[BayerConverter alloc] init];
 	if (bayerConverter == NULL) 
         return NULL;
@@ -137,15 +137,6 @@
     
 	return self;
 }
-
-//
-// This attempts to provide the highest bandwidth
-//
-- (BOOL) setGrabInterfacePipe
-{
-    return [self usbSetAltInterfaceTo:7 testPipe:[self getGrabbingPipe]];
-}
-
 
 //
 // Scan the frame and return the results
@@ -200,103 +191,6 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
-
-- (CameraError) spca5xx_init
-{
-    /*
-    static __u16 spca561_ext_modes[][6] = {
-    {352, 288, 0x00, 0x27, 0x00, 1023},
-    {320, 240, 0x01, 0x27, 0x00, 1023},
-    {176, 144, 0x02, 0x23, 0x00, 1023},	// software mode hardware seem buggy slow shift in video
-    {160, 120, 0x03, 0x23, 0x00, 1023},
-    {0, 0, 0, 0, 0}
-    };
-    int index = 0;
-    */
-    
-    spca561_init(spca50x);
-    
-//    spca50x->mode = (spca561_ext_modes[index][2]) & 0x0F;
-//    int method = (spca561_ext_modes[index][2] & 0xF0) >> 4;
-//    spca50x_reg_write(spca50x->dev, 0, 0x8500, spca50x->mode);            // mode
-//    spca50x_reg_write(spca50x->dev, 0, 0x8700, spca561_ext_modes[index][3]);      // clock
-    
-    return CameraErrorOK;
-}
-
-
-
-- (CameraError) spca5xx_config
-{
-    int result = spca561_config(spca50x);
-    return (result == 0) ? CameraErrorOK : CameraErrorInternal;
-}
-
-
-- (CameraError) spca5xx_start
-{
-    spca561_start(spca50x);
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_stop
-{
-    spca561_stop(spca50x);
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_shutdown
-{
-    spca561_shutdown(spca50x);
-    return CameraErrorOK;
-}
-
-
-// brightness also returned in spca5xx_struct
-
-- (CameraError) spca5xx_getbrightness
-{
-    spca561_getbrightness(spca50x);
-    return CameraErrorOK;
-}
-
-
-// takes brightness from spca5xx_struct
-
-- (CameraError) spca5xx_setbrightness
-{
-    spca561_setbrightness(spca50x);
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_setAutobright
-{
-    spca561_setAutobright(spca50x);
-    return CameraErrorOK;
-}
-
-
-// contrast also returned in spca5xx_struct
-
-- (CameraError) spca5xx_getcontrast
-{
-    spca561_getcontrast(spca50x);
-    return CameraErrorOK;
-}
-
-
-// takes contrast from spca5xx_struct
-
-- (CameraError) spca5xx_setcontrast
-{
-    spca561_setcontrast(spca50x);
-    return CameraErrorOK;
-}
-
-
 //
 // other stuff, including decompression
 //
@@ -331,6 +225,5 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
                               flip:hFlip
                          rotate180:NO];
 }
-
 
 @end
