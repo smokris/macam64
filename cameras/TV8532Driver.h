@@ -31,4 +31,12 @@
 	UInt8 * decodingBuffer;
 }
 
++ (NSArray *) cameraUsbDescriptions;
+
+- (id) initWithCentral: (id) c;
+- (void) spcaSetResolution: (int) spcaRes;
+- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
+- (void) setIsocFrameFunctions;
+- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
+
 @end
