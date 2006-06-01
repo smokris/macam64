@@ -22,9 +22,11 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 //
 
+
 #import <GenericDriver.h>
 
 #include "spca5xx_files/spca5xx.h"
+
 
 // Prototypes for low-level USB access functions used by the spca5xx code
 
@@ -37,16 +39,30 @@ int spca50x_reg_read(struct usb_device * dev, __u16 reg, __u16 index, __u16 leng
 int spca50x_reg_readwait(struct usb_device * dev, __u16 reg, __u16 index, __u16 value);
 int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3]);
 
-// 
+
+// The actual driver
 
 @interface SPCA5XXDriver : GenericDriver 
 {
     struct usb_spca50x * spca50x;
+    struct cam_operation * cameraOperation;
 }
 
-#pragma mark -> Subclass Must Implement! <-
+- (id) initWithCentral:(id) c;
+- (void) startupCamera;
+- (void) dealloc;
+- (BOOL) supportsResolution:(CameraResolution) res fps:(short) rate;
+- (CameraResolution) defaultResolutionAndRate:(short *) dFps;
+- (void) spcaSetResolution: (int) spcaRe;
+- (void) setResolution: (CameraResolution) r fps: (short) fr;
+- (void) setBrightness:(float) v;
+- (void) setContrast:(float) v;
+- (BOOL) setGrabInterfacePipe;
+- (BOOL) startupGrabStream;
+- (void) shutdownGrabStream;
 
-// The following must be implemented by subclasses of the SPCA5XX driver
+// The following must no longer be implemented by subclasses of the SPCA5XX driver
+// They still *can* be implemented, but they do not have to be.
 
 - (CameraError) spca5xx_init;
 - (CameraError) spca5xx_config;
@@ -66,11 +82,13 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3]);
 @end
 
 // Need to define this structure, make it useful and point to the driver!
+// This cleverly lets us use a lot of the spca5xx code directly.
 
 struct usb_device 
 {
     SPCA5XXDriver * driver;
 };
+
 
 // These can all be moved to different files eventually
 
@@ -232,23 +250,6 @@ struct usb_device
 {
     
 }
-
-@end
-
-
-@interface SPCA5XX_ZR030XDriver : SPCA5XXDriver 
-{
-    
-}
-
-
-@end
-
-@interface SPCA5XX_TV8532Driver : SPCA5XXDriver 
-{
-    
-}
-
 
 @end
 
