@@ -26,13 +26,11 @@
 #import "TV8532Driver.h"
 
 #include "MiscTools.h"
-#include "USB_VendorProductIDs.h"
-
 #include "spcadecoder.h"
+#include "USB_VendorProductIDs.h"
 
 
 @implementation TV8532Driver
-
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -97,8 +95,11 @@
     spca50x->i2c_trigger_on_write = 0;
     spca50x->cameratype = GBGR;
     
+    cameraOperation = &ftv8532;
+    
 	return self;
 }
+
 
 /*
 static __u16 tv8532_ext_modes[][6] = {
@@ -227,6 +228,8 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         packet = 0;
         lastWasInvalid = 1;
         
+        *dataLength = 0;
+        
 #ifdef REALLY_VERBOSE
         printf("Invalid packet.\n");
 #endif
@@ -276,96 +279,6 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
-
-- (CameraError) spca5xx_init
-{
-    tv8532_init(spca50x);
-    
-    return CameraErrorOK;
-}
-
-
-
-- (CameraError) spca5xx_config
-{
-    tv8532_configure(spca50x);
-    
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_start
-{
-    tv8532_start(spca50x);
-    
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_stop
-{
-    tv8532_stop(spca50x);
-    
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_shutdown
-{
-    // ??
-    
-    return CameraErrorOK;
-}
-
-
-// brightness also returned in spca5xx_struct
-
-- (CameraError) spca5xx_getbrightness
-{
-    tv8532_getbrightness(spca50x);
-    
-    return CameraErrorOK;
-}
-
-
-// takes brightness from spca5xx_struct
-
-- (CameraError) spca5xx_setbrightness
-{
-    tv8532_setbrightness(spca50x);
-    
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_setAutobright
-{
-    // nothing
-    
-    return CameraErrorOK;
-}
-
-
-// contrast also returned in spca5xx_struct
-
-- (CameraError) spca5xx_getcontrast
-{
-    // nothing
-    
-    return CameraErrorOK;
-}
-
-
-// takes contrast from spca5xx_struct
-
-- (CameraError) spca5xx_setcontrast
-{
-    tv8532_setcontrast(spca50x);
-    
-    return CameraErrorOK;
-}
-
-
 //
 // other stuff, including decompression
 //
@@ -398,6 +311,5 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                               flip:hFlip
                          rotate180:NO];
 }
-
 
 @end
