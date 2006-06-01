@@ -195,6 +195,8 @@ IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     if (frameLength < 6) 
     {
+        *dataLength = 0;
+        
 #if REALLY_VERBOSE
         printf("Invalid chunk!\n");
 #endif
