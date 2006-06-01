@@ -22,16 +22,14 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 //
 
+
 #import "SPCA5XXDriver.h"
 
 #include "MiscTools.h"
-
 #include <unistd.h>
 
 
-
 @implementation SPCA5XXDriver
-
 
 void spca5xxRegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length) 
 {
@@ -145,9 +143,6 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 	return 0;
 }
 
-
-// need meat here
-
 //
 // Initialize the driver
 //
@@ -161,6 +156,11 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
     spca50x->dev = (struct usb_device *) malloc(sizeof(struct usb_device));
     spca50x->dev->driver = self;
     
+    cameraOperation = NULL;  // Set this in a sub-class!
+    
+    hardwareBrightness = YES;
+    hardwareContrast = YES;
+    
     return self;
 }
 
@@ -169,7 +169,7 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 //
 - (void) startupCamera
 {
-    // 
+    // Initialization sequence
     
     [self spca5xx_config];
     [self spca5xx_init];
@@ -211,8 +211,9 @@ short SPCA5xxResolution(CameraResolution res)
     return ret;
 }
 
-
+//
 // use mode array from "config"
+//
 - (BOOL) supportsResolution:(CameraResolution) res fps:(short) rate 
 {
     int mode = SPCA5xxResolution(res);
@@ -264,6 +265,7 @@ short SPCA5xxResolution(CameraResolution res)
     return ResolutionInvalid;
 }
 
+
 - (void) spcaSetResolution: (int) spcaRes
 {
     spca50x->mode = spca50x->mode_cam[spcaRes].mode;
@@ -289,23 +291,11 @@ short SPCA5xxResolution(CameraResolution res)
 }
 
 
-- (BOOL) canSetBrightness 
-{
-    return YES;
-}
-
-
 - (void) setBrightness:(float) v 
 {
     spca50x->brightness = v * 65535;
     [self spca5xx_setbrightness];
     [super setBrightness:v];
-}
-
-
-- (BOOL) canSetContrast 
-{
-    return YES;
 }
 
 
@@ -316,7 +306,6 @@ short SPCA5xxResolution(CameraResolution res)
     [super setContrast:v];
 }
 
-
 //
 // Put in the alt-interface with the highest bandwidth (instead of 8)
 // This attempts to provide the highest bandwidth
@@ -326,17 +315,14 @@ short SPCA5xxResolution(CameraResolution res)
     return [self usbSetAltInterfaceTo:7 testPipe:[self getGrabbingPipe]];
 }
 
-
 //
 // This is the key method that starts up the stream
 //
 - (BOOL) startupGrabStream 
 {
-    CameraError error = CameraErrorOK;
+    CameraError error = [self spca5xx_start];
     
-    [self spca5xx_start];
-    
-    return error == CameraErrorOK;
+    return (error == CameraErrorOK) ? YES : NO;
 }
 
 //
@@ -350,19 +336,18 @@ short SPCA5xxResolution(CameraResolution res)
 }
 
 
+// The following may be subclassed if necessary
 #pragma mark ----- SPCA5XX Specific -----
-#pragma mark -> Subclass Must Implement! <-
-
-// The follwing must be implemented by subclasses of the SPCA5XX driver
-// And hopefully it is simple, a simple call to a routine for each
 
 
-// return int?
 // turn off LED
 // verify sensor
 - (CameraError) spca5xx_init
 {
-    return CameraErrorUnimplemented;
+    if (cameraOperation != NULL) 
+        return (0 == (*cameraOperation->initialize)(spca50x)) ? CameraErrorOK : CameraErrorInternal;
+    else 
+        return CameraErrorUnimplemented;
 }
 
 
@@ -372,7 +357,10 @@ short SPCA5xxResolution(CameraResolution res)
 // set bias
 - (CameraError) spca5xx_config
 {
-    return CameraErrorUnimplemented;
+    if (cameraOperation != NULL) 
+        return (0 == (*cameraOperation->configure)(spca50x)) ? CameraErrorOK : CameraErrorInternal;
+    else 
+        return CameraErrorUnimplemented;
 }
 
 
@@ -383,7 +371,14 @@ short SPCA5xxResolution(CameraResolution res)
 
 - (CameraError) spca5xx_start
 {
-    return CameraErrorUnimplemented;
+    if (cameraOperation != NULL) 
+    {
+        (*cameraOperation->start)(spca50x);
+        
+        return CameraErrorOK;
+    }
+    else 
+        return CameraErrorUnimplemented;
 }
 
 
@@ -392,7 +387,16 @@ short SPCA5xxResolution(CameraResolution res)
 // turn off power
 - (CameraError) spca5xx_stop
 {
-    return CameraErrorUnimplemented;
+    if (cameraOperation != NULL) 
+    {
+        (*cameraOperation->stopN)(spca50x);
+        [self usbSetAltInterfaceTo:0 testPipe:[self getGrabbingPipe]];
+        (*cameraOperation->stop0)(spca50x);
+        
+        return CameraErrorOK;
+    }
+    else 
+        return CameraErrorUnimplemented;
 }
 
 
@@ -400,50 +404,89 @@ short SPCA5xxResolution(CameraResolution res)
 // turn off power
 - (CameraError) spca5xx_shutdown
 {
-    return CameraErrorUnimplemented;
+    if (cameraOperation != NULL) 
+    {
+        (*cameraOperation->cam_shutdown)(spca50x);
+        
+        return CameraErrorOK;
+    }
+    else 
+        return CameraErrorUnimplemented;
 }
 
 
 // return brightness
 - (CameraError) spca5xx_getbrightness
 {
-    return CameraErrorUnimplemented;
+    if (cameraOperation != NULL) 
+    {
+//      __u16 brightness = 
+        (*cameraOperation->get_bright)(spca50x);
+        
+        return CameraErrorOK;
+    }
+    else 
+        return CameraErrorUnimplemented;
 }
 
 
 - (CameraError) spca5xx_setbrightness
 {
-    return CameraErrorUnimplemented;
+    if (cameraOperation != NULL) 
+    {
+        (*cameraOperation->set_bright)(spca50x);
+        
+        return CameraErrorOK;
+    }
+    else 
+        return CameraErrorUnimplemented;
 }
 
 
 - (CameraError) spca5xx_setAutobright
 {
-    return CameraErrorUnimplemented;
+    if (cameraOperation != NULL) 
+    {
+        (*cameraOperation->set_autobright)(spca50x);
+        
+        return CameraErrorOK;
+    }
+    else 
+        return CameraErrorUnimplemented;
 }
 
 
 // return contrast??
 - (CameraError) spca5xx_getcontrast
 {
-    return CameraErrorUnimplemented;
+    if (cameraOperation != NULL) 
+    {
+//      __u16 contrast = 
+        (*cameraOperation->get_contrast)(spca50x);
+        
+        return CameraErrorOK;
+    }
+    else 
+        return CameraErrorUnimplemented;
 }
 
 
 - (CameraError) spca5xx_setcontrast
 {
-    return CameraErrorUnimplemented;
+    if (cameraOperation != NULL) 
+    {
+        (*cameraOperation->set_contrast)(spca50x);
+        
+        return CameraErrorOK;
+    }
+    else 
+        return CameraErrorUnimplemented;
 }
-
-
 
 @end
 
 
-
-
 @implementation SPCA5XX_SONIXDriver
-
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -489,12 +532,12 @@ static void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16
 
 */
 
-
 // stuff
-
 
 @end
 
+
+#pragma mark ----- Compatability -----
 
 // how about PDEBUG???
 
@@ -510,6 +553,10 @@ void wait_ms(int delay_time_in_milli_seconds)
     usleep(delay_time_in_milli_seconds * 1000);
 }
 
+
+void spin_lock_irqsave(spinlock_t * lock, long flags) {}
+
+void spin_unlock_irqrestore(spinlock_t * lock, long flags) {}
 
 
 
