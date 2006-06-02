@@ -120,6 +120,7 @@
     
     int bpc;
     int frameCount;
+    int multiplier;
     
 	UInt8 * decodingBuffer;
 }

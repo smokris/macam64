@@ -16,6 +16,9 @@
 #include "USB_VendorProductIDs.h"
 
 
+#define BIGBUFFER_SIZE 0x20000
+
+
 @interface QuickCamVCDriver (Private)
 
 - (BOOL) resetUSS720;
@@ -65,6 +68,7 @@
     
     bpc = 8;
     frameCount = 0;
+    multiplier = 0;
     
     // Allocate memory
     // Initialize variable and other structures
@@ -103,33 +107,26 @@
 	[self setSaturation:0.5];
 	[self setSharpness:0.5];
     
-#if 0
-	if (!qcamvc) return -1;
-    
 	long i;
-	unsigned char *bigbuffer;
-	unsigned char bitmask;
+	UInt8 bitmask;
+	UInt8 * bigbuffer;
     
-	memset(&qcamvc->misc_reg, 0, sizeof(qcamvc->misc_reg));
 	
-	bigbuffer=kmalloc(BIGBUFFER_SIZE, GFP_KERNEL);
-	if (bigbuffer==NULL) 
+	bigbuffer = malloc(BIGBUFFER_SIZE);
+	if (bigbuffer == NULL) 
 	{
-		printk("QuickCam VC: Init bigbuffer kmalloc error.\n");
-		return -1;
+		printf("QuickCam VC: Init bigbuffer malloc error.\n");
 	}
-	
-	qcamvc->camera_init = 1;
-	
-	/* setup a 128KB bit mask for 6bit/8bit per component */
-	bitmask = 0xFF << qcamvc->bpc;
-	for(i=0; i<BIGBUFFER_SIZE ; i+=2)
+		
+	// setup a 128KB bit mask for 6bit/8bit per component
+	bitmask = 0xFF << bpc;
+	for(i = 0; i < BIGBUFFER_SIZE; i += 2)
 	{
-		*(bigbuffer + i) = (unsigned char )(i >> 11);
+		*(bigbuffer + i) = (unsigned char ) (i >> 11);
 		*(bigbuffer + i + 1) = bitmask;
 	}
 	
-	get_camera_model(qcamvc);
+//	get_camera_model(qcamvc);
 	
     [self setCameraRegister:QCAM_VC_SET_BRIGHTNESS data:0x38];
     [self setCameraRegister:QCAM_VC_SET_BRIGHTNESS data:0x78];
@@ -140,8 +137,8 @@
 	// clear 0x0e address (whatever this address actually does?)
     [self setCameraRegister:0x0E data:0x00];
 	
-	/* write 128KB of 6bit/8bit mask */
-	set_registers(qcamvc, QCAM_VC_GET_FRAME, bigbuffer, BIGBUFFER_SIZE);
+	// write 128KB of 6bit/8bit mask
+    [self setCameraRegisters:QCAM_VC_GET_FRAME data:bigbuffer size:BIGBUFFER_SIZE];
 	
 	// set address 0x0e to 0x01
     [self setCameraRegister:0x0E data:0x01];
@@ -151,22 +148,28 @@
     [self setCameraRegister:QCAM_VC_SET_BRIGHTNESS data:0x78];
     [self setCameraRegister:QCAM_VC_SET_BRIGHTNESS data:0x58];
     
-	/* set brightness & exposure - probably not needed here */
-	qcamvc_set_brightness(qcamvc, qcamvc->brightness);
-	qcamvc_set_exposure(qcamvc, qcamvc->exposure);
+	// set brightness & exposure - probably not needed here
+	//qcamvc_set_brightness(qcamvc, qcamvc->brightness);
+//    [self setBrightness:xx];
+//    [self setShutter:xx];
+	//qcamvc_set_exposure(qcamvc, qcamvc->exposure);
     
 	// set config bit. (whatever this bit actually does?)
     [self setCameraRegister:QCAM_VC_SET_MISC data:0x01];
 	
-	/* set CCD columns & rows */
-	qcamvc_set_ccd_area(qcamvc);
+	// set CCD columns & rows
+//	qcamvc_set_ccd_area(qcamvc);
+//  [self setCCDArea];
     
-	/* set brightness & exposure */
-	qcamvc_set_brightness(qcamvc, qcamvc->brightness);
-	qcamvc_set_exposure(qcamvc, qcamvc->exposure);
+	// set brightness & exposure
+//	qcamvc_set_brightness(qcamvc, qcamvc->brightness);
+//	qcamvc_set_exposure(qcamvc, qcamvc->exposure);
+//    [self setBrightness:xx];
+//    [self setShutter:xx];
 	
-	/* set the Light Sensitivity (no gain/no attenuation = 128 ) */
-	qcamvc_set_light_sensitivity(qcamvc, qcamvc->light_sens);
+	// set the Light Sensitivity (no gain/no attenuation = 128 )
+//	qcamvc_set_light_sensitivity(qcamvc, qcamvc->light_sens);
+//    [self setLightSensitivity:lightSensitivity];
     
 	// set Misc options & re-enable video streaming now
     UInt8 misc = 0;
@@ -180,7 +183,6 @@
 	
 	// send a get frame to clear the previous resolution
     [self setCameraRegister:QCAM_VC_GET_FRAME data:0xFF];
-#endif
 }
 
 
