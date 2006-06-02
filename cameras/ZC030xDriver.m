@@ -25,13 +25,11 @@
 
 #import "ZC030xDriver.h"
 
-#include "USB_VendorProductIDs.h"
-
 #include "spcadecoder.h"
+#include "USB_VendorProductIDs.h"
 
 
 @implementation ZC030xDriver
-
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -40,7 +38,7 @@
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_WEBCAM_NOTEBOOK], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
-            @"Creative Webcam NoteBoook", @"name", NULL], 
+            @"Creative Webcam NoteBook", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_WEBCAM_MOBILE], @"idProduct",
@@ -233,8 +231,7 @@
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
-//  MALLOC(decodingBuffer, UInt8 *, 356 * 292 + 1000, "decodingBuffer");
-    MALLOC(decodingBuffer, UInt8 *, 644 * 484 + 1000, "decodingBuffer");
+    cameraOperation = &fzc3xx;
     
     init_jpeg_decoder(spca50x);  // May be irrelevant
     
@@ -258,6 +255,8 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     if (frameLength < 2) 
     {
+        *dataLength = 0;
+        
 #if REALLY_VERBOSE
         printf("Invalid chunk!\n");
 #endif
@@ -283,7 +282,6 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     return validFrame;
 }
 
-
 //
 // These are the C functions to be used for scanning the frames
 //
@@ -291,89 +289,6 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     grabContext.isocFrameScanner = zc30xIsocFrameScanner;
     grabContext.isocDataCopier = genericIsocDataCopier;
-}
-
-
-- (CameraError) spca5xx_init
-{
-    int error = zc3xx_init(spca50x);
-    
-    return (error == 0) ? CameraErrorOK : CameraErrorInternal;
-}
-
-
-- (CameraError) spca5xx_config
-{
-    int error = zc3xx_config(spca50x);
-    
-    return (error == 0) ? CameraErrorOK : CameraErrorInternal;
-}
-
-
-- (CameraError) spca5xx_start
-{
-    zc3xx_start(spca50x);
-    
-    [self spca5xx_setbrightness];
-    [self spca5xx_setcontrast];
-    
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_stop
-{
-    zc3xx_stop(spca50x);
-    
-    return CameraErrorOK;
-}
-
-
-- (CameraError) spca5xx_shutdown
-{
-    zc3xx_shutdown(spca50x);
-    
-    return CameraErrorOK;
-}
-
-//
-// brightness also returned in spca5xx_struct
-//
-- (CameraError) spca5xx_getbrightness
-{
-    zc3xx_getbrightness(spca50x);
-    
-    return CameraErrorOK;
-}
-
-//
-// takes brightness from spca5xx_struct
-//
-- (CameraError) spca5xx_setbrightness
-{
-    zc3xx_setbrightness(spca50x);
-    
-    return CameraErrorOK;
-}
-
-//
-// contrast also returned in spca5xx_struct
-//
-- (CameraError) spca5xx_getcontrast
-{
-    zc3xx_getcontrast(spca50x);
-    
-    return CameraErrorOK;
-}
-
-//
-// takes contrast from spca5xx_struct
-//
-- (CameraError) spca5xx_setcontrast
-{
-    zc3xx_setcontrast(spca50x);
-    
-    return CameraErrorOK;
 }
 
 //
@@ -394,7 +309,6 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     //   frame.scanlength -length of data (tmpbuffer on input, data on output)
     //   frame.tmpbuffer - points to input buffer
     
-
 /*  I think these get set in the jpeg-decoding routine
         
     spca50x->frame->dcts ?
@@ -406,9 +320,9 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->frame->width = rawWidth;
     spca50x->frame->height = rawHeight;
      
-    spca50x->frame->data = decodingBuffer;
-    spca50x->frame->scanlength = buffer->numBytes;
-    spca50x->frame->tmpbuffer = buffer->buffer;
+    spca50x->frame->data = nextImageBuffer;
+    spca50x->frame->tmpbuffer = buffer->buffer + 16;
+    spca50x->frame->scanlength = buffer->numBytes - 16;
     
     spca50x->frame->decoder = &spca50x->maindecode;  // has the code table, are red, green, blue set up?
     
@@ -419,7 +333,10 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         spca50x->frame->decoder->Blue[i] = i;
     }
     
-    spca50x->frame->format = 0;
+    spca50x->frame->cameratype = spca50x->cameratype;
+    
+    spca50x->frame->format = VIDEO_PALETTE_RGB24;
+    
     spca50x->frame->cropx1 = 0;
     spca50x->frame->cropx2 = 0;
     spca50x->frame->cropy1 = 0;
@@ -438,10 +355,8 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     // reset info.dri
     spca50x->frame->decoder->info.dri = 0;
-    memcpy(spca50x->frame->tmpbuffer, spca50x->frame->data + 16, spca50x->frame->scanlength - 16);
-    // make_jpeg(myframe);  // would be easy to just make it a jpeg
-    jpeg_decode422(spca50x->frame, 0);  // bgr = 0
+    
+    jpeg_decode422(spca50x->frame, 1);  // bgr = 1 (works better for SPCA508A...)
 }
-
 
 @end
