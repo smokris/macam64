@@ -52,8 +52,8 @@ int JpgDecompress(unsigned char * pIn, unsigned char * pOut, int size, int width
     //   frame.tmpbuffer - points to input buffer
     
     myframe.data = pOut;  // output
-    myframe.scanlength = size;  // current length of data
     myframe.tmpbuffer = pIn;  // definitely input data
+    myframe.scanlength = size;  // current length of data
     
     myframe.decoder = &spca50x.maindecode;  // has the code table, are red, green, blue set up?
     
@@ -64,7 +64,10 @@ int JpgDecompress(unsigned char * pIn, unsigned char * pOut, int size, int width
         myframe.decoder->Blue[i] = i;
     }
     
-    myframe.format = 0;
+    myframe.cameratype = JPEG;
+    
+    myframe.format = VIDEO_PALETTE_RGB24;
+    
     myframe.cropx1 = 0;
     myframe.cropx2 = 0;
     myframe.cropy1 = 0;
@@ -72,7 +75,7 @@ int JpgDecompress(unsigned char * pIn, unsigned char * pOut, int size, int width
     
     myframe.decoder->info.dri = 0;
     
-    jpeg_decode422(&myframe, 0);
+    jpeg_decode422(&myframe, 1);
     
     return 1; 
 }

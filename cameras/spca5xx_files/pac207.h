@@ -300,7 +300,7 @@ static void pac207_RegWrite(struct usb_spca50x *spca50x)
 
 static void pac207_setAutobright(struct usb_spca50x *spca50x)
 {
-    unsigned long flags;
+    unsigned long flags = 0;
     __u8 luma = 0;
     __u8 luma_mean = 128;
     __u8 luma_delta = 20;
