@@ -115,7 +115,9 @@ macam - webcam app and QuickTime driver component
 
 - (BOOL) readI2CRegister:(unsigned char)reg to:(unsigned short*)val {
     BOOL ok=YES;
+    UInt8 buffer[2];
     BOOL twoByte=(bytePerRegister==2);
+    
     i2cBuf[0x00]=reg;
     i2cBuf[0x20]=i2cSensorAddress;
     i2cBuf[0x21]=0;
@@ -123,14 +125,11 @@ macam - webcam app and QuickTime driver component
     ok=[camera usbWriteCmdWithBRequest:4 wValue:0x0400 wIndex:0 buf:i2cBuf len:35];
     if (!ok) return NO;
     if (!val) return NO;
-    *val=0;
-    if (twoByte) {
-        ok=[camera usbReadCmdWithBRequest:4 wValue:0x1410 wIndex:0 buf:val len:2];
-    } else {
-        ok=[camera usbReadCmdWithBRequest:4 wValue:0x1410 wIndex:0 buf:val len:2];
-        *val/=256;
-    }
-    *val=*val&0xff;
+    
+    buffer[0] = buffer[1] = 0;
+    ok=[camera usbReadCmdWithBRequest:4 wValue:0x1410 wIndex:0 buf:buffer len:2];
+    *val = (twoByte) ? buffer[1] : buffer[0];
+    
     return ok;
 }
 
