@@ -247,11 +247,12 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SPCA561ADriver class]];   // Based on SPCA5XX - seems to work now
     [self registerCameraDriver:[TV8532Driver class]];     // Based on SPCA5XX - testing!
     [self registerCameraDriver:[ZC030xDriver class]];     // Based on SPCA5XX - testing!
-//    [self registerCameraDriver:[SPCA508Driver class]];  // Based on SPCA5XX - Need decompression for these...
-//    [self registerCameraDriver:[SPCA508CS110Driver class]];
-//    [self registerCameraDriver:[SPCA508SightcamDriver class]];
-//    [self registerCameraDriver:[SPCA508Sightcam2Driver class]];
-//    [self registerCameraDriver:[SPCA508CreativeVistaDriver class]];
+    
+    [self registerCameraDriver:[SPCA508Driver class]];  // Based on SPCA5XX - Works, but not too pretty
+    [self registerCameraDriver:[SPCA508CS110Driver class]];
+    [self registerCameraDriver:[SPCA508SightcamDriver class]];
+    [self registerCameraDriver:[SPCA508Sightcam2Driver class]];
+    [self registerCameraDriver:[SPCA508CreativeVistaDriver class]];
     
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
