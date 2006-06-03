@@ -534,6 +534,21 @@
 		F5DB499209E3677C00FF3230 /* KworldTV300UDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5DB498E09E3677C00FF3230 /* KworldTV300UDriver.m */; };
 		F5DB499309E3677C00FF3230 /* KworldTV300UDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5DB498D09E3677C00FF3230 /* KworldTV300UDriver.h */; };
 		F5DB499409E3677C00FF3230 /* KworldTV300UDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5DB498E09E3677C00FF3230 /* KworldTV300UDriver.m */; };
+		F5DFAB8A0A3145F700D86C03 /* ov7630c.h in Headers */ = {isa = PBXBuildFile; fileRef = F5DFAB850A3145F700D86C03 /* ov7630c.h */; };
+		F5DFAB8B0A3145F700D86C03 /* spca500.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB860A3145F700D86C03 /* spca500.dat */; };
+		F5DFAB8C0A3145F700D86C03 /* spca501.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB870A3145F700D86C03 /* spca501.dat */; };
+		F5DFAB8D0A3145F700D86C03 /* spca505.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB880A3145F700D86C03 /* spca505.dat */; };
+		F5DFAB8E0A3145F700D86C03 /* spca508.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB890A3145F700D86C03 /* spca508.dat */; };
+		F5DFAB8F0A3145F700D86C03 /* ov7630c.h in Headers */ = {isa = PBXBuildFile; fileRef = F5DFAB850A3145F700D86C03 /* ov7630c.h */; };
+		F5DFAB900A3145F700D86C03 /* spca500.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB860A3145F700D86C03 /* spca500.dat */; };
+		F5DFAB910A3145F700D86C03 /* spca501.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB870A3145F700D86C03 /* spca501.dat */; };
+		F5DFAB920A3145F700D86C03 /* spca505.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB880A3145F700D86C03 /* spca505.dat */; };
+		F5DFAB930A3145F700D86C03 /* spca508.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB890A3145F700D86C03 /* spca508.dat */; };
+		F5DFAB940A3145F700D86C03 /* ov7630c.h in Headers */ = {isa = PBXBuildFile; fileRef = F5DFAB850A3145F700D86C03 /* ov7630c.h */; };
+		F5DFAB950A3145F700D86C03 /* spca500.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB860A3145F700D86C03 /* spca500.dat */; };
+		F5DFAB960A3145F700D86C03 /* spca501.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB870A3145F700D86C03 /* spca501.dat */; };
+		F5DFAB970A3145F700D86C03 /* spca505.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB880A3145F700D86C03 /* spca505.dat */; };
+		F5DFAB980A3145F700D86C03 /* spca508.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB890A3145F700D86C03 /* spca508.dat */; };
 		F5F17B6F09BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
 		F5F17B7009BCD671000AEB63 /* GenericDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17B6E09BCD671000AEB63 /* GenericDriver.m */; };
 		F5F17B7109BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
@@ -819,6 +834,11 @@
 		F5D2DA2209DC5EE300139641 /* SPCA508Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCA508Driver.m; sourceTree = "<group>"; };
 		F5DB498D09E3677C00FF3230 /* KworldTV300UDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KworldTV300UDriver.h; sourceTree = "<group>"; };
 		F5DB498E09E3677C00FF3230 /* KworldTV300UDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = KworldTV300UDriver.m; sourceTree = "<group>"; };
+		F5DFAB850A3145F700D86C03 /* ov7630c.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = ov7630c.h; path = spca5xx_files/ov7630c.h; sourceTree = "<group>"; };
+		F5DFAB860A3145F700D86C03 /* spca500.dat */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = spca500.dat; path = spca5xx_files/spca500.dat; sourceTree = "<group>"; };
+		F5DFAB870A3145F700D86C03 /* spca501.dat */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = spca501.dat; path = spca5xx_files/spca501.dat; sourceTree = "<group>"; };
+		F5DFAB880A3145F700D86C03 /* spca505.dat */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = spca505.dat; path = spca5xx_files/spca505.dat; sourceTree = "<group>"; };
+		F5DFAB890A3145F700D86C03 /* spca508.dat */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = spca508.dat; path = spca5xx_files/spca508.dat; sourceTree = "<group>"; };
 		F5E6AA660371F8920166D062 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6B0371F8B00166D062 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6C0371F8B90166D062 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
@@ -1087,6 +1107,11 @@
 		F5994D54096ED733004F6807 /* spca5xx_files */ = {
 			isa = PBXGroup;
 			children = (
+				F5DFAB850A3145F700D86C03 /* ov7630c.h */,
+				F5DFAB860A3145F700D86C03 /* spca500.dat */,
+				F5DFAB870A3145F700D86C03 /* spca501.dat */,
+				F5DFAB880A3145F700D86C03 /* spca505.dat */,
+				F5DFAB890A3145F700D86C03 /* spca508.dat */,
 				F5B2EEF30A1AFD9E001423D7 /* cs2102.h */,
 				F5B2EEF40A1AFD9E001423D7 /* cxlib.h */,
 				F5B2EEF50A1AFD9E001423D7 /* dummy_cam.h */,
@@ -1371,6 +1396,7 @@
 				F553F4830A22BB1B00591163 /* OV519Driver.h in Headers */,
 				F553F4960A22BB6300591163 /* JpgDecompress.h in Headers */,
 				F5C5C22B0A26C3CD00737FBB /* CN0352PDriver.h in Headers */,
+				F5DFAB940A3145F700D86C03 /* ov7630c.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1463,6 +1489,7 @@
 				F553F4810A22BB1B00591163 /* OV519Driver.h in Headers */,
 				F553F4940A22BB6300591163 /* JpgDecompress.h in Headers */,
 				F5C5C22A0A26C3CD00737FBB /* CN0352PDriver.h in Headers */,
+				F5DFAB8F0A3145F700D86C03 /* ov7630c.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1551,6 +1578,7 @@
 				F553F47F0A22BB1B00591163 /* OV519Driver.h in Headers */,
 				F553F4920A22BB6300591163 /* JpgDecompress.h in Headers */,
 				F5C5C2290A26C3CD00737FBB /* CN0352PDriver.h in Headers */,
+				F5DFAB8A0A3145F700D86C03 /* ov7630c.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1724,6 +1752,10 @@
 				F535EC5408DB3970007943DA /* RecordMovieToolbarItem.tiff in Resources */,
 				F535EC5508DB3970007943DA /* RecordMovieActiveToolbarItem.tiff in Resources */,
 				F535EC5608DB3970007943DA /* MyQCOrbitCameraInspector.nib in Resources */,
+				F5DFAB950A3145F700D86C03 /* spca500.dat in Resources */,
+				F5DFAB960A3145F700D86C03 /* spca501.dat in Resources */,
+				F5DFAB970A3145F700D86C03 /* spca505.dat in Resources */,
+				F5DFAB980A3145F700D86C03 /* spca508.dat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1732,6 +1764,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				F535ECC408DB3970007943DA /* DriverLocalizable.strings in Resources */,
+				F5DFAB900A3145F700D86C03 /* spca500.dat in Resources */,
+				F5DFAB910A3145F700D86C03 /* spca501.dat in Resources */,
+				F5DFAB920A3145F700D86C03 /* spca505.dat in Resources */,
+				F5DFAB930A3145F700D86C03 /* spca508.dat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1759,6 +1795,10 @@
 				F535ED3608DB3970007943DA /* RecordMovieActiveToolbarItem.tiff in Resources */,
 				F535ED3708DB3970007943DA /* MainMenu.nib in Resources */,
 				F535ED3808DB3970007943DA /* plugin.icns in Resources */,
+				F5DFAB8B0A3145F700D86C03 /* spca500.dat in Resources */,
+				F5DFAB8C0A3145F700D86C03 /* spca501.dat in Resources */,
+				F5DFAB8D0A3145F700D86C03 /* spca505.dat in Resources */,
+				F5DFAB8E0A3145F700D86C03 /* spca508.dat in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
