@@ -100,6 +100,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_FLYCAM], @"idVendor",
             @"FlyCam USB100", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_EZONICS_ICONTACT], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_MAXELL], @"idVendor",
+            @"Ezonics iContact (EZ-612)", @"name", NULL], 
+        
         NULL];
 }
 
