@@ -82,11 +82,10 @@
         return NULL;
     
     hardwareBrightness = YES;
+    hardwareContrast = NO;
     
     MALLOC(decodingBuffer, UInt8 *, 356 * 292 + 1000, "decodingBuffer");
-/*
-    spca50x->compress = 1;
-*/    
+    
     spca50x->bridge = BRIDGE_TV8532;
     spca50x->sensor = SENSOR_INTERNAL;
     spca50x->header_len = 4;
@@ -101,19 +100,17 @@
 }
 
 
-/*
-static __u16 tv8532_ext_modes[][6] = {
-    // x , y , Code, clk, n/a,  pipe 
-    {352, 288, 0x00, 0x28, 0x00, 1023}, // mode 0
-    {320, 240, 0x10, 0x28, 0x00, 1023}, // mode 0, software crop
-    {176, 144, 0x01, 0x23, 0x00, 1023}, // mode 1
-    //{160, 120, 0x03, 0x23, 0x00, 1023}, 
-    {0, 0, 0, 0, 0}
-};
-*/
-
-
-static int scanningHeight = 0;  // Need this for the scanning function later...
+- (void) startupCamera
+{
+    [super startupCamera];
+    
+	[self setBrightness:0.25];
+	[self setContrast:0.66];
+	[self setGamma:0.5];
+	[self setSaturation:0.55];
+	[self setSharpness:0.7];
+    [self setWhiteBalanceMode:WhiteBalanceAutomatic];
+}
 
 
 - (void) spcaSetResolution: (int) spcaRes
@@ -121,12 +118,10 @@ static int scanningHeight = 0;  // Need this for the scanning function later...
     if (spcaRes == SIF)  // Actually CIF... (spca5xx is confused)
     {
         spca50x->mode = 0;
-        scanningHeight = HeightOfResolution(ResolutionCIF);
     }
     else                 // And this is QCIF
     {
         spca50x->mode = 1;
-        scanningHeight = HeightOfResolution(ResolutionQCIF);
     }
 }
 
@@ -153,56 +148,6 @@ static int scanningHeight = 0;  // Need this for the scanning function later...
             return NO;
     }
 }
-
-/*
- {
-     iPix = 0;
-     spca50x->header_len = 0;
-     
-     if (cdata[0] == 0x80) 
-     {
-         // counter is limited so we need few header for a frame :) 
-         
-         // header 0x80 0x80 0x80 0x80 0x80 
-         // packet  00   63  127  145  00   
-         // sof     0     1   1    0    0   
-         // update sequence
-         
-         if ((spca50x->packet == 63) || (spca50x->packet == 127))
-             tv8532 = 1;
-         
-         // is there a frame start ?
-         
-         if (spca50x->packet >= ((spca50x->hdrheight >> 1) - 1)) 
-         {
-             if (!tv8532) 
-             {
-                 sequenceNumber = 0;
-                 spca50x->packet = 0;
-             }
-         } 
-         else 
-         {
-             if (!tv8532) 
-             {
-                 // Drop packet frame corrupt
-                 frame->last_packet = sequenceNumber = 0;
-                 spca50x->packet = 0;
-                 continue;
-             }
-             
-             tv8532 = 1;
-             sequenceNumber++;
-             spca50x->packet++;
-         }
-    } 
-     else 
-     {
-         sequenceNumber++;
-         spca50x->packet++;
-     }
-}
-*/
 
 //
 // Scan the frame and return the results
@@ -244,27 +189,15 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 #endif
     
     if (frameNumber == 0x80 && lastWasInvalid) // start a new image
-//  if (frameNumber == 0x80 && packet != 63 && packet != 127) // start a new image
     {
-        packet = 0;
+#ifdef REALLY_VERBOSE
+        printf("New image start!\n");
+#endif
+        lastWasInvalid = 0;
         
-        if (packet >= (scanningHeight / 2) - 1) 
-        {
-#ifdef REALLY_VERBOSE
-            printf("New image start!\n");
-#endif
-            return newChunkFrame;
-        }
-        else 
-        {
-#ifdef REALLY_VERBOSE
-            printf("Drop current image, invalid!\n");
-#endif
-            return invalidChunk;
-        }
+        return newChunkFrame;
     }
     
-    packet++;
     lastWasInvalid = 0;
     
     return validFrame;
@@ -284,7 +217,9 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 - (void) decodeBuffer: (GenericChunkBuffer *) buffer
 {
+#ifdef REALLY_VERBOSE
     printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
+#endif
     
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
@@ -309,7 +244,7 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                        dstRowBytes:nextImageBufferRowBytes
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
-                         rotate180:NO];
+                         rotate180:YES];
 }
 
 @end
