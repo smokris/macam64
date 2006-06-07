@@ -839,6 +839,8 @@
 		F5DFAB870A3145F700D86C03 /* spca501.dat */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = spca501.dat; path = spca5xx_files/spca501.dat; sourceTree = "<group>"; };
 		F5DFAB880A3145F700D86C03 /* spca505.dat */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = spca505.dat; path = spca5xx_files/spca505.dat; sourceTree = "<group>"; };
 		F5DFAB890A3145F700D86C03 /* spca508.dat */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = spca508.dat; path = spca5xx_files/spca508.dat; sourceTree = "<group>"; };
+		F5E63B640A3727BD00AAA2DA /* SPCA5xxExampleDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SPCA5xxExampleDriver.h; sourceTree = "<group>"; };
+		F5E63B650A3727BD00AAA2DA /* SPCA5xxExampleDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SPCA5xxExampleDriver.m; sourceTree = "<group>"; };
 		F5E6AA660371F8920166D062 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6B0371F8B00166D062 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6C0371F8B90166D062 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
@@ -860,7 +862,7 @@
 		F5F17BAF09BD0B10000AEB63 /* QCMessengerDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = QCMessengerDriver.m; sourceTree = "<group>"; };
 		F5F1809009BF37EB000AEB63 /* VV6450Sensor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = VV6450Sensor.h; sourceTree = "<group>"; };
 		F5F1809109BF37EB000AEB63 /* VV6450Sensor.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = VV6450Sensor.m; sourceTree = "<group>"; };
-		F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyVicamDriver.m; sourceTree = "<group>"; };
+		F5F4373C02D278D6018D4F8C /* MyVicamDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyVicamDriver.m; sourceTree = "<group>"; wrapsLines = 1; };
 		F5F4373D02D278D6018D4F8C /* vicamurbs.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = vicamurbs.h; sourceTree = "<group>"; };
 		F5F4373E02D278D6018D4F8C /* MyVicamDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyVicamDriver.h; sourceTree = "<group>"; };
 		F5F4374C02D52947018D4F8C /* RGBScaler.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = RGBScaler.m; sourceTree = "<group>"; };
@@ -1172,6 +1174,8 @@
 			children = (
 				F5CFE5FA09D069DF00C6DB41 /* ExampleDriver.h */,
 				F5CFE5FB09D069DF00C6DB41 /* ExampleDriver.m */,
+				F5E63B640A3727BD00AAA2DA /* SPCA5xxExampleDriver.h */,
+				F5E63B650A3727BD00AAA2DA /* SPCA5xxExampleDriver.m */,
 				F5C5C2280A26C3CD00737FBB /* CN0352PDriver.h */,
 				F553F47D0A22BB1A00591163 /* OV519Driver.h */,
 				F553F47E0A22BB1A00591163 /* OV519Driver.m */,
