@@ -210,6 +210,26 @@
             [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
             @"Philips SPC 300NC", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IMAGE], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam Image", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COOL], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam Cool", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_CONNECT], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam IM (D) / Connect", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_MESSENGER_C], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam Messenger (C)", @"name", NULL], 
+        
         NULL];
 }
 
@@ -264,7 +284,7 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     }
     
 #if REALLY_VERBOSE
-    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+//  printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
 #endif
     
     if (buffer[0] == 0xFF && buffer[1] == 0xD8) 
@@ -300,31 +320,25 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
-    // before jpeg_decode422() is called:
-    //   copy data to tmpbuffer, possibly skippin some header info
-    //   scanlength is the length of data
+#ifdef REALLY_VERBOSE
+    printf("Need to decode a JPEG buffer with %ld bytes.\n", buffer->numBytes);
+#endif
     
     // when jpeg_decode422() is called:
     //   frame.data - points to output buffer
-    //   frame.scanlength -length of data (tmpbuffer on input, data on output)
     //   frame.tmpbuffer - points to input buffer
+    //   frame.scanlength -length of data (tmpbuffer on input, data on output)
     
-/*  I think these get set in the jpeg-decoding routine
-        
-    spca50x->frame->dcts ?
-    spca50x->frame->out ?
-    spca50x->frame->max ?
-*/    
-    spca50x->frame->hdrwidth = rawWidth;
-    spca50x->frame->hdrheight = rawHeight;
     spca50x->frame->width = rawWidth;
     spca50x->frame->height = rawHeight;
+    spca50x->frame->hdrwidth = rawWidth;
+    spca50x->frame->hdrheight = rawHeight;
      
     spca50x->frame->data = nextImageBuffer;
     spca50x->frame->tmpbuffer = buffer->buffer + 16;
     spca50x->frame->scanlength = buffer->numBytes - 16;
     
-    spca50x->frame->decoder = &spca50x->maindecode;  // has the code table, are red, green, blue set up?
+    spca50x->frame->decoder = &spca50x->maindecode;
     
     for (i = 0; i < 256; i++) 
     {
@@ -342,19 +356,11 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->frame->cropy1 = 0;
     spca50x->frame->cropy2 = 0;
     
-    // do jpeg decoding
-    
-    /*
-    width = (myframe->data[10] << 8) | myframe->data[11];
-    height = (myframe->data[12] << 8) | myframe->data[13];
-    // some camera did not respond with the good height ie:Labtec Pro 240 -> 232 
-    if (myframe->hdrwidth != width)
-        done = ERR_CORRUPTFRAME;
-    else {
-    */
-    
     // reset info.dri
+    
     spca50x->frame->decoder->info.dri = 0;
+    
+    // do jpeg decoding
     
     jpeg_decode422(spca50x->frame, 1);  // bgr = 1 (works better for SPCA508A...)
 }
