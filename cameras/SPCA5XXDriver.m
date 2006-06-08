@@ -486,25 +486,7 @@ short SPCA5xxResolution(CameraResolution res)
 @end
 
 
-@implementation SPCA5XX_SONIXDriver
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        /*
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_VISTA_PLUS], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
-            @"Creative Vista Plus", @"name", NULL], 
-        */
-        // Add more entries here
-        
-        NULL];
-}
-
-/*
-
-static void sonixRegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length) 
+void sonixRegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length) 
 {   
     SPCA5XXDriver * driver = (SPCA5XXDriver *) dev->driver;
     
@@ -516,7 +498,7 @@ static void sonixRegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 
 }
 
 
-static void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 *buffer, __u16 length)
+void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 *buffer, __u16 length)
 {
     SPCA5XXDriver * driver = (SPCA5XXDriver *) dev->driver;
     
@@ -526,15 +508,6 @@ static void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16
                                   buf:buffer 
                                   len:length];
 }
-
-
-#include "sonix.h"
-
-*/
-
-// stuff
-
-@end
 
 
 #pragma mark ----- Compatability -----

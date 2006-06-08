@@ -39,6 +39,9 @@ int spca50x_reg_read(struct usb_device * dev, __u16 reg, __u16 index, __u16 leng
 int spca50x_reg_readwait(struct usb_device * dev, __u16 reg, __u16 index, __u16 value);
 int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3]);
 
+void sonixRegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length); 
+void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length);
+
 
 // The actual driver
 
@@ -234,22 +237,3 @@ struct usb_device
 }
 
 @end
-
-/*
-@interface SPCA561ADriver : SPCA501ADriver 
-{
-    
-}
-
-
-@end
-*/
-
-
-@interface SPCA5XX_SONIXDriver : SPCA5XXDriver 
-{
-    
-}
-
-@end
-
