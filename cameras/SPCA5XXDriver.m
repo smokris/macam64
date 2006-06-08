@@ -510,6 +510,11 @@ void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index,
 }
 
 
+#if DEBUG
+int debug = 9;
+#endif
+
+
 #pragma mark ----- Compatability -----
 
 // how about PDEBUG???
