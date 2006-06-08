@@ -549,6 +549,12 @@
 		F5DFAB960A3145F700D86C03 /* spca501.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB870A3145F700D86C03 /* spca501.dat */; };
 		F5DFAB970A3145F700D86C03 /* spca505.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB880A3145F700D86C03 /* spca505.dat */; };
 		F5DFAB980A3145F700D86C03 /* spca508.dat in Resources */ = {isa = PBXBuildFile; fileRef = F5DFAB890A3145F700D86C03 /* spca508.dat */; };
+		F5E63B790A372AC300AAA2DA /* SonixDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E63B750A372AC300AAA2DA /* SonixDriver.h */; };
+		F5E63B7A0A372AC300AAA2DA /* SonixDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E63B760A372AC300AAA2DA /* SonixDriver.m */; };
+		F5E63B7D0A372AC300AAA2DA /* SonixDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E63B750A372AC300AAA2DA /* SonixDriver.h */; };
+		F5E63B7E0A372AC300AAA2DA /* SonixDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E63B760A372AC300AAA2DA /* SonixDriver.m */; };
+		F5E63B810A372AC300AAA2DA /* SonixDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E63B750A372AC300AAA2DA /* SonixDriver.h */; };
+		F5E63B820A372AC300AAA2DA /* SonixDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E63B760A372AC300AAA2DA /* SonixDriver.m */; };
 		F5F17B6F09BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
 		F5F17B7009BCD671000AEB63 /* GenericDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17B6E09BCD671000AEB63 /* GenericDriver.m */; };
 		F5F17B7109BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
@@ -841,6 +847,8 @@
 		F5DFAB890A3145F700D86C03 /* spca508.dat */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = spca508.dat; path = spca5xx_files/spca508.dat; sourceTree = "<group>"; };
 		F5E63B640A3727BD00AAA2DA /* SPCA5xxExampleDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SPCA5xxExampleDriver.h; sourceTree = "<group>"; };
 		F5E63B650A3727BD00AAA2DA /* SPCA5xxExampleDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SPCA5xxExampleDriver.m; sourceTree = "<group>"; };
+		F5E63B750A372AC300AAA2DA /* SonixDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SonixDriver.h; sourceTree = "<group>"; };
+		F5E63B760A372AC300AAA2DA /* SonixDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SonixDriver.m; sourceTree = "<group>"; };
 		F5E6AA660371F8920166D062 /* English */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = English; path = English.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6B0371F8B00166D062 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
 		F5E6AA6C0371F8B90166D062 /* French */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = French; path = French.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
@@ -1176,6 +1184,8 @@
 				F5CFE5FB09D069DF00C6DB41 /* ExampleDriver.m */,
 				F5E63B640A3727BD00AAA2DA /* SPCA5xxExampleDriver.h */,
 				F5E63B650A3727BD00AAA2DA /* SPCA5xxExampleDriver.m */,
+				F5E63B750A372AC300AAA2DA /* SonixDriver.h */,
+				F5E63B760A372AC300AAA2DA /* SonixDriver.m */,
 				F5C5C2280A26C3CD00737FBB /* CN0352PDriver.h */,
 				F553F47D0A22BB1A00591163 /* OV519Driver.h */,
 				F553F47E0A22BB1A00591163 /* OV519Driver.m */,
@@ -1401,6 +1411,7 @@
 				F553F4960A22BB6300591163 /* JpgDecompress.h in Headers */,
 				F5C5C22B0A26C3CD00737FBB /* CN0352PDriver.h in Headers */,
 				F5DFAB940A3145F700D86C03 /* ov7630c.h in Headers */,
+				F5E63B790A372AC300AAA2DA /* SonixDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1494,6 +1505,7 @@
 				F553F4940A22BB6300591163 /* JpgDecompress.h in Headers */,
 				F5C5C22A0A26C3CD00737FBB /* CN0352PDriver.h in Headers */,
 				F5DFAB8F0A3145F700D86C03 /* ov7630c.h in Headers */,
+				F5E63B7D0A372AC300AAA2DA /* SonixDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1583,6 +1595,7 @@
 				F553F4920A22BB6300591163 /* JpgDecompress.h in Headers */,
 				F5C5C2290A26C3CD00737FBB /* CN0352PDriver.h in Headers */,
 				F5DFAB8A0A3145F700D86C03 /* ov7630c.h in Headers */,
+				F5E63B810A372AC300AAA2DA /* SonixDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1907,6 +1920,7 @@
 				F5B2EF340A1B8861001423D7 /* QuickCamVCDriver.m in Sources */,
 				F553F4840A22BB1B00591163 /* OV519Driver.m in Sources */,
 				F553F4950A22BB6300591163 /* JpgDecompress.c in Sources */,
+				F5E63B7A0A372AC300AAA2DA /* SonixDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1979,6 +1993,7 @@
 				F5B2EF320A1B8861001423D7 /* QuickCamVCDriver.m in Sources */,
 				F553F4820A22BB1B00591163 /* OV519Driver.m in Sources */,
 				F553F4930A22BB6300591163 /* JpgDecompress.c in Sources */,
+				F5E63B7E0A372AC300AAA2DA /* SonixDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2049,6 +2064,7 @@
 				F5B2EF300A1B8861001423D7 /* QuickCamVCDriver.m in Sources */,
 				F553F4800A22BB1B00591163 /* OV519Driver.m in Sources */,
 				F553F4910A22BB6300591163 /* JpgDecompress.c in Sources */,
+				F5E63B820A372AC300AAA2DA /* SonixDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
