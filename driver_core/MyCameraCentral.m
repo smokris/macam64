@@ -63,6 +63,7 @@
 #import "KworldTV300UDriver.h"
 #import "QuickCamVCDriver.h"
 #import "OV519Driver.h"
+#import "SonixDriver.h"
 
 #include "unistd.h"
 
@@ -254,18 +255,28 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SPCA508Sightcam2Driver class]];
     [self registerCameraDriver:[SPCA508CreativeVistaDriver class]];
     
+    [self registerCameraDriver:[SonixDriver class]];  // Based on SPCA5XX - Have no idea if it works
+    [self registerCameraDriver:[SonixDriverVariant1 class]];
+    [self registerCameraDriver:[SonixDriverVariant2 class]];
+    [self registerCameraDriver:[SonixDriverVariant3 class]];
+    [self registerCameraDriver:[SonixDriverVariant4 class]];
+    [self registerCameraDriver:[SonixDriverVariant5 class]];
+    [self registerCameraDriver:[SonixDriverVariant6 class]];
+    [self registerCameraDriver:[SonixDriverVariant7 class]];
+    [self registerCameraDriver:[SN9CxxxDriver class]];
+    [self registerCameraDriver:[SN9CxxxDriverVariant1 class]];
+    [self registerCameraDriver:[SN9CxxxDriverVariant2 class]];
+    [self registerCameraDriver:[SN9CxxxDriverVariant3 class]];
+    [self registerCameraDriver:[SN9CxxxDriverVariant4 class]];
+    [self registerCameraDriver:[SN9CxxxDriverVariant5 class]];
+    [self registerCameraDriver:[SN9CxxxDriverVariant6 class]];
+    
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
     [self registerCameraDriver:[KworldTV300UDriver class]];  // This is very incomplete at this time
 #endif
     
-//    [self registerCameraDriver:[MyIntelPCCameraPro class]];
-//    [self registerCameraDriver:[MyIntelPCCamera class]];
-//    [self registerCameraDriver:[MyGrandtecVcap class]];
-//    [self registerCameraDriver:[MyViewQuestM318B class]];
-//    [self registerCameraDriver:[MyViewQuestVQ110 class]];
-//    [self registerCameraDriver:[MyDVC325 class]];
-
+    
     //Get the IOKit master port (needed for communication with IOKit)
     ret = IOMasterPort(MACH_PORT_NULL, &masterPort);
     if (ret||(!masterPort)) { NSLog(@"MyCameraCentral: IOMasterPort failed (%08x)", ret); return NO;}
