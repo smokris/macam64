@@ -257,7 +257,7 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
     
 	return self;
 }
-
+/*
 //
 // Provide feedback about which resolutions and rates are supported
 //
@@ -281,7 +281,7 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
             return NO;
     }
 }
-
+*/
 //
 // Returns the pipe used for grabbing
 //

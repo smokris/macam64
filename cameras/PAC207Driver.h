@@ -34,7 +34,7 @@
 + (NSArray *) cameraUsbDescriptions;
 
 - (id) initWithCentral: (id) c;
-- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
+//- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
 - (UInt8) getGrabbingPipe;
 - (BOOL) setGrabInterfacePipe;
 - (void) setIsocFrameFunctions;
