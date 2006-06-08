@@ -26,7 +26,7 @@
 #import <SPCA5XXDriver.h>
 
 
-@interface PAC207Driver : SPCA5XX_SONIXDriver 
+@interface PAC207Driver : SPCA5XXDriver 
 {
 	UInt8 * decodingBuffer;
 }
