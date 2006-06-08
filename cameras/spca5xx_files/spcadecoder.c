@@ -383,7 +383,7 @@ void init_sonix_decoder(struct usb_spca50x *spca50x)
     }
 }
 
-static void sonix_decompress(struct spca50x_frame *myframe)
+void sonix_decompress(struct spca50x_frame *myframe)
 {
     int width = myframe->hdrwidth;
     int height = myframe->hdrheight;
