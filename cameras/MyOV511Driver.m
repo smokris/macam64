@@ -16,22 +16,17 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- $Id$
 */
 
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOCFPlugIn.h>
 #include <IOKit/usb/IOUSBLib.h>
-
 #import "MyCameraCentral.h"
 #import "MyOV511Driver.h"
 #import "Resolvers.h"
 #import "yuv2rgb.h"
 #import "MiscTools.h"
 #include "unistd.h"
-
-#include "USB_VendorProductIDs.h"
-
 
 #define OV511_DEBUG
 #define USE_COMPRESS
@@ -67,24 +62,50 @@ int Decompress420(unsigned char *pIn, unsigned char *pOut, unsigned char *pTmp, 
 	4, 4, 4, 4, 4, 4, 4, 4  \
 }
 
-#define OV518_YQUANTABLE { \
-	5, 4, 5, 6, 6, 7, 7, 7, \
-	5, 5, 5, 5, 6, 7, 7, 7, \
-	6, 6, 6, 6, 7, 7, 7, 8, \
-	7, 7, 6, 7, 7, 7, 8, 8  \
-}
-
-#define OV518_UVQUANTABLE { \
-	6, 6, 6, 7, 7, 7, 7, 7, \
-	6, 6, 6, 7, 7, 7, 7, 7, \
-	6, 6, 6, 7, 7, 7, 7, 8, \
-	7, 7, 7, 7, 7, 7, 8, 8  \
-}
-
-
 #define ENABLE_Y_QUANTABLE 1
 #define ENABLE_UV_QUANTABLE 1
 
+@implementation MyOV511PlusDriver
+
+//Class methods needed
++ (unsigned short) cameraUsbProductID { return PRODUCT_OV511PLUS; }
++ (unsigned short) cameraUsbVendorID { return VENDOR_OVT; }
++ (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"OV511Plus-based camera"]; }
+
+- (short) defaultAltInterface {
+    return 7;
+}
+
+- (short) packetSize:(short)altInterface {
+    short size;
+    switch(altInterface) {
+        case 7:
+		default:
+            size = 961;
+            break;
+        case 6:
+            size = 769;
+            break;
+        case 5:
+            size = 513;
+            break;
+        case 4:
+            size = 385;
+            break;
+        case 3:
+            size = 257;
+            break;
+        case 2:
+            size = 129;
+            break;
+        case 1:
+            size = 22;
+            break;
+    }
+    return size;
+}
+
+@end
 
 //camera modes and the necessary data for them
 
@@ -98,25 +119,10 @@ int Decompress420(unsigned char *pIn, unsigned char *pOut, unsigned char *pTmp, 
 
 @implementation MyOV511Driver
 
-// Class methods needed
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_OV511], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
-            @"OV511-based camera", @"name", NULL], 
-        
-        // Intel Play Me2Cam 0813:0002
-        
-        NULL];
-}
-
-
-// use better name!
-
+//Class methods needed
++ (unsigned short) cameraUsbProductID { return PRODUCT_OV511; }
++ (unsigned short) cameraUsbVendorID { return VENDOR_OVT; }
++ (NSString*) cameraName {return [MyCameraCentral localizedStringFor:@"OV511-based camera"];}
 
 void blockCopy(int buffsize, int *cursize, char *srcbuf, char *distbuf, int width, int height);
 void tmpcopy32(u_char *buffer, int offset, int size, u_char *tmpbuf, long *tmpsize);
@@ -124,35 +130,48 @@ void tmpcopy32(u_char *buffer, int offset, int size, u_char *tmpbuf, long *tmpsi
 static unsigned char yQuanTable511[] = OV511_YQUANTABLE;
 static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 
-
-- (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId 
-{
-    int val;
+- (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
+    UInt8 buf[16], cid;
     long i;
-    UInt8 cid;
-    
-    // Setup connection to camera
-    CameraError err = [self usbConnectToCam:usbLocationId configIdx:0];
-    if (err != CameraErrorOK) 
-        return err;
-    
+    CameraError err=[self usbConnectToCam:usbLocationId configIdx:0];
+//setup connection to camera
+     if (err!=CameraErrorOK) return err;
+
     /* reset the OV511 */
-     if ([self regWrite:OV511_REG_RST val:0x7f] < 0) 
-         return CameraErrorUSBProblem;
-    
-    if ([self regWrite:OV511_REG_RST val:0x00] < 0) 
+    buf[0] = 0x7f;
+    if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1]) {
+#ifdef VERBOSE
+        NSLog(@"OV511:startupGrabbing: error : OV511_REG_RST");
+#endif
         return CameraErrorUSBProblem;
-    
+    }
+
+    buf[0] = 0x00;
+    if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1]) {
+#ifdef VERBOSE
+        NSLog(@"OV511:startupGrabbing: error : OV511_REG_RST");
+#endif
+        return CameraErrorUSBProblem;
+    }
+
     /* initialize system */
-    if ([self regWrite:OV511_REG_EN_SYS val:0x01] < 0) 
+    buf[0] = 0x01;
+    if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_EN_SYS buf:buf len:1]) {
+#ifdef VERBOSE
+        NSLog(@"OV511:startupGrabbing: error : OV511_REG_EN_SYS");
+#endif
         return CameraErrorUSBProblem;
-    
-    if ((val = [self regRead:OV511_REG_CID]) < 0) 
+    }
+
+    if (![self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_CID buf:buf len:1]) {
+#ifdef VERBOSE
+        NSLog(@"OV511:startupGrabbing: error : OV511_REG_CID");
+#endif
         return CameraErrorUSBProblem;
-    
-    cid = val;
-    switch (cid) 
-    {
+    }
+
+    cid = buf[0];
+    switch(cid) {
         case 6:
             sensorType = SENS_SAA7111A_WITH_FI1236MK2;
             sensorWrite = SAA7111A_I2C_WRITE_ID;
@@ -173,46 +192,39 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
             break;
         case 0:
         default:
-            // must detect i2c id
-            for (i = 0; i <= 7; ++i) 
-            {
-                [self regWrite:OV511_REG_SID val:OV7610_I2C_WRITE_ID + i * 4];
-                if ([self i2cRead2] != 0xff) 
+            // detect i2c id
+            for(i = 0; i <= 7; ++i) {
+                buf[0] = OV7610_I2C_WRITE_ID + i * 4;
+                [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
+                if([self i2cRead2] != 0xff)
                     break;
             }
-            if (i <= 7) 
-            {
+            if(i <= 7) {
                 sensorWrite = OV7610_I2C_WRITE_ID + i * 4;
                 sensorRead = OV7610_I2C_READ_ID + i * 4;
                 [self seti2cid];
 
                 // check Common I version ID
-                if (([self i2cRead:0x29] & 0x03) == 0x03) 
-                {
+                if(([self i2cRead:0x29] & 0x03) == 0x03) {
                     sensorType = SENS_OV7610;
 #ifdef OV511_DEBUG
                     NSLog(@"macam: OV511 Custom ID %d with OV7610", cid);
 #endif
-                } 
-                else 
-                {
+                } else {
                     sensorType = SENS_OV7620;
 #ifdef OV511_DEBUG
                     NSLog(@"macam: OV511 Custom ID %d with OV7620", cid);
 #endif
                 }
-            } 
-            else 
-            {
+            } else {
                 // detect i2c id
-                for (i = 0; i <= 7; ++i) 
-                {
-                    [self regWrite:OV511_REG_SID val:OV6620_I2C_WRITE_ID + i * 4];
-                    if ([self i2cRead2] != 0xff) 
+                for(i = 0; i <= 7; ++i) {
+                    buf[0] = OV6620_I2C_WRITE_ID + i * 4;
+                    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
+                    if([self i2cRead2] != 0xff)
                         break;
                 }
-                if (i <= 7) 
-                {
+                if(i <= 7) {
                     sensorWrite = OV6620_I2C_WRITE_ID + i * 4;
                     sensorRead = OV6620_I2C_READ_ID + i * 4;
                     [self seti2cid];
@@ -221,15 +233,13 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 #ifdef OV511_DEBUG
                     NSLog(@"macam: OV511 Custom ID %d with OV6620", cid);
 #endif
-                } 
-                else 
-                {
+                } else {
                     return CameraErrorInternal;
                 }
             }
             break;
     }
-    
+
 //set internals
     camHFlip=NO;			//Some defaults that can be changed during startup
     chunkHeader=0;
@@ -253,13 +263,10 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     return [super startupWithUsbLocationId:usbLocationId];
 }
 
-
-- (void) dealloc 
-{
+- (void) dealloc {
     [self usbCloseConnection];
     [super dealloc];
 }
-
 
 - (BOOL) canSetBrightness { return YES; }
 - (void) setBrightness:(float)v{
@@ -278,7 +285,6 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     [super setBrightness:v];
 }
 
-
 - (BOOL) canSetContrast { return YES; }
 - (void) setContrast:(float)v {
     UInt8 b;
@@ -295,7 +301,6 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     }
     [super setContrast:v];
 }
-
 
 - (BOOL) canSetSaturation { return YES; }
 - (void) setSaturation:(float)v {
@@ -324,7 +329,6 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     [super setGamma:v];
 }
 
-
 - (BOOL) canSetShutter { return NO; }
 - (void) setShutter:(float)v {
     UInt8 b[2];
@@ -335,7 +339,6 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     [super setShutter:v];
 }
 
-
 - (BOOL) canSetGain { return NO; }
 - (void) setGain:(float)v {
     UInt8 b;
@@ -345,7 +348,6 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 //        [self usbWriteCmdWithBRequest:GRP_SET_LUMA wValue:SEL_GAIN wIndex:INTF_CONTROL buf:&b len:1];
     [super setGain:v];
 }
-
 
 - (BOOL) canSetAutoGain { return NO; }
 - (void) setAutoGain:(BOOL)v {
@@ -366,12 +368,9 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     [super setAutoGain:v];
 }    
 
-
-- (BOOL) canSetHFlip { return NO; }
-
+- (BOOL)canSetHFlip { return NO; }
 
 - (WhiteBalanceMode) defaultWhiteBalanceMode { return WhiteBalanceAutomatic; }
-
 
 - (void) setImageBuffer:(unsigned char*)buffer bpp:(short)bpp rowBytes:(long)rb{
     if (buffer==NULL) return;
@@ -380,7 +379,6 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     [super setImageBuffer:buffer bpp:bpp rowBytes:rb];
 }
 
-
 - (short) maxCompression {
 #ifdef USE_COMPRESS
     return 1;
@@ -388,7 +386,6 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     return 0;
 #endif
 }
-
 
 - (BOOL) supportsResolution:(CameraResolution)res fps:(short)rate {
     switch (res) {
@@ -412,26 +409,18 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     }
 }
 
-
-- (CameraResolution) defaultResolutionAndRate:(short*) rate 
-{
-    *rate = 5;
+- (CameraResolution) defaultResolutionAndRate:(short*)rate {
+    *rate=5;
     return ResolutionSIF;
 }
 
-
-- (short) defaultAltInterface 
-{
+- (short) defaultAltInterface {
     return 1;
 }
 
-
-- (short) packetSize:(short) altInterface 
-{
+- (short) packetSize:(short)altInterface {
     short size;
-    
-    switch (altInterface) 
-    {
+    switch(altInterface) {
         case 6:
             size = 257;
             break;
@@ -455,19 +444,16 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
             size = 992;
             break;
     }
-    
     return size;
 }
 
-
-- (BOOL) setupGrabContext 
-{
+- (BOOL) setupGrabContext {
     long i,j;
     AbsoluteTime at;
     IOReturn err;
 
     BOOL ok=YES;
-    [self cleanupGrabContext];					// cleanup in case there's something left in here
+    [self cleanupGrabContext];					//cleanup in case there's something left in here
 
     usbAltInterface = [self defaultAltInterface];
     usbFrameBytes = [self packetSize:usbAltInterface];
@@ -566,26 +552,35 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     if (!ok) [self cleanupGrabContext];				//We failed. Throw away the garbage
 
     if(ok) {
+        UInt8 buf[16];
  //       CameraError ret=CameraErrorOK;
 
-        [self regWrite:OV511_REG_PKSZ val:0x01];
+        buf[0] = 0x01;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PKSZ buf:buf len:1];
 
-        [self regWrite:OV511_REG_PKFMT val:0x00];
+        buf[0] = 0x00;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PKFMT buf:buf len:1];
 
-        [self regWrite:OV511_REG_RST val:0x3d];
+        buf[0] = 0x3d;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1];
 
-        [self regWrite:OV511_REG_RST val:0x00];
+        buf[0] = 0x00;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1];
 
         /* set YUV 4:2:0 format, Y channel LPF */
-        [self regWrite:OV511_REG_M400 val:0x01];
+        buf[0] = 0x01;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_M400 buf:buf len:1];
 
-        [self regWrite:OV511_REG_M420_YFIR val:0x03];
+        buf[0] = 0x03;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_M420_YFIR buf:buf len:1];
 
         /* disable snapshot */
-        [self regWrite:OV511_REG_SNAP val:0x00];
+        buf[0] = 0x00;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SNAP buf:buf len:1];
 
         /* disable compression */
-        [self regWrite:OV511_REG_CE_EN val:0x00];
+        buf[0] = 0x00;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_CE_EN buf:buf len:1];
 
         if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620) {
             [self i2cWrite:OV7610_REG_RWB val:0x05];
@@ -714,23 +709,29 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         }
 
 #ifdef USE_COMPRESS
-        if(compression) 
-        {
+        if(compression) {
             /* enable compression */
             [self ov511_upload_quan_tables];
-            [self regWrite:OV511_REG_CE_EN val:0x07];
-            [self regWrite:OV511_REG_LT_EN val:0x03];
+            buf[0] = 0x07;
+            [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_CE_EN buf:buf len:1];
+            buf[0] = 0x03;
+            [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_LT_EN buf:buf len:1];
         }
 #endif
 
-        if(sensorType == SENS_SAA7111A) 
-        {
-            [self regWrite:OV511_REG_DLYM val:0x00];
-            [self regWrite:OV511_REG_PEM val:0x00];
+        if(sensorType == SENS_SAA7111A) {
+            buf[0] = 0x00;
+            [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_DLYM buf:buf len:1];
+
+            buf[0] = 0x00;
+            [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PEM buf:buf len:1];
         }
 
-        [self regWrite:OV511_REG_PXCNT val:([self width] >> 3) - 1];
-        [self regWrite:OV511_REG_LNCNT val:([self height] >> 3) - 1];
+        buf[0] = ([self width] >> 3) - 1;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PXCNT buf:buf len:1];
+
+        buf[0] = ([self height] >> 3) - 1;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_LNCNT buf:buf len:1];
 
         if(resolution == ResolutionVGA &&
             (sensorType == SENS_OV7610 || sensorType == SENS_OV7620)) {
@@ -748,23 +749,31 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
             [self i2cWrite:OV7610_REG_COML val:0x1e];
         }
 
-        [self regWrite:OV511_REG_PXDV val:0x00];
+        buf[0] = 0x00;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PXDV buf:buf len:1];
 
-        [self regWrite:OV511_REG_LNDV val:0x00];
+        buf[0] = 0x00;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_LNDV buf:buf len:1];
 
-        [self regWrite:OV511_REG_ENFC val:0x01];
+        buf[0] = 0x01;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_ENFC buf:buf len:1];
 
         /* set FIFO format */
-        [self regWrite:OV511_REG_PKSZ val:(usbFrameBytes - 1) / 32];
+        buf[0] = (usbFrameBytes - 1) / 32;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PKSZ buf:buf len:1];
 
-        [self regWrite:OV511_REG_PKFMT val:0x03];
+        buf[0] = 0x03;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_PKFMT buf:buf len:1];
 
         /* select the fifosize alternative */
 //        if (![self usbSetAltInterfaceTo:7 testPipe:1]) return CameraErrorNoBandwidth;
 
         /* reset the device again */
-        [self regWrite:OV511_REG_RST val:0x3f];
-        [self regWrite:OV511_REG_RST val:0x00];
+        buf[0] = 0x3f;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1];
+
+        buf[0] = 0x00;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_RST buf:buf len:1];
     }
 
     return ok;
@@ -1120,15 +1129,18 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
 
         //Check if the snapshot button state has changed.
         {
-            int value = [self regRead:OV511_REG_SNAP];
-            BOOL buttonIsPressed = (value >= 0) && (value & 0x08);
-            
-            if (buttonIsPressed) 
-            {
+        UInt8 buf[16];
+        BOOL buttonIsPressed;
+            [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SNAP buf:buf len:1];
+            buttonIsPressed = (buf[0] & 0x08);
+            if (buttonIsPressed) {
                 [self mergeCameraEventHappened:CameraEventSnapshotButtonDown];
-                [self regWrite:OV511_REG_SNAP val:0x00];
-                [self regWrite:OV511_REG_SNAP val:0x02];
-                [self regWrite:OV511_REG_SNAP val:0x00];
+                buf[0] = 0;
+                [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SNAP buf:buf len:1];
+                buf[0] = 2;
+                [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SNAP buf:buf len:1];
+                buf[0] = 0;
+                [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SNAP buf:buf len:1];
             }
         }
     }
@@ -1152,195 +1164,175 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
     [self cameraEventHappened:self event:evt];
 }
 
-
-//
-//  Set the value of a register
-//
-- (int) regWrite:(UInt8) reg val:(UInt8) val
-{
-    UInt8 buf[16];
-    
-    buf[0] = val;
-    
-    if (![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:reg buf:buf len:1]) 
-    {
-#ifdef VERBOSE
-        NSLog(@"OV511:regWrite:usbWriteCmdWithBRequest error");
-#endif
-        return -1;
-    }
-    
-    return 0;
-}
-
-
-//
-//  Get the value of a register
-//
-//  return - negative is error
-//         - zero or positive is data
-//
-- (int) regRead:(UInt8) reg
-{
-    UInt8 buf[16];
-    
-    if (![self usbReadCmdWithBRequest:2 wValue:0 wIndex:reg buf:buf len:1]) 
-    {
-#ifdef VERBOSE
-        NSLog(@"OV511:regRead:usbReadCmdWithBRequest error");
-#endif
-        return -1;
-    }
-    
-    return buf[0];
-}
-
-
 /*
- *   2 bytes write to i2c on ov511 bus
- */
-- (int) i2cWrite:(UInt8) reg val:(UInt8) val
-{
-    int value;
-    
-    if (![self regWrite:OV511_REG_SWA val:reg]) 
+    2 bytes write to i2c on ov511 bus
+*/
+
+- (int) i2cWrite:(UInt8) reg val:(UInt8) val{
+    UInt8 buf[16];
+
+    buf[0] = reg;
+    if(![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SWA buf:buf len:1]) {
+#ifdef VERBOSE
+        NSLog(@"OV511:i2cWrite:usbWriteCmdWithBRequest error");
+#endif
         return -1;
-    
-    if (![self regWrite:OV511_REG_SDA val:val]) 
+    }
+
+    buf[0] = val;
+    if(![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SDA buf:buf len:1]) {
+#ifdef VERBOSE
+        NSLog(@"OV511:i2cWrite:usbWriteCmdWithBRequest error");
+#endif
         return -1;
-    
-    if (![self regWrite:OV511_REG_I2C_CONTROL val:0x01]) 
+    }
+
+    buf[0] = 0x01;
+    if(![self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1]) {
+#ifdef VERBOSE
+        NSLog(@"OV511:i2cWrite:usbWriteCmdWithBRequest error");
+#endif
         return -1;
-    
+    }
+
     /* wait until bus idle */
-    do 
-    {
-        if ((value = [self regRead:OV511_REG_I2C_CONTROL]) < 0) 
+    do {
+        if(![self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1]) {
+#ifdef VERBOSE
+            NSLog(@"OV511:i2cWrite:usbReadCmdWithBRequest error");
+#endif
             return -1;
-    } 
-    while ((value & 0x01) == 0);
+        }
+    } while((buf[0] & 0x01) == 0);
 
     /* no retries */
-    if ((value & 0x02) != 0)
+    if((buf[0] & 0x02) != 0)
       return -1;
 
     return 0;
 }
 
-
 /*
     byte read from i2c spesfic id on ov511 bus
 */
-- (int) i2cRead:(UInt8) reg 
-{
+
+- (int) i2cRead:(UInt8) reg {
+    UInt8 buf[16];
     UInt8 val;
     int retries = 3;
-    
-    while (--retries >= 0) 
-    {
-        // wait until bus idle
-        do {
-            val = [self regRead:OV511_REG_I2C_CONTROL];
-        } while ((val & 0x01) == 0);
-        
-        // perform a dummy write cycle to set the register
-        [self regWrite:OV511_REG_SMA val:reg];
-        
-        // initiate the dummy write
-        [self regWrite:OV511_REG_I2C_CONTROL val:0x03];
 
-        // wait until bus idle
-        do {
-            val = [self regRead:OV511_REG_I2C_CONTROL];
-        } while ((val & 0x01) == 0);
-
-        // no retries
-        if ((val & 0x02) == 0)
-            break;
-    }
-
-    if (retries < 0)
-        return -1;
-
-    retries = 3;
-    
-    while (--retries >= 0) 
-    {
-        // initiate read
-        [self regWrite:OV511_REG_I2C_CONTROL val:0x05];
-
-        // wait until bus idle
-        do {
-            val = [self regRead:OV511_REG_I2C_CONTROL];
-        } while ((val & 0x01) == 0);
-
-        if ((val & 0x02) == 0)
-            break;
-
-        // abort I2C bus before retrying
-        [self regWrite:OV511_REG_I2C_CONTROL val:0x05];
-    }
-    
-    if (retries < 0) 
-        return -1;
-    
-    // retrieve data
-    val = [self regRead:OV511_REG_SDA];
-    
-    [self regWrite:OV511_REG_I2C_CONTROL val:0x05];
-    
-    return val;
-}
-
-
-- (int) i2cRead2 
-{
-    int value;
-    int retries = 3;
-
-    while (--retries >= 0) 
-    {
-        /* initiate read */
-        [self regWrite:OV511_REG_I2C_CONTROL val:0x05];
+    while(--retries >= 0) {
 
         /* wait until bus idle */
         do {
-            value = [self regRead:OV511_REG_I2C_CONTROL];
-        } while ((value & 0x01) == 0);
+            [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+        } while((buf[0] & 0x01) == 0);
 
-        if ((value & 0x02) == 0)
+        /* perform a dummy write cycle to set the register */
+        buf[0] = reg;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SMA buf:buf len:1];
+
+        /* initiate the dummy write */
+        buf[0] = 0x03;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+
+        /* wait until bus idle */
+        do {
+            [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+        } while((buf[0] & 0x01) == 0);
+
+        /* no retries */
+        if((buf[0] & 0x02) == 0)
+            break;
+    }
+
+    if(retries < 0)
+        return -1;
+
+    retries = 3;
+    while(--retries >= 0) {
+        /* initiate read */
+        buf[0] = 0x05;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+
+        /* wait until bus idle */
+        do {
+            [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+        } while((buf[0] & 0x01) == 0);
+
+        if((buf[0] & 0x02) == 0)
             break;
 
         /* abort I2C bus before retrying */
-        [self regWrite:OV511_REG_I2C_CONTROL val:0x05];
+        buf[0] = 0x05;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
     }
  
     if(retries < 0)
         return -1;
 
     /* retrieve data */
-    value = [self regRead:OV511_REG_SDA];
+    [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SDA buf:buf len:1];
+    val = buf[0];
 
-    [self regWrite:OV511_REG_I2C_CONTROL val:0x05];
+    buf[0] = 0x05;
+    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
 
-    return value;
+    return val;
 }
 
+- (int) i2cRead2 {
+    UInt8 buf[16];
+    UInt8 val;
+    int retries = 3;
 
-- (void) seti2cid 
-{
-    // set I2C write slave ID
-    [self regWrite:OV511_REG_SID val:sensorWrite];
+    while(--retries >= 0) {
+        /* initiate read */
+        buf[0] = 0x05;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
 
-    // set I2C read slave ID
-    [self regWrite:OV511_REG_SRA val:sensorRead];
+        /* wait until bus idle */
+        do {
+            [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+        } while((buf[0] & 0x01) == 0);
+
+        if((buf[0] & 0x02) == 0)
+            break;
+
+        /* abort I2C bus before retrying */
+        buf[0] = 0x05;
+        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+    }
+ 
+    if(retries < 0)
+        return -1;
+
+    /* retrieve data */
+    [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SDA buf:buf len:1];
+    val = buf[0];
+
+    buf[0] = 0x05;
+    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_I2C_CONTROL buf:buf len:1];
+
+    return val;
 }
 
+- (void) seti2cid {
+    UInt8 buf[16];
+    /* set I2C write slave ID */
+    buf[0] = sensorWrite;
+    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SID buf:buf len:1];
+
+    /* set I2C read slave ID */
+    buf[0] = sensorRead;
+    [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SRA buf:buf len:1];
+}
 
 - (int) ov511_upload_quan_tables{
 	unsigned char *pYTable = yQuanTable511;
 	unsigned char *pUVTable = uvQuanTable511;
 	unsigned char val0, val1;
+        UInt8 buf[16];
 	int i, reg = OV511_REG_LT_V;
 
 	for (i = 0; i < OV511_QUANTABLESIZE / 2; i++)
@@ -1352,7 +1344,8 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
 			val0 &= 0x0f;
 			val1 &= 0x0f;
 			val0 |= val1 << 4;
-            [self regWrite:reg val:val0];
+                        buf[0] = val0;
+                        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:reg buf:buf len:1];
 		}
 
 		if (ENABLE_UV_QUANTABLE)
@@ -1362,7 +1355,8 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
 			val0 &= 0x0f;
 			val1 &= 0x0f;
 			val0 |= val1 << 4;
-            [self regWrite:reg+OV511_QUANTABLESIZE/2 val:val0];
+                        buf[0] = val0;
+                        [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:reg+OV511_QUANTABLESIZE/2 buf:buf len:1];
 		}
 
 		reg++;
@@ -1477,381 +1471,3 @@ int b, in = 0, allzero;
 }
 
 @end
-
-
-#pragma mark ===================
-
-
-@implementation MyOV511PlusDriver
-
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_OV511PLUS], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
-            @"OV511Plus-based camera", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PLAY_ME2CAM], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_MATTEL], @"idVendor",
-            @"Intel Play Me2Cam", @"name", NULL], 
-        
-        NULL];
-}
-
-
-- (short) defaultAltInterface 
-{
-    return 7;
-}
-
-
-- (short) packetSize:(short) altInterface 
-{
-    short size;
-    
-    switch (altInterface) 
-    {
-		default:
-        case 7:
-            size = 961;
-            break;
-        case 6:
-            size = 769;
-            break;
-        case 5:
-            size = 513;
-            break;
-        case 4:
-            size = 385;
-            break;
-        case 3:
-            size = 257;
-            break;
-        case 2:
-            size = 129;
-            break;
-        case 1:
-            size = 22;
-            break;
-    }
-    
-    return size;
-}
-
-
-@end
-
-
-#pragma mark ===================
-
-
-@implementation OV518Driver
-
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_OV518], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
-            @"OV518-based camera", @"name", NULL], 
-        
-        NULL];
-}
-
-
-- (short) defaultAltInterface 
-{
-    return 7;
-}
-
-
-- (short) packetSize:(short) altInterface 
-{
-    short size;
-    
-    switch (altInterface) 
-    {
-		default:
-        case 7:
-            size = 896;
-            break;
-        case 6:
-            size = 768;
-            break;
-        case 5:
-            size = 540;
-            break;
-        case 4:
-            size = 512;
-            break;
-        case 3:
-            size = 384;
-            break;
-        case 2:
-            size = 256;
-            break;
-        case 1:
-            size = 128;
-            break;
-        case 0:
-            size = 0;
-            break;
-    }
-    
-    return size;
-}
-
-
-//
-//  Set the value of a register
-//
-- (int) regWrite:(UInt8) reg val:(UInt8) val
-{
-    UInt8 buf[16];
-    
-    buf[0] = val;
-    
-    if (![self usbWriteCmdWithBRequest:1 wValue:0 wIndex:reg buf:buf len:1]) 
-    {
-#ifdef VERBOSE
-        NSLog(@"OV511:regWrite:usbWriteCmdWithBRequest error");
-#endif
-        return -1;
-    }
-    
-    return 0;
-}
-
-
-//
-//  Get the value of a register
-//
-//  return - negative is error
-//         - zero or positive is data
-//
-- (int) regRead:(UInt8) reg
-{
-    UInt8 buf[16];
-    
-    if (![self usbReadCmdWithBRequest:1 wValue:0 wIndex:reg buf:buf len:1]) 
-    {
-#ifdef VERBOSE
-        NSLog(@"OV511:regRead:usbReadCmdWithBRequest error");
-#endif
-        return -1;
-    }
-    
-    return buf[0];
-}
-
-
-//
-//  Set a register on the sensor using the i2c bus
-//
-- (int) i2cWrite:(UInt8) reg val:(UInt8) val
-{
-    if ([self regWrite:OV511_REG_SWA val:reg] < 0) 
-        return -1;
-    
-    if ([self regWrite:OV511_REG_SDA val:val] < 0) 
-        return -1;
-    
-    if ([self regWrite:OV518_REG_I2C_CONTROL val:0x01] < 0) 
-        return -1;
-    
-    return 0;
-}
-
-
-//
-//  Get a register on the sensor using the i2c bus
-//
-- (int) i2cRead:(UInt8) reg 
-{
-    UInt8 val;
-    
-    // perform a dummy write cycle to set the register
-    [self regWrite:OV511_REG_SMA val:reg];
-    
-    // initiate the dummy write
-    [self regWrite:OV518_REG_I2C_CONTROL val:0x03];
-    
-    // initiate read
-    [self regWrite:OV518_REG_I2C_CONTROL val:0x05];
-    
-    // retrieve data
-    val = [self regRead:OV511_REG_SDA];
-
-    return val;
-}
-
-
-//  Not sure what this is for
-//  Read after setting the register, why not just a regular read???
-- (int) i2cRead2 
-{
-    UInt8 val;
-    
-    // initiate read
-    [self regWrite:OV518_REG_I2C_CONTROL val:0x05];
-    
-    // retrieve data
-    val = [self regRead:OV511_REG_SDA];
-    
-    return val;
-}
-
-
-@end
-
-
-#pragma mark ===================
-
-
-@implementation OV518PlusDriver
-
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_OV518PLUS], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
-            @"OV518Plus-based camera", @"name", NULL], 
-        
-        NULL];
-}
-
-
-@end
-
-
-#pragma mark ===================
-
-
-@implementation TentativeOV519Driver
-
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_OV519], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
-            @"OV519-based camera (1)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_OV519_AKA1], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
-            @"OV519-based camera (2)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_OV519_AKA2], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
-            @"OV519-based camera (3)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_EYE_TOY], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONY], @"idVendor",
-            @"Sony Eye Toy (1)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_EYE_TOY_AKA1], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONY], @"idVendor",
-            @"Sony Eye Toy (2)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_EYE_TOY_AKA2], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONY], @"idVendor",
-            @"Sony Eye Toy (3)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_EYE_TOY_AKA3], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONY], @"idVendor",
-            @"Sony Eye Toy (4)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_XBOX_VIDEO_CHAT], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_MICROSOFT], @"idVendor",
-            @"Microsoft Xbox Video Chat", @"name", NULL], 
-        
-        NULL];
-}
-
-
-- (short) defaultAltInterface 
-{
-    return 4;
-}
-
-
-- (short) packetSize:(short) altInterface 
-{
-    short size;
-    
-    switch (altInterface) 
-    {
-		default:
-        case 4:
-            size = 896;
-            break;
-        case 3:
-            size = 768;
-            break;
-        case 2:
-            size = 512;
-            break;
-        case 1:
-            size = 384;
-            break;
-        case 0:
-            size = 0;
-            break;
-    }
-    
-    return size;
-}
-
-
-@end
-
-
-#pragma mark ===================
-
-
-@implementation OV530Driver
-
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_OV530], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
-            @"OV530-based camera", @"name", NULL], 
-        
-        NULL];
-}
-
-
-// DSC works for OV530, it is dual-mode, need to implement
-
-
-@end
-
-
-/*
- TODO
- - check with ov51x driver backwards and forwards
- - handle OV518 decompression
- - handle OV519 JPEG images
- */
