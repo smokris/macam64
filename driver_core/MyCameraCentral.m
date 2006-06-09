@@ -240,8 +240,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
 //  [self registerCameraDriver:[PixartDriver class]];   // Disabled because working on SPCA5XX-based version instead
 #if EXPERIMENTAL
     [self registerCameraDriver:[PAC7311Driver class]];
-    [self registerCameraDriver:[OV518Driver class]];
-    [self registerCameraDriver:[OV518PlusDriver class]];
+//  [self registerCameraDriver:[OV518Driver class]];
+//  [self registerCameraDriver:[OV518PlusDriver class]];
 #endif
     [self registerCameraDriver:[OV519Driver class]];
     [self registerCameraDriver:[PAC207Driver class]];     // Based on SPCA5XX - seems to work pretty well
