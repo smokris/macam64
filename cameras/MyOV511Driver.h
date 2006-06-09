@@ -16,7 +16,6 @@
     You should have received a copy of the GNU General Public License
     along with this program; if not, write to the Free Software
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- $Id$
 */
 
 #import <Cocoa/Cocoa.h>
@@ -49,6 +48,9 @@ Next: Camera constants and conversions. This information has partly been obtaine
 Doing these amounts of defines is often called bad style. We should find a better way.
 */
 
+#define VENDOR_OVT 0x05A9
+#define PRODUCT_OV511 0x511
+#define PRODUCT_OV511PLUS 0xA511
 
 //Conversions into the values of the camera
 
@@ -91,13 +93,12 @@ Doing these amounts of defines is often called bad style. We should find a bette
 #define OV511_REG_PIO		0x38
 #define OV511_REG_PDATA		0x39
 #define OV511_REG_ENTP		0x3E
-#define OV511_REG_I2C_CONTROL	0x40 // OV511(+) only
-#define OV518_REG_I2C_CONTROL	0x47 // OV518(+) only
+#define OV511_REG_I2C_CONTROL	0x40
 #define OV511_REG_SID		0x41
-#define OV511_REG_SWA		0x42 // OV51x
-#define OV511_REG_SMA		0x43 // OV51x
+#define OV511_REG_SWA		0x42
+#define OV511_REG_SMA		0x43
 #define OV511_REG_SRA		0x44
-#define OV511_REG_SDA		0x45 // OV51x
+#define OV511_REG_SDA		0x45
 #define OV511_REG_PSC		0x46
 #define OV511_REG_TMO		0x47
 #define OV511_REG_SPA		0x48
@@ -228,7 +229,6 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
     CameraError err;		//Collector f errors occurred during grab. [cleanupGrabContext] will leave this as it is
 } OV511GrabContext;
 
-
 @interface MyOV511Driver : MyCameraDriver {
     
 //Camera Type
@@ -251,7 +251,9 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
     BOOL grabbingThreadRunning;		//For active wait for finishing grabbing
 }
 
-+ (NSArray *) cameraUsbDescriptions;
++ (unsigned short) cameraUsbProductID;
++ (unsigned short) cameraUsbVendorID;
++ (NSString*) cameraName;
 
 //start/stop
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
@@ -275,12 +277,6 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
 
 - (CameraError) decodingThread;				//Entry method for the chunk to image decoding thread
 
-
-
-// Register access
-- (int) regWrite:(UInt8) reg val:(UInt8) val;
-- (int) regRead:(UInt8) reg;
-
 //I2C
 - (int) i2cWrite:(UInt8) reg val:(UInt8) val;
 - (int) i2cRead:(UInt8) reg;
@@ -294,48 +290,8 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
 
 @end
 
-
 @interface MyOV511PlusDriver : MyOV511Driver 
-
-+ (NSArray *) cameraUsbDescriptions;
-
-@end
-
-
-@interface OV518Driver : MyOV511Driver 
-
-+ (NSArray *) cameraUsbDescriptions;
-
-// Register access
-- (int) regWrite:(UInt8) reg val:(UInt8) val;
-- (int) regRead:(UInt8) reg;
-
-// I2C
-- (int) i2cWrite:(UInt8) reg val:(UInt8) val;
-- (int) i2cRead:(UInt8) reg;
-- (int) i2cRead2;
-
-@end
-
-
-@interface OV518PlusDriver : OV518Driver 
-
-+ (NSArray *) cameraUsbDescriptions;
-
-@end
-
-
-@interface TentativeOV519Driver : OV518Driver 
-
-+ (NSArray *) cameraUsbDescriptions;
-
-@end
-
-
-@interface OV530Driver : TentativeOV519Driver 
-
-+ (NSArray *) cameraUsbDescriptions;
-
-// add DSC stuff
-
++ (unsigned short) cameraUsbProductID;
++ (unsigned short) cameraUsbVendorID;
++ (NSString*) cameraName;
 @end
