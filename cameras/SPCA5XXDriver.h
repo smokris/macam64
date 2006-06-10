@@ -119,14 +119,6 @@ struct usb_device
 @end
 
 
-@interface SPCA501ADriver : SPCA5XXDriver
-{
-    
-}
-
-@end
-
-
 @interface SPCA504ADriver : SPCA5XXDriver
 {
     
