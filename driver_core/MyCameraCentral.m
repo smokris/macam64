@@ -64,6 +64,7 @@
 #import "QuickCamVCDriver.h"
 #import "OV519Driver.h"
 #import "SonixDriver.h"
+#import "SPCA501ADriver.h"
 
 #include "unistd.h"
 
@@ -249,7 +250,13 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[TV8532Driver class]];     // Based on SPCA5XX - testing!
     [self registerCameraDriver:[ZC030xDriver class]];     // Based on SPCA5XX - testing!
     
-    [self registerCameraDriver:[SPCA508Driver class]];  // Based on SPCA5XX - Works, but not too pretty
+    [self registerCameraDriver:[SPCA501ADriver class]];   // Based on SPCA5XX - testing
+    [self registerCameraDriver:[SPCA501ADriverVariant1 class]];
+    [self registerCameraDriver:[SPCA501ADriverVariant2 class]];
+    [self registerCameraDriver:[SPCA501ADriverVariant3 class]];
+    [self registerCameraDriver:[SPCA501ADriverVariant4 class]];
+    
+    [self registerCameraDriver:[SPCA508Driver class]];    // Based on SPCA5XX - Works, but not too pretty
     [self registerCameraDriver:[SPCA508CS110Driver class]];
     [self registerCameraDriver:[SPCA508SightcamDriver class]];
     [self registerCameraDriver:[SPCA508Sightcam2Driver class]];
