@@ -227,7 +227,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
 	[self registerCameraDriver:[MySwedaSSP09BDriver class]];
     [self registerCameraDriver:[MySE401Driver class]];
     [self registerCameraDriver:[MyQCProBeigeDriver class]];
-#if EXPERIMENTAL
+#if 0
     [self registerCameraDriver:[QuickCamVCDriver class]];
 #else
     [self registerCameraDriver:[MyQCVCDriver class]]; // Trying a different route
@@ -247,7 +247,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[OV519Driver class]];
     [self registerCameraDriver:[PAC207Driver class]];     // Based on SPCA5XX - seems to work pretty well
     [self registerCameraDriver:[SPCA561ADriver class]];   // Based on SPCA5XX - seems to work now
-    [self registerCameraDriver:[TV8532Driver class]];     // Based on SPCA5XX - testing!
+    [self registerCameraDriver:[TV8532Driver class]];     // Based on SPCA5XX - seems to work now
+    [self registerCameraDriver:[TV8532RotatedDriver class]];
     [self registerCameraDriver:[ZC030xDriver class]];     // Based on SPCA5XX - testing!
     
     [self registerCameraDriver:[SPCA501ADriver class]];   // Based on SPCA5XX - testing

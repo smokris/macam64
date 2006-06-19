@@ -37,16 +37,6 @@
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_EXPRESS_C], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
-            @"Logitech QuickCam Express (C)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_LABTEC_WEBCAM_A], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_LABTEC], @"idVendor",
-            @"Labtec Webcam (A)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_GENERIC_TV8532], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_GENERIC_TV8532], @"idVendor",
             @"Generic TV8532 Webcam", @"name", NULL], 
@@ -80,6 +70,8 @@
     bayerConverter = [[BayerConverter alloc] init];
 	if (bayerConverter == NULL) 
         return NULL;
+    
+    rotate = YES;
     
     hardwareBrightness = YES;
     hardwareContrast = NO;
@@ -244,7 +236,43 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                        dstRowBytes:nextImageBufferRowBytes
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
-                         rotate180:YES];
+                         rotate180:rotate];
+}
+
+@end
+
+
+@implementation TV8532RotatedDriver
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_EXPRESS_C], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam Express (C)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_LABTEC_WEBCAM_A], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LABTEC], @"idVendor",
+            @"Labtec Webcam (A)", @"name", NULL], 
+        
+        NULL];
+}
+
+//
+// Initialize the driver
+//
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    rotate = NO;
+    
+	return self;
 }
 
 @end
