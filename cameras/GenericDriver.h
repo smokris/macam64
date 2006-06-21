@@ -39,6 +39,7 @@
 
 #include "MyCameraDriver.h"
 #include "BayerConverter.h"
+#include "LookUpTable.h"
 
 // These seem to work well for many cameras
 
@@ -129,6 +130,7 @@ typedef struct GenericGrabContext
     BOOL grabbingThreadRunning;
     
     BayerConverter * bayerConverter; // Our decoder for Bayer Matrix sensors, will be NULL if not a Bayer image
+    LookUpTable * LUT; // Process brightness, contrast, saturation, and gamma for those without BayerConverters
     
     BOOL hardwareBrightness;
     BOOL hardwareContrast;

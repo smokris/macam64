@@ -71,6 +71,7 @@
     
     grabbingThreadRunning = NO;
 	bayerConverter = NULL;
+    LUT = NULL;
     
     hardwareBrightness = NO;
     hardwareContrast = NO;
@@ -118,6 +119,10 @@
         [bayerConverter release];
 	bayerConverter = NULL;
     
+    if (LUT) 
+        [LUT release];
+    LUT = NULL;
+    
 	[self cleanupGrabContext];
     
 	[super dealloc];
@@ -132,7 +137,7 @@
 //
 - (BOOL) canSetBrightness 
 {
-    return (bayerConverter != NULL || hardwareBrightness) ? YES : NO;
+    return (bayerConverter != NULL || LUT != NULL || hardwareBrightness) ? YES : NO;
 }
 
 - (void) setBrightness: (float) v 
@@ -141,6 +146,9 @@
     
     if (bayerConverter != NULL && !hardwareBrightness) 
         [bayerConverter setBrightness:[self brightness] - 0.5f];
+    
+    if (LUT != NULL && !hardwareBrightness) 
+        [LUT setBrightness:[self brightness] - 0.5f];
 }
 
 //
@@ -148,7 +156,7 @@
 //
 - (BOOL) canSetContrast 
 { 
-    return (bayerConverter != NULL || hardwareContrast) ? YES : NO;
+    return (bayerConverter != NULL || LUT != NULL || hardwareContrast) ? YES : NO;
 }
 
 - (void) setContrast: (float) v 
@@ -157,6 +165,9 @@
     
     if (bayerConverter != NULL && !hardwareContrast) 
         [bayerConverter setContrast:[self contrast] + 0.5f];
+    
+    if (LUT != NULL && !hardwareContrast) 
+        [LUT setContrast:[self contrast] + 0.5f];
 }
 
 //
@@ -164,7 +175,7 @@
 //
 - (BOOL) canSetGamma 
 { 
-    return (bayerConverter != NULL || hardwareGamma) ? YES : NO;
+    return (bayerConverter != NULL || LUT != NULL || hardwareGamma) ? YES : NO;
 }
 
 - (void) setGamma: (float) v 
@@ -173,6 +184,9 @@
     
     if (bayerConverter != NULL && !hardwareGamma) 
         [bayerConverter setGamma:[self gamma] + 0.5f];
+    
+    if (LUT != NULL && !hardwareGamma) 
+        [LUT setGamma:[self gamma] + 0.5f];
 }
 
 //
@@ -180,7 +194,7 @@
 //
 - (BOOL) canSetSaturation 
 { 
-    return (bayerConverter != NULL || hardwareSaturation) ? YES : NO;
+    return (bayerConverter != NULL || LUT != NULL || hardwareSaturation) ? YES : NO;
 }
 
 - (void) setSaturation: (float) v 
@@ -189,6 +203,9 @@
     
     if (bayerConverter != NULL && !hardwareSaturation) 
         [bayerConverter setSaturation:[self saturation] * 2.0f];
+    
+    if (LUT != NULL && !hardwareSaturation) 
+        [LUT setSaturation:[self saturation] * 2.0f];
 }
 
 //
@@ -241,19 +258,23 @@
 //
 - (BOOL) canSetWhiteBalanceMode 
 {
-    return (bayerConverter != NULL) ? YES : NO;
+    return (bayerConverter != NULL || LUT != NULL) ? YES : NO;
 }
 
 - (BOOL) canSetWhiteBalanceModeTo: (WhiteBalanceMode) newMode 
 {
-    BOOL ok = (bayerConverter != NULL) ? YES : NO;
+    BOOL ok = NO;
     
     switch (newMode) 
     {
         case WhiteBalanceLinear:
         case WhiteBalanceIndoor:
         case WhiteBalanceOutdoor:
+            ok = bayerConverter != NULL || LUT != NULL;
+            break;
+            
         case WhiteBalanceAutomatic:
+            ok = bayerConverter != NULL;
             break;
             
         default:
@@ -268,28 +289,44 @@
 {
     [super setWhiteBalanceMode:newMode];
     
-    if (bayerConverter == NULL) 
+    if (bayerConverter == NULL && LUT == NULL) 
         return;
     
     switch (whiteBalanceMode) 
     {
         case WhiteBalanceLinear:
-            [bayerConverter setGainsDynamic:NO];
-            [bayerConverter setGainsRed:1.0f green:1.0f blue:1.0f];
+            if (bayerConverter != NULL) 
+            {
+                [bayerConverter setGainsDynamic:NO];
+                [bayerConverter setGainsRed:1.0f green:1.0f blue:1.0f];
+            }
+            if (LUT != NULL) 
+                [LUT setGainsRed:1.0f green:1.0f blue:1.0f];
             break;
             
         case WhiteBalanceIndoor:
-            [bayerConverter setGainsDynamic:NO];
-            [bayerConverter setGainsRed:0.8f green:0.97f blue:1.25f];
+            if (bayerConverter != NULL) 
+            {
+                [bayerConverter setGainsDynamic:NO];
+                [bayerConverter setGainsRed:0.8f green:0.97f blue:1.25f];
+            }
+            if (LUT != NULL) 
+                [LUT setGainsRed:0.8f green:0.97f blue:1.25f];
             break;
             
         case WhiteBalanceOutdoor:
-            [bayerConverter setGainsDynamic:NO];
-            [bayerConverter setGainsRed:1.1f green:0.95f blue:0.95f];
+            if (bayerConverter != NULL) 
+            {
+                [bayerConverter setGainsDynamic:NO];
+                [bayerConverter setGainsRed:1.1f green:0.95f blue:0.95f];
+            }
+            if (LUT != NULL) 
+                [LUT setGainsRed:1.1f green:0.95f blue:0.95f];
             break;
             
         case WhiteBalanceAutomatic:
-            [bayerConverter setGainsDynamic:YES];
+            if (bayerConverter != NULL) 
+                [bayerConverter setGainsDynamic:YES];
             break;
     }
 }
