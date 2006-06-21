@@ -123,6 +123,9 @@ static int spca508_config(struct usb_spca50x *spca50x)
     // prove that we can communicate with the device.  This works, which
     // confirms at we are communicating properly and that the device
     // is a 508.
+    int revision = spca50x_reg_read(dev, 0x02, 0x08, 2);
+    PDEBUG(1, "Read chip revision: 0x%4.4X", revision);
+    
     data1 = spca50x_reg_read(dev, 0, 0x8104, 1);
     if (data1 < 0)
 	PDEBUG(1, "Error reading USB Vendor ID from Global register");
