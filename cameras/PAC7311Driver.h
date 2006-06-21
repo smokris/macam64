@@ -22,17 +22,31 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 //
 
+#import <GenericDriver.h>
 
-#import <PixartDriver.h>
-
-
-@interface PAC7311Driver : PixartDriver 
+@interface PAC7311Driver : GenericDriver 
 {
-
+    UInt32 skipBytes;
+    BOOL jpegCompression;
 }
 
 + (NSArray *) cameraUsbDescriptions;
 
-- (CameraError) startupGrabbing;
+- (id) initWithCentral: (id) c;
+
+- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
+- (CameraResolution) defaultResolutionAndRate: (short *) rate;
+
+//- (void) setBrightness: (float) v;
+//- (void) setContrast: (float) v;
+
+- (UInt8) getGrabbingPipe;
+- (BOOL) setGrabInterfacePipe;
+- (void) setIsocFrameFunctions;
+
+- (BOOL) startupGrabStream;
+- (void) shutdownGrabStream;
+
+- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
