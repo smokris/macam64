@@ -91,6 +91,10 @@ enum
 	if (self == NULL) 
         return NULL;
     
+    LUT = [[LookUpTable alloc] init];
+	if (LUT == NULL) 
+        return NULL;
+    
     spca50x->desc = ViewQuestVQ110;
     spca50x->bridge = BRIDGE_SPCA508;
     spca50x->sensor = SENSOR_INTERNAL;;
@@ -184,8 +188,6 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     spca50x->frame->decoder = &spca50x->maindecode;  // has the code table
     
-    // control gamma, contrast, etc right here?
-    
     for (i = 0; i < 256; i++) 
     {
         spca50x->frame->decoder->Red[i] = i;
@@ -205,6 +207,8 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     // do the decoding
     
     yuv_decode(spca50x->frame, 1);
+    
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
 }
 
 @end

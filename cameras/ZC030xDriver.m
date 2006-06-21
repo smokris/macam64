@@ -248,6 +248,10 @@
 	if (self == NULL) 
         return NULL;
     
+    LUT = [[LookUpTable alloc] init];
+	if (LUT == NULL) 
+        return NULL;
+    
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
@@ -363,6 +367,8 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     // do jpeg decoding
     
     jpeg_decode422(spca50x->frame, 1);  // bgr = 1 (works better for SPCA508A...)
+    
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
 }
 
 @end

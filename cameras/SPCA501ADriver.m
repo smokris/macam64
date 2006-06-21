@@ -77,6 +77,10 @@ enum
 	if (self == NULL) 
         return NULL;
     
+    LUT = [[LookUpTable alloc] init];
+	if (LUT == NULL) 
+        return NULL;
+    
     // Set as appropriate
     hardwareBrightness = YES;
     hardwareContrast = YES;
@@ -124,8 +128,8 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     }
     
 #ifdef REALLY_VERBOSE
-    printf("buffer[0] = 0x%02x (length = %d) 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
-            buffer[0], frameLength, buffer[1], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
+//    printf("buffer[0] = 0x%02x (length = %d) 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
+//            buffer[0], frameLength, buffer[1], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
 #endif
     
     if (buffer[0] == 0) 
@@ -177,8 +181,6 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     
     spca50x->frame->decoder = &spca50x->maindecode;  // has the code table
     
-    // control gamma, contrast, etc right here?
-    
     for (i = 0; i < 256; i++) 
     {
         spca50x->frame->decoder->Red[i] = i;
@@ -198,6 +200,8 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     // do the decoding
     
     yuv_decode(spca50x->frame, 1);
+    
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
 }
 
 @end
