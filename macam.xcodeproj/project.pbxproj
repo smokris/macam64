@@ -561,6 +561,12 @@
 		F5E63B7E0A372AC300AAA2DA /* SonixDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E63B760A372AC300AAA2DA /* SonixDriver.m */; };
 		F5E63B810A372AC300AAA2DA /* SonixDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5E63B750A372AC300AAA2DA /* SonixDriver.h */; };
 		F5E63B820A372AC300AAA2DA /* SonixDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5E63B760A372AC300AAA2DA /* SonixDriver.m */; };
+		F5ED13DD0A48752A00770B6A /* LookUpTable.h in Headers */ = {isa = PBXBuildFile; fileRef = F5ED13DB0A48752A00770B6A /* LookUpTable.h */; };
+		F5ED13DE0A48752A00770B6A /* LookUpTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F5ED13DC0A48752A00770B6A /* LookUpTable.m */; };
+		F5ED13DF0A48752A00770B6A /* LookUpTable.h in Headers */ = {isa = PBXBuildFile; fileRef = F5ED13DB0A48752A00770B6A /* LookUpTable.h */; };
+		F5ED13E00A48752A00770B6A /* LookUpTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F5ED13DC0A48752A00770B6A /* LookUpTable.m */; };
+		F5ED13E10A48752A00770B6A /* LookUpTable.h in Headers */ = {isa = PBXBuildFile; fileRef = F5ED13DB0A48752A00770B6A /* LookUpTable.h */; };
+		F5ED13E20A48752A00770B6A /* LookUpTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F5ED13DC0A48752A00770B6A /* LookUpTable.m */; };
 		F5F17B6F09BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
 		F5F17B7009BCD671000AEB63 /* GenericDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17B6E09BCD671000AEB63 /* GenericDriver.m */; };
 		F5F17B7109BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
@@ -867,6 +873,8 @@
 		F5EB6B0F08B304BE0099821A /* MyQCOrbitCameraInspector.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = MyQCOrbitCameraInspector.nib; sourceTree = "<group>"; };
 		F5EB6B1708B304DB0099821A /* MyQCOrbitDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyQCOrbitDriver.h; sourceTree = "<group>"; };
 		F5EB6B1808B304DB0099821A /* MyQCOrbitDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyQCOrbitDriver.m; sourceTree = "<group>"; };
+		F5ED13DB0A48752A00770B6A /* LookUpTable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LookUpTable.h; sourceTree = "<group>"; };
+		F5ED13DC0A48752A00770B6A /* LookUpTable.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LookUpTable.m; sourceTree = "<group>"; wrapsLines = 1; };
 		F5EDFAD2036875F00166D062 /* yuv2rgbOV420.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = yuv2rgbOV420.c; sourceTree = "<group>"; };
 		F5EDFAD5036876210166D062 /* MyOV511Driver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyOV511Driver.m; sourceTree = "<group>"; };
 		F5EDFAD6036876210166D062 /* MyOV511Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyOV511Driver.h; sourceTree = "<group>"; wrapsLines = 1; };
@@ -1294,6 +1302,8 @@
 			isa = PBXGroup;
 			children = (
 				F522580908725639002023A4 /* USB_VendorProductIDs.h */,
+				F5ED13DB0A48752A00770B6A /* LookUpTable.h */,
+				F5ED13DC0A48752A00770B6A /* LookUpTable.m */,
 				F553F48F0A22BB6300591163 /* JpgDecompress.c */,
 				F553F4900A22BB6300591163 /* JpgDecompress.h */,
 				F5F79A920212038E01E152CA /* GlobalDefs.h */,
@@ -1423,6 +1433,7 @@
 				F5DFAB940A3145F700D86C03 /* ov7630c.h in Headers */,
 				F5E63B790A372AC300AAA2DA /* SonixDriver.h in Headers */,
 				F5B92A9D0A39F1E700BAF43D /* SPCA501ADriver.h in Headers */,
+				F5ED13DF0A48752A00770B6A /* LookUpTable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1518,6 +1529,7 @@
 				F5DFAB8F0A3145F700D86C03 /* ov7630c.h in Headers */,
 				F5E63B7D0A372AC300AAA2DA /* SonixDriver.h in Headers */,
 				F5B92A9F0A39F1E800BAF43D /* SPCA501ADriver.h in Headers */,
+				F5ED13DD0A48752A00770B6A /* LookUpTable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1609,6 +1621,7 @@
 				F5DFAB8A0A3145F700D86C03 /* ov7630c.h in Headers */,
 				F5E63B810A372AC300AAA2DA /* SonixDriver.h in Headers */,
 				F5B92AA10A39F1E800BAF43D /* SPCA501ADriver.h in Headers */,
+				F5ED13E10A48752A00770B6A /* LookUpTable.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1935,6 +1948,7 @@
 				F553F4950A22BB6300591163 /* JpgDecompress.c in Sources */,
 				F5E63B7A0A372AC300AAA2DA /* SonixDriver.m in Sources */,
 				F5B92A9E0A39F1E700BAF43D /* SPCA501ADriver.m in Sources */,
+				F5ED13E00A48752A00770B6A /* LookUpTable.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2009,6 +2023,7 @@
 				F553F4930A22BB6300591163 /* JpgDecompress.c in Sources */,
 				F5E63B7E0A372AC300AAA2DA /* SonixDriver.m in Sources */,
 				F5B92AA00A39F1E800BAF43D /* SPCA501ADriver.m in Sources */,
+				F5ED13DE0A48752A00770B6A /* LookUpTable.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2081,6 +2096,7 @@
 				F553F4910A22BB6300591163 /* JpgDecompress.c in Sources */,
 				F5E63B820A372AC300AAA2DA /* SonixDriver.m in Sources */,
 				F5B92AA20A39F1E800BAF43D /* SPCA501ADriver.m in Sources */,
+				F5ED13E20A48752A00770B6A /* LookUpTable.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
