@@ -74,14 +74,14 @@ int spca50x_reg_write(struct usb_device * dev, __u16 reg, __u16 index, __u16 val
 
 int spca50x_reg_read_with_value(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u16 length)
 {
-    __u8 buf[16]; // originally 4, should really check against length
+    __u8 buf[16] = { 0 }; // originally 4, should really check against length
     SPCA5XXDriver * driver = (SPCA5XXDriver *) dev->driver;
     
     BOOL ok = [driver usbReadCmdWithBRequest:reg 
                                        wValue:value 
                                        wIndex:index 
                                           buf:buf 
-                                          len:0];
+                                          len:length];
     
     return (ok) ? buf[0] + 256 * buf[1] + 256 * 256 * buf[2] + 256 * 256 * 256 * buf[3] : -1;
 //    return *(int *)&buffer[0]; //  original code, non-portable because ofbyte ordering assumptions
