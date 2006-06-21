@@ -72,6 +72,12 @@
     bayerConverter = [[BayerConverter alloc] init];
 	if (bayerConverter == NULL) 
         return NULL;
+    
+    or
+    
+    LUT = [[LookUpTable alloc] init];
+	if (LUT == NULL) 
+        return NULL;
     */
     
     // Allocate memory
