@@ -82,7 +82,7 @@
 }
 
 - (void) setSourceFormat:(short)fmt {
-    if ((fmt<1)||(fmt>6)) return;
+    if ((fmt<1)||(fmt>MAX_BAYER_TYPE)) return;
     sourceFormat=fmt;
 }
 
@@ -204,6 +204,9 @@
 
     RGGB is just rotated...
     
+    
+    Format 7 - RAW data?
+    - each RGB = pixel, thus Grayscale...
     */
     short g1,g2,g3,g4,g5,g6,g7,g8;
     short r1,r2,r3,r4;
@@ -218,6 +221,26 @@
 	
     //source type specific variables 
     long componentStep,srcSkip;
+    
+    if (type == 7) 
+    {
+        dst1Run=rgbBuffer;
+        
+        for (x = 0; x < sourceWidth; x++) 
+            for (y = 0; y < sourceHeight; y++) 
+            {
+                int val = *src / 2;
+                
+                *(dst1Run++) = val;
+                *(dst1Run++) = val;
+                *(dst1Run++) = val;
+                
+                src++;
+            }
+        
+        return;
+    }
+    
     switch (type) {
         case 1:	//Components planar in half row, order swapped (STV680-style)
             componentStep=1;
@@ -839,5 +862,358 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
     needsTransferLookup=(gamma!=1.0f)||(brightness!=0.0f)||(contrast!=1.0f)
         ||(saturation!=65536)||(redGain!=1.0f)||(greenGain!=1.0f)||(blueGain!=1.0f);
 }
+
+@end
+
+
+@interface CyYeGMgConverter (Private)
+
+- (void) demosaicFrom:(unsigned char*)src type:(short)type srcRowBytes:(long)srcRowBytes;
+
+@end
+
+
+@implementation CyYeGMgConverter
+
+
+- (void) setSourceFormat: (short) fmt
+{
+    if ((fmt < 1) || (fmt > 8)) 
+        return;
+    sourceFormat = fmt;
+}
+
+
+//Internals
+- (void) demosaicFrom: (unsigned char *) src type: (short) type srcRowBytes: (long) srcRowBytes 
+{
+/*
+    Format 8 - CMYG??
+    
+    Cy  Ye  Cy  Ye  Cy  Ye ...
+    G   Mg  G   Mg  G   Mg ...
+    Cy  Ye  Cy  Ye  Cy  Ye ...
+    Mg  G   Mg  G   Mg  G  ...
+    Cy  Ye  Cy  Ye  Cy  Ye ...
+    G   Mg  G   Mg  G   Mg ...
+    Cy  Ye  Cy  Ye  Cy  Ye ...
+    Mg  G   Mg  G   Mg  G  ...
+    .
+    .
+    .
+    
+*/
+    /*
+    short g1,g2,g3,g4,g5,g6,g7,g8;
+    short r1,r2,r3,r4;
+    short b1,b2,b3,b4;
+	
+    unsigned char *green1Run,*green2Run,*green3Run,*green4Run;
+    unsigned char *red1Run,*red2Run,*blue1Run,*blue2Run;
+    unsigned char *dst1Run,*dst2Run;
+    long dstSkip=sourceWidth*3;
+	BOOL GRBGtype = YES;  //  As opposed to BGGR
+	BOOL CyYeGrMgtype = NO;
+	
+    // every other pixel is the same type of component
+    long componentStep = 2;
+    // 
+    long srcSkip = 2 * srcRowBytes - (sourceWidth / 2) * componentStep;
+*/
+    int Cy, Ye, Gr, Mg, R, G, B;
+    int x, y, alternate;
+    
+    if (type <= MAX_BAYER_TYPE) 
+        [super demosaicFrom:src type:type srcRowBytes:srcRowBytes];
+    
+//    printf("Processing CyYeGMg pattern now!\n");
+    
+    for (y = 0; y < sourceHeight; y += 2) 
+        for (x = 0; x < sourceWidth; x+= 2) 
+        {
+            alternate = (y % 4 == 0) ? 0 : 1;
+            
+            Cy = src[(y + 0) * srcRowBytes + (x + 0)];
+            Ye = src[(y + 0) * srcRowBytes + (x + 1)];
+            Gr = src[(y + 1) * srcRowBytes + (x + 0 + alternate)];
+            Mg = src[(y + 1) * srcRowBytes + (x + 1 - alternate)];
+            
+            R = Mg + Ye - Cy;
+            G = Ye + Cy - Mg;
+            B = Cy + Mg - Ye;
+            G = Gr;
+            B = Cy;
+            R = Mg;
+            
+            // G should be close to Gr
+            
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 0)) + 0] = CLAMP(R,0,255);
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 0)) + 1] = CLAMP(G,0,255);
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 0)) + 2] = CLAMP(B,0,255);
+            
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 1)) + 0] = CLAMP(R,0,255);
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 1)) + 1] = CLAMP(G,0,255);
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 1)) + 2] = CLAMP(B,0,255);
+            
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 0)) + 0] = CLAMP(R,0,255);
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 0 + alternate)) + 1] = CLAMP(Gr,0,255); // G should be close to Gr
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 0)) + 2] = CLAMP(B,0,255);
+            
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 1)) + 0] = CLAMP(R,0,255);
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 1 - alternate)) + 1] = CLAMP(G,0,255);
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 1)) + 2] = CLAMP(B,0,255);
+        }
+        
+    
+/*
+    // corners
+    
+    // TL
+    // TR
+    // BL
+    // BR
+    
+    // top & bottom
+    
+    for (x = 1; x < sourceWidth - 1; x++) 
+    {
+        // TOP
+        // BOTTOM
+    }
+    
+    // sides
+    
+    for (y = 1; y < sourceHeight - 1; y++) 
+    {
+        // LEFT
+        // RIGHT
+    }
+    
+    // middle
+    
+    for (x = 1; x < sourceWidth - 1; x++) 
+    {
+        for (y = 1; y < sourceHeight - 1; y++) 
+        {
+            // MIDDLE
+            
+            src[y * srcRowBytes + x];
+        }
+    }
+*/
+         
+         
+#if 0    
+    switch (type) 
+    {
+        case 1:	//Components planar in half row, order swapped (STV680-style)
+            componentStep=1;
+            green1Run =src+sourceWidth/2;
+            red1Run   =src;
+            blue1Run  =src+srcRowBytes+sourceWidth/2;
+            green2Run =src+srcRowBytes;
+            break;
+        case 2:	//Interleaved data (STV600-style) // GRBG
+        case 6: // works like 4 then switch R and B at the end // GBRG
+            componentStep=2;
+            green1Run =src;
+            red1Run   =src+1;
+            blue1Run  =src+srcRowBytes;
+            green2Run =src+srcRowBytes+1;
+            break;
+        case 3:	//Row 1: xGxG, Row 2: RBRB (QuickCam Pro subsampled-style)
+            componentStep=2;
+            red1Run   =src+srcRowBytes+1;
+            green1Run =src+1;
+            green2Run =src+1;
+            blue1Run  =src+srcRowBytes;
+            break;
+        case 8: // Cy Ye Gr Mg weirdness
+            CyYeGrMgtype = YES;
+        case 4:	// OV7630 style // BGGR
+        case 5: // works like 4 then switch R and B at the end // RGGB
+			GRBGtype = NO;
+            componentStep=2;
+            blue1Run  =src;
+            green1Run =src+1;
+            green2Run =src+srcRowBytes;
+            red1Run   =src+srcRowBytes+1;
+            break;
+        default: //Assume type 2
+#ifdef VERBOSE
+            NSLog(@"BayerConverter: Unknown bayer data type: %i",type);
+#endif VERBOSE
+            componentStep=2;
+            green1Run =src;
+            red1Run   =src+1;
+            blue1Run  =src+srcRowBytes;
+            green2Run =src+srcRowBytes+1;
+            break;
+    }
+	
+    //init data run pointers
+    srcSkip =2*srcRowBytes-(((sourceWidth-2)/2)*componentStep);
+	// componentStep is added here to compensate for the initial subtraction in the big loop below
+	// the loop over the non-border rows starts with the runs pointing to the left half
+	// one could probably eliminate both adding it here and subtracting it later
+    green3Run =green1Run+2*srcRowBytes+componentStep;
+    red2Run   =red1Run+2*srcRowBytes+componentStep;
+    blue2Run  =blue1Run+2*srcRowBytes+componentStep;
+    green4Run =green2Run+2*srcRowBytes+componentStep;
+    dst1Run=rgbBuffer;
+    dst2Run=rgbBuffer+2*dstSkip;
+	
+	//First row, first column
+    *(dst1Run++)=*red1Run;
+	*(dst1Run++)=(GRBGtype)?*green1Run:(*green1Run+*green2Run)/2;
+    *(dst1Run++)=*blue1Run;
+	//First row, non-border columns
+    for (x=(sourceWidth-2)/2;x>0;x--) {
+        *(dst1Run++)=*red1Run;
+        *(dst1Run++)=(GRBGtype)?(*green1Run+*(green1Run+componentStep)+*green2Run)/3:*green1Run;
+        *(dst1Run++)=(*blue1Run+*(blue1Run+componentStep))/2;
+        if (GRBGtype) green1Run+=componentStep;
+        green2Run+=componentStep;
+        blue1Run+=componentStep;
+        *(dst1Run++)=(*red1Run+*(red1Run+componentStep))/2;
+        *(dst1Run++)=(GRBGtype)?*green1Run:(*green1Run+*(green1Run+componentStep)+*green2Run)/3;
+        *(dst1Run++)=*blue1Run;
+        red1Run+=componentStep;
+        if (!GRBGtype) green1Run+=componentStep;
+    }
+	//First row, last column
+    *(dst1Run++)=*red1Run;
+    *(dst1Run++)=(GRBGtype)?(*green1Run+*green2Run)/2:*green1Run;
+    *(dst1Run++)=*blue1Run;
+	//Reset the src data run pointers we changed in the first row - dst1RUn is ok now
+    green1Run =green3Run-2*srcRowBytes;
+    red1Run   =red2Run-2*srcRowBytes;
+    blue1Run  =blue2Run-2*srcRowBytes;
+    green2Run =green4Run-2*srcRowBytes;
+    
+    
+	//All non-border rows
+    for (y=(sourceHeight-2)/2;y>0;y--) {
+		//init right half of colors to left values - will be shifted inside the loop
+        r2=*(red1Run-componentStep);	
+        r4=*(red2Run-componentStep);
+        g2=*(green1Run-componentStep);
+        g4=*(green2Run-componentStep);
+        g6=*(green3Run-componentStep);
+        g8=*(green4Run-componentStep);
+        b2=*(blue1Run-componentStep);
+        b4=*(blue2Run-componentStep);
+		
+		//First pixel column in row
+        *(dst1Run++)=(GRBGtype)?(r2+r4)/2:r2;
+        *(dst1Run++)=(GRBGtype)?(g2+g4+g6)/3:g2;
+        *(dst1Run++)=(GRBGtype)?b2:(b2+b4)/2;
+        *(dst2Run++)=(GRBGtype)?r4:(r2+r4)/2;
+        *(dst2Run++)=(GRBGtype)?g6:(g4+g6+g8)/3;
+        *(dst2Run++)=(GRBGtype)?(b2+b4)/2:b4;
+		
+		//All non-border columns in row
+        for (x=(sourceWidth-2)/2;x>0;x--) {
+            //shift right half of colors to left half
+            r1=r2;
+            r3=r4;
+            g1=g2;
+            g3=g4;
+            g5=g6;
+            g7=g8;
+            b1=b2;
+            b3=b4;
+            //read new ones
+            r2=*red1Run; red1Run+=componentStep;
+            g2=*green1Run; green1Run+=componentStep;
+            g4=*green2Run; green2Run+=componentStep;
+            b2=*blue1Run; blue1Run+=componentStep;
+            r4=*red2Run; red2Run+=componentStep;
+            g6=*green3Run; green3Run+=componentStep;
+            g8=*green4Run; green4Run+=componentStep;
+            b4=*blue2Run; blue2Run+=componentStep;
+			
+            //Interpolate Pixel (2,2): location of g3 (r1).
+            *(dst1Run++)=(GRBGtype)?(r1+r3)/2:r1;
+            *(dst1Run++)=(GRBGtype)?g3:(g1+g3+g4+g5)/4;
+            *(dst1Run++)=(GRBGtype)?(b1+b2)/2:(b1+b2+b3+b4)/4;
+            //Interpolate Pixel (3,2): location of b2 (g4).
+            *(dst1Run++)=(GRBGtype)?(r1+r2+r3+r4)/4:(r1+r2)/2;
+            *(dst1Run++)=(GRBGtype)?(g2+g3+g4+g6)/4:g4;
+            *(dst1Run++)=(GRBGtype)?b2:(b2+b4)/2;
+            //Interpolate Pixel (2,3): location of r3 (g5).
+            *(dst2Run++)=(GRBGtype)?r3:(r1+r3)/2;
+            *(dst2Run++)=(GRBGtype)?(g3+g5+g6+g7)/4:g5;
+            *(dst2Run++)=(GRBGtype)?(b1+b2+b3+b4)/4:(b3+b4)/2;
+            //Interpolate Pixel (3,3): location of g6 (b4).
+            *(dst2Run++)=(GRBGtype)?(r3+r4)/2:(r1+r2+r3+r4)/4;
+            *(dst2Run++)=(GRBGtype)?g6:(g4+g5+g6+g8)/4;
+            *(dst2Run++)=(GRBGtype)?(b2+b4)/2:b4;
+        }
+		
+		//last pixel column in row
+        *(dst1Run++)=(GRBGtype)?(r2+r4)/2:r2;
+        *(dst1Run++)=(GRBGtype)?g4:(g2+g4+g6)/3;
+        *(dst1Run++)=(GRBGtype)?b2:(b2+b4)/2;
+        *(dst2Run++)=(GRBGtype)?r4:(r2+r4)/2;
+        *(dst2Run++)=(GRBGtype)?(g4+g6+g8)/3:g6;
+        *(dst2Run++)=(GRBGtype)?(b2+b4)/2:b4;
+		
+		//go to start of next two lines
+        dst1Run+=dstSkip;
+        dst2Run+=dstSkip;
+        red1Run+=srcSkip;
+        red2Run+=srcSkip;
+        green1Run+=srcSkip;
+        green2Run+=srcSkip;
+        green3Run+=srcSkip;
+        green4Run+=srcSkip;
+        blue1Run+=srcSkip;
+        blue2Run+=srcSkip;
+    }
+    // corrections
+    red1Run   += srcRowBytes - srcSkip;
+    red2Run   += srcRowBytes - srcSkip;
+    green1Run += srcRowBytes - srcSkip;
+    green2Run += srcRowBytes - srcSkip;
+    green3Run += srcRowBytes - srcSkip;
+    green4Run += srcRowBytes - srcSkip;
+    blue1Run  += srcRowBytes - srcSkip;
+    blue2Run  += srcRowBytes - srcSkip;
+	//Last row, first column
+    *(dst1Run++)=*red1Run;
+    *(dst1Run++)=(GRBGtype)?(*green1Run+*green2Run)/2:*green1Run;
+    *(dst1Run++)=*blue1Run;
+	//Last row, non-border columns
+    for (x=(sourceWidth-2)/2;x>0;x--) {
+        *(dst1Run++)=*red1Run;
+        *(dst1Run++)=(GRBGtype)?*green2Run:(*green1Run+*green2Run+*(green2Run+componentStep))/3;
+        *(dst1Run++)=(*blue1Run+*(blue1Run+componentStep))/2;
+        green1Run+=componentStep;
+        blue1Run+=componentStep;
+        *(dst1Run++)=(*red1Run+*(red1Run+componentStep))/2;
+        *(dst1Run++)=(GRBGtype)?(*green1Run+*green2Run+*(green2Run+componentStep))/3:*(green2Run+componentStep);
+        *(dst1Run++)=*blue1Run;
+        red1Run+=componentStep;
+        green2Run+=componentStep;
+    }
+	//Last row, last column
+    *(dst1Run++)=*red1Run;
+    *(dst1Run++)=(GRBGtype)?*green2Run:(*green1Run+*green2Run)/2;
+    *(dst1Run++)=*blue1Run;
+    
+    if (type == 5 || type == 6) // RGGB or GBRG
+    {
+        for (y = 0; y < sourceHeight; y++) 
+            for (x = 0; x < sourceWidth; x++) 
+            {
+                unsigned char temp = rgbBuffer[3 * (x + y * sourceWidth) + 0]; // R
+                rgbBuffer[3 * (x + y * sourceWidth) + 0] = rgbBuffer[3 * (x + y * sourceWidth) + 2];
+                rgbBuffer[3 * (x + y * sourceWidth) + 2] = temp;
+            }
+    }
+#endif
+}
+
 
 @end
