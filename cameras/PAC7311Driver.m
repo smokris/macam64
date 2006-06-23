@@ -701,7 +701,7 @@ int  pac7311IsocDataCopier(void * destination, const void * source, size_t lengt
     skipBytes = 16 * v;
     skipBytes *= 2;
     skipBytes += 0;
-    printf("skipBytes = %u\n", skipBytes);
+    printf("skipBytes = %u\n", (unsigned int) skipBytes);
 }
 
 
@@ -756,7 +756,7 @@ int  pac7311IsocDataCopier(void * destination, const void * source, size_t lengt
 {
     static GenericChunkBuffer cleanBuffer = { NULL, 0 };
     static int counter = 0;
-    int i, skip = 16;
+//    int i, skip = 16;
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
