@@ -28,6 +28,7 @@
 
 @interface ZC030xDriver : SPCA5XXDriver 
 {
+    int forceRGB;
 }
 
 + (NSArray *) cameraUsbDescriptions;
@@ -35,5 +36,13 @@
 - (id) initWithCentral: (id) c;
 - (void) setIsocFrameFunctions;
 - (void) decodeBuffer: (GenericChunkBuffer *) buffer;
+
+@end
+
+
+@interface ZC030xDriverBGR : ZC030xDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
 
 @end

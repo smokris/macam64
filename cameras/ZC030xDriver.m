@@ -61,11 +61,6 @@
             @"Mustek WCam300A (C)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_VIDEOCAM_V2], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_GENIUS], @"idVendor",
-            @"Genius VideoCam V2", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_VIDEOCAM_V3], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_GENIUS], @"idVendor",
             @"Genius VideoCam V3", @"name", NULL], 
@@ -259,6 +254,8 @@
     
     init_jpeg_decoder(spca50x);  // May be irrelevant
     
+    forceRGB = 1;
+    
 	return self;
 }
 
@@ -366,9 +363,38 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     // do jpeg decoding
     
-    jpeg_decode422(spca50x->frame, 1);  // bgr = 1 (works better for SPCA508A...)
+    jpeg_decode422(spca50x->frame, forceRGB);  // bgr = 1 (works better for SPCA508A...)
     
     [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
+}
+
+@end
+
+
+@implementation ZC030xDriverBGR
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_VIDEOCAM_V2], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_GENIUS], @"idVendor",
+            @"Genius VideoCam V2", @"name", NULL], 
+        
+        NULL];
+}
+
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    forceRGB = 0;
+    
+	return self;
 }
 
 @end
