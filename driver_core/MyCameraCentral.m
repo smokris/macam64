@@ -250,6 +250,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[TV8532Driver class]];     // Based on SPCA5XX - seems to work now
     [self registerCameraDriver:[TV8532RotatedDriver class]];
     [self registerCameraDriver:[ZC030xDriver class]];     // Based on SPCA5XX - testing!
+    [self registerCameraDriver:[ZC030xDriverBGR class]];
     
     [self registerCameraDriver:[SPCA501ADriver class]];   // Based on SPCA5XX - testing
     [self registerCameraDriver:[SPCA501ADriverVariant1 class]];
