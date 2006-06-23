@@ -125,4 +125,6 @@
 	UInt8 * decodingBuffer;
 }
 
+- (void) setCCDArea;
+
 @end
