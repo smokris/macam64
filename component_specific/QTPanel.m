@@ -247,6 +247,7 @@ pascal ComponentResult sgpnGetDITL(sgpnGlobals storage, Handle* ditl) {
     UseResFile((**storage).resRef);
     if (!ditl) return qtParamErr;
     *ditl=Get1Resource('DITL',258);
+    DetachResource(*ditl);
     UseResFile(saveRef);
     if (!(*ditl)) return mFulErr;
     return 0;
