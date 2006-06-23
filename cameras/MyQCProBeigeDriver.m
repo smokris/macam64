@@ -738,6 +738,36 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
         NULL];
 }
 
+
+- (id) initWithCentral: (id) c
+{
+    self = [super initWithCentral:c];
+    if (!self) 
+        return NULL;
+    
+    if (bayerConverter) 
+        [bayerConverter release];
+    
+    CYGM = [[CyYeGMgConverter alloc] init];
+    if (!CYGM) 
+        return NULL;
+    bayerConverter = CYGM;
+    
+    return self;
+}
+
+
+- (void) dealloc 
+{
+    if (CYGM) 
+        [CYGM release];
+    CYGM = NULL;
+    bayerConverter = NULL;
+    
+    [super dealloc];
+}
+
+
 - (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId 
 {
 	CameraError err = [super startupWithUsbLocationId:usbLocationId];
@@ -861,29 +891,37 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 }
 
 
-- (void) decompressBuffer2:(UInt8 *) src 
+- (void) decompressBuffer:(UInt8 *) src 
 {
-    [super decompressBuffer:src];
+//    [super decompressBuffer:src];
     
     // fix colour space
-    /*
     int i;
     UInt32* dst=(UInt32*)[decompressionBuffer mutableBytes];
     UInt32 bits=0;
     src+=4;		//Skip past header
     for (i=[self width]*[self height]/4;i>0;i--) {
-        bits=src[0]+(src[1]<<8)+(src[2]<<16);
+        bits=src[0]|(src[1]<<8)|(src[2]<<16);
         src+=3;
-        *(dst++)=((bits<<26)&0xfc000000)|((bits<<12)&0x00fc0000)|((bits>>2)&0x0000fc00)|((bits>>16)&0x000000fc);
+//        *(dst++)=((bits<<24)&0x3f000000)|((bits<<10)&0x003f0000)|((bits>>4)&0x00003f00)|((bits>>18)&0x0000003f);
+      *(dst++)=((bits<<26)&0xfc000000)|((bits<<12)&0x00fc0000)|((bits>>2)&0x0000fc00)|((bits>>16)&0x000000fc);
     }
-     */
-    
 }
+
 
 - (BOOL) canSetAutoGain 
 {
-    return NO;
+    return YES;
 }
 
+
+- (CameraError) startupGrabbing 
+{
+    CameraError err = [super startupGrabbing];
+    
+    [bayerConverter setSourceFormat:8];
+    
+    return err;
+}
 
 @end

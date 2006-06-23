@@ -99,6 +99,9 @@
 
 
 @interface MyQCVCDriver : MyQCProBeigeDriver 
+{
+    CyYeGMgConverter * CYGM;
+}
 
 + (NSArray*) cameraUsbDescriptions;
 
