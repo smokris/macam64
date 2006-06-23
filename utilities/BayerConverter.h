@@ -31,6 +31,9 @@ sourceFormat specifies serialization type. Examples show first two lines of a 6-
 5 = RGGB Bayer, sent interleaved, correct matrix order.         RGRGRG GBGBGB (rotated BGGR)
 */
 
+#define MAX_BAYER_TYPE 7
+
+
 @interface BayerConverter : NSObject {
     float contrast;
     float brightness;
@@ -102,7 +105,28 @@ sourceFormat specifies serialization type. Examples show first two lines of a 6-
 			srcRowBytes:(long)srcRB dstRowBytes:(long)dstRB dstBPP:(short)dstBPP 
 				   flip:(BOOL)flip rotate180:(BOOL)rotate180;
 
+@end
 
 
+//
+//  CyYeGMgConverter - subclass instead of trying to change
+//
+//  Format 8 - CMYG??
+//
+//  Cy  Ye  Cy  Ye  Cy  Ye ...
+//  G   Mg  G   Mg  G   Mg ...
+//  Cy  Ye  Cy  Ye  Cy  Ye ...
+//  Mg  G   Mg  G   Mg  G  ... [notice how the Green alternates position
+//  Cy  Ye  Cy  Ye  Cy  Ye ...
+//  G   Mg  G   Mg  G   Mg ...
+//  Cy  Ye  Cy  Ye  Cy  Ye ...
+//  Mg  G   Mg  G   Mg  G  ...
+//  
+
+@interface CyYeGMgConverter : BayerConverter
+{
+}
+
+- (void) setSourceFormat:(short)fmt;
 
 @end
