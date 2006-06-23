@@ -150,8 +150,8 @@
     
 	// set brightness & exposure - probably not needed here
 	//qcamvc_set_brightness(qcamvc, qcamvc->brightness);
-//    [self setBrightness:xx];
-//    [self setShutter:xx];
+    [self setBrightness:brightness];
+    [self setShutter:shutter];
 	//qcamvc_set_exposure(qcamvc, qcamvc->exposure);
     
 	// set config bit. (whatever this bit actually does?)
@@ -159,13 +159,13 @@
 	
 	// set CCD columns & rows
 //	qcamvc_set_ccd_area(qcamvc);
-//  [self setCCDArea];
+    [self setCCDArea];
     
 	// set brightness & exposure
 //	qcamvc_set_brightness(qcamvc, qcamvc->brightness);
 //	qcamvc_set_exposure(qcamvc, qcamvc->exposure);
-//    [self setBrightness:xx];
-//    [self setShutter:xx];
+    [self setBrightness:brightness];
+    [self setShutter:shutter];
 	
 	// set the Light Sensitivity (no gain/no attenuation = 128 )
 //	qcamvc_set_light_sensitivity(qcamvc, qcamvc->light_sens);
@@ -193,8 +193,32 @@
 {
     switch (res) 
     {
+        case ResolutionQSIF:
+            if (rate > 30) 
+                return NO;
+            return YES;
+            break;
+            
+        case ResolutionQCIF:
+            if (rate > 30) 
+                return NO;
+            return YES;
+            break;
+            
+        case ResolutionSIF:
+            if (rate > 25) 
+                return NO;
+            return YES;
+            break;
+            
         case ResolutionCIF:
             if (rate > 20) 
+                return NO;
+            return YES;
+            break;
+            
+        case ResolutionVGA:
+            if (rate > 10) 
                 return NO;
             return YES;
             break;
@@ -302,6 +326,93 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     [self usbSetAltInterfaceTo:2 testPipe:[self getGrabbingPipe]];
 }
+
+
+- (void) setBrightness: (float) v 
+{
+    UInt8 val = 255 * v;
+	short i,j;
+	unsigned char buffer[21] =
+    {
+		0x58, 0xd8, 0x58, 0xd8, 0x58,
+		0xd8, 0x58, 0xd8, 0x58, 0xd8,
+		0x58, 0xd8, 0x58, 0xd8, 0x58,
+		0xd8, 0x58, 0xd8, 0x58, 0xd8, 
+        0x5c
+    };
+	
+	for (i = 0x01, j = 18 ; i <= 0x80 ; i *= 2 , j -= 2) 
+	{
+		if (val & i) 
+		{
+			buffer[j] = buffer[j] | 1;
+			buffer[j+1] = buffer[j+1] | 1;
+		}
+	}
+    
+    [self setCameraRegisters:QCAM_VC_SET_BRIGHTNESS data:buffer size:sizeof(buffer)];
+}
+
+
+- (void) setShutter: (float) v 
+{
+    UInt8 val = 255 * v;
+	unsigned char buffer[2];
+	int ival;
+    
+	/* No idea why exposure range is 294 -> 1, 295 -> 16383, but that's what it is. */
+	/* Exposure zero and one, appear to be the same thing. */
+    
+	ival = val + 1;
+	ival = (ival < 4) ? ival : ((ival * ival) >> 2); /* linear below 4 */
+	
+	if(ival < 295)
+	{
+		ival = 295 - ival;
+	}
+	else if(ival > 16383)
+	{
+		ival = 16383;
+	}
+    
+	buffer[0] = ival;
+	buffer[1] = ival >> 8;
+    
+    [self setCameraRegisters:QCAM_VC_SET_EXPOSURE data:buffer size:2];
+}
+
+
+- (void) setCCDArea
+{
+    int w = [self width];
+    int h = [self height];
+    
+    multiplier = 0;
+    
+    if (w > 176 || h > 144) // has to fit inside a byte?
+    {
+        multiplier = 1;
+        w /= 2;
+        h /=2;
+    }
+    	
+    UInt8 ccd[4];
+    /*
+	unsigned char first_col;
+	unsigned char last_col;
+	unsigned char first_row;
+	unsigned char last_row;
+	unsigned char multiplier;
+    */
+    
+    ccd[0] = 92 - w / 2;
+    ccd[1] = ccd[0] + w;
+    ccd[2] = (73 - h / 2) << multiplier;
+    ccd[3] = ccd[2] + h;
+        
+    [self setCameraRegisters:QCAM_VC_SET_CCD_AREA data:ccd size:4];
+}
+
 
 //
 // try a couple of ways:
@@ -462,7 +573,7 @@ return size;
     [bayerConverter setSourceFormat:3]; // This is probably different
     [bayerConverter setSourceWidth:rawWidth height:rawHeight];
     [bayerConverter setDestinationWidth:rawWidth height:rawHeight];
-    [bayerConverter convertFromSrc:decodingBuffer
+    [bayerConverter convertFromSrc:buffer->buffer
                             toDest:nextImageBuffer
                        srcRowBytes:rawWidth
                        dstRowBytes:nextImageBufferRowBytes
