@@ -78,16 +78,6 @@
 #import "MyQCWebDriver.h"
 
 
-static void  DEBUGLOG(NSString * arg)
-{
-}
-
-
-static void  DEBUGLOG2(NSString * arg1, unsigned long value)
-{
-}
-
-
 @interface VV6450Sensor (Private)
 - (BOOL) writeGain:(short)value;
 - (BOOL) writeExposure:(short)value;
@@ -218,7 +208,7 @@ Gain:		high			low			low
 	if (g == rawGainValue) return YES;
 
 	rawGainValue = g;
-	DEBUGLOG2(@"writeGain: 0x%02x", g & 0x00ff);
+	DEBUGLOG(@"writeGain: 0x%02x", g & 0x00ff);
     if (ok) ok = [camera writeSTVRegister:0x0509 value:g];
     if (ok) ok = [camera writeSTVRegister:0x050A value:g];
     if (ok) ok = [camera writeSTVRegister:0x050B value:g];
@@ -236,7 +226,7 @@ Gain:		high			low			low
 	if (a == rawExposureValue) return YES;
 
 	rawExposureValue = a;
-	DEBUGLOG2(@"writeExposure: 0x%02x", a & 0x00ff);
+	DEBUGLOG(@"writeExposure: 0x%02x", a & 0x00ff);
     if (ok) ok = [camera writeSTVRegister:0x143a value:a];
     if (ok) ok = [camera writeSTVRegister:0x143f value:0x01]; //commit settings
 	return ok;

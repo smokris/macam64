@@ -1,6 +1,8 @@
 //
 //  QCMessengerDriver.m
-//  macam
+//
+//  macam - webcam app and QuickTime driver component
+//  QCMessengerDriver - driver for Logitech QuickCam Messenger (and similar) cameras
 //
 //  Created by masakazu on Sun May 08 2005.
 //  Copyright (c) 2005 masakazu (masa0038@users.sourceforge.net)
@@ -34,12 +36,10 @@
 
 @interface QCMessengerDriver (Private)
 
-- (BOOL) setupGrabContext;				//Sets up the grabContext structure for the usb async callbacks
-- (BOOL) cleanupGrabContext;				//Cleans it up
-#if 0
-- (void) read:(id)data;			//Entry method for the usb data grabbing thread
-#endif
-- (void) decodeChunk:(STV600ChunkBuffer*)chunk;
+- (BOOL) setupGrabContext;          // Sets up the grabContext structure for the usb async callbacks
+- (BOOL) cleanupGrabContext;        // Cleans it up
+
+- (void) decodeChunk: (STV600ChunkBuffer *) chunk;
 
 - (BOOL) camBoot;
 - (BOOL) camInit;
@@ -49,18 +49,7 @@
 @end
 
 
-void  DEBUGLOG(NSString * arg)
-{
-}
-
-
-void  DEBUGLOG2(NSString * arg1, unsigned long value)
-{
-}
-
-
 @implementation QCMessengerDriver
-
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -279,7 +268,7 @@ void  DEBUGLOG2(NSString * arg1, unsigned long value)
 }
 
 - (BOOL) canSetLed {
-#ifdef DEBUG
+#if DEBUG
     return YES;
 #else
     return NO;
@@ -287,7 +276,7 @@ void  DEBUGLOG2(NSString * arg1, unsigned long value)
 }
 
 - (BOOL) isLedOn {
-#ifdef DEBUG
+#if DEBUG
     return [self isDebugging];
 #else
     return NO;
@@ -295,7 +284,7 @@ void  DEBUGLOG2(NSString * arg1, unsigned long value)
 }
 
 - (void) setLed:(BOOL)v {
-#ifdef DEBUG
+#if DEBUG
     if ([self canSetLed]) f_debug = v;
 #endif
 }
@@ -357,7 +346,7 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
         }
         
         if (!frameListFound) {
-#ifdef VERBOSE
+#if VERBOSE
             NSLog(@"isocComplete: Didn't find my frameList");
 #endif
             *(gCtx->shouldBeGrabbing) = NO;
@@ -399,7 +388,7 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                             DiscardFillingChunk(gCtx);
                         }
                     } else {
-                        DEBUGLOG2(@"chunk: missing fillingChunk!: dataRunCode = 0x%04x", dataRunCode);
+                        DEBUGLOG(@"chunk: missing fillingChunk!: dataRunCode = 0x%04x", dataRunCode);
                     }
                 } else {
                     switch (dataRunCode) {

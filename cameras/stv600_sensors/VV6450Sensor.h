@@ -20,10 +20,19 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 //
 
-#import <Cocoa/Cocoa.h>
+
 #import "MyVV6410Sensor.h"
 
-@interface VV6450Sensor : MyVV6410Sensor {
+
+#if DEBUG
+#  define DEBUGLOG(args...) NSLog(args)
+#else
+#  define DEBUGLOG(args...)
+#endif
+
+
+@interface VV6450Sensor : MyVV6410Sensor 
+{
     UInt8 rawGainValue;
     UInt8 rawExposureValue;
 }
@@ -31,9 +40,9 @@
 - (id) initWithCamera:(MyQCExpressADriver*)cam;
 - (BOOL) writeI2CSequence;
 - (BOOL) readI2CRegister:(unsigned char)reg to:(unsigned short*)val;
-- (BOOL) resetSensor;	//Sets the sensor to defaults for grabbing - to be called before grabbing starts
-- (BOOL) startStream;	//Starts up data delivery from the sensor
-- (BOOL) stopStream;	//Stops data delivery from the sensor
-- (void) adjustExposure;//Sets the camera exposure according to gain, shutter, autoGain etc.
+- (BOOL) resetSensor;	// Sets the sensor to defaults for grabbing - to be called before grabbing starts
+- (BOOL) startStream;	// Starts up data delivery from the sensor
+- (BOOL) stopStream;	// Stops data delivery from the sensor
+- (void) adjustExposure;// Sets the camera exposure according to gain, shutter, autoGain etc.
 
 @end
