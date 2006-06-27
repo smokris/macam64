@@ -506,18 +506,18 @@
     for (y=height/2;y>0;y--) {
         for (x=width/2;x>0;x--) {
 //Step 1: Read matix data from memory to rxcx variables and update source pointers for next iteration
-            r1c1=*((unsigned long*)(src1Run));
-            r1c2=*((unsigned long*)(src1Run+4));
-            r1c3=*((unsigned long*)(src1Run+8));
-            r2c1=*((unsigned long*)(src2Run));
-            r2c2=*((unsigned long*)(src2Run+4));
-            r2c3=*((unsigned long*)(src2Run+8));
-            r3c1=*((unsigned long*)(src3Run));
-            r3c2=*((unsigned long*)(src3Run+4));
-            r3c3=*((unsigned long*)(src3Run+8));
-            r4c1=*((unsigned long*)(src4Run));
-            r4c2=*((unsigned long*)(src4Run+4));
-            r4c3=*((unsigned long*)(src4Run+8));
+            r1c1=CFSwapInt32HostToBig(*((unsigned long*)(src1Run)));
+            r1c2=CFSwapInt32HostToBig(*((unsigned long*)(src1Run+4)));
+            r1c3=CFSwapInt32HostToBig(*((unsigned long*)(src1Run+8)));
+            r2c1=CFSwapInt32HostToBig(*((unsigned long*)(src2Run)));
+            r2c2=CFSwapInt32HostToBig(*((unsigned long*)(src2Run+4)));
+            r2c3=CFSwapInt32HostToBig(*((unsigned long*)(src2Run+8)));
+            r3c1=CFSwapInt32HostToBig(*((unsigned long*)(src3Run)));
+            r3c2=CFSwapInt32HostToBig(*((unsigned long*)(src3Run+4)));
+            r3c3=CFSwapInt32HostToBig(*((unsigned long*)(src3Run+8)));
+            r4c1=CFSwapInt32HostToBig(*((unsigned long*)(src4Run)));
+            r4c2=CFSwapInt32HostToBig(*((unsigned long*)(src4Run+4)));
+            r4c3=CFSwapInt32HostToBig(*((unsigned long*)(src4Run+8)));
             src1Run+=6;
             src2Run+=6;
             src3Run+=6;
@@ -941,9 +941,6 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
             R = Mg + Ye - Cy;
             G = Ye + Cy - Mg;
             B = Cy + Mg - Ye;
-            G = Gr;
-            B = Cy;
-            R = Mg;
             
             // G should be close to Gr
             
@@ -962,6 +959,24 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
             rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 1)) + 0] = CLAMP(R,0,255);
             rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 1 - alternate)) + 1] = CLAMP(G,0,255);
             rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 1)) + 2] = CLAMP(B,0,255);
+
+#if 0
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 0)) + 0] = CLAMP(0,0,255);
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 0)) + 1] = CLAMP(Cy,0,255);
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 0)) + 2] = CLAMP(Cy,0,255);
+            
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 1)) + 0] = CLAMP(Ye,0,255);
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 1)) + 1] = CLAMP(Ye,0,255);
+            rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 1)) + 2] = CLAMP(0,0,255);
+            
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 0 + alternate)) + 0] = CLAMP(0,0,255);
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 0 + alternate)) + 1] = CLAMP(Gr,0,255); // G should be close to Gr
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 0 + alternate)) + 2] = CLAMP(0,0,255);
+            
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 1 - alternate)) + 0] = CLAMP(Mg,0,255);
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 1 - alternate)) + 1] = CLAMP(0,0,255);
+            rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 1 - alternate)) + 2] = CLAMP(Mg,0,255);
+#endif
         }
         
     
