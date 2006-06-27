@@ -581,36 +581,36 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
             //Step 4: Assemble values and write to destination, update destination pointers
             switch (writeMode) {
                 case 3:
-                    *((unsigned long* )(dst1Run  ))=(r1<<24)+(g1<<16)+(b1<<8)+r2;
-                    *((unsigned short*)(dst1Run+4))=                  (g2<<8)+b2;
-                    *((unsigned long* )(dst2Run  ))=(r3<<24)+(g3<<16)+(b3<<8)+r4;
-                    *((unsigned short*)(dst2Run+4))=                  (g4<<8)+b4;
+                    *((unsigned long* )(dst1Run  ))=CFSwapInt32BigToHost((r1<<24)+(g1<<16)+(b1<<8)+r2);
+                    *((unsigned short*)(dst1Run+4))=CFSwapInt16BigToHost(                  (g2<<8)+b2);
+                    *((unsigned long* )(dst2Run  ))=CFSwapInt32BigToHost((r3<<24)+(g3<<16)+(b3<<8)+r4);
+                    *((unsigned short*)(dst2Run+4))=CFSwapInt16BigToHost(                  (g4<<8)+b4);
                     dst1Run+=6;
                     dst2Run+=6;
                     break;
                 case 4:
-                    *((unsigned long*)(dst1Run  ))=0xff000000+(r1<<16)+(g1<<8)+(b1);
-                    *((unsigned long*)(dst1Run+4))=0xff000000+(r2<<16)+(g2<<8)+(b2);
-                    *((unsigned long*)(dst2Run  ))=0xff000000+(r3<<16)+(g3<<8)+(b3);
-                    *((unsigned long*)(dst2Run+4))=0xff000000+(r4<<16)+(g4<<8)+(b4);
+                    *((unsigned long*)(dst1Run  ))=CFSwapInt32BigToHost(0xff000000+(r1<<16)+(g1<<8)+(b1));
+                    *((unsigned long*)(dst1Run+4))=CFSwapInt32BigToHost(0xff000000+(r2<<16)+(g2<<8)+(b2));
+                    *((unsigned long*)(dst2Run  ))=CFSwapInt32BigToHost(0xff000000+(r3<<16)+(g3<<8)+(b3));
+                    *((unsigned long*)(dst2Run+4))=CFSwapInt32BigToHost(0xff000000+(r4<<16)+(g4<<8)+(b4));
                     dst1Run+=8;
                     dst2Run+=8;
                     break;
                 case 259:
                     dst1Run-=6;
                     dst2Run-=6;
-                    *((unsigned long* )(dst1Run  ))=(r2<<24)+(g2<<16)+(b2<<8)+r1;
-                    *((unsigned short*)(dst1Run+4))=                  (g1<<8)+b1;
-                    *((unsigned long* )(dst2Run  ))=(r4<<24)+(g4<<16)+(b4<<8)+r3;
-                    *((unsigned short*)(dst2Run+4))=                  (g3<<8)+b3;
+                    *((unsigned long* )(dst1Run  ))=CFSwapInt32BigToHost((r2<<24)+(g2<<16)+(b2<<8)+r1);
+                    *((unsigned short*)(dst1Run+4))=CFSwapInt16BigToHost(                  (g1<<8)+b1);
+                    *((unsigned long* )(dst2Run  ))=CFSwapInt32BigToHost((r4<<24)+(g4<<16)+(b4<<8)+r3);
+                    *((unsigned short*)(dst2Run+4))=CFSwapInt16BigToHost(                  (g3<<8)+b3);
                     break;
                 case 260:
                     dst1Run-=8;
                     dst2Run-=8;
-                    *((unsigned long*)(dst1Run  ))=0xff000000+(r2<<16)+(g2<<8)+(b2);
-                    *((unsigned long*)(dst1Run+4))=0xff000000+(r1<<16)+(g1<<8)+(b1);
-                    *((unsigned long*)(dst2Run  ))=0xff000000+(r4<<16)+(g4<<8)+(b4);
-                    *((unsigned long*)(dst2Run+4))=0xff000000+(r3<<16)+(g3<<8)+(b3);
+                    *((unsigned long*)(dst1Run  ))=CFSwapInt32BigToHost(0xff000000+(r2<<16)+(g2<<8)+(b2));
+                    *((unsigned long*)(dst1Run+4))=CFSwapInt32BigToHost(0xff000000+(r1<<16)+(g1<<8)+(b1));
+                    *((unsigned long*)(dst2Run  ))=CFSwapInt32BigToHost(0xff000000+(r4<<16)+(g4<<8)+(b4));
+                    *((unsigned long*)(dst2Run+4))=CFSwapInt32BigToHost(0xff000000+(r3<<16)+(g3<<8)+(b3));
                     break;
             }
         }
