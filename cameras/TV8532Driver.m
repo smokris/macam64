@@ -41,16 +41,6 @@
             [NSNumber numberWithUnsignedShort:VENDOR_GENERIC_TV8532], @"idVendor",
             @"Generic TV8532 Webcam", @"name", NULL], 
         
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_STINGRAY_A], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_VEO], @"idVendor",
-            @"Veo Stingray (A)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_STINGRAY_B], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_VEO], @"idVendor",
-            @"Veo Stingray (B)", @"name", NULL], 
-        
         NULL];
 }
 
@@ -257,6 +247,16 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:PRODUCT_LABTEC_WEBCAM_A], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_LABTEC], @"idVendor",
             @"Labtec Webcam (A)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_STINGRAY_A], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_VEO], @"idVendor",
+            @"Veo Stingray (A)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_STINGRAY_B], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_VEO], @"idVendor",
+            @"Veo Stingray (B)", @"name", NULL], 
         
         NULL];
 }
