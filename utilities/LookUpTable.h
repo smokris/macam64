@@ -61,6 +61,7 @@
 - (UInt8) blue: (UInt8) b  green: (int) g;
 - (void) processTriplet: (UInt8 *) triplet;
 - (void) processImage: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp;
+- (void) processImageRep: (NSBitmapImageRep *) imageRep buffer: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp;
 
 // Get/set properties
 - (float) brightness;	//[-1.0 ... 1.0], 0.0 = no change, more = brighter

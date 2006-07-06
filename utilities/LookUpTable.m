@@ -136,6 +136,39 @@
 }
 
 
+- (void) processImageRep: (NSBitmapImageRep *) imageRep buffer: (UInt8 *) dstBuffer numRows: (long) numRows rowBytes: (long) dstRowBytes bpp: (short) dstBpp
+{
+    long  w, h;
+    UInt8 * src, * dst;
+    UInt8 * srcBuffer = [imageRep bitmapData];
+    int srcBpp = [imageRep samplesPerPixel];
+    int srcRowBytes = [imageRep bytesPerRow];
+    int numColumns = dstRowBytes / dstBpp;
+    
+    for (h = 0; h < numRows; h++) 
+    {
+        src = srcBuffer + h * srcRowBytes;
+        dst = dstBuffer + h * dstRowBytes;
+        
+        for (w = 0; w < numColumns; w++) 
+        {
+            dst[0] = src[0];
+            dst[1] = src[1];
+            dst[2] = src[2];
+            
+            if (needsTransferLookup) 
+                [self processTriplet:dst];
+            
+            if (dstBpp == 4 && srcBpp == 4) 
+                dst[3] = src[3];
+            
+            src += srcBpp;
+            dst += dstBpp;
+        }
+    }
+}
+
+
 - (void) recalcTransferLookup 
 {
     float f,r,g,b;
