@@ -185,6 +185,30 @@ int JpgDecompress(unsigned char * pIn, unsigned char * pOut, int size, int width
 
 /*
  
+ {
+    CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, data, size, MyReleaseProc);
+    
+    CGImageRef image = CGImageCreateWithJPEGDataProvider(provider, NULL, true, kCGRenderingIntentDefault);
+    
+    if (provider != NULL) 
+         CFRelease(provider);
+ }
+ 
+ void MyReleaseProc(void * info, const void * data, size_t size)
+ {
+     if (info != NULL) 
+     {
+         // release private information here 
+     }
+     
+     if (data != NULL) 
+     {
+         // release picture data here 
+     }
+ }
+ 
+ 
+ 
  use CGImageCreateWithJPEGDataProvider
  
  use CGDataProviderCreateWithData
@@ -233,7 +257,7 @@ int JpgDecompress(unsigned char * pIn, unsigned char * pOut, int size, int width
          return picture;
  }
  
- void MyReleaseProc (void *info, const void *data, size_t size)// 3
+ void MyReleaseProc(void * info, const void * data, size_t size)
  {
      if (info != NULL) { 
          // release private information here 
