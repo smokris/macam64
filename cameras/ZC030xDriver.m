@@ -252,6 +252,7 @@
     
     cameraOperation = &fzc3xx;
     
+    spca50x->qindex = 5; // Should probably be set before init_jpeg_decoder()
     init_jpeg_decoder(spca50x);  // May be irrelevant
     
     forceRGB = 1;
@@ -294,8 +295,8 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         printf("New chunk!\n");
 #endif
         
-        *dataStart = 2;
-        *dataLength = frameLength - 2;
+        *dataStart = 0;
+        *dataLength = frameLength;
         
         return newChunkFrame;
     }
@@ -336,8 +337,8 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->frame->hdrheight = rawHeight;
      
     spca50x->frame->data = nextImageBuffer;
-    spca50x->frame->tmpbuffer = buffer->buffer + 16;
-    spca50x->frame->scanlength = buffer->numBytes - 16;
+    spca50x->frame->tmpbuffer = buffer->buffer;
+    spca50x->frame->scanlength = buffer->numBytes;
     
     spca50x->frame->decoder = &spca50x->maindecode;
     
