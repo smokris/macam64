@@ -395,6 +395,14 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
             @"Genius VideoCam Messenger", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x608f], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Genius Look 315FS or Sweex USB Webcam 300K", @"name", NULL], 
+        // Genius Look 315FS
+        // Sweex USB Webcam 300K (JA000060)
+        // These are actually SN9C103, not 102
+
         NULL];
 }
 
@@ -874,3 +882,52 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 @end
+
+
+// Look at the datasheets for all the valid IDs
+// Really need to do sensor detection here instead
+// Just two classes: proprietary compression or JPEG compression?
+
+// 0x0c45
+// 0x608f
+// has microphone
+//
+// SN9C103
+// OV7630
+// closest to SonixDriverVariant5
+// 
+// Genius Look 315FS
+// Sweex USB Webcam 300K (JA000060)
+//
+/*
+ T:  Bus=02 Lev=01 Prnt=01 Port=01 Cnt=01 Dev#=  4 Spd=12  MxCh= 0
+ D:  Ver= 1.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS=64 #Cfgs=  1
+ P:  Vendor=0c45 ProdID=608f Rev= 1.01
+ S:  Product=USB camera
+ C:* #Ifs= 3 Cfg#= 1 Atr=80 MxPwr=500mA
+ I:  If#= 0 Alt= 0 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=sn9c102
+ E:  Ad=81(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+ E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+ E:  Ad=83(I) Atr=03(Int.) MxPS=   1 Ivl=100ms
+ I:  If#= 0 Alt= 1 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=sn9c102
+ E:  Ad=81(I) Atr=01(Isoc) MxPS= 128 Ivl=1ms
+ E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+ E:  Ad=83(I) Atr=03(Int.) MxPS=   1 Ivl=100ms
+ I:  If#= 0 Alt= 2 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=sn9c102
+ E:  Ad=81(I) Atr=01(Isoc) MxPS= 256 Ivl=1ms
+ E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+ E:  Ad=83(I) Atr=03(Int.) MxPS=   1 Ivl=100ms
+ I:  If#= 0 Alt= 3 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=sn9c102
+ E:  Ad=81(I) Atr=01(Isoc) MxPS= 384 Ivl=1ms
+ E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+ E:  Ad=83(I) Atr=03(Int.) MxPS=   1 Ivl=100ms
+ I:  If#= 0 Alt= 4 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=sn9c102
+ I:  If#= 0 Alt= 8 #EPs= 3 Cls=ff(vend.) Sub=ff Prot=ff Driver=sn9c102
+ E:  Ad=81(I) Atr=01(Isoc) MxPS=1003 Ivl=1ms
+ E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
+ E:  Ad=83(I) Atr=03(Int.) MxPS=   1 Ivl=100ms
+ I:  If#= 1 Alt= 0 #EPs= 0 Cls=01(audio) Sub=01 Prot=00 Driver=sn9c102
+ I:  If#= 2 Alt= 0 #EPs= 0 Cls=01(audio) Sub=02 Prot=00 Driver=sn9c102
+ I:  If#= 2 Alt= 1 #EPs= 1 Cls=01(audio) Sub=02 Prot=00 Driver=sn9c102
+ E:  Ad=84(I) Atr=05(Isoc) MxPS=  20 Ivl=1ms
+ */
