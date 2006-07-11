@@ -206,7 +206,9 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 //
 - (void) decodeBuffer: (GenericChunkBuffer *) buffer
 {
-//  printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
+#if REALLY_VERBOSE
+    printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
+#endif
     
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
@@ -215,7 +217,9 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     
 	// Decode the bytes
     
-//  printf("buffer[0] = 0x%02x, buffer[1] =  0x%02x\n", buffer->buffer[0], buffer->buffer[1]);
+#if REALLY_VERBOSE
+    printf("buffer[0] = 0x%02x, buffer[1] =  0x%02x\n", buffer->buffer[0], buffer->buffer[1]);
+#endif
     
     if (buffer->buffer[1] & 0x10) 
         decode_spca561(buffer->buffer, decodePtr, rawWidth, rawHeight);
