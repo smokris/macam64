@@ -153,3 +153,13 @@ short HeightOfResolution(CameraResolution r) {
     }
     return ret;
 }
+
+void SetQDRect(Rect  * rect, short left, short top, short right, short bottom)
+{
+    rect->left = left;
+    rect->top = top;
+    rect->right = right;
+    rect->bottom = bottom;
+}
+
+

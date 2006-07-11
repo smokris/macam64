@@ -51,4 +51,7 @@ short WidthOfResolution(CameraResolution r);
 short HeightOfResolution(CameraResolution r);
 
 
+// Replace deprecated calls
+void SetQDRect(Rect  * rect, short left, short top, short right, short bottom);
+
 #endif
