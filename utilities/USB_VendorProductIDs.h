@@ -101,6 +101,7 @@
 #define PRODUCT_QUICKCAM_NOTEBOOKS_A    0x092a      // SPCA561A [square one]
 #define PRODUCT_LABTEC_WEBCAM_C         0x092b      // SPCA561A
 #define PRODUCT_QUICKCAM_CHAT_B         0x092c      // SPCA561A
+#define PRODUCT_QUICKCAM_EXPRESS_E      0x092f      // SPCA561A??
 
 #define PRODUCT_POCKET_CAMERA           0x0950
 #define PRODUCT_CLICKSMART_420          0x0960
