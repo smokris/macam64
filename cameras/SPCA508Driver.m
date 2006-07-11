@@ -223,7 +223,7 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x0110], @"idProduct",
             [NSNumber numberWithUnsignedShort:0x8086], @"idVendor",
-            @"Intel Easy PC Camera", @"name", NULL], 
+            @"Intel CS110 Easy PC Camera", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x0815], @"idProduct", // IC200
