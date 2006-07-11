@@ -81,6 +81,11 @@
             @"Logitech QuickCam Chat (B)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_EXPRESS_E], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam Express (E)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_COMPACT_PC_PM3], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_MAXELL], @"idVendor",
             @"Maxell Compact PC PM3", @"name", NULL], 
