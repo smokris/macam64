@@ -86,6 +86,16 @@
             @"Logitech QuickCam Express (E)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_EXPRESS_F], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam Express (F)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_EXPRESS_G], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam Express (G)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_COMPACT_PC_PM3], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_MAXELL], @"idVendor",
             @"Maxell Compact PC PM3", @"name", NULL], 
