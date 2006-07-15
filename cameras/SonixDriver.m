@@ -538,9 +538,11 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     // This is important
     cameraOperation = &fsn9cxx;
     
+    spca50x->qindex = 5; // Should probably be set before init_jpeg_decoder()
+
     // Set to reflect actual values
     spca50x->bridge = BRIDGE_SN9CXXX;
-    spca50x->cameratype = JPGS;	// jpeg 4.2.2 whithout header ;
+    spca50x->cameratype = JPGS;	// jpeg 4.2.2 whithout header
     
     spca50x->desc = SpeedNVC350K;
     spca50x->sensor = SENSOR_HV7131R;
@@ -551,6 +553,14 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->i2c_trigger_on_write = 0;
     
 	return self;
+}
+
+
+- (void) startupCamera
+{
+    [super startupCamera];  // Calls config() and init()
+    
+    init_jpeg_decoder(spca50x);  // May be irrelevant
 }
 
 //
@@ -584,7 +594,7 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
            buffer[0], frameLength, buffer[1], buffer[frameLength-64], buffer[frameLength-63], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
 #endif
     
-    if (position >= 0 && buffer[position] == 0xFF && buffer[position+1] == 0xD9) 
+    if (position >= 0 && buffer[position] == 0xFF && buffer[position+1] == 0xD9) // JPEG Image-End marker
     {
 #ifdef REALLY_VERBOSE
         printf("New image start!\n");
