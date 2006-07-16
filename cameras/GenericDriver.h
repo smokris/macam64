@@ -47,6 +47,16 @@
 #define GENERIC_NUM_TRANSFERS        10
 #define GENERIC_NUM_CHUNK_BUFFERS     5
 
+// Define some compression constants
+
+typedef enum CompressionType
+{
+    unknownCompression,
+    noCompression,
+    jpegCompression,
+    sonixCompression1,
+} CompressionType;
+
 // Some constants and functions for proccessing isochronous frames
 
 typedef enum IsocFrameResult
@@ -136,7 +146,26 @@ typedef struct GenericGrabContext
     BOOL hardwareContrast;
     BOOL hardwareSaturation;
     BOOL hardwareGamma;
-    BOOL hardwareSharpness;    
+    BOOL hardwareSharpness;
+    
+    CompressionType compressionType;
+    int jpegVersion;
+    
+    struct // Using Cocoa JPEG decompression
+    {
+        CGRect              rect;
+        NSBitmapImageRep  * imageRep;
+        NSGraphicsContext * bitmapGC;
+        CGContextRef        imageContext;
+    } JPEGversion1;
+    
+    struct // Using QuickTime decompression
+    {
+    } JPEGversion2;
+    
+    struct // Using Image Compression Manager
+    {
+    } JPEGversion3;
 }
 
 #pragma mark -> Subclass Unlikely to Implement (generic implementation) <-
@@ -170,6 +199,7 @@ typedef struct GenericGrabContext
 - (UInt8) getGrabbingPipe;
 // specificIsocDataCopier()   // The existing version should work for most
 // specificIsocFrameScanner() // If a suitable one does not already exist
+- (void) decodeBuffer: (GenericChunkBuffer *) buffer;  // Works for JPEG anyway
 
 #pragma mark -> Subclass Must Implement! (Mostly stub implementations) <-
 
@@ -178,6 +208,5 @@ typedef struct GenericGrabContext
 - (BOOL) startupGrabStream;
 - (void) shutdownGrabStream;
 - (void) setIsocFrameFunctions;
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end

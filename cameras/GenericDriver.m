@@ -79,6 +79,14 @@
     hardwareGamma = NO;
     hardwareSharpness = NO;   
     
+    JPEGversion1.rect = CGRectMake(0, 0, [self width], [self height]);
+    JPEGversion1.imageRep = NULL;
+    JPEGversion1.bitmapGC = NULL;
+    JPEGversion1.imageContext = NULL;
+    
+    compressionType = unknownCompression;
+    jpegVersion = 0;
+    
 	return self;
 }
 
@@ -427,6 +435,8 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     grabContext.imageWidth = [self width];
     grabContext.imageHeight = [self height];
     
+    [self setIsocFrameFunctions];  // can also adjust number of transfers, frames, buffers
+    
     // Clear things that have to be set back if init() fails
     
     grabContext.chunkReadyLock = NULL;
@@ -436,8 +446,6 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
         grabContext.transferContexts[i].buffer = NULL;
     
     // Setup simple things
-    
-    [self setIsocFrameFunctions];
     
     grabContext.intf = intf;
     grabContext.grabbingPipe = [self getGrabbingPipe];
@@ -889,6 +897,49 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     [NSThread exit];
 }
 
+
+- (BOOL) setupDecoding 
+{
+    BOOL ok = YES;
+    
+    if (compressionType == jpegCompression && jpegVersion == 1) 
+    {
+        JPEGversion1.rect = CGRectMake(0, 0, [self width], [self height]);
+        
+        JPEGversion1.imageRep = [NSBitmapImageRep alloc];
+        JPEGversion1.imageRep = [JPEGversion1.imageRep initWithBitmapDataPlanes:NULL
+                                           pixelsWide:[self width]
+                                           pixelsHigh:[self height]
+                                        bitsPerSample:8
+                                      samplesPerPixel:4
+                                             hasAlpha:YES
+                                             isPlanar:NO
+                                       colorSpaceName:NSDeviceRGBColorSpace
+                                          bytesPerRow:4 * [self width]
+                                         bitsPerPixel:4 * 8];
+    
+        //  This only works with 32 bits/pixel ARGB
+        //  bitmapGC = [NSGraphicsContext graphicsContextWithBitmapImageRep:imageRep];
+    
+        //  Need this for pre 10.4 compatibility?
+        JPEGversion1.bitmapGC = [NSGraphicsContext graphicsContextWithAttributes:
+                        [NSDictionary dictionaryWithObject:JPEGversion1.imageRep forKey:NSGraphicsContextDestinationAttributeName]];
+        //  NSGraphicsContext * bitmapGC = [NSGraphicsContext graphicsContextWithAttributes:<#(NSDictionary *)attributes#>];
+    
+        JPEGversion1.imageContext = (CGContextRef) [JPEGversion1.bitmapGC graphicsPort];
+    }
+    
+    return ok;
+}
+
+
+- (void) cleanupDecoding;
+{
+    if (JPEGversion1.imageRep != NULL) 
+        [JPEGversion1.imageRep release];
+    JPEGversion1.imageRep = NULL;
+}
+
 //
 // Avoid subclassing this method if possible
 // Instead put functionality into [decodeBuffer]
@@ -900,7 +951,7 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     
     // Initialize
     
-    if (![self setupGrabContext]) 
+    if (![self setupGrabContext] || ![self setupDecoding]) 
     {
         error = CameraErrorNoMem;
         shouldBeGrabbing = NO;
@@ -968,11 +1019,56 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     }
     
     [self cleanupGrabContext];
+    [self cleanupDecoding];
     
     if (error == CameraErrorOK) 
         error = grabContext.contextError; // Return the error from the context if there was one
     
     return error;
+}
+
+
+void BufferProviderRelease(void * info, const void * data, size_t size)
+{
+    if (info != NULL) 
+    {
+        // Odd
+    }
+    
+    if (data != NULL) 
+    {
+        // Normal
+    }
+}
+
+
+- (void) decodeBufferJPEGversion1: (GenericChunkBuffer *) buffer
+{
+    CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer->buffer, buffer->numBytes, BufferProviderRelease);
+    CGImageRef image = CGImageCreateWithJPEGDataProvider(provider, NULL, false, kCGRenderingIntentDefault);
+    
+    CGContextDrawImage(JPEGversion1.imageContext, JPEGversion1.rect, image);
+    
+    CGDataProviderRelease(provider);
+    CGImageRelease(image);
+    
+    [LUT processImageRep:JPEGversion1.imageRep 
+                  buffer:nextImageBuffer 
+                 numRows:[self height] 
+                rowBytes:nextImageBufferRowBytes 
+                     bpp:nextImageBufferBPP];
+}
+
+
+- (void) decodeBufferJPEGversion2: (GenericChunkBuffer *) buffer
+{
+    // QuickTime
+}
+
+
+- (void) decodeBufferJPEGversion3: (GenericChunkBuffer *) buffer
+{
+    // QuickTime
 }
 
 //
@@ -981,7 +1077,27 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
 //
 - (void) decodeBuffer: (GenericChunkBuffer *) buffer
 {
-    NSLog(@"GenericDriver - decodeBuffer must be implemented");
+    if (compressionType == jpegCompression) 
+    {
+        switch (jpegVersion) 
+        {
+            case 3:
+                [self decodeBufferJPEGversion3:buffer];
+                break;
+                
+            case 2:
+                [self decodeBufferJPEGversion2:buffer];
+                break;
+                
+            default:
+                NSLog(@"GenericDriver - decodeBuffer encountered unknown jpegVersion (%i)", jpegVersion);
+            case 1:
+                [self decodeBufferJPEGversion1:buffer];
+                break;
+        }
+    }
+    else 
+        NSLog(@"GenericDriver - decodeBuffer must be implemented");
 }
 
 @end
