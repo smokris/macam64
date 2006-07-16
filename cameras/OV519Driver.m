@@ -48,12 +48,14 @@
 
 */
 
+// QTNewGWorldFromPtr()
 
 #import "OV519Driver.h"
 
 #include "USB_VendorProductIDs.h"
 #include "MiscTools.h"
 #include "JpgDecompress.h"
+#include <unistd.h>
 
 
 @interface OV519Driver (Private)
@@ -126,13 +128,254 @@
 	if (self == NULL) 
         return NULL;
     
+    LUT = [[LookUpTable alloc] init];
+	if (LUT == NULL) 
+        return NULL;
+    
+    compressionType = jpegCompression;
+    jpegVersion = 1;
+    
     // Allocate memory
     // Initialize variables and other structures
     
     hardwareBrightness = YES;
     hardwareSaturation = YES;
+//  hardwareGain = YES;
+    
+    sensorSID = OV7648_I2C_WSID; // Assume this for now
     
 	return self;
+}
+
+
+- (int) i2cSetSID;
+{
+    int result;
+    
+    result = [self regWrite:R51x_I2C_W_SID val:sensorSID];
+    if (result < 0)
+        return result;
+    
+    result = [self regWrite:R51x_I2C_R_SID val:sensorSID + 1];
+    if (result < 0)
+        return result;
+    
+    return result;
+}
+
+
+- (int) initSensor
+{
+    int i, result;
+    BOOL success = NO;
+    static int i2c_detection_attempts = 10;
+    
+    // Reset the sensor
+    
+    result = [self i2cWrite:0x12 val:0x80];
+    if (result < 0) 
+        return result;
+    
+    // Wait for it to initialize
+    
+    usleep(150 * 1000);
+    
+    // Now try to detect it a few times
+    
+	for (i = 0; i < i2c_detection_attempts && !success; i++) 
+    {
+        if ([self i2cRead:OV7610_REG_ID_HIGH] == 0x7F && 
+            [self i2cRead:OV7610_REG_ID_LOW] == 0xA2) 
+        {
+			success = YES;
+			break;
+		}
+        
+        // Reset the sensor
+        
+        result = [self i2cWrite:0x12 val:0x80];
+        if (result < 0) 
+            return result;
+        
+        // Wait for it to initialize
+        
+        usleep(150 * 1000);
+        
+		// Dummy read to sync I2C
+        
+        result = [self i2cRead:0x00];
+        if (result < 0) 
+            return result;
+	}
+    
+	if (!success)
+		return -1;
+    
+    printf("I2C synced in %d attempt(s)\n", i);
+    
+	return 0;
+}
+
+
+- (int) configureOV6xx0
+{
+    return 0;
+}
+
+
+- (int) configureOV7xx0
+{
+    int result = 0;
+    
+    result = [self i2cWrite:0x12 val:0x80]; // reset
+    if (result < 0) 
+        return result;
+    
+    result = [self i2cWrite:0x12 val:0x14]; // setup
+    if (result < 0) 
+        return result;
+    
+    return result;
+}
+
+
+- (int) configureOV8xx0
+{
+    return 0;
+}
+
+
+- (int) findSensor;
+{
+    int result;
+    
+    // The OV519 must be more aggressive about sensor detection since
+    // I2C write will never fail if the sensor is not present. We have
+    // to try to initialize the sensor to detect its presence 
+    
+#if REALLY_VERBOSE
+    int i;
+    
+    for (i = 0; i < 0xFF; i +=2) 
+    {
+        sensorSID = i;
+        result = [self i2cSetSID];
+        result = [self i2cWrite:0x12 val:0x80];
+        usleep(150*1000);
+        
+        if ((result = [self i2cRead:0x0A]) != 0xFF) 
+            printf("found something at 0x%2.2X -- [0x%2.2X] = 0x%2.2X\n", i, 0x0A, result);
+        
+        if ((result = [self i2cRead:0x0B]) != 0xFF) 
+            printf("found something at 0x%2.2X -- [0x%2.2X] = 0x%2.2X\n", i, 0x0B, result);
+        
+        if ((result = [self i2cRead:OV7610_REG_ID_HIGH]) != 0xFF) 
+            printf("found something at 0x%2.2X -- [0x%2.2X] = 0x%2.2X\n", i, OV7610_REG_ID_HIGH, result);
+        
+        if ((result = [self i2cRead:OV7610_REG_ID_LOW]) != 0xFF) 
+            printf("found something at 0x%2.2X -- [0x%2.2X] = 0x%2.2X\n", i, OV7610_REG_ID_LOW, result);
+    }
+#endif
+    
+    // First we try OV7xx0
+    
+    sensorSID = OV7xx0_SID;
+    result = [self i2cSetSID];
+    if (result < 0) 
+        return -1;
+    
+    result = [self initSensor];
+    if (result >= 0) 
+    {
+        printf("Found OV7xx0 sensor.\n");
+        result = [self configureOV7xx0];
+        if (result < 0) 
+            printf("Could not configure the OV7xx0 sensor.\n");
+        return result;
+    }
+    
+    // Second we try OV6xx0
+    
+    sensorSID = OV6xx0_SID;
+    result = [self i2cSetSID];
+    if (result < 0) 
+        return -1;
+    
+    result = [self initSensor];
+    if (result >= 0) 
+    {
+        printf("Found OV6xx0 sensor.\n");
+        result = [self configureOV6xx0];
+        if (result < 0) 
+            printf("Could not configure the OV6xx0 sensor.\n");
+        return result;
+    }
+    
+    // Third we try OV8xx0
+    
+    sensorSID = OV8xx0_SID;
+    result = [self i2cSetSID];
+    if (result < 0) 
+        return -1;
+    
+    result = [self initSensor];
+    if (result >= 0) 
+    {
+        printf("Found OV8xx0 sensor.\n");
+        result = [self configureOV8xx0];
+        if (result < 0) 
+            printf("Could not configure the OV8xx0 sensor.\n");
+        return result;
+    }
+    
+    // 4th we try OV8xx0
+    
+    sensorSID = OV9xx0_SID;
+    result = [self i2cSetSID];
+    if (result < 0) 
+        return -1;
+    
+    result = [self initSensor];
+    if (result >= 0) 
+    {
+        printf("Found OV9xx0 sensor.\n");
+        return result;
+    }
+    
+    // 5th we try OV8xx0
+    
+    sensorSID = 0xD8;
+    result = [self i2cSetSID];
+    if (result < 0) 
+        return -1;
+    
+    result = [self initSensor];
+    if (result >= 0) 
+    {
+        printf("Found sensor with SID = 0x%2.2X.\n", sensorSID);
+        return result;
+    }
+    
+    // 6th we try OV8xx0
+    
+    sensorSID = 0x48;
+    result = [self i2cSetSID];
+    if (result < 0) 
+        return -1;
+    
+    result = [self initSensor];
+    if (result >= 0) 
+    {
+        printf("Found sensor with SID = 0x%2.2X.\n", sensorSID);
+        return result;
+    }
+    
+    printf("Could not find a sensor SID. Big problem.\n");
+    
+    sensorSID = OV7xx0_SID;
+    result = [self i2cSetSID];
+    
+    return result;
 }
 
 
@@ -140,7 +383,7 @@
 {   // This init part is taken from ov51x driver for linux
 	// I copied the comments, but some registers are not documented
     
-#if EXPERIMENTAL
+#if 0
     // [hxr] read sensor ID here? suggested code:
     {
         if ([self regWrite:OV519_REG_RESET1 val:0x0f] < 0) return; // Reset
@@ -156,15 +399,38 @@
             printf("The sensor is unknown things may or may not work! Please report!\n");
     }
 #endif
+/*
+    { OV511_REG_BUS, 0x5a,	0x6d }, // EnableSystem 
+    // windows reads 0x53 at this point
+    { OV511_REG_BUS, 0x53,	0x9b },
+    { OV511_REG_BUS, 0x54,	0x0f }, // set bit2 to enable jpeg
+    { OV511_REG_BUS, 0x5d,	0x03 },
+    { OV511_REG_BUS, 0x49,	0x01 },
+    { OV511_REG_BUS, 0x48,	0x00 },
     
+    // Set LED pin to output mode. Bit 4 must be cleared or sensor
+    // detection will fail. This deserves further investigation.
+    { OV511_REG_BUS, OV519_GPIO_IO_CTRL0,	0xee },
+    
+    { OV511_REG_BUS, 0x51,	0x0f },	// SetUsbInit 
+    { OV511_REG_BUS, 0x51,	0x00 },
+    { OV511_REG_BUS, 0x22,	0x00 },
+    // windows reads 0x55 at this point
+ 
+    reg_setbit(ov, OV519_SYS_EN_CLK1, 1, 2 ) // enable compression
+ 
+    reg_w_mask(ov, OV519_GPIO_DATA_OUT0, on ? 0x01 : 0x00, 0x01)  // led 
+ 
+ 
+*/    
 	if ([self regWrite:OV519_REG_RESET1 val:0x0f] < 0) return; // Reset
 	if ([self regWrite:OV519_REG_YS_CTRL val:0x6d] < 0) return; // Enables various things (adds "System Reset Mask" to defaults)
 	if ([self regWrite:OV519_REG_EN_CLK0 val:0x9b] < 0) return; // adds SCCB (I2C) and audio, unset microcontroller
 	if ([self regWrite:OV519_REG_En_CLK1 val:0x0f] < 0) return; // enables video fifo/jpeg/sfifo/cif
 	if ([self regWrite:OV519_REG_PWDN val:0x03] < 0) return; // sets Normal mode (not suspend) and Power Down Reset Mask
-	//if ([self regWrite:0x49 val:0x01] < 0) return; // undocumented and unnecessary
-	//if ([self regWrite:0x48 val:0x00] < 0) return; // same as above
-	//if ([self regWrite:OV519_REG_GPIO_IO_CTRL0 val:0xee] < 0) return; // something about leds - not necessary for now
+	if ([self regWrite:0x49 val:0x01] < 0) return; // undocumented and unnecessary
+	if ([self regWrite:0x48 val:0x00] < 0) return; // same as above
+	if ([self regWrite:OV519_REG_GPIO_IO_CTRL0 val:0xee] < 0) return; // something about leds - not necessary for now
 																		// in ov51x has something to do with sensor detection
 
 	//if ([self regWrite:0xa2 val:0x20] < 0) return; // a2-a5 undocumented
@@ -186,7 +452,7 @@
 	if ([self regWrite:OV519_REG_CAMERA_CLOCK val:0x04] < 0) return; // from windrv 090403
 	
 	// Reset the I2C - useful when experimenting with sensor's settings
-	//if ([self i2cWrite:OV7648_REG_COMA val:0x80] < 0) return;
+	if ([self i2cWrite:OV7648_REG_COMA val:0x80] < 0) return;
 
 	if ([self regWriteMask:OV519_REG_DFR val:0x10 mask:0x50] < 0) return;	// 8-bit mode (color) (bridge->host)
 																			// it's also possible to choose CCIR with 6th bit
@@ -201,6 +467,11 @@
 
 	// Uncompressed frames aren't supported (but maybe at low resolution...)
 	//compression = 1; // this is for selecting different levels of compression [hxr]
+    
+//  if ([self regWrite:OV519_REG_IO_N val:0x6f] < 0) return;
+    
+    if ([self findSensor] < 0) ;
+    
 #if REALLY_VERBOSE
 	[self dumpRegs];
 #endif
@@ -347,14 +618,46 @@
 - (void) setBrightness: (float) v
 {
 	[super setBrightness:v];
-	[self i2cWrite:OV7648_REG_BRT val:(UInt8)(v*256)];
+	[self i2cWrite:OV7648_REG_BRT val:(UInt8)(v*255)];
 }
 
 - (void) setSaturation: (float) v
 {
 	[super setSaturation:v];
-	[self i2cWrite:OV7648_REG_SAT val:((UInt8)(v*256)) & 0xf0];	// some bit are reserved
+	[self i2cWrite:OV7648_REG_SAT val:((UInt8)(v*255)) & 0xf0];	// some bit are reserved
 }
+
+- (BOOL) canSetGain
+{
+    return YES;
+}
+
+- (void) setGain: (float) v
+{
+	[super setBrightness:v];
+	[self i2cWrite:OV7648_REG_GAIN val:(UInt8)(v*255)];
+}
+
+
+- (BOOL) canSetLed 
+{
+    return YES;
+}
+
+
+- (void) setLed:(BOOL)v 
+{
+    [super setLed:v];
+    
+    // Switches red LED on Eye Toy
+    // Don't know how to control blue LED yet
+    
+    [self regWriteMask:OV519_REG_GPIO_DATA_OUT0 val:(v ? 0x01 : 0x00)  mask:0x01];
+    
+//  [self regWriteMask:OV519_REG_GPIO_DATA_OUT1 val:(v ? 0x02 : 0x00)  mask:0x02];
+//  [self regWriteMask:OV519_REG_IO_Y val:(v ? 0x10 : 0x00)  mask:0x10];
+}
+
 
 //
 // Returns the pipe used for grabbing
@@ -415,7 +718,7 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	static int currLen;
     
     *dataStart = 0;
-    *dataLength = frameLength;
+    *dataLength = 0;
     
     *tailStart = frameLength;
     *tailLength = 0;
@@ -447,11 +750,11 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 			
 			currState = WAIT_NEW;
 #if REALLY_VERBOSE
-			if (currLen != buffer[15]*256 + buffer[14]) // this check could be useful for debugging
+			if (currLen != 8 * (buffer[15]*256 + buffer[14])) // this check could be useful for debugging
             {
                 printf("End of frame length value (%d) does not correspond to total length (%d)\n", 
-                       buffer[15]*256 + buffer[14], currLen);
-                return invalidFrame;
+                       8 * (buffer[15]*256 + buffer[14]), currLen);
+//                return invalidFrame;
             }
 #endif
 			*dataStart = 16;
@@ -462,6 +765,7 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	} 
     else if (currState == WAIT_NEXT) 
     {
+        *dataLength = frameLength;
 		currLen += frameLength;
         return validFrame;
     }
@@ -509,16 +813,6 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 //
-// This is the method that takes the raw chunk data and turns it into an image
-//
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
-{
-	nextImageBufferBPP = 3;
-	nextImageBufferRowBytes = 640 * 3;
-	JpgDecompress(buffer->buffer, nextImageBuffer, buffer->numBytes, [self width], [self height]);
-}
-
-//
 // Read and write a register value
 // taken from MyOV511Driver
 // Read and write also sensor's I2C registers
@@ -563,26 +857,56 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	realVal &= ~mask;
 	val &= mask;
 	realVal |= val;
-	return [self regWrite:reg val:val];
+	return [self regWrite:reg val:realVal];
 }
+
 
 - (int) i2cRead:(UInt8) reg 
 {
-    UInt8 val;
+    int result = 0;
+    int val;
     
-	[self regWrite:OV519_I2C_SSA val:OV7648_I2C_RSID];
+/*
+	rc = reg_w(ov, R51x_I2C_SADDR_2, reg); // 0x43
+	if (rc < 0) return rc;
+    
+	// Initiate 2-byte write cycle 
+	rc = reg_w(ov, R518_I2C_CTL, 0x03); // 0x47
+	if (rc < 0) return rc;
+    
+	// Initiate 2-byte read cycle 
+	rc = reg_w(ov, R518_I2C_CTL, 0x05); // 0x47
+	if (rc < 0) return rc;
+    
+	value = reg_r(ov, R51x_I2C_DATA); // 0x45
+*/    
+    
+//	[self regWrite:OV519_I2C_SSA val:OV7648_I2C_RSID];
+	result = [self regWrite:OV519_I2C_SSA val:sensorSID]; // 0x41
+    if (result < 0) 
+        return result;
 	
     // perform a dummy write cycle to set the register
-    [self regWrite:OV519_I2C_SMA val:reg];
+    result = [self regWrite:OV519_I2C_SMA val:reg]; // 0x43
+    if (result < 0) 
+        return result;
     
     // initiate the dummy write
-    [self regWrite:OV519_I2C_CONTROL val:0x03];
+    result = [self regWrite:OV519_I2C_CONTROL val:0x03]; // 0x47
+    if (result < 0) 
+        return result;
+    
+	result = [self regWrite:0x44 val:sensorSID + 1]; // 0x41
+    if (result < 0) 
+        return result;
     
     // initiate read
-    [self regWrite:OV519_I2C_CONTROL val:0x05];
+    result = [self regWrite:OV519_I2C_CONTROL val:0x05]; // 0x47
+    if (result < 0) 
+        return result;
     
     // retrieve data
-    val = [self regRead:OV519_I2C_SDA];
+    val = [self regRead:OV519_I2C_SDA]; // 0x45
     
     return val;
 }
@@ -590,7 +914,8 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 - (int) i2cWrite:(UInt8) reg val:(UInt8) val
 {
     
-	[self regWrite:OV519_I2C_SSA val:OV7648_I2C_WSID];
+//	[self regWrite:OV519_I2C_SSA val:OV7648_I2C_WSID];
+	[self regWrite:OV519_I2C_SSA val:sensorSID];
     
     if ([self regWrite:OV519_I2C_SWA val:reg] < 0) 
         return -1;
@@ -611,7 +936,7 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	realVal &= ~mask;
 	val &= mask;
 	realVal |= val;
-	return [self i2cWrite:reg val:val];
+	return [self i2cWrite:reg val:realVal];
 }
 
 - (void) dumpRegs
@@ -634,3 +959,16 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 @end
+
+
+
+/*
+ EyeToy -- different LED policy -- Only turn on if asked to, very bright -- no need for macam special treatment
+ 
+ LED control - different for 511+, 518&+, 519
+ 
+ clockdivision is different...
+ 
+ 
+ 
+ */
