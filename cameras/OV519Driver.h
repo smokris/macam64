@@ -160,6 +160,25 @@
 #define	OV519_REG_YD6				0xFD	/*	R			00	*/
 #define	OV519_REG_YD7				0xFE	/*	R			00	*/
 
+/* I2C registers */
+#define R511_I2C_CTL		0x40
+#define R518_I2C_CTL		0x47	/* OV518(+) only */
+#define R51x_I2C_W_SID		0x41
+#define R51x_I2C_SADDR_3	0x42
+#define R51x_I2C_SADDR_2	0x43
+#define R51x_I2C_R_SID		0x44
+#define R51x_I2C_DATA		0x45
+#define R51x_I2C_CLOCK		0x46
+#define R51x_I2C_TIMEOUT	0x47
+
+/* I2C snapshot registers */
+#define R511_SI2C_SADDR_3	0x48
+#define R511_SI2C_DATA		0x49
+
+
+#define OV7610_REG_ID_HIGH       0x1C	/* manufacturer ID MSB */
+#define OV7610_REG_ID_LOW        0x1D	/* manufacturer ID LSB */
+
 /*
 
 	OV7648 sensor's registers.
@@ -221,6 +240,12 @@
 #define	OV7648_I2C_RSID		0x43
 #define	OV7648_I2C_WSID		0x42
 
+#define OV7xx0_SID   0x42
+#define OV6xx0_SID   0xC0
+#define OV8xx0_SID   0xA0
+#define OV9xx0_SID   0x60
+
+
 /*
 
 	These constants are copied from ov51x. See OV519Driver.m for more details.
@@ -246,8 +271,7 @@
 
 @interface OV519Driver : GenericDriver 
 {
-    // Add any data structure that you need to keep around
-    // i.e. decoding buffers, decoding structures etc
+    UInt8   sensorSID;
 }
 
 + (NSArray *) cameraUsbDescriptions;
@@ -266,8 +290,6 @@
 
 - (BOOL) startupGrabStream;
 - (void) shutdownGrabStream;
-
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 - (int) regRead: (UInt8) reg;
 - (int) regWrite: (UInt8) reg val:(UInt8) val;
