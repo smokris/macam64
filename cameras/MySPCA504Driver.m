@@ -778,9 +778,9 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
     CGrafPtr oldPort;
     GDHandle oldGDev;
     OSErr err;
-    // Fix deprecated calls, is all this really necessary??
-    SetRect(&srcBounds,0,0,624,480);
-    SetRect(&dstBounds,0,0,[self width],[self height]);
+    // Fix deprecated calls, is all this really necessary?? SetRect
+    SetQDRect(&srcBounds, 0, 0, 624, 480);
+    SetQDRect(&dstBounds, 0, 0, [self width], [self height]);
     jfifBuf[jfifLength++]=0xff;	//Add end tag
     jfifBuf[jfifLength++]=0xd9;
     err=    QTNewGWorldFromPtr(
@@ -795,13 +795,13 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
     if (err) return;
     //*** FIXME: Not caching the GWorld is probably a performance killer...TODO
     pm=GetGWorldPixMap(gw);
-    LockPixels(pm);
+//  LockPixels(pm);  // no need since we provide pointer
     GetGWorld(&oldPort,&oldGDev);
     SetGWorld(gw,NULL);
     (**pccamImgDesc).dataSize=jfifLength;
     DecompressImage((Ptr) jfifBuf,pccamImgDesc,pm,&srcBounds,&dstBounds,srcCopy,NULL);
     SetGWorld(oldPort,oldGDev);
-    UnlockPixels(pm);
+//  UnlockPixels(pm);  // no need since we provide pointer
     DisposeGWorld(gw);
 }
 
