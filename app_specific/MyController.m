@@ -383,6 +383,20 @@ extern NSString* SnapshotQualityPrefsKey;
 }
 
 
+- (IBAction) copy:(id) sender
+{
+    if (imageRep != NULL) 
+    {
+        NSData * clipData = [imageRep TIFFRepresentation];
+//      NSData * clipData = [imageRep TIFFRepresentationUsingCompression:NSTIFFCompressionLZW factor:0.0];
+        NSPasteboard * cb = [NSPasteboard generalPasteboard];
+        
+        [cb declareTypes:[NSArray arrayWithObjects:NSTIFFPboardType, nil] owner:nil];
+        [cb setData:clipData forType:NSTIFFPboardType];
+    }
+}
+
+
 //
 // This only works if the file already exists...
 //
