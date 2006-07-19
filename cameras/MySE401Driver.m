@@ -31,6 +31,7 @@
 
 #define VENDOR_ENDPOINTS 0x03e8
 #define PRODUCT_SE401 0x0004
+#define PRODUCT_AOX_VIDEOCAM_67016 0x1000
 
 #define VENDOR_KENSINGTON 0x047d
 #define PRODUCT_VIDEOCAM_67014 0x5001
@@ -61,29 +62,41 @@
 @end
 @implementation MySE401Driver
 
-+ (NSArray*) cameraUsbDescriptions {
++ (NSArray*) cameraUsbDescriptions 
+{
     NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_KENSINGTON],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_VIDEOCAM_67014],@"idProduct",
         @"Kensington VideoCAM 67014",@"name",NULL];
+    
     NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_KENSINGTON],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_VIDEOCAM_67015],@"idProduct",
         @"Kensington VideoCAM 67015/67017",@"name",NULL];
+    
     NSDictionary* dict3=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_KENSINGTON],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_VIDEOCAM_67016],@"idProduct",
         @"Kensington VideoCAM 67016",@"name",NULL];
+    
     NSDictionary* dict4=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_VESTA_FUN],@"idProduct",
         @"Philips Vesta Fun (PCVC665K)",@"name",NULL];
+    
     NSDictionary* dict5=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_ENDPOINTS],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_SE401],@"idProduct",
         @"Endpoints SE401-based camera",@"name",NULL];
-    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,NULL];
+    
+    NSDictionary* dict6=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_ENDPOINTS],@"idVendor",
+        [NSNumber numberWithUnsignedShort:PRODUCT_AOX_VIDEOCAM_67016],@"idProduct",
+        @"Kensington VideoCAM 67016 with 0x03e8:0x1000",@"name",NULL];
+    
+    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,NULL];
 }
+
 - (id) initWithCentral:(id)c {
     self=[super initWithCentral:c];
     if (!self) return NULL;
