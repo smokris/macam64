@@ -128,6 +128,15 @@ extern NSString* SnapshotQualityPrefsKey;
     [[NSApplication sharedApplication] terminate:self];
 }
 
+
+- (BOOL) windowShouldClose: (id) sender
+
+{
+    [self doQuit:self];
+    return YES;
+}
+
+
 - (void) startup {
     terminating=NO;
     imageGrabbed=NO;
@@ -136,6 +145,7 @@ extern NSString* SnapshotQualityPrefsKey;
     [self setupToolbar];
     [window setLevel:NSNormalWindowLevel];
     [window makeKeyAndOrderFront:self];
+    [window setDelegate:self]; // for the -windowShouldClose: message
     image=[[NSImage alloc] init];
     [image setCacheDepthMatchesImageDepth:YES];			//We have to set this to work with thousands of colors
     imageRep=[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL	//Set up just to avoid a NIL imageRep
