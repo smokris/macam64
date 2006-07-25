@@ -29,6 +29,7 @@
 @interface ZC030xDriver : SPCA5XXDriver 
 {
     int forceRGB;
+    BOOL invert;
 }
 
 + (NSArray *) cameraUsbDescriptions;
@@ -41,6 +42,14 @@
 
 
 @interface ZC030xDriverBGR : ZC030xDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
+
+@end
+
+
+@interface ZC030xDriverInverted : ZC030xDriver
 
 + (NSArray *) cameraUsbDescriptions;
 - (id) initWithCentral: (id) c;

@@ -196,16 +196,6 @@
             @"Chuntex CTX M730V TFT", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_SPC_200NC], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
-            @"Philips SPC 200NC", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_SPC_300NC], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
-            @"Philips SPC 300NC", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IMAGE], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam Image", @"name", NULL], 
@@ -254,6 +244,7 @@
     
     spca50x->qindex = 5; // Should probably be set before init_jpeg_decoder()
     forceRGB = 1;
+    invert = NO;
     
     spca50x->bridge = BRIDGE_ZC3XX;
     spca50x->cameratype = JPGH;
@@ -375,7 +366,7 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     jpeg_decode422(spca50x->frame, forceRGB);  // bgr = 1 (works better for SPCA508A...)
     
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:invert];
 }
 
 @end
@@ -408,3 +399,38 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 @end
+
+
+@implementation ZC030xDriverInverted
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_SPC_200NC], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
+            @"Philips SPC 200NC", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_SPC_300NC], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
+            @"Philips SPC 300NC", @"name", NULL], 
+        
+        NULL];
+}
+
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    invert = YES;
+    
+	return self;
+}
+
+@end
+
