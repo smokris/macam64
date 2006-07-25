@@ -322,6 +322,13 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
             @"Sonix BTC PC380", @"name", NULL], 
         
+        // This is actually a SN9C103... hopefully it works anyway
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x60af], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Trust HiRes Webcam WB-3400T", @"name", NULL], 
+        
         NULL];
 }
 
@@ -679,7 +686,7 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     jpeg_decode422(spca50x->frame, 1);  // bgr = 1 (works better for SPCA508A...)
     
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:NO];
 }
 
 @end
