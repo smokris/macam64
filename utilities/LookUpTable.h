@@ -59,8 +59,8 @@
 - (UInt8) red: (UInt8) r  green: (int) g;
 - (UInt8) green: (UInt8) g;
 - (UInt8) blue: (UInt8) b  green: (int) g;
-- (void) processTriplet: (UInt8 *) triplet;
-- (void) processImage: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp;
+- (void) processTriplet: (UInt8 *) tripletIn toHere: (UInt8 *) tripletOut;
+- (void) processImage: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp invert: (BOOL) invert;
 - (void) processImageRep: (NSBitmapImageRep *) imageRep buffer: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp;
 
 // Get/set properties

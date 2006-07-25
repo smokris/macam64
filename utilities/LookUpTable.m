@@ -105,24 +105,65 @@
 }
 
 
-- (void) processTriplet: (UInt8 *) triplet
+- (void) processTriplet: (UInt8 *) tripletIn toHere: (UInt8 *) tripletOut
 {
-    int g =    triplet[1];
-    int r = (((triplet[0] - g) * saturation) / 65536) + g;
-    int b = (((triplet[2] - g) * saturation) / 65536) + g;
+    int g =    tripletIn[1];
+    int r = (((tripletIn[0] - g) * saturation) / 65536) + g;
+    int b = (((tripletIn[2] - g) * saturation) / 65536) + g;
     
-    triplet[0] = redTransferLookup[CLAMP(r,0,255)];
-    triplet[1] = greenTransferLookup[CLAMP(g,0,255)];
-    triplet[2] = blueTransferLookup[CLAMP(b,0,255)];
+    tripletOut[0] = redTransferLookup[CLAMP(r,0,255)];
+    tripletOut[1] = greenTransferLookup[CLAMP(g,0,255)];
+    tripletOut[2] = blueTransferLookup[CLAMP(b,0,255)];
 }
 
 
-- (void) processImage: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp
+- (void) processImage: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp invert: (BOOL) invert
 {
     UInt8 * ptr;
     long  w, h;
     
-    if (needsTransferLookup) 
+    if (invert) 
+    {
+        UInt8 swap[3];
+        UInt8 * opposite;
+        
+        for (h = 0; h < numRows / 2; h++) 
+        {
+            ptr = buffer + h * rowBytes;
+            opposite = buffer + (numRows - h - 1) * rowBytes;
+            
+            if (bpp == 4) 
+            {
+                ptr++;
+                opposite++;
+            }
+            
+            for (w = 0; w < rowBytes; w += bpp, ptr += bpp, opposite += bpp) 
+            {
+                swap[0] = ptr[0];
+                swap[1] = ptr[1];
+                swap[2] = ptr[2];
+                
+                if (needsTransferLookup) 
+                {
+                    [self processTriplet:opposite toHere:ptr];
+                    [self processTriplet:swap toHere:opposite];
+                }
+                else 
+                {
+                    ptr[0] = opposite[0];
+                    ptr[1] = opposite[1];
+                    ptr[2] = opposite[2];
+                    
+                    opposite[0] = swap[0];
+                    opposite[1] = swap[1];
+                    opposite[2] = swap[2];
+                }
+            }
+        }
+    }
+    else if (needsTransferLookup) 
+    {
         for (h = 0; h < numRows; h++) 
         {
             ptr = buffer + h * rowBytes;
@@ -131,8 +172,9 @@
                 ptr++;
             
             for (w = 0; w < rowBytes; w += bpp, ptr += bpp) 
-                [self processTriplet:ptr];
+                [self processTriplet:ptr toHere:ptr];
         }
+    }
 }
 
 
@@ -152,12 +194,14 @@
         
         for (w = 0; w < numColumns; w++) 
         {
-            dst[0] = src[0];
-            dst[1] = src[1];
-            dst[2] = src[2];
-            
             if (needsTransferLookup) 
-                [self processTriplet:dst];
+                [self processTriplet:src toHere:dst];
+            else
+            {
+                dst[0] = src[0];
+                dst[1] = src[1];
+                dst[2] = src[2];
+            }
             
             if (dstBpp == 4 && srcBpp == 4) 
                 dst[3] = src[3];
