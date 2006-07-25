@@ -777,6 +777,14 @@
     return ok;
 }
 
+
+// for most (99%) the first one is correct
+- (io_service_t) findInterface: (io_iterator_t) iterator
+{
+    return IOIteratorNext(iterator);
+}
+
+
 - (CameraError) usbConnectToCam:(UInt32)usbLocationId configIdx:(short)configIdx{
     IOReturn				err;
     IOCFPlugInInterface 		**iodev;		// requires <IOKit/IOCFPlugIn.h>
@@ -915,13 +923,15 @@
     err = (*dev)->CreateInterfaceIterator(dev, &interfaceRequest, &iterator);
     CheckError(err,"usbConnectToCam-CreateInterfaceIterator");
     
-//and take the first one
-    usbInterfaceRef = IOIteratorNext(iterator);
+//and find the right interface
+    usbInterfaceRef = [self findInterface:iterator];
     assert (usbInterfaceRef);
 
     //we don't need the iterator any more
     IOObjectRelease(iterator);
     iterator = 0;
+    
+    // function to take usbInterfaceRef -> intf ?
     
 //get a plugin interface for the interface interface
     err = IOCreatePlugInInterfaceForService(usbInterfaceRef, kIOUSBInterfaceUserClientTypeID, kIOCFPlugInInterfaceID, &iodev, &score);
