@@ -201,7 +201,7 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     
     yuv_decode(spca50x->frame, 1);
     
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:NO];
 }
 
 @end
