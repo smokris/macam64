@@ -960,7 +960,7 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
             rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 1 - alternate)) + 1] = CLAMP(G,0,255);
             rgbBuffer[3 * (((y + 1) * sourceWidth) + (x + 1)) + 2] = CLAMP(B,0,255);
 
-#if 0
+#if 1
             rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 0)) + 0] = CLAMP(0,0,255);
             rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 0)) + 1] = CLAMP(Cy,0,255);
             rgbBuffer[3 * (((y + 0) * sourceWidth) + (x + 0)) + 2] = CLAMP(Cy,0,255);
@@ -1230,5 +1230,68 @@ Don't take me wrong - this is not the best postprocessing that could be done. Bu
 #endif
 }
 
+
+- (void) processTriplet: (UInt8 *) triplet
+{
+    int g =    triplet[1];
+    int r = (((triplet[0] - g) * saturation) / 65536) + g;
+    int b = (((triplet[2] - g) * saturation) / 65536) + g;
+    
+    triplet[0] = redTransferLookup[CLAMP(r,0,255)];
+    triplet[1] = greenTransferLookup[CLAMP(g,0,255)];
+    triplet[2] = blueTransferLookup[CLAMP(b,0,255)];
+}
+
+
+- (void) processImage: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp
+{
+    UInt8 * ptr;
+    long  w, h;
+    
+    if (needsTransferLookup) 
+        for (h = 0; h < numRows; h++) 
+        {
+            ptr = buffer + h * rowBytes;
+            
+            if (bpp == 4) 
+                ptr++;
+            
+            for (w = 0; w < rowBytes; w += bpp, ptr += bpp) 
+                [self processTriplet:ptr];
+        }
+}
+
+
+- (void) postprocessGRBGTo: (unsigned char*) dst dstRowBytes: (long) dstRB dstBPP: (short) dstBPP flip: (BOOL) flip
+{
+    // copy rgbBuffer to dst
+    
+    unsigned char * src = rgbBuffer;
+    unsigned char * dst_saved = dst;
+    
+    int width  = MIN(sourceWidth, destinationWidth);
+    int height = MIN(sourceHeight, destinationHeight);
+    int srcBPP = 3;
+    int srcRB = sourceWidth * srcBPP;
+    int srcRowSkip = srcRB - width * srcBPP;
+    int dstRowSkip = dstRB - width * dstBPP;
+    int x,y;
+    
+    for (y = 0; y < height; y++) 
+    {
+        for (x = 0; x < height; x++) 
+        {
+            if (dstBPP == 4) *(dst++) = 255;
+            *(dst++) = *(src++);
+            *(dst++) = *(src++);
+            *(dst++) = *(src++);
+        }
+        
+        src += srcRowSkip;
+        dst += dstRowSkip;
+    }
+    
+    [self processImage:dst_saved numRows:height rowBytes:dstRB bpp:dstBPP];
+}
 
 @end
