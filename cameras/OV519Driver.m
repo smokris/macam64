@@ -253,7 +253,7 @@
     // I2C write will never fail if the sensor is not present. We have
     // to try to initialize the sensor to detect its presence 
     
-#if REALLY_VERBOSE
+#if 0 // in cvs-build-2006-07-16
     int i;
     
     for (i = 0; i < 0xFF; i +=2) 
