@@ -81,6 +81,8 @@ typedef struct SONIXGrabContext {
 
    short writeSkipBytes;			//  Used in getStoredMediaObject
    
+   BOOL rotate;
+   
    BayerConverter* bayerConverter;
    UInt8* bayerBuffer;
 }
@@ -138,6 +140,15 @@ typedef struct SONIXGrabContext {
 
 // decoding is slightly different
 - (void) decode:(UInt8*)src to:(UInt8*)pixmap width:(int)width height:(int) height bpp:(short)bpp rowBytes:(long)rb;
+
+@end
+
+
+@interface MyFunCamDriver : MyViviCam3350BDriver 
+
++ (NSArray*) cameraUsbDescriptions;
+
+- (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId;
 
 @end
 

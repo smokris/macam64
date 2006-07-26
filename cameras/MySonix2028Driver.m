@@ -177,6 +177,7 @@ typedef enum SonixSensorType {
     [super setGain:0.5f];
     [self setCompression:0];
 	writeSkipBytes = 12;
+    rotate = NO;
     return [super startupWithUsbLocationId:usbLocationId];
 }
 
@@ -710,7 +711,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
                        dstRowBytes:rb
                             dstBPP:bpp
                               flip:hFlip
-						 rotate180:NO];
+						 rotate180:rotate];
 }
 
 - (CameraError) decodingThread {
@@ -1332,6 +1333,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 	[bayerConverter setSourceFormat:4];  //  This is in BGGR format!
 	
 	writeSkipBytes = 4;
+    rotate = YES;
 	
 	return CameraErrorOK;
 }
@@ -1512,7 +1514,33 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
                        dstRowBytes:rb
                             dstBPP:bpp
                               flip:hFlip
-						 rotate180:YES];
+						 rotate180:rotate];
+}
+
+@end
+
+
+@implementation MyFunCamDriver
+
++ (NSArray*) cameraUsbDescriptions 
+{
+    NSDictionary* dict1=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:0x0471],@"idVendor",
+        [NSNumber numberWithUnsignedShort:0x0321],@"idProduct",
+        @"Philips Fun Camera (DMVC 300K)",@"name",NULL];
+    
+    return [NSArray arrayWithObjects:dict1,NULL];
+}
+
+- (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId 
+{
+	CameraError err = [super startupWithUsbLocationId:usbLocationId];
+    if (err != CameraErrorOK) 
+		return err;
+	
+	rotate = NO;
+	
+	return CameraErrorOK;
 }
 
 @end
