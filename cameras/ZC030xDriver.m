@@ -260,6 +260,21 @@
     init_jpeg_decoder(spca50x);  // May be irrelevant
 }
 
+
+- (short) maxCompression 
+{
+    return 5;
+}
+
+
+- (void) setCompression: (short) v 
+{
+    [super setCompression:v];
+    
+    spca50x->qindex = [self maxCompression] - [self compression];
+    init_jpeg_decoder(spca50x);  // Possibly irrelevant
+}
+
 //
 // Scan the frame and return the results
 //
