@@ -26,6 +26,8 @@
 #include "MiscTools.h"
 #include "unistd.h"	//usleep
 
+#include "USB_VendorProductIDs.h"
+
 #define VENDOR_PHILIPS 0x0471
 #define PRODUCT_VESTA_FUN 0x030b
 
@@ -60,6 +62,8 @@
 - (UInt16) readInternalRegister:(UInt16)sel;
     
 @end
+
+
 @implementation MySE401Driver
 
 + (NSArray*) cameraUsbDescriptions 
@@ -113,6 +117,9 @@
     lastBlueGain=-1;
     lastResetLevel=-1;
     resetLevel=32;
+    
+    cameraID = 0x0401;
+    
     return self;
 }
 
@@ -137,7 +144,7 @@
     [self setInternalRegister:0x57 to:1];					//Switch LED on
     [self usbReadCmdWithBRequest:0x06 wValue:0 wIndex:0 buf:buf len:64];	//Get camera description
     if (buf[1]!=0x41) {
-        NSLog(@"SE401-Camera sent wrong description.");
+        NSLog(@"SE401-Camera sent wrong description (%i; %i %i).", buf[1], buf[2], buf[3]);
         return CameraErrorUSBProblem;
     }
     numSizes=buf[4]+buf[5]*256;
@@ -931,5 +938,362 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     return buf;
 }
 
-
 @end	
+
+/*
+ 
+[NSDictionary dictionaryWithObjectsAndKeys:
+    [NSNumber numberWithUnsignedShort:0x0102], @"idProduct",
+    [NSNumber numberWithUnsignedShort:0x08ca], @"idVendor",
+    @"Aiptek Pencam 400", @"name", NULL], 
+
+ [NSDictionary dictionaryWithObjectsAndKeys:
+     [NSNumber numberWithUnsignedShort:0x2182], @"idProduct",
+     [NSNumber numberWithUnsignedShort:VENDOR_ENDPOINTS], @"idVendor",
+     @"Concord EyeQ Mini", @"name", NULL], 
+ 
+ [NSDictionary dictionaryWithObjectsAndKeys:
+     [NSNumber numberWithUnsignedShort:0x2123], @"idProduct",
+     [NSNumber numberWithUnsignedShort:VENDOR_ENDPOINTS], @"idVendor",
+     @"Sipix Stylecam", @"name", NULL], 
+ 
+ */
+
+@implementation SE402Driver
+
++ (NSArray*) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        // Endpoints SE402
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x1003], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_ENDPOINTS], @"idVendor",
+            @"Endpoints SE402", @"name", NULL], 
+        
+        // Spypen Actor
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x2112], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_ENDPOINTS], @"idVendor",
+            @"Spypen Actor", @"name", NULL], 
+        
+        // Rimax Slim Multicam
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x2040], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_ENDPOINTS], @"idVendor",
+            @"Rimax Slim Multicam", @"name", NULL], 
+        
+        // Concord Eye-Q Easy
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x1010], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_ENDPOINTS], @"idVendor",
+            @"Concord Eye-Q Easy", @"name", NULL], 
+        
+        // More entries can easily be added for more cameras
+        
+        NULL];
+}
+
+
+/* EPCAM controls: */
+
+#define VENDOR_REQ_CAMERA_INFO		0x00
+#define VENDOR_REQ_CAPTURE_INFO		0x01
+#define	VENDOR_REQ_COMPRESSION		0x02
+#define VENDOR_REQ_CONT_CAPTURE		0x03
+#define VENDOR_REQ_CAPTURE_FRAME	0x04
+#define VENDOR_REQ_IMAGE_INFO		0x05
+#define VENDOR_REQ_EXT_FEATURE		0x06
+#define	VENDOR_REQ_CAM_POWER		0x07
+#define VENDOR_REQ_LED_CONTROL		0x08
+#define VENDOR_DEAD_PIXEL		0x09
+#define VENDOR_REQ_AUTO_CONTROL		0x0a
+#define VENDOR_REQ_BIOS			0xff
+
+#define VENDOR_CMD_BIOS_READ		0x07
+
+#define EPCAM_FORMAT_BAYER		1
+
+/* Hyundai hv7131b registers
+   7121 and 7141 should be the same (haven't really checked...) */
+/* Mode registers: */
+#define HV7131_REG_MODE_A	0x00
+#define HV7131_REG_MODE_B	0x01
+#define HV7131_REG_MODE_C	0x02
+/* Frame registers: */
+#define HV7131_REG_FRSU		0x10
+#define HV7131_REG_FRSL		0x11
+#define HV7131_REG_FCSU		0x12
+#define HV7131_REG_FCSL		0x13
+#define HV7131_REG_FWHU		0x14
+#define HV7131_REG_FWHL		0x15
+#define HV7131_REG_FWWU		0x16
+#define HV7131_REG_FWWL		0x17
+/* Timing registers: */
+#define HV7131_REG_THBU		0x20
+#define HV7131_REG_THBL		0x21
+#define HV7131_REG_TVBU		0x22
+#define HV7131_REG_TVBL		0x23
+#define HV7131_REG_TITU		0x25
+#define HV7131_REG_TITM		0x26
+#define HV7131_REG_TITL		0x27
+#define HV7131_REG_TMCD		0x28
+/* Adjust Registers: */
+#define HV7131_REG_ARLV		0x30
+#define HV7131_REG_ARCG		0x31
+#define HV7131_REG_AGCG		0x32
+#define HV7131_REG_ABCG		0x33
+#define HV7131_REG_APBV		0x34
+#define HV7131_REG_ASLP		0x54
+/* Offset Registers: */
+#define HV7131_REG_OFSR		0x50
+#define HV7131_REG_OFSG		0x51
+#define HV7131_REG_OFSB		0x52
+/* Reset level statistics registers: */
+#define HV7131_REG_LOREFNOH	0x57
+#define HV7131_REG_LOREFNOL	0x58
+#define HV7131_REG_HIREFNOH	0x59
+#define HV7131_REG_HIREFNOL	0x5a
+
+///* se401 registers */
+//#define SE401_OPERATINGMODE	0x2000
+
+
+/* size of usb transfers */
+#define EPCAM_PACKETBUFS	4
+/* number of iso urbs to use */
+#define EPCAM_NUMSBUF		4
+/* read the usb specs for this one :) */
+#define EPCAM_VIDEO_ENDPOINT	1
+#define EPCAM_BUTTON_ENDPOINT	2
+/* number of frames supported by the v4l part */
+#define EPCAM_NUMFRAMES		2
+/* scratch buffers for passing data to the decoders */
+#define EPCAM_NUMSCRATCH	64
+/* maximum amount of data in a JangGu packet */
+#define EPCAM_VLCDATALEN	1024
+/* number of nul sized packets to receive before kicking the camera */
+#define EPCAM_MAX_NULLPACKETS	4000
+/* number of decoding errors before kicking the camera */
+#define EPCAM_MAX_ERRORS	200
+
+
+- (CameraError) startupWithUsbLocationId: (UInt32) usbLocationId 
+{
+    CameraError err;
+    UInt8 buf[0x80];
+    int numSizes;
+    int i;
+//    int width = 320;  // Assume there's no smaller camera
+//    int height = 240;
+    
+    // Setup connection to camera
+    err = [self usbConnectToCam:usbLocationId configIdx:0];
+    if (err != CameraErrorOK) 
+        return err;
+    
+//    [self setInternalRegister:0x57 to:1];  // Switch LED on
+    [self usbWriteCmdWithBRequest:VENDOR_REQ_LED_CONTROL wValue:1 wIndex:0 buf:NULL len:0];
+    [self usbReadCmdWithBRequest:VENDOR_REQ_CAMERA_INFO wValue:0 wIndex:0 buf:buf len:0x80];  // Get camera description
+    
+    for (i = 0; i < 0x80; i += 2) 
+    {
+        printf("0x%.2X: 0x%.2X 0x%.2X\n", i, buf[i], buf[i+1]);
+    }
+    
+    cameraID = 256 * buf[3] + buf[2];
+    
+    maxWidth =  256 * buf[7] + buf[6];
+    maxHeight =  256 * buf[9] + buf[8];
+    
+    printf("\n");
+    
+#if 0
+    +static int epcam_init(struct usb_epcam *epcam)
+        +{
+            +        int i=0, rc;
+            +        unsigned char cp[0x80];
+            +	/* led on */
+                +        epcam_sndctrl(1, epcam, VENDOR_REQ_LED_CONTROL, 1, NULL, 0); // 0x08
+            +
+                +	/* get camera descriptor */
+                +	memset(cp, 0, 0x80);
+            +	rc=epcam_sndctrl(0, epcam, VENDOR_REQ_CAMERA_INFO, 0, cp, sizeof(cp)); // 0x00
+            +	info("vendor_req_camera_info: %d", rc);
+            +	if (rc<0) {
+                +		info("Error reading camera descriptor");
+                +		return 1;
+                +	}
+            +	info("size     :%d  %x %x", QT2INT(cp   ), cp[0], cp[1]);
+            +	info("rev      :%d  %x %x", QT2INT(cp+4 ), cp[4], cp[5]);
+            +	info("maxwidth :%d  %x %x", QT2INT(cp+6 ), cp[6], cp[7]);
+            +	info("maxheight:%d  %x %x", QT2INT(cp+8 ), cp[8], cp[9]);
+            +	info("zoomcaps :%d  %x %x", QT2INT(cp+10), cp[10], cp[11]);
+            +	info("ISPCaps  :%d  %x %x", QT2INT(cp+12), cp[12], cp[13]);
+            +	info("Formats  :%d  %x %x", QT2INT(cp+14), cp[14], cp[15]);
+            +	for (i=0; i<QT2INT(cp+14); i++) {
+                +		if (QT2INT(cp+16+i*2)==EPCAM_FORMAT_BAYER)
+                    +			info("Bayer format supported");
+                +		else
+                    +			info("Unknown format: %d", QT2INT(cp+16+i*2));
+                +	}
+            +	info("bios version: %d", epcam_read_bios(epcam, 0xfffc));
+            +
+                +	epcam->maxwidth=QT2INT(cp+6);
+            +	epcam->maxheight=QT2INT(cp+8);
+            +	epcam->camid=QT2INT(cp+2);
+            +
+                +	info("camid: %x", epcam->camid);
+            +	if (epcam->camid!=0x800 &&
+                    +	    epcam->camid!=0x402 &&
+                    +	    epcam->camid!=0x401 ) {
+                +		err("Not a supported camid: %d!", epcam->camid);
+                +		return 1;
+                +	}
+            +	if (epcam->camid==0x401) {
+                +		info("Your camera might work with this driver...");
+                +		info("Please send your results to: pe1rxq@amsat.org");
+                +	}
+            +
+                +	epcam->cwidth=epcam->maxwidth/2;
+            +	epcam->cheight=epcam->maxheight/2;
+            +	epcam->maxframesize=epcam->maxwidth*epcam->maxheight*3;
+            +
+                +	/* some default values */
+                +	epcam->brightness=32768;
+            +	epcam_send_pict(epcam);
+            +	epcam->resetlevel=0x2d;
+            +	epcam->palette=VIDEO_PALETTE_RGB24;
+            +	epcam->dropped=0;
+            +	epcam->framecount=0;
+            +	epcam->readcount=0;
+            +	epcam_recv_pict(epcam);
+            +	
+                +        /* Flash the led */
+                +        epcam_sndctrl(1, epcam, VENDOR_REQ_CAM_POWER, 1, NULL, 0);
+            +	epcam_sndctrl(1, epcam, VENDOR_REQ_LED_CONTROL, 1, NULL, 0);
+            +        epcam_sndctrl(1, epcam, VENDOR_REQ_CAM_POWER, 0, NULL, 0);
+            +	epcam_sndctrl(1, epcam, VENDOR_REQ_LED_CONTROL, 0, NULL, 0);
+            +
+                +
+                +        return 0;
+            +}
+#endif
+    
+    
+    
+    // Do the camera startup sequence
+//    [self setInternalRegister:0x57 to:1];					//Switch LED on
+    /*
+    [self usbReadCmdWithBRequest:0x06 wValue:0 wIndex:0 buf:buf len:64];	//Get camera description
+    
+    for (i = 0; i < 64; i += 2) 
+    {
+        printf("0x%.2X: 0x%.2X 0x%.2X\n", i, buf[i], buf[i+1]);
+    }
+    */
+    numSizes = buf[14] + buf[15] * 256;
+    for (i = 0; i <= ResolutionSVGA; i++) 
+        resolutionSupport[i] = 0;  // Reset resolution support bit mask
+    
+    for (i = 0; i < numSizes; i++) 
+    {
+        int j;
+//        width =buf[6+i*4+0]+buf[6+i*4+1]*256;
+//        height=buf[6+i*4+2]+buf[6+i*4+3]*256;
+        
+        for (j = 1; j <= ResolutionSVGA; j++) 
+        {
+            if ((WidthOfResolution(j) < maxWidth/1) && (HeightOfResolution(j) < maxHeight/1)) 
+                resolutionSupport[j] |= 1;
+            
+            if ((WidthOfResolution(j) < maxWidth/2) && (HeightOfResolution(j) < maxHeight/2)) 
+                resolutionSupport[j] |= 2;
+            
+            if ((WidthOfResolution(j) < maxWidth/4) && (HeightOfResolution(j) < maxHeight/4)) 
+                resolutionSupport[j] |= 4;
+        }
+    }
+    /*
+    maxWidth=width;						//Remember max width (=last res)
+    maxHeight=height;						//Remember max height (=last res)
+    for (i = 1; i <= ResolutionSVGA; i++) 
+    {
+        int a,b,c;
+        a=(resolutionSupport[i]&1)?1:0;
+        b=(resolutionSupport[i]&2)?1:0;
+        c=(resolutionSupport[i]&4)?1:0;
+    }
+    
+    [self setInternalRegister:0x56 to:0];					//Switch camera power off
+    [self setInternalRegister:0x57 to:0];					//Switch LED off
+    */
+    for (i = 1; i <= ResolutionSVGA; i++) 
+    {
+        if (resolutionSupport[i] & 1) 
+            [self setResolution:i fps:5];
+    }
+    
+    // Flash the LED
+    [self usbWriteCmdWithBRequest:VENDOR_REQ_CAM_POWER   wValue:1 wIndex:0 buf:NULL len:0];
+    [self usbWriteCmdWithBRequest:VENDOR_REQ_LED_CONTROL wValue:1 wIndex:0 buf:NULL len:0];
+    [self usbWriteCmdWithBRequest:VENDOR_REQ_CAM_POWER   wValue:0 wIndex:0 buf:NULL len:0];
+    [self usbWriteCmdWithBRequest:VENDOR_REQ_LED_CONTROL wValue:0 wIndex:0 buf:NULL len:0];
+    
+    //set some defaults
+    [self setBrightness:0.5];
+    [self setContrast:0.5];
+    [self setGamma:0.5];
+    [self setSaturation:0.5];
+    [self setSharpness:0.5];
+    [self setGain:0.5];
+    [self setShutter:0.5];
+    [self setWhiteBalanceMode:WhiteBalanceLinear];
+    
+    //Do the remaining, usual connection stuff
+//    err=[super startupWithUsbLocationId:usbLocationId];
+//    if (err!=CameraErrorOK) return err;
+    
+    return err;
+}
+
+@end
+
+
+@implementation EP800Driver
+
++ (NSArray*) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        // Endpoints EP800
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x1005], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_ENDPOINTS], @"idVendor",
+            @"Endpoint EP800", @"name", NULL], 
+        
+        // Creative PD1001
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x0400d], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Creative Webcam (PD1001)", @"name", NULL], 
+        
+        // Chicony DC-100
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0xa001], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x04f2], @"idVendor",
+            @"Chicony DC-100", @"name", NULL], 
+        
+        // More entries can easily be added for more cameras
+        
+        NULL];
+}
+
+@end

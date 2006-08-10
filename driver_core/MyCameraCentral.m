@@ -228,6 +228,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
 	[self registerCameraDriver:[MyFunCamDriver class]];
 	[self registerCameraDriver:[MySwedaSSP09BDriver class]];
     [self registerCameraDriver:[MySE401Driver class]];
+    [self registerCameraDriver:[SE402Driver class]]; // test
+    [self registerCameraDriver:[EP800Driver class]]; // test
     [self registerCameraDriver:[MyQCProBeigeDriver class]];
 #if 0
     [self registerCameraDriver:[QuickCamVCDriver class]];

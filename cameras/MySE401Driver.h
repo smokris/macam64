@@ -62,6 +62,8 @@
     BOOL streamIsCompressed;		//If the stream is JangGu-compressed or raw Bayer
     NSMutableData* jangGuBuffer;	//Buffer to hold the JangGu-decompressed data
     float lastMeanBrightness;		//Our average brightness (for JangGu - where no BayerConverter is used)
+
+    int cameraID;
 }
 
 #define SE401_NUM_CHUNKS 3
@@ -106,5 +108,23 @@
 - (void) grabbingThread:(id)data;
 - (CameraError) decodingThread;
 
+@end
+
+
+@interface SE402Driver : MySE401Driver 
+{
+}
+
++ (NSArray*) cameraUsbDescriptions;
 
 @end
+
+
+@interface EP800Driver : SE402Driver 
+{
+}
+
++ (NSArray*) cameraUsbDescriptions;
+
+@end
+
