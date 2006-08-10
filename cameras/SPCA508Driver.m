@@ -27,9 +27,6 @@
 //
 // doesn't seem to work in a hub
 //
-// always starts with 5 timeouts:
-// usbCmdWithBRequestType: Error: kIOUSBTransactionTimeout - time out
-//
 // images are way too bright (whitish or light grayish actually)
 // Red is too orange
 // Blue is fine
@@ -133,7 +130,9 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     *tailStart = frameLength;
     *tailLength = 0;
     
+#if REALLY_VERBOSE
 //  printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+#endif
     
     if (frameLength < 1 || buffer[0] == 0xFF) 
     {
@@ -142,7 +141,9 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         return invalidFrame;
     }
     
-//  printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+#if REALLY_VERBOSE
+    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+#endif
     
     if (buffer[0] == 0x00) 
     {
@@ -175,7 +176,9 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
-//  printf("decoding buffer with %ld bytes\n", buffer->numBytes);
+#if REALLY_VERBOSE
+    printf("decoding buffer with %ld bytes\n", buffer->numBytes);
+#endif
     
     spca50x->frame->hdrwidth = rawWidth;
     spca50x->frame->hdrheight = rawHeight;
