@@ -45,6 +45,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
             @"PixArt PAC7311 based camera (probably)", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x2601], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
+            @"Philips SPC 610NC (probably)", @"name", NULL], 
+        
         NULL];
 }
 
