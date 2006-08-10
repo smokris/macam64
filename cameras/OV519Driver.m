@@ -78,6 +78,7 @@
             [NSNumber numberWithUnsignedShort:PRODUCT_OV519_AKA1], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_OVT], @"idVendor",
             @"OV519-based camera (2)", @"name", NULL], 
+        // Maxell Maxcam Plus -- still does not work though (actually seems to be a 10.3.x issue)
         
         // More entries can easily be added for more cameras
 		
