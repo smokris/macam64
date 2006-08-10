@@ -134,7 +134,7 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 		err_code = spca50x_reg_write(dev, data[I][0], (__u16) (data[I][2]), (__u16) (data[I][1]));
 		if (err_code < 0) 
 		{ 
-//			PDEBUG(1, "Register write failed for 0x%x,0x%x,0x%x", data[I][0], data[I][1], data[I][2]); 
+			PDEBUG(1, "spca50x_write_vector: Register write failed for 0x%x, 0x%x, 0x%x", data[I][0], data[I][1], data[I][2]); 
 			return -1; 
 		}
 		I++;
