@@ -88,7 +88,7 @@
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_EXPRESS_F], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
-            @"Logitech QuickCam Express (F)", @"name", NULL], 
+            @"Logitech QuickCam Chat Skype", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_EXPRESS_G], @"idProduct",
