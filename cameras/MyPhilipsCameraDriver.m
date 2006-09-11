@@ -45,10 +45,30 @@
 + (unsigned short) cameraUsbVendorID { return VENDOR_PHILIPS; }
 + (NSString*) cameraName { return [MyCameraCentral localizedStringFor:@"abstract Philips generic camera"]; }
 
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    power_save = NO;
+    
+	return self;
+}
+
+
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     CameraError err=[self usbConnectToCam:usbLocationId configIdx:0];
 //setup connection to camera
      if (err!=CameraErrorOK) return err;
+// if camera uses power save, it needs to be activated
+     if (power_save) 
+     {
+         UInt8 buf[16];
+         buf[0] = 0x00;
+         [self usbWriteCmdWithBRequest:GRP_SET_STATUS wValue:SEL_POWER wIndex:INTF_CONTROL buf:buf len:1];
+     }
 //set internals
     camHFlip=NO;			//Some defaults that can be changed during startup
     chunkHeader=0;

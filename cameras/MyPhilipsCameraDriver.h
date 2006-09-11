@@ -140,11 +140,15 @@ typedef struct PhilipsGrabContext {	//Everything the grabbing thread internals n
     short chunkHeader;			//chunk header size (commonly known as frame header size)
     short chunkFooter;			//chunk footer size (commonly known as frame footer size)
     BOOL grabbingThreadRunning;		//For active wait for finishing grabbing
+    
+    BOOL power_save;
 }
 
 + (unsigned short) cameraUsbProductID;
 + (unsigned short) cameraUsbVendorID;
 + (NSString*) cameraName;
+
+- (id) initWithCentral: (id) c;
 
 //start/stop
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
