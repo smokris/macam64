@@ -93,12 +93,7 @@
         [NSNumber numberWithUnsignedShort:PRODUCT_SE401],@"idProduct",
         @"Endpoints SE401-based camera",@"name",NULL];
     
-    NSDictionary* dict6=[NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithUnsignedShort:VENDOR_ENDPOINTS],@"idVendor",
-        [NSNumber numberWithUnsignedShort:PRODUCT_AOX_VIDEOCAM_67016],@"idProduct",
-        @"Kensington VideoCAM 67016 with 0x03e8:0x1000",@"name",NULL];
-    
-    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,NULL];
+    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,NULL];
 }
 
 - (id) initWithCentral:(id)c {
@@ -994,6 +989,11 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
             @"Concord Eye-Q Easy", @"name", NULL], 
         
         // More entries can easily be added for more cameras
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:VENDOR_ENDPOINTS], @"idVendor",
+            [NSNumber numberWithUnsignedShort:PRODUCT_AOX_VIDEOCAM_67016], @"idProduct",
+            @"Kensington VideoCAM 67016 with 0x03e8:0x1000", @"name", NULL],
         
         NULL];
 }
