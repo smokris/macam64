@@ -18,11 +18,12 @@
  $Id$
  */
 
-#import <Cocoa/Cocoa.h>
+
 #import "MyPhilipsCameraDriver.h"
 
-@interface MyKiaraFamilyDriver : MyPhilipsCameraDriver {
 
+@interface MyKiaraFamilyDriver : MyPhilipsCameraDriver 
+{
 }
 
 + (NSArray*) cameraUsbDescriptions;
@@ -34,6 +35,15 @@
 - (CameraResolution) defaultResolutionAndRate:(short*)fps;
 - (void) setLed:(BOOL)v;		// switch LED on/off
 
+@end
 
+
+@interface MyKiaraFamilyPowerSaveDriver : MyKiaraFamilyDriver 
+{
+}
+
++ (NSArray*) cameraUsbDescriptions;
+
+- (id) initWithCentral: (id) c;
 
 @end

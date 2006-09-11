@@ -364,11 +364,6 @@ Here is a table of sniffed data. I have no idea what this means
         [NSNumber numberWithUnsignedShort:PRODUCT_VCS_UC300],@"idProduct",
         @"Visionite VCS-UC300",@"name",NULL];
     
-    NSDictionary* dict9=[NSDictionary dictionaryWithObjectsAndKeys:
-        [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
-        [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_ZOOM_NEW],@"idProduct",
-        @"Logitech QuickCam Zoom (new)",@"name",NULL];
-    
     NSDictionary* dict10=[NSDictionary dictionaryWithObjectsAndKeys:
         [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH],@"idVendor",
         [NSNumber numberWithUnsignedShort:PRODUCT_CISCO_VT_ADVANTAGE],@"idProduct",
@@ -379,7 +374,7 @@ Here is a table of sniffed data. I have no idea what this means
         [NSNumber numberWithUnsignedShort:PRODUCT_SPC_900NC],@"idProduct",
         @"Philips SPC 900NC",@"name",NULL];
     
-    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,dict7,dict8,dict9,dict10,dict11,NULL];
+    return [NSArray arrayWithObjects:dict1,dict2,dict3,dict4,dict5,dict6,dict7,dict8,dict10,dict11,NULL];
 }
 
 
@@ -440,10 +435,54 @@ Here is a table of sniffed data. I have no idea what this means
     *b_16 = TO_LEDON(v);
     c =TO_LEDON(LEDon);
     if (*b_16 != c) {
-        *b_16 = CFSwapInt16BigToHost(*b_16); // Data format was developed in BigEndian format, whether correct or not, make sure it is swapped if necessary
+        // Not reall a 16 bit word at all, but really two sequential bytes
+//      *b_16 = CFSwapInt16BigToHost(*b_16); // Data format was developed in BigEndian format, whether correct or not, make sure it is swapped if necessary
         [self usbWriteCmdWithBRequest:GRP_SET_STATUS wValue:SEL_LED wIndex:INTF_CONTROL buf:b len:2];
     }
     [super setLed:v];
 }
+
+/*
+ buf[0] - "on" value
+ buf[1] - "off" value
+ 
+ */
+@end
+
+
+@implementation MyKiaraFamilyPowerSaveDriver
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_ZOOM_NEW], @"idProduct",
+            @"Logitech QuickCam Zoom (new)", @"name", NULL],
+        
+        NULL];
+}
+
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    power_save = YES;
+    
+	return self;
+}
+
+/*
+	if (power)
+ buf = 0x00; // active 
+	else
+ buf = 0xFF; // power save 
+	return SendControlMsg(SET_STATUS_CTL, SET_POWER_SAVE_MODE_FORMATTER, 1);
+ */
+
 
 @end
