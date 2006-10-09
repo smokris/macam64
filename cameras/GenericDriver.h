@@ -44,7 +44,7 @@
 // These seem to work well for many cameras
 
 #define GENERIC_FRAMES_PER_TRANSFER  50
-#define GENERIC_NUM_TRANSFERS        10
+#define GENERIC_NUM_TRANSFERS         2
 #define GENERIC_NUM_CHUNK_BUFFERS     5
 
 // Define some compression constants
@@ -161,6 +161,9 @@ typedef struct GenericGrabContext
     
     struct // Using QuickTime decompression
     {
+        CGRect              rect;
+        NSBitmapImageRep  * imageRep;
+        CGContextRef        imageContext;
     } JPEGversion2;
     
     struct // Using Image Compression Manager
