@@ -1044,6 +1044,13 @@
 			path = images;
 			sourceTree = "<group>";
 		};
+		F51B953E0AB9DB0400179B4C /* Philips */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Philips;
+			sourceTree = "<group>";
+		};
 		F55A58C002572BFE014CA2B1 /* stv600_sensors */ = {
 			isa = PBXGroup;
 			children = (
@@ -1204,6 +1211,7 @@
 		F5F79A800212038E01E152CA /* cameras */ = {
 			isa = PBXGroup;
 			children = (
+				F51B953E0AB9DB0400179B4C /* Philips */,
 				F5F79A830212038E01E152CA /* MyKiaraFamilyDriver.h */,
 				F5F79A840212038E01E152CA /* MyKiaraFamilyDriver.m */,
 				F5F79A850212038E01E152CA /* MyPhilipsCameraDriver.h */,
@@ -2425,12 +2433,14 @@
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
+					"EXCEPT_COMPRESS_DONE=1",
 					"MACAM=1",
 					"VERBOSE=1",
 					"REALLY_VERBOSE=1",
 					"DEBUG=1",
 					"EXPERIMENTAL=1",
 					"LOG_USB_CALLS=0",
+					"LOG_QT_CALLS=1",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_LDFLAGS = "-lSystem";
@@ -2457,7 +2467,7 @@
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.2.8.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Release;
 		};
@@ -2577,8 +2587,8 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = "";
-				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_MODEL_TUNING = G4;
+				GCC_OPTIMIZATION_LEVEL = 3;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"MACAM=1",
 					"VERBOSE=1",
@@ -2707,7 +2717,7 @@
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"MACAM=1",
 					"VERBOSE=1",
-					"REALLY_VERBOSE=1",
+					"REALLY_VERBOSE=0",
 					"EXPERIMENTAL=1",
 				);
 				GCC_VERSION_i386 = 4.0;
@@ -2720,7 +2730,7 @@
 				PREBINDING = NO;
 				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 				SDKROOT_i386 = /Developer/SDKs/MacOSX10.4u.sdk;
-				SDKROOT_ppc = /Developer/SDKs/MacOSX10.1.5.sdk;
+				SDKROOT_ppc = /Developer/SDKs/MacOSX10.4u.sdk;
 				STRIP_INSTALLED_PRODUCT = NO;
 			};
 			name = "CVS Build";
