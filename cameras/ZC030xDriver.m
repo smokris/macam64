@@ -171,9 +171,9 @@
             @"Logitech Communicate STX", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMMUN_STX_B], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMM_STX_PLUS], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
-            @"Logitech Communicate STX (B)", @"name", NULL], 
+            @"Logitech Communicate STX Plus", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_NOTEBOOK_DELUXE], @"idProduct",
@@ -283,6 +283,10 @@
     
     spca50x->qindex = [self maxCompression] - [self compression];
     init_jpeg_decoder(spca50x);  // Possibly irrelevant
+    
+#if VERBOSE
+    printf("Compression set to %d (spca50x->qindex = %d)\n", v, spca50x->qindex);
+#endif
 }
 
 //
@@ -347,7 +351,7 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
-#ifdef REALLY_VERBOSE
+#if VERBOSE
     printf("Need to decode a JPEG buffer with %ld bytes.\n", buffer->numBytes);
 #endif
     
