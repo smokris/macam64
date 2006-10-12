@@ -1,6 +1,11 @@
 // M560x
 // see http://gkall.hobby.nl/m560x.html
 
+
+// Genius Slim uses the ALi5603
+
+// Creative Live! Cam Voice uses the ALi M5603C [0x041E/0x4045]
+
 (USB 2.0 version probably)
 
 T:  Bus=01 Lev=01 Prnt=01 Port=05 Cnt=01 Dev#=  3 Spd=480 MxCh= 0
