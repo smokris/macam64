@@ -79,10 +79,10 @@
     hardwareGamma = NO;
     hardwareSharpness = NO;   
     
-    JPEGversion1.rect = CGRectMake(0, 0, [self width], [self height]);
-    JPEGversion1.imageRep = NULL;
-    JPEGversion1.bitmapGC = NULL;
-    JPEGversion1.imageContext = NULL;
+    CocoaJPEG.rect = CGRectMake(0, 0, [self width], [self height]);
+    CocoaJPEG.imageRep = NULL;
+    CocoaJPEG.bitmapGC = NULL;
+    CocoaJPEG.imageContext = NULL;
     
     compressionType = unknownCompression;
     jpegVersion = 0;
@@ -436,6 +436,15 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     grabContext.imageHeight = [self height];
     
     [self setIsocFrameFunctions];  // can also adjust number of transfers, frames, buffers
+    
+    if (grabContext.numberOfTransfers > GENERIC_MAX_TRANSFERS) 
+        grabContext.numberOfTransfers = GENERIC_MAX_TRANSFERS;
+    
+    if (grabContext.numberOfFramesPerTransfer > GENERIC_FRAMES_PER_TRANSFER) 
+        grabContext.numberOfFramesPerTransfer = GENERIC_FRAMES_PER_TRANSFER;
+    
+    if (grabContext.numberOfChunkBuffers > GENERIC_NUM_CHUNK_BUFFERS) 
+        grabContext.numberOfChunkBuffers = GENERIC_NUM_CHUNK_BUFFERS;
     
     // Clear things that have to be set back if init() fails
     
@@ -902,31 +911,121 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
 {
     BOOL ok = YES;
     
+    if (compressionType == jpegCompression) 
+    {
+        printf("JPEG compression is being used.\n");
+        printf("   decompression using method %d\n", jpegVersion);
+    }
+    
     if (compressionType == jpegCompression && jpegVersion == 1) 
     {
-        JPEGversion1.rect = CGRectMake(0, 0, [self width], [self height]);
+        CocoaJPEG.rect = CGRectMake(0, 0, [self width], [self height]);
         
-        JPEGversion1.imageRep = [NSBitmapImageRep alloc];
-        JPEGversion1.imageRep = [JPEGversion1.imageRep initWithBitmapDataPlanes:NULL
-                                           pixelsWide:[self width]
-                                           pixelsHigh:[self height]
-                                        bitsPerSample:8
-                                      samplesPerPixel:4
-                                             hasAlpha:YES
-                                             isPlanar:NO
-                                       colorSpaceName:NSDeviceRGBColorSpace
-                                          bytesPerRow:4 * [self width]
-                                         bitsPerPixel:4 * 8];
+        CocoaJPEG.imageRep = [NSBitmapImageRep alloc];
+        CocoaJPEG.imageRep = [CocoaJPEG.imageRep initWithBitmapDataPlanes:NULL
+                                                                     pixelsWide:[self width]
+                                                                     pixelsHigh:[self height]
+                                                                  bitsPerSample:8
+                                                                samplesPerPixel:4
+                                                                       hasAlpha:YES
+                                                                       isPlanar:NO
+                                                                 colorSpaceName:NSDeviceRGBColorSpace
+                                                                    bytesPerRow:4 * [self width]
+                                                                   bitsPerPixel:4 * 8];
+        
+        // use CGBitmapContextCreate() instead??
+/*
+00270                 CGColorSpaceRef colorspace_ref = (image_depth == 8) ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
+00271                 
+00272                 if (!colorspace_ref)
+00273                         return false;
+00274                 
+00275                 CGImageAlphaInfo alpha_info = (image_depth == 8) ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast; //kCGImageAlphaLast; //RGBA format
+00276 
+00277                 context_ref = CGBitmapContextCreate(buffer->data, (size_t)image_size.width, (size_t)image_size.height, 8, buffer_rowbytes, colorspace_ref, alpha_info);
+00278 
+00279                 if (context_ref)
+00280                 {
+00281                         CGContextSetFillColorSpace(context_ref, colorspace_ref);
+00282                         CGContextSetStrokeColorSpace(context_ref, colorspace_ref);
+00283                         // move down, and flip vertically 
+00284                         // to turn postscript style coordinates to "screen style"
+00285                         CGContextTranslateCTM(context_ref, 0.0, image_size.height);
+00286                         CGContextScaleCTM(context_ref, 1.0, -1.0);
+00287                 }
+00288                 
+00289                 CGColorSpaceRelease(colorspace_ref);
+00290                 colorspace_ref = NULL;
+*/
+        
+/*
+CGColorSpaceRef CreateSystemColorSpace () 
+{
+    CMProfileRef sysprof = NULL;
+    CGColorSpaceRef dispColorSpace = NULL;
     
+    // Get the Systems Profile for the main display
+    if (CMGetSystemProfile(&sysprof) == noErr)
+    {
+        // Create a colorspace with the systems profile
+        dispColorSpace = CGColorSpaceCreateWithPlatformColorSpace(sysprof);
+        
+        // Close the profile
+        CMCloseProfile(sysprof);
+    }
+    
+    return dispColorSpace;
+}
+*/
+        
+        CMProfileRef sysprof = NULL;
+        CGColorSpaceRef dispColorSpace = NULL;
+        
+        // Get the Systems Profile for the main display
+        if (CMGetSystemProfile(&sysprof) == noErr)
+        {
+            // Create a colorspace with the systems profile
+            dispColorSpace = CGColorSpaceCreateWithPlatformColorSpace(sysprof);
+            
+            // Close the profile
+            CMCloseProfile(sysprof);
+        }
+        
+        CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
+        
+        CocoaJPEG.imageContext = CGBitmapContextCreate( [CocoaJPEG.imageRep bitmapData],
+                                            [self width], [self height], 8, 4 * [self width],
+                                            colorspace, kCGImageAlphaPremultipliedLast);
+        
+        CGColorSpaceRelease(colorspace);
+        CGColorSpaceRelease(dispColorSpace);
+    }
+    
+    if (compressionType == jpegCompression && jpegVersion == 2) 
+    {
+        CocoaJPEG.rect = CGRectMake(0, 0, [self width], [self height]);
+        
+        CocoaJPEG.imageRep = [NSBitmapImageRep alloc];
+        CocoaJPEG.imageRep = [CocoaJPEG.imageRep initWithBitmapDataPlanes:NULL
+                                                                     pixelsWide:[self width]
+                                                                     pixelsHigh:[self height]
+                                                                  bitsPerSample:8
+                                                                samplesPerPixel:4
+                                                                       hasAlpha:YES
+                                                                       isPlanar:NO
+                                                                 colorSpaceName:NSDeviceRGBColorSpace
+                                                                    bytesPerRow:4 * [self width]
+                                                                   bitsPerPixel:4 * 8];
+        
         //  This only works with 32 bits/pixel ARGB
         //  bitmapGC = [NSGraphicsContext graphicsContextWithBitmapImageRep:imageRep];
-    
+        
         //  Need this for pre 10.4 compatibility?
-        JPEGversion1.bitmapGC = [NSGraphicsContext graphicsContextWithAttributes:
-                        [NSDictionary dictionaryWithObject:JPEGversion1.imageRep forKey:NSGraphicsContextDestinationAttributeName]];
+        CocoaJPEG.bitmapGC = [NSGraphicsContext graphicsContextWithAttributes:
+            [NSDictionary dictionaryWithObject:CocoaJPEG.imageRep forKey:NSGraphicsContextDestinationAttributeName]];
         //  NSGraphicsContext * bitmapGC = [NSGraphicsContext graphicsContextWithAttributes:<#(NSDictionary *)attributes#>];
-    
-        JPEGversion1.imageContext = (CGContextRef) [JPEGversion1.bitmapGC graphicsPort];
+        
+        CocoaJPEG.imageContext = (CGContextRef) [CocoaJPEG.bitmapGC graphicsPort];
     }
     
     return ok;
@@ -935,9 +1034,9 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
 
 - (void) cleanupDecoding;
 {
-    if (JPEGversion1.imageRep != NULL) 
-        [JPEGversion1.imageRep release];
-    JPEGversion1.imageRep = NULL;
+    if (CocoaJPEG.imageRep != NULL) 
+        [CocoaJPEG.imageRep release];
+    CocoaJPEG.imageRep = NULL;
 }
 
 //
@@ -1042,27 +1141,23 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
 }
 
 
-- (void) decodeBufferJPEGversion1: (GenericChunkBuffer *) buffer
+- (void) decodeBufferCocoaJPEG: (GenericChunkBuffer *) buffer
 {
     CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer->buffer, buffer->numBytes, BufferProviderRelease);
     CGImageRef image = CGImageCreateWithJPEGDataProvider(provider, NULL, false, kCGRenderingIntentDefault);
     
-    CGContextDrawImage(JPEGversion1.imageContext, JPEGversion1.rect, image);
+    CGContextDrawImage(CocoaJPEG.imageContext, CocoaJPEG.rect, image);
+    
+    CGContextFlush(CocoaJPEG.imageContext);
     
     CGDataProviderRelease(provider);
     CGImageRelease(image);
     
-    [LUT processImageRep:JPEGversion1.imageRep 
+    [LUT processImageRep:CocoaJPEG.imageRep 
                   buffer:nextImageBuffer 
                  numRows:[self height] 
                 rowBytes:nextImageBufferRowBytes 
                      bpp:nextImageBufferBPP];
-}
-
-
-- (void) decodeBufferJPEGversion2: (GenericChunkBuffer *) buffer
-{
-    // QuickTime
 }
 
 
@@ -1085,14 +1180,11 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
                 [self decodeBufferJPEGversion3:buffer];
                 break;
                 
-            case 2:
-                [self decodeBufferJPEGversion2:buffer];
-                break;
-                
             default:
                 NSLog(@"GenericDriver - decodeBuffer encountered unknown jpegVersion (%i)", jpegVersion);
+            case 2:
             case 1:
-                [self decodeBufferJPEGversion1:buffer];
+                [self decodeBufferCocoaJPEG:buffer];
                 break;
         }
     }

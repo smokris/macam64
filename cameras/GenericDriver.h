@@ -44,6 +44,7 @@
 // These seem to work well for many cameras
 
 #define GENERIC_FRAMES_PER_TRANSFER  50
+#define GENERIC_MAX_TRANSFERS         5
 #define GENERIC_NUM_TRANSFERS         2
 #define GENERIC_NUM_CHUNK_BUFFERS     5
 
@@ -121,7 +122,7 @@ typedef struct GenericGrabContext
     
     NSLock * chunkListLock;		  // The lock for access to the empty buffer pool/ full chunk queue
     long chunkBufferLength;		  // The size of the chunk buffers
-    GenericTransferContext transferContexts[GENERIC_NUM_TRANSFERS];  // The transfer contexts
+    GenericTransferContext transferContexts[GENERIC_MAX_TRANSFERS];  // The transfer contexts
     GenericChunkBuffer emptyChunkBuffers[GENERIC_NUM_CHUNK_BUFFERS]; // The pool of empty (ready-to-fill) chunk buffers
     GenericChunkBuffer fullChunkBuffers[GENERIC_NUM_CHUNK_BUFFERS];	 // The queue of full (ready-to-decode) chunk buffers (oldest=last)
     GenericChunkBuffer fillingChunkBuffer; // The chunk buffer currently filling up (only if fillingChunk == true)
@@ -151,24 +152,21 @@ typedef struct GenericGrabContext
     CompressionType compressionType;
     int jpegVersion;
     
-    struct // Using Cocoa JPEG decompression
+    struct // Using Cocoa JPEG decompression (version 1 & 2)
     {
         CGRect              rect;
         NSBitmapImageRep  * imageRep;
         NSGraphicsContext * bitmapGC;
         CGContextRef        imageContext;
-    } JPEGversion1;
+    } CocoaJPEG;
     
     struct // Using QuickTime decompression
     {
-        CGRect              rect;
-        NSBitmapImageRep  * imageRep;
-        CGContextRef        imageContext;
-    } JPEGversion2;
+    } JPEGversion3;
     
     struct // Using Image Compression Manager
     {
-    } JPEGversion3;
+    } JPEGversion4;
 }
 
 #pragma mark -> Subclass Unlikely to Implement (generic implementation) <-
