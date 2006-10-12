@@ -22,7 +22,7 @@
 #import "MyCameraDriver.h"
 #import "JFIFHeaderTemplate.h"
 
-#define SPCA504_NUM_TRANSFERS 10
+#define SPCA504_NUM_TRANSFERS 2
 #define SPCA504_FRAMES_PER_TRANSFER 50
 #define SPCA504_NUM_CHUNK_BUFFERS 5
 
