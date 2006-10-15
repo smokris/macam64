@@ -296,7 +296,8 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
 //
 - (BOOL) setGrabInterfacePipe
 {
-    return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
+    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:8  numAltInterfaces:8];
+//    return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
 }
 
 //

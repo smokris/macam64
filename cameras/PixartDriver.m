@@ -175,7 +175,8 @@ static inline unsigned short getShort(unsigned char *pt)
 //
 - (BOOL) setGrabInterfacePipe
 {
-    return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
+    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:8  numAltInterfaces:8];
+//    return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
 }
 
 //

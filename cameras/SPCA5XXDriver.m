@@ -312,7 +312,9 @@ short SPCA5xxResolution(CameraResolution res)
 //
 - (BOOL) setGrabInterfacePipe
 {
-    return [self usbSetAltInterfaceTo:7 testPipe:[self getGrabbingPipe]];
+    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:7  numAltInterfaces:-1];
+    
+//  return [self usbSetAltInterfaceTo:7 testPipe:[self getGrabbingPipe]];
 }
 
 //

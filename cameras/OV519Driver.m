@@ -212,7 +212,10 @@
 	if (!success)
 		return -1;
     
-    printf("I2C synced in %d attempt(s)\n", i);
+    if (i > 0) 
+        printf("I2C synced in %d attempts\n", i+1);
+    else 
+        printf("I2C synced in %d attempt\n", i+1);
     
 	return 0;
 }
@@ -329,7 +332,7 @@
         return result;
     }
     
-    // 4th we try OV8xx0
+    // 4th we try OV9xx0
     
     sensorSID = OV9xx0_SID;
     result = [self i2cSetSID];
@@ -677,8 +680,11 @@
 	if ([self regWrite:OV519_REG_RESET1 val:0x0f] < 0) // safe reset
         return FALSE;
     
-    if (![self usbSetAltInterfaceTo:4 testPipe:[self getGrabbingPipe]]) // 4 should be the best, but 1,2,3 are possible
-        return FALSE;                                                   // and give smaller packets
+    if (![self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:4]) 
+        return FALSE;
+    
+//    if (![self usbSetAltInterfaceTo:4 testPipe:[self getGrabbingPipe]]) // 4 should be the best, but 1,2,3 are possible
+//        return FALSE;                                                   // and give smaller packets
     
 	if ([self regWrite:OV519_REG_RESET1 val:0x00] < 0) 
         return FALSE;
@@ -723,12 +729,23 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     *tailStart = frameLength;
     *tailLength = 0;
-	    
+    
+#if REALLY_VERBOSE
+    if (frameLength == 0) 
+        printf("zero-length buffer\n");
+    else 
+        printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", 
+                buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7], buffer[8], buffer[9]);
+#endif
+    
     if (frameLength < 3) 
         return invalidFrame;
     
     if (buffer[0] == 0xff && buffer[1] == 0xff && buffer[2] == 0xff) 
     {
+#if REALLY_VERBOSE
+        printf("HEADER!\n");
+#endif
 		if (buffer[3] == 0x50) // Start of frame
         {
 			if (buffer[9] == 0x01) 
