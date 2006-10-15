@@ -728,7 +728,7 @@
 		F55DD843021311680166DE0F /* QTPanel.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = QTPanel.h; sourceTree = "<group>"; };
 		F55DD844021311680166DE0F /* QTPanel.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = QTPanel.m; sourceTree = "<group>"; };
 		F55DD845021311680166DE0F /* QTVideoDigitizer.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = QTVideoDigitizer.h; sourceTree = "<group>"; };
-		F55DD846021311680166DE0F /* QTVideoDigitizer.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = QTVideoDigitizer.m; sourceTree = "<group>"; };
+		F55DD846021311680166DE0F /* QTVideoDigitizer.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; lineEnding = 2; path = QTVideoDigitizer.m; sourceTree = "<group>"; };
 		F563AB490247FDC601BF65F7 /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F563AB4A0247FDC601BF65F7 /* German */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/Localizable.strings; sourceTree = "<group>"; };
 		F563AB4B0247FDC601BF65F7 /* German */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = German; path = German.lproj/MyImageDocument.nib; sourceTree = "<group>"; };
@@ -904,7 +904,7 @@
 		F5F79A820212038E01E152CA /* MyCPIACameraDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyCPIACameraDriver.m; sourceTree = "<group>"; wrapsLines = 1; };
 		F5F79A830212038E01E152CA /* MyKiaraFamilyDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyKiaraFamilyDriver.h; sourceTree = "<group>"; };
 		F5F79A840212038E01E152CA /* MyKiaraFamilyDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyKiaraFamilyDriver.m; sourceTree = "<group>"; };
-		F5F79A850212038E01E152CA /* MyPhilipsCameraDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyPhilipsCameraDriver.h; sourceTree = "<group>"; };
+		F5F79A850212038E01E152CA /* MyPhilipsCameraDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyPhilipsCameraDriver.h; sourceTree = "<group>"; wrapsLines = 1; };
 		F5F79A860212038E01E152CA /* MyPhilipsCameraDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyPhilipsCameraDriver.m; sourceTree = "<group>"; };
 		F5F79A870212038E01E152CA /* MyTimonFamilyDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyTimonFamilyDriver.h; sourceTree = "<group>"; };
 		F5F79A880212038E01E152CA /* MyTimonFamilyDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyTimonFamilyDriver.m; sourceTree = "<group>"; };
@@ -2426,7 +2426,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				COPY_PHASE_STRIP = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
