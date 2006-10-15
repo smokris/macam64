@@ -180,7 +180,8 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 
 - (BOOL) setGrabInterfacePipe
 {
-    return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
+    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:8  numAltInterfaces:8];
+//  return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
 }
 
 
@@ -481,7 +482,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x600d], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"SONIX 0x600d", @"name", NULL], 
+            @"Trust 120 Spacecam", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x6029], @"idProduct",
@@ -630,7 +631,8 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 
 - (BOOL) setGrabInterfacePipe
 {
-    return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
+    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:8  numAltInterfaces:8];
+//  return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
 }
 
 //
@@ -838,6 +840,13 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:0x60fc], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
             @"Sonix Lic 300", @"name", NULL], 
+        
+        // just guess for now, might belong somewhere else
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x60fe], @"idProduct", 
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Rainbow Color Webcam 5790P", @"name", NULL], 
         
         NULL];
 }
