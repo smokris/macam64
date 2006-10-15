@@ -33,11 +33,17 @@ pascal ComponentResult vdigMainEntry (ComponentParameters *params, Handle storag
     ProcInfoType procInfo;
 #ifdef LOG_QT_CALLS
     char selectorName[200];
+    int cid = -1;
+    if (storage != NULL) 
+    {
+        vdigGlobals globals = (vdigGlobals) storage;
+        cid = [(**globals).bridge cid];
+    }
 #ifdef EXCEPT_COMPRESS_DONE
     if (params->what!=kVDCompressDoneSelect) {
 #endif
         if(ResolveVDSelector(params->what, selectorName)) {
-            NSLog(@"QT call to vdig: %s\n",selectorName);
+            NSLog(@"QT call to vdig (%d): %s\n", cid, selectorName);
         } else {
             NSLog(@"QT call unknown selector %d\n",params->what);
         }
@@ -168,18 +174,46 @@ bool vdigLookupSelector(short what,ProcPtr* ptr,ProcInfoType* info) {
                                                   *ptr=(ComponentRoutineUPP)vdigGetMaxAuxBuffer; break;
             case kVDReleaseAsyncBuffersSelect:    *info=uppVDReleaseAsyncBuffersProcInfo;
                                                   *ptr=(ComponentRoutineUPP)vdigReleaseAsyncBuffers; break;
-//            case kVDGetPreferredImageDimensionsSelect: *info=uppVDGetPreferredImageDimensionsProcInfo;
-//                                                  *ptr=(ComponentRoutineUPP)vdigGetPreferredImageDimensions; break;
-			case kVDGetUniqueIDsSelect:				*info=uppVDGetUniqueIDsProcInfo;
-													*ptr=(ComponentRoutineUPP)vdigGetUniqueIDs; break;
-			default: ok=false; break;
+//          case kVDGetPreferredImageDimensionsSelect: *info=uppVDGetPreferredImageDimensionsProcInfo;
+//                                                *ptr=(ComponentRoutineUPP)vdigGetPreferredImageDimensions; break;
+            
+			case kVDGetDeviceNameAndFlagsSelect:    *info = uppVDGetDeviceNameAndFlagsProcInfo;
+                                                    *ptr = (ComponentRoutineUPP) vdigGetDeviceNameAndFlags; 
+                                                    break;
+            
+			case kVDCaptureStateChangingSelect:     *info = uppVDCaptureStateChangingProcInfo;
+                                                    *ptr = (ComponentRoutineUPP) vdigCaptureStateChanging; 
+                                                    break;
+            
+			case kVDGetUniqueIDsSelect:             *info = uppVDGetUniqueIDsProcInfo;
+                                                    *ptr = (ComponentRoutineUPP) vdigGetUniqueIDs; 
+                                                    break;
+            
+			case kVDSelectUniqueIDsSelect:          *info = uppVDSelectUniqueIDsProcInfo;
+                                                    *ptr = (ComponentRoutineUPP) vdigSelectUniqueIDs; 
+                                                    break;
+            
+//			case kVDCopyPreferredAudioDeviceSelect: *info = uppVDCopyPreferredAudioDeviceProcInfo;
+//                                                  *ptr = (ComponentRoutineUPP) vdigCopyPreferredAudioDevice; 
+//                                                  break;
+            
+            // also check: kComponentVersionSelect, kVDGetHueSelect, kVDGetSharpnessSelect, kVDGetBlackLevelValueSelect, kVDGetWhiteLevelValueSelect, kVDGetPLLFilterTypeSelect, kVDSetDestinationPortSelect, kVDSetPlayThruOnOffSelect
+			default: 
+                ok = false; 
+                break;
         }
         
     }
     return ok;
 }
 
-/*A note on component instances in the next fuction: We only wand one instance per component because a physical device cannot be shared easily. Apples examples recommend counting component instances to archieve this. But this is sometimes too slow. Especially Oculus shuts down a driver and opens it again immediately afterwards (don't ask me why). In some of these cases, CountComponentInstances() still counts the old, freshly closed instance. That's why I let the bridge decide if other instances exist. */
+/* A note on component instances in the next fuction: 
+   We only wand one instance per component because a physical device cannot be shared easily. 
+   Apples examples recommend counting component instances to archieve this. 
+   But this is sometimes too slow. Especially Oculus shuts down a driver and 
+   opens it again immediately afterwards (don't ask me why). In some of these 
+   cases, CountComponentInstances() still counts the old, freshly closed instance. 
+   That's why I let the bridge decide if other instances exist. */
  
 pascal ComponentResult vdigOpen(vdigGlobals storage, ComponentInstance self) {
     OSErr err;
@@ -662,19 +696,133 @@ pascal VideoDigitizerError vdigGetPreferredImageDimensions(vdigGlobals storage, 
  anyway.
  */
 
-//VDGetUniqueIDs
+#define MACAM_ARBITRARY_VALUE   421
+
+// Strangely enough, this is not defied in the QuickTime Headers!
+#define vdDontHaveThatUniqueIDErr -2212
+
+//
+// VDGetUniqueIDs
+//
 pascal VideoDigitizerError vdigGetUniqueIDs(vdigGlobals storage, UInt64* device, UInt64* input) 
 {
-	unsigned long *p; // use for both
+	unsigned long * d, * p; // use for both
 	
-	p = (unsigned long *) device; // UInt64 (or wide) to long
-	*p = 421; // first to 421; (high, just a value)
-	*(p+1) = [(**storage).bridge cid]; // usbDeviceRef, is long
-		
+	d = (unsigned long *) device; // UInt64 (or wide) to long
+	*(d+0) = MACAM_ARBITRARY_VALUE; // first to 421; (high, just a value)
+	*(d+1) = [(**storage).bridge cid]; // usbDeviceRef, is long
+    
 	p = (void *) input; // input is unused
-	*p = 0;
+	*(p+0) = 0;
 	*(p+1) = 0;
 	
-	return 0;
+#if LOG_QT_CALLS
+    printf("vdigGetUniqueIDs: device ID = %8lX %8lX   input ID = %8lX %8lX\n", *(d+0), *(d+1), *(p+0), *(p+1));
+#endif
+    
+    return 0;
 }
 
+//
+// VDSelectUniqueIDs
+//
+pascal VideoDigitizerError vdigSelectUniqueIDs(vdigGlobals storage, UInt64 * deviceID, UInt64 * inputID) 
+{
+    UInt64 temp;
+	unsigned long * p, * t = (unsigned long *) &temp;
+	
+	*(t+0) = MACAM_ARBITRARY_VALUE;
+	*(t+1) = [(**storage).bridge cid]; // usbDeviceRef (long)
+    
+    p = (unsigned long *) deviceID;
+    
+#if LOG_QT_CALLS
+    printf("vdigSelectUniqueIDs: device ID: argument = %8lX %8lX   actual = %8lX %8lX\n", *(p+0), *(p+1), *(t+0), *(t+1));
+#endif
+
+    if (p[0] != t[0] || p[1] != t[1]) 
+        return vdDontHaveThatUniqueIDErr;
+
+	*(t+0) = 0;
+	*(t+1) = 0;
+
+    p = (unsigned long *) inputID;
+
+    if (p[0] != t[0] || p[1] != t[1]) 
+        return vdDontHaveThatUniqueIDErr;
+    
+#if LOG_QT_CALLS
+    printf("vdigSelectUniqueIDs: input ID: argument = %8lX %8lX   actual = %8lX %8lX\n", *(p+0), *(p+1), *(t+0), *(t+1));
+#endif
+    
+	return noErr;
+}
+
+//
+// VDCaptureStateChanging
+//
+pascal VideoDigitizerError vdigCaptureStateChanging(vdigGlobals storage, UInt32 inStateFlags)
+{
+#if LOG_QT_CALLS
+    printf("vdigCaptureStateChanging:\n");
+    if (inStateFlags & vdFlagCaptureStarting) 
+        printf("Capture is about to start; allocate bandwidth \n");
+    if (inStateFlags & vdFlagCaptureStopping) 
+        printf("Capture is about to stop; stop queuing frames \n");
+    if (inStateFlags & vdFlagCaptureIsForPreview) 
+        printf("Capture is just to screen for preview purposes \n");
+    if (inStateFlags & vdFlagCaptureIsForRecord) 
+        printf("Capture is going to be recorded \n");
+    if (inStateFlags & vdFlagCaptureLowLatency) 
+        printf("Fresh frames are more important than delivering every frame - don't queue too much \n");
+    if (inStateFlags & vdFlagCaptureAlwaysUseTimeBase) 
+        printf("Use the timebase for every frame; don't worry about making durations uniform \n");
+    if (inStateFlags & vdFlagCaptureSetSettingsBegin) 
+        printf("A series of calls are about to be made to restore settings \n");
+    if (inStateFlags & vdFlagCaptureSetSettingsEnd) 
+        printf("Finished restoring settings; any set calls after this are from the app or UI \n");
+#endif
+    
+#if 0
+    vdFlagCaptureStarting         = (1 << 0), /* Capture is about to start; allocate bandwidth */
+    vdFlagCaptureStopping         = (1 << 1), /* Capture is about to stop; stop queuing frames*/
+    vdFlagCaptureIsForPreview     = (1 << 2), /* Capture is just to screen for preview purposes*/
+    vdFlagCaptureIsForRecord      = (1 << 3), /* Capture is going to be recorded*/
+    vdFlagCaptureLowLatency       = (1 << 4), /* Fresh frames are more important than delivering every frame - don't queue too much*/
+    vdFlagCaptureAlwaysUseTimeBase = (1 << 5), /* Use the timebase for every frame; don't worry about making durations uniform*/
+    vdFlagCaptureSetSettingsBegin = (1 << 6), /* A series of calls are about to be made to restore settings.*/
+    vdFlagCaptureSetSettingsEnd   = (1 << 7) /* Finished restoring settings; any set calls after this are from the app or UI*/
+#endif
+    
+	return noErr;
+}
+
+//
+// VDGetDeviceNameAndFlags
+//
+pascal VideoDigitizerError vdigGetDeviceNameAndFlags(vdigGlobals storage, Str255 outName, UInt32 * outNameFlags)
+{
+    short index;
+    char cstr[256], nstr[256];
+    MyBridge * bridge = (**storage).bridge;
+    
+    if (!outName) 
+        return qtParamErr;
+    
+    // Get the name
+    [bridge->central getName:cstr forID:bridge->cid];
+    
+    // Append #1, or #2 etc to the camera name to make it unique
+    index = [bridge->central indexOfCamera:bridge->driver];
+    sprintf(nstr, " #%d", index);
+    if (strlen(cstr) + strlen(nstr) < 256) 
+        strcpy(cstr + strlen(cstr), nstr);
+    else 
+        strcpy(cstr + 255 - strlen(nstr), nstr);
+    
+    CStr2PStr(cstr, outName);
+    
+    *outNameFlags = 0; // vdDeviceFlagShowInputsAsDevices | vdDeviceFlagHideDevice;
+
+	return noErr;
+}
