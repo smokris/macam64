@@ -879,7 +879,7 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
         CheckError(error, "CreateInterfaceAsyncEventSource");
         CFRunLoopAddSource(CFRunLoopGetCurrent(), cfSource, kCFRunLoopDefaultMode); // Add it to our run loop
         
-        for (i = 0; ok && (i < GENERIC_NUM_TRANSFERS); i++) // Initiate transfers
+        for (i = 0; ok && (i < grabContext.numberOfTransfers); i++) // Initiate transfers
             ok = startNextIsochRead(&grabContext, i);
     }
     
@@ -911,11 +911,13 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
 {
     BOOL ok = YES;
     
+#if VERBOSE
     if (compressionType == jpegCompression) 
     {
-        printf("JPEG compression is being used.\n");
-        printf("   decompression using method %d\n", jpegVersion);
+        printf("JPEG compression is being used, ");
+        printf("decompression using method %d\n", jpegVersion);
     }
+#endif
     
     if (compressionType == jpegCompression && jpegVersion == 1) 
     {
