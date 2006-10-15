@@ -777,6 +777,278 @@
     return ok;
 }
 
+#define MAX_ALT_INTERFACES  20
+
+//
+// Find the alt-interface that provides the most bandwidth
+//
+- (BOOL) usbMaximizeBandwidth: (short) suggestedPipe  suggestedAltInterface: (short) altRequested  numAltInterfaces: (short) maxAlt
+{
+    static BOOL firstTime = YES;
+    
+    IOReturn err;
+    BOOL ok = YES;
+    BOOL done = NO;
+    
+    int pipe = suggestedPipe;
+    int a, alt, numAltInterfaces = MAX_ALT_INTERFACES - 1;
+    int maxPacketSizeList[MAX_ALT_INTERFACES];
+    int maxPacketSizePipe[MAX_ALT_INTERFACES];
+    int maxBandWidthAlt = 0;
+    int maxBandWidthPS = -1;
+    
+    if ((!isUSBOK) || (!intf)) 
+        return NO;
+    
+    if (maxAlt < 0) // number of alt interfaces is not known
+    {
+        if (altRequested > numAltInterfaces) 
+        {
+            if (firstTime) 
+                printf("The requested alt interface is higher than the max possible! (%d > %d)\n", altRequested, numAltInterfaces);
+            
+            altRequested = -1;
+        }
+        
+        if (altRequested < 0) // no specific interface is requested
+        {
+            if (firstTime) 
+            {
+                printf("Neither the total number of alt interfaces or a suggestion given, \n");
+                printf(" results may be unpredictable on some verssions of Mac OS X (esp. before 10.4)\n");
+            }
+        }
+        else 
+        {
+            numAltInterfaces = altRequested; // safest to set this to be the max
+        }
+    }
+    else 
+    {
+        if (altRequested > maxAlt) 
+        {
+            if (firstTime) 
+                printf("The requested alt interface is higher than the max specified! (%d > %d)\n", altRequested, maxAlt);
+        }
+        
+        if (maxAlt > numAltInterfaces) 
+        {
+            if (firstTime) 
+                printf("Too many alt interfaces! (%d) Need to adjust constant MAX_ALT_INTERFACES and recompile!\n", maxAlt);
+        }
+        else 
+            numAltInterfaces = maxAlt;
+    }
+    
+    for (alt = 0; alt <= numAltInterfaces; alt++) 
+    {
+#if DEBUG
+        printf("Trying alt %d, ", alt);
+#endif
+        err = (*intf)->SetAlternateInterface(intf, alt);
+#if DEBUG
+        printf("return is %d\n", err);
+#endif
+        if (err != kIOReturnSuccess) 
+        {
+            numAltInterfaces = alt - 1;
+        }
+        else 
+        {
+#if VERBOSE
+            if (firstTime) 
+                printf("alt interface %d:\n", alt);
+#endif
+            
+            for (pipe = 0; pipe < 10; pipe++) 
+            {
+                UInt8				direction, number, transferType, interval;
+                UInt16				maxPacketSize;
+                
+                err = (*intf)->GetPipeProperties(intf, pipe, &direction, &number, &transferType, &maxPacketSize, &interval);
+                
+                if (err != kIOReturnSuccess) 
+                {
+                    break;
+                }
+                else 
+                {
+#if VERBOSE
+                    char * dir = "???";
+                    char * type = "???";
+                    
+                    switch (direction) 
+                    {
+                        case kUSBOut:
+                            dir = "OUT";
+                            break;
+                            
+                        case kUSBIn:
+                            dir = "IN ";
+                            break;
+                            
+                        case kUSBNone:
+                            dir = "NONE";
+                            break;
+                            
+                        case kUSBAnyDirn:
+                        default:
+                            dir = "ANY";
+                            break;
+                    }
+                        
+                    switch (transferType) 
+                    {
+                        case kUSBControl:
+                            type = "CONTROL";
+                            break;
+                            
+                        case kUSBIsoc:
+                            type = "ISOC";
+                            break;
+                            
+                        case kUSBBulk:
+                            type = "BULK";
+                            break;
+                            
+                        case kUSBInterrupt:
+                            type = "INTERRUPT";
+                            break;
+                            
+                        case kUSBAnyType:
+                        default:
+                            type = "ANY";
+                            break;
+                    }
+                    
+                    if (firstTime) 
+                        printf("  pipe %d: %s %d %s %d %d\n", pipe, dir, 
+                               number, type, maxPacketSize, interval);
+#endif
+                    
+                    if (direction == kUSBIn && transferType == kUSBIsoc) 
+                    {
+                        maxPacketSizeList[alt] = maxPacketSize;
+                        maxPacketSizePipe[alt] = pipe;
+                        
+                        if (maxBandWidthPS < maxPacketSize) 
+                        {
+                            maxBandWidthPS = maxPacketSize;
+                            maxBandWidthAlt = alt;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    // find out about device, speed, alt-interfaces
+// 197 IOReturn (*GetIOUSBLibVersion)(void *self, NumVersion *ioUSBLibVersion, NumVersion *usbFamilyVersion);
+
+// all IOReturn (*GetLocationID)(void *self, UInt32 *locationID);
+// all IOReturn (*GetDevice)(void *self, io_service_t *device);
+    
+// all IOReturn (*GetDeviceAddress)(void *device, USBDeviceAddress *addr);
+// all IOReturn (*GetDeviceSpeed)(void *device, UInt8 *devSpeed);
+// all IOReturn (*GetLocationID)(void *device, UInt32 *locationID);
+// all IOReturn (*GetConfigurationDescriptorPtr)(void *device, UInt8 configIndex, IOUSBConfigurationDescriptorPtr *desc);
+
+// 182 IOReturn (*USBDeviceSuspend)(void *device, Boolean suspend);
+// 197 IOReturn (*GetIOUSBLibVersion)(void *device, NumVersion *ioUSBLibVersion, NumVersion *usbFamilyVersion);
+
+// 190 IOReturn (*SetPipePolicy)(void *self, UInt8 pipeRef, UInt16 maxPacketSize, UInt8 maxInterval);
+// 190 IOReturn (*GetBandwidthAvailable)(void *self, UInt32 *bandwidth);
+// 190 IOReturn (*GetEndpointProperties)(void *self, UInt8 alternateSetting, UInt8 endpointNumber, UInt8 direction, UInt8 *transferType, UInt16 *maxPacketSize, UInt8 *interval);
+    
+    // find out about bus
+    // find out about other devices hooked up to the bus
+    
+    firstTime = NO;
+    
+    // try to get the requested alt-interface
+    // if none suggested (-1), then maximize
+    // use the alt with maximum packet size, set the altRequested to this
+    
+    pipe = suggestedPipe;
+    alt = (altRequested >= 0) ? altRequested : maxBandWidthAlt;
+    maxBandWidthPS = maxPacketSizeList[alt];
+    
+    while (ok && !done) 
+    {
+#if VERBOSE
+        printf("Setting alt to %d, ", alt);
+#endif
+        err = (*intf)->SetAlternateInterface(intf, alt);
+#if VERBOSE
+        printf("return is %d\n", err);
+#endif
+        CheckError(err, "usbMaximizeBandwidth:SetAlternateInterface");
+        
+        if (!err && pipe == 0) 
+            done = YES;
+        
+        if (!err) 
+        {
+#if VERBOSE
+            printf("Checking pipe status, ");
+#endif
+            err = (*intf)->GetPipeStatus(intf, pipe);
+#if VERBOSE
+            printf("return is %d\n", err);
+#endif
+            CheckError(err, "usbMaximizeBandwidth:getPipeStatus");
+        
+            if (!err) 
+                done = YES;
+        }
+        
+        if (err) 
+        {
+            int nextAlt = -1;
+            
+            // find the next one
+            
+            for (a = 0; a <= numAltInterfaces; a++) 
+                if (maxPacketSizeList[a] < maxBandWidthPS) 
+                {
+                    if (nextAlt < 0)
+                        nextAlt = a;
+                    else if (maxPacketSizeList[a] > maxPacketSizeList[nextAlt]) 
+                        nextAlt = a;
+                }
+            
+            if (nextAlt < 0) 
+            {
+                ok = NO;
+                printf("usbMaximizeBandwidth: no more interfaces to try!\n");
+            }
+            
+            if (maxPacketSizeList[nextAlt] == 0) 
+            {
+                ok = NO;
+                printf("usbMaximizeBandwidth: last interface has zero packet-size!\n");
+            }
+            
+            alt = nextAlt;
+        }
+    }
+    
+    // get the requestedPacketSize
+    
+    // now loop
+    //   set the alt
+    //   get the status
+    //   if pipe is OK or no more choices, then end loop
+    //   if pipe is not OK, then find the alt with the next lower packet-size
+    //   if pipe is zero (and not requested) print some error message
+    //  end loop
+    
+    // if none available but 0, (and not requested) then return NO
+    // if anything other than 0 is available, return YES
+    
+    return ok;
+}
+
 
 // for most (99%) the first one is correct
 - (io_service_t) findInterface: (io_iterator_t) iterator

@@ -297,6 +297,8 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (BOOL) usbWriteVICmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len;//Sends a OUT|VENDOR|INTERFACE command 
 
 - (BOOL) usbSetAltInterfaceTo:(short)alt testPipe:(short)pipe;	//Sets the alt interface and optionally tests if a pipe exists
+- (BOOL) usbMaximizeBandwidth: (short) pipe  suggestedAltInterface: (short) suggested  numAltInterfaces: (short) max;
+
 - (CameraError) usbConnectToCam:(UInt32)usbLocationId configIdx:(short)configIdx;
     //Standard open dev, reset device, set config (if>=0), open intf 
 - (void) usbCloseConnection;				//Close and release intf and dev
