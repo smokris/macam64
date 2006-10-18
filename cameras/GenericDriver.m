@@ -846,14 +846,14 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     ChangeMyThreadPriority(10);	// We need to update the isoch read in time, so timing is important for us
     
     // Try to get as much bandwidth as possible somehow?
-    
+/*    
     if (![self setGrabInterfacePipe]) 
     {
         if (grabContext.contextError == CameraErrorOK) 
             grabContext.contextError = CameraErrorNoBandwidth; // Probably means not enough bandwidth
         ok = NO;
     }
-    
+*/    
     // Start the stream
     
     if (ok) 
@@ -1050,9 +1050,17 @@ CGColorSpaceRef CreateSystemColorSpace ()
     CameraError error = CameraErrorOK;
     grabbingThreadRunning = NO;
     
+    // Try to get as much bandwidth as possible somehow?
+    
+    if (shouldBeGrabbing && ![self setGrabInterfacePipe]) 
+    {
+        error = CameraErrorNoBandwidth; // Probably means not enough bandwidth
+        shouldBeGrabbing = NO;
+    }
+    
     // Initialize
     
-    if (![self setupGrabContext] || ![self setupDecoding]) 
+    if (shouldBeGrabbing && (![self setupGrabContext] || ![self setupDecoding])) 
     {
         error = CameraErrorNoMem;
         shouldBeGrabbing = NO;
