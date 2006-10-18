@@ -59,6 +59,10 @@ struct code_table
     IOUSBInterfaceInterface** intf;     //An interface to the interface
     int interfaceID;                    //Store the interface version so we know what functions are available
     
+    char * descriptor;
+    int altInterfacesAvailable;
+    int currentMaxPacketSize;
+    
 //Camera settings. 
     float brightness;
     float contrast;
@@ -76,7 +80,7 @@ struct code_table
     short fps;
     short compression;			//0 = uncompressed, higher means more compressed
 
-    //Driver states. Sorry, this has changed - the old version was too sensible to racing conditions. Everything except atomic read access has to be mutexed with stateLock (there is an exception: drivers may unset shouldBeGrabbing from within their internal grabbing and decoding since it's for sure that isGrabbing is set in that situation)
+    //Driver states. Sorry, this has changed - the old version was too sensitive to racing conditions. Everything except atomic read access has to be mutexed with stateLock (there is an exception: drivers may unset shouldBeGrabbing from within their internal grabbing and decoding since it's for sure that isGrabbing is set in that situation)
         
     BOOL isStarted;		//If the driver has been started up
     BOOL isGrabbing;		//If the driver is in grabbing state
