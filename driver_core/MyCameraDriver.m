@@ -58,6 +58,11 @@
     central=c;
     dev=NULL;
     intf=NULL;
+    
+    descriptor = NULL;
+    altInterfacesAvailable = -1;
+    currentMaxPacketSize = -1;
+    
     brightness=0.0f;
     contrast=0.0f;
     saturation=0.0f;
@@ -970,13 +975,18 @@
     // use the alt with maximum packet size, set the altRequested to this
     
     pipe = suggestedPipe;
-    alt = (altRequested >= 0) ? altRequested : maxBandWidthAlt;
-    maxBandWidthPS = maxPacketSizeList[alt];
+    
+    if ((altRequested >= 0) && (maxPacketSizeList[altRequested] > 0)) 
+        alt = altRequested;
+    else // none requested
+        alt = maxBandWidthAlt;
     
     while (ok && !done) 
     {
+        maxBandWidthPS = maxPacketSizeList[alt];
+        
 #if VERBOSE
-        printf("Setting alt to %d, ", alt);
+        printf("Setting alt to %d, (with packet-size = %d), ", alt, maxBandWidthPS);
 #endif
         err = (*intf)->SetAlternateInterface(intf, alt);
 #if VERBOSE
@@ -997,18 +1007,85 @@
             printf("return is %d\n", err);
 #endif
             CheckError(err, "usbMaximizeBandwidth:getPipeStatus");
+        }
         
-            if (!err) 
+        // Must call GetPipeProperties() to really find out the status of the pipe
+        
+        if (!err) 
+        {
+            UInt8 direction, number, transferType, interval;
+            UInt16 maxPacketSize;
+            
+#if VERBOSE
+            char * dir = "???";
+            char * type = "???";
+            
+            printf("Checking pipe properties, ");
+#endif
+            err = (*intf)->GetPipeProperties(intf, pipe, &direction, &number, &transferType, &maxPacketSize, &interval);
+#if VERBOSE
+            printf("return is %d\n", err);
+            
+            switch (direction) 
+            {
+                case kUSBOut:
+                    dir = "OUT";
+                    break;
+                    
+                case kUSBIn:
+                    dir = "IN ";
+                    break;
+                    
+                case kUSBNone:
+                    dir = "NONE";
+                    break;
+                    
+                case kUSBAnyDirn:
+                default:
+                    dir = "ANY";
+                    break;
+            }
+            
+            switch (transferType) 
+            {
+                case kUSBControl:
+                    type = "CONTROL";
+                    break;
+                    
+                case kUSBIsoc:
+                    type = "ISOC";
+                    break;
+                    
+                case kUSBBulk:
+                    type = "BULK";
+                    break;
+                    
+                case kUSBInterrupt:
+                    type = "INTERRUPT";
+                    break;
+                    
+                case kUSBAnyType:
+                default:
+                    type = "ANY";
+                    break;
+            }
+            
+            printf("  pipe %d: %s %d %s %d %d\n", pipe, dir, number, type, maxPacketSize, interval);
+#endif
+            CheckError(err, "usbMaximizeBandwidth:GetPipeProperties");
+            
+            if (!err && maxPacketSize > 0) 
                 done = YES;
         }
         
-        if (err) 
+        if (err || !done) 
         {
             int nextAlt = -1;
             
             // find the next one
             
             for (a = 0; a <= numAltInterfaces; a++) 
+            {
                 if (maxPacketSizeList[a] < maxBandWidthPS) 
                 {
                     if (nextAlt < 0)
@@ -1016,6 +1093,10 @@
                     else if (maxPacketSizeList[a] > maxPacketSizeList[nextAlt]) 
                         nextAlt = a;
                 }
+#if VERBOSE
+                printf("a = %d, nextAlt = %d, PS[a] = %d\n", a, nextAlt, maxPacketSizeList[a]);
+#endif
+            }
             
             if (nextAlt < 0) 
             {
@@ -1032,6 +1113,8 @@
             alt = nextAlt;
         }
     }
+    
+    currentMaxPacketSize = maxBandWidthPS;
     
     // get the requestedPacketSize
     
@@ -1212,7 +1295,7 @@
     IOObjectRelease(usbInterfaceRef);
     
 //get access to the interface interface
-#if 0
+#if 1
     interfaceID = 220;
     err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID220), (LPVOID)&intf);
     
@@ -1250,6 +1333,10 @@
     CheckError(err,"usbConnectToCam-QueryInterface2");
     assert(intf);
     (*iodev)->Release(iodev);					// done with this
+    
+#if VERBOSE
+    printf("USB Interface ID = %d\n", interfaceID);
+#endif
     
 //open interface
     err = (*intf)->USBInterfaceOpen(intf);
@@ -1299,23 +1386,28 @@
 // Depends on whether it is high-speed device on a high-speed hub
 - (int) usbGetIsocFrameSize
 {
-#if 0
     IOReturn err;
+    int result, defaultSize = 1023;
     UInt32 microsecondsInFrame = kUSBFullSpeedMicrosecondsInFrame;
     
     if (interfaceID >= 197) 
     {
         err = (*(IOUSBInterfaceInterface197 **) intf)->GetFrameListTime(intf, &microsecondsInFrame);
-        CheckError(err,"usbGetIsocFrameSize");
+        CheckError(err,"usbGetIsocFrameSize:GetFrameListTime");
     }
     
     if (microsecondsInFrame == kUSBHighSpeedMicrosecondsInFrame) 
-        return kUSBMaxHSIsocEndpointReqCount;
+        defaultSize = kUSBMaxHSIsocEndpointReqCount;
+    else 
+        defaultSize = kUSBMaxFSIsocEndpointReqCount;
     
-    return kUSBMaxFSIsocEndpointReqCount;
-#else 
-    return 1023;
+    result = (currentMaxPacketSize < 0) ? defaultSize : currentMaxPacketSize;
+    
+#if VERBOSE
+    printf("usbGetIsocFrameSize returning %d\n", result);
 #endif
+    
+    return result;
 }
 
 //Other tool functions
