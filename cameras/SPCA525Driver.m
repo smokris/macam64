@@ -179,16 +179,11 @@
 //
 - (BOOL) setGrabInterfacePipe
 {
-    return [self usbSetAltInterfaceTo:11 testPipe:[self getGrabbingPipe]];
+//    return [self usbSetAltInterfaceTo:11 testPipe:[self getGrabbingPipe]];
+
+    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:11];
 }
 
-//
-// USB2 allows much larger transfers
-//
-- (int) usbGetIsocFrameSize
-{
-    return 3072;
-}
 
 // Values for bmHeaderInfo (Video and Still Image Payload Headers, 2.4.3.3)
 
