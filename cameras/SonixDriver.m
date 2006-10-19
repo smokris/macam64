@@ -51,6 +51,7 @@ enum
     Sn535,
     Lic300,
     PhilipsSPC700NC,
+    Rainbow5790P,
 };
 
 
@@ -841,13 +842,6 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
             @"Sonix Lic 300", @"name", NULL], 
         
-        // just guess for now, might belong somewhere else
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x60fe], @"idProduct", 
-            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"Rainbow Color Webcam 5790P", @"name", NULL], 
-        
         NULL];
 }
 
@@ -902,6 +896,40 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     spca50x->i2c_ctrl_reg = 0x81;
     spca50x->i2c_base = 0x5d;
+    spca50x->i2c_trigger_on_write = 0;
+    
+	return self;
+}
+
+@end
+
+
+@implementation SN9CxxxDriverVariant7
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x60fe], @"idProduct", 
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Rainbow Color Webcam 5790P", @"name", NULL], 
+        
+        NULL];
+}
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->desc = Rainbow5790P;
+    spca50x->sensor = SENSOR_OV7630;
+    spca50x->customid = SN9C105;
+    
+    spca50x->i2c_ctrl_reg = 0x81;
+    spca50x->i2c_base = 0x21;
     spca50x->i2c_trigger_on_write = 0;
     
 	return self;
