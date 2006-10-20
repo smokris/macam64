@@ -22,7 +22,10 @@
 
 #include "USB_VendorProductIDs.h"
 
+#include "pwc_files/pwc-dec23.h"
+#include "pwc_files/pwc-kiara.h"
 
+/*
 typedef struct _ToUCamFormatEntry {
     CameraResolution res;
     short frameRate;
@@ -42,7 +45,7 @@ static ToUCamFormatEntry formats[]={
 };
 
 static long numFormats=7;
-
+*/
 
 /*
 Here is a table of sniffed data. I have no idea what this means
@@ -390,21 +393,173 @@ Here is a table of sniffed data. I have no idea what this means
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr {	//Returns if this combination is supported
     short i=0;
     BOOL found=NO;
+    /*
     while ((i<numFormats)&&(!found)) {
         if ((formats[i].res==r)&&(formats[i].frameRate==fr)) found=YES;
         else i++;
     }
+     */
+	short res=-1;
+	short frameRate=-1;
+    
+	switch (r)
+	{
+        case ResolutionSQSIF:	//sqsif = 128 x  96
+            res=PSZ_SQCIF;
+            break;
+        case ResolutionQSIF:  	//qsif  = 160 x 120
+            res=PSZ_QSIF;
+            break;
+        case ResolutionQCIF: 	//qcif  = 176 x 144
+            res=PSZ_QCIF;
+            break;
+        case ResolutionSIF:   	//sif   = 320 x 240
+            res=PSZ_SIF;
+            break;
+        case ResolutionCIF:   	//cif   = 352 x 288
+            res=PSZ_CIF;
+            break;
+        case ResolutionVGA:   	//vga   = 640 x 480
+            res=PSZ_VGA;
+            break;
+        case ResolutionSVGA: 	//svga  = 800 x 600
+            break;
+        case ResolutionInvalid:
+            break;
+	}
+	
+	if (fr >0 && fr<=5)
+	{
+		frameRate=0;
+	}
+	else if (fr >5 && fr<=10)
+	{
+		frameRate=1;
+	}
+	else if (fr >10 && fr<=15)
+	{
+		frameRate=2;
+	}
+	else if (fr >15 && fr<=20)
+	{
+		frameRate=3;
+	}
+	else if (fr >20 && fr<=25)
+	{
+		frameRate=4;
+	}
+	else if (fr >25 && fr<=30)
+	{
+		frameRate=5;
+	}
+	
+	if (res>=0 && frameRate>=0)
+	{
+		//scans the compressions 
+		for (i=0; i<4; i++)
+		{
+			if (Kiara_table[res][frameRate][i].alternate !=0)
+			{
+				found=YES;
+				break;
+			}
+		}
+	}
+	
     return found;
 }
 
 - (void) setResolution:(CameraResolution)r fps:(short)fr {	//Set a resolution and frame rate.
     short i=0;
     BOOL found=NO;
+	short res=-1;
+	short frameRate=-1;
+	short width=-1, height=-1;
+    
     [super setResolution:r fps:fr];	//Update resolution and fps if state and format is ok
+/*    
     while ((i<numFormats)&&(!found)) {
         if ((formats[i].res==resolution)&&(formats[i].frameRate==fps)) found=YES;
         else i++;
     }
+*/
+	switch (r)
+	{
+        case ResolutionSQSIF:	//sqsif = 128 x  96
+            res=PSZ_SQCIF;
+            width=128;
+            height=96;
+            break;
+        case ResolutionQSIF:  	//qsif  = 160 x 120
+            res=PSZ_QSIF;
+            width=160;
+            height=120;
+            break;
+        case ResolutionQCIF: 	//qcif  = 176 x 144
+            width=176;
+            height=144;
+            res=PSZ_QCIF;
+            break;
+        case ResolutionSIF:   	//sif   = 320 x 240
+            width=320;
+            height=240;
+            res=PSZ_SIF;
+            break;
+        case ResolutionCIF:   	//cif   = 352 x 288
+            res=PSZ_CIF;
+            width=352;
+            height=288;
+            break;
+        case ResolutionVGA:   	//vga   = 640 x 480
+            res=PSZ_VGA;
+            width=640;
+            height=480;
+            break;
+        case ResolutionSVGA: 	//svga  = 800 x 600
+            width=800;
+            height=600;
+            break;
+        case ResolutionInvalid:
+            break;
+	}
+	
+	if (fr >0 && fr<=5)
+	{
+		frameRate=0;
+	}
+	else if (fr >5 && fr<=10)
+	{
+		frameRate=1;
+	}
+	else if (fr >10 && fr<=15)
+	{
+		frameRate=2;
+	}
+	else if (fr >15 && fr<=20)
+	{
+		frameRate=3;
+	}
+	else if (fr >20 && fr<=25)
+	{
+		frameRate=4;
+	}
+	else if (fr >25 && fr<=30)
+	{
+		frameRate=5;
+	}
+	
+	if (res>=0 && frameRate>=0)
+	{
+		//scans the compressions 
+		for (i=0; i<4; i++)
+		{
+			if (Kiara_table[res][frameRate][i].alternate !=0)
+			{
+				found=YES;
+				break;
+			}
+		}
+	}
     if (!found) {
 #ifdef VERBOSE
         NSLog(@"MyKiaraFamilyDriver:setResolution: format not found");
@@ -412,9 +567,37 @@ Here is a table of sniffed data. I have no idea what this means
     }
     [stateLock lock];
     if (!isGrabbing) {
+/*        
         [self usbWriteCmdWithBRequest:GRP_SET_STREAM wValue:SEL_FORMAT wIndex:INTF_VIDEO buf:formats[i].camInit len:12];
         usbFrameBytes=formats[i].usbFrameBytes;
         usbAltInterface=formats[i].altInterface;
+*/        
+        UInt16 id;
+//      long err=
+            (*intf)->GetDeviceProduct(intf, &id);
+        
+        // [self usbWriteCmdWithBRequest:GRP_SET_STREAM wValue:SEL_FORMAT wIndex:INTF_VIDEO buf:Kiara_table[res][frameRate][i].mode len:12];
+        usbFrameBytes=Kiara_table[res][frameRate][i].packetsize;
+        usbAltInterface=Kiara_table[res][frameRate][i].alternate;
+		
+		if( NULL == videoDevice)
+		{
+			MALLOC(videoDevice, struct pwc_device*, sizeof(struct pwc_device), "");
+			memset(videoDevice, 0,  sizeof(struct pwc_device));
+		}
+		videoDevice->type=id;
+		pwc_construct(videoDevice);
+		pwc_free_buffers(videoDevice);
+		pwc_allocate_buffers(videoDevice);
+		videoDevice->cmd_len=12;
+		memcpy(videoDevice->cmd_buf, Kiara_table[res][frameRate][i].mode, videoDevice->cmd_len);
+		if (0 == pwc_dec23_init(videoDevice, id, videoDevice->cmd_buf))
+		{
+			if (0 == pwc_set_video_mode(videoDevice, width, height, fr, compression, 0))
+			{
+				[self usbWriteCmdWithBRequest:GRP_SET_STREAM wValue:SEL_FORMAT wIndex:INTF_VIDEO buf:videoDevice->cmd_buf len:videoDevice->cmd_len];
+			}
+		}
     }
     [stateLock unlock];
 }
@@ -447,6 +630,62 @@ Here is a table of sniffed data. I have no idea what this means
  buf[1] - "off" value
  
  */
+
+- (void) dealloc { 
+	if (videoDevice != NULL)
+	{
+		pwc_free_buffers(videoDevice);
+		FREE(videoDevice,"");
+	}
+    [super dealloc];
+}
+
+- (short) maxCompression {
+    return 3;
+}
+
+- (BOOL) canSetWhiteBalanceMode {
+    return isStarted;
+}
+
+- (BOOL) canSetWhiteBalanceModeTo:(WhiteBalanceMode)newMode {
+    BOOL ok=YES;
+    switch (newMode) {
+        case WhiteBalanceIndoor:
+        case WhiteBalanceOutdoor:
+        case WhiteBalanceAutomatic:
+            break;
+		case WhiteBalanceLinear:
+        default:
+            ok=NO;
+            break;
+    }
+    return ok;
+}
+
+- (void) setWhiteBalanceMode:(WhiteBalanceMode)newMode{
+    UInt8 b=-1;
+    if (![self canSetWhiteBalanceMode]) return;
+    /*  * 00: indoor (incandescant lighting)
+        * 01: outdoor (sunlight)
+        * 02: fluorescent lighting
+        * 03: manual
+        * 04: auto*/
+    switch (newMode) {
+        case WhiteBalanceIndoor:
+			b=00;
+        case WhiteBalanceOutdoor:
+			b=01;
+        case WhiteBalanceAutomatic:
+			b=04;
+            break;
+        default:
+            break;
+    }
+    if (b != (UInt8) (-1))
+        [self usbWriteCmdWithBRequest:GRP_SET_CHROMA wValue:WB_MODE_FORMATTER wIndex:INTF_CONTROL buf:&b len:1];
+}
+
 @end
 
 

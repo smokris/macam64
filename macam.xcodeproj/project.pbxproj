@@ -34,6 +34,39 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
+		F52514160AE73B2B006217A0 /* pwc-dec23.h in Headers */ = {isa = PBXBuildFile; fileRef = F525140B0AE73B2B006217A0 /* pwc-dec23.h */; };
+		F52514180AE73B2B006217A0 /* pwc-ioctl.h in Headers */ = {isa = PBXBuildFile; fileRef = F525140D0AE73B2B006217A0 /* pwc-ioctl.h */; };
+		F52514190AE73B2B006217A0 /* pwc-kiara.h in Headers */ = {isa = PBXBuildFile; fileRef = F525140E0AE73B2B006217A0 /* pwc-kiara.h */; };
+		F525141C0AE73B2B006217A0 /* pwc-timon.h in Headers */ = {isa = PBXBuildFile; fileRef = F52514110AE73B2B006217A0 /* pwc-timon.h */; };
+		F525141E0AE73B2B006217A0 /* pwc-uncompress.h in Headers */ = {isa = PBXBuildFile; fileRef = F52514130AE73B2B006217A0 /* pwc-uncompress.h */; };
+		F52514200AE73B2B006217A0 /* pwc.h in Headers */ = {isa = PBXBuildFile; fileRef = F52514150AE73B2B006217A0 /* pwc.h */; };
+		F52514210AE73B2B006217A0 /* pwc-dec23.h in Headers */ = {isa = PBXBuildFile; fileRef = F525140B0AE73B2B006217A0 /* pwc-dec23.h */; };
+		F52514230AE73B2B006217A0 /* pwc-ioctl.h in Headers */ = {isa = PBXBuildFile; fileRef = F525140D0AE73B2B006217A0 /* pwc-ioctl.h */; };
+		F52514240AE73B2B006217A0 /* pwc-kiara.h in Headers */ = {isa = PBXBuildFile; fileRef = F525140E0AE73B2B006217A0 /* pwc-kiara.h */; };
+		F52514270AE73B2B006217A0 /* pwc-timon.h in Headers */ = {isa = PBXBuildFile; fileRef = F52514110AE73B2B006217A0 /* pwc-timon.h */; };
+		F52514290AE73B2B006217A0 /* pwc-uncompress.h in Headers */ = {isa = PBXBuildFile; fileRef = F52514130AE73B2B006217A0 /* pwc-uncompress.h */; };
+		F525142B0AE73B2B006217A0 /* pwc.h in Headers */ = {isa = PBXBuildFile; fileRef = F52514150AE73B2B006217A0 /* pwc.h */; };
+		F525142C0AE73B2B006217A0 /* pwc-dec23.h in Headers */ = {isa = PBXBuildFile; fileRef = F525140B0AE73B2B006217A0 /* pwc-dec23.h */; };
+		F525142E0AE73B2B006217A0 /* pwc-ioctl.h in Headers */ = {isa = PBXBuildFile; fileRef = F525140D0AE73B2B006217A0 /* pwc-ioctl.h */; };
+		F525142F0AE73B2B006217A0 /* pwc-kiara.h in Headers */ = {isa = PBXBuildFile; fileRef = F525140E0AE73B2B006217A0 /* pwc-kiara.h */; };
+		F52514320AE73B2B006217A0 /* pwc-timon.h in Headers */ = {isa = PBXBuildFile; fileRef = F52514110AE73B2B006217A0 /* pwc-timon.h */; };
+		F52514340AE73B2B006217A0 /* pwc-uncompress.h in Headers */ = {isa = PBXBuildFile; fileRef = F52514130AE73B2B006217A0 /* pwc-uncompress.h */; };
+		F52514360AE73B2B006217A0 /* pwc.h in Headers */ = {isa = PBXBuildFile; fileRef = F52514150AE73B2B006217A0 /* pwc.h */; };
+		F52514400AE740E2006217A0 /* pwc-dec23.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143B0AE740E2006217A0 /* pwc-dec23.c */; };
+		F52514410AE740E2006217A0 /* pwc-kiara.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143C0AE740E2006217A0 /* pwc-kiara.c */; };
+		F52514420AE740E2006217A0 /* pwc-misc.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143D0AE740E2006217A0 /* pwc-misc.c */; };
+		F52514430AE740E2006217A0 /* pwc-timon.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143E0AE740E2006217A0 /* pwc-timon.c */; };
+		F52514440AE740E2006217A0 /* pwc-uncompress.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143F0AE740E2006217A0 /* pwc-uncompress.c */; };
+		F52514450AE740E2006217A0 /* pwc-dec23.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143B0AE740E2006217A0 /* pwc-dec23.c */; };
+		F52514460AE740E2006217A0 /* pwc-kiara.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143C0AE740E2006217A0 /* pwc-kiara.c */; };
+		F52514470AE740E2006217A0 /* pwc-misc.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143D0AE740E2006217A0 /* pwc-misc.c */; };
+		F52514480AE740E2006217A0 /* pwc-timon.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143E0AE740E2006217A0 /* pwc-timon.c */; };
+		F52514490AE740E2006217A0 /* pwc-uncompress.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143F0AE740E2006217A0 /* pwc-uncompress.c */; };
+		F525144A0AE740E2006217A0 /* pwc-dec23.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143B0AE740E2006217A0 /* pwc-dec23.c */; };
+		F525144B0AE740E2006217A0 /* pwc-kiara.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143C0AE740E2006217A0 /* pwc-kiara.c */; };
+		F525144C0AE740E2006217A0 /* pwc-misc.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143D0AE740E2006217A0 /* pwc-misc.c */; };
+		F525144D0AE740E2006217A0 /* pwc-timon.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143E0AE740E2006217A0 /* pwc-timon.c */; };
+		F525144E0AE740E2006217A0 /* pwc-uncompress.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143F0AE740E2006217A0 /* pwc-uncompress.c */; };
 		F535EC0A08DB3970007943DA /* GlobalDefs.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A920212038E01E152CA /* GlobalDefs.h */; };
 		F535EC0B08DB3970007943DA /* MiniGraphicsTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A940212038E01E152CA /* MiniGraphicsTools.h */; };
 		F535EC0C08DB3970007943DA /* MiscTools.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F79A960212038E01E152CA /* MiscTools.h */; };
@@ -673,6 +706,17 @@
 		F51EEE580284B73A01B888F7 /* MyCameraInspector.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyCameraInspector.m; sourceTree = "<group>"; };
 		F51EEE5D0284BC9601B888F7 /* DefaultCameraInspector.nib */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; path = DefaultCameraInspector.nib; sourceTree = "<group>"; };
 		F522580908725639002023A4 /* USB_VendorProductIDs.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = USB_VendorProductIDs.h; sourceTree = "<group>"; };
+		F525140B0AE73B2B006217A0 /* pwc-dec23.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "pwc-dec23.h"; path = "pwc_files/pwc-dec23.h"; sourceTree = "<group>"; };
+		F525140D0AE73B2B006217A0 /* pwc-ioctl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "pwc-ioctl.h"; path = "pwc_files/pwc-ioctl.h"; sourceTree = "<group>"; };
+		F525140E0AE73B2B006217A0 /* pwc-kiara.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "pwc-kiara.h"; path = "pwc_files/pwc-kiara.h"; sourceTree = "<group>"; };
+		F52514110AE73B2B006217A0 /* pwc-timon.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "pwc-timon.h"; path = "pwc_files/pwc-timon.h"; sourceTree = "<group>"; };
+		F52514130AE73B2B006217A0 /* pwc-uncompress.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = "pwc-uncompress.h"; path = "pwc_files/pwc-uncompress.h"; sourceTree = "<group>"; };
+		F52514150AE73B2B006217A0 /* pwc.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = pwc.h; path = pwc_files/pwc.h; sourceTree = "<group>"; };
+		F525143B0AE740E2006217A0 /* pwc-dec23.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "pwc-dec23.c"; path = "pwc_files/pwc-dec23.c"; sourceTree = "<group>"; };
+		F525143C0AE740E2006217A0 /* pwc-kiara.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "pwc-kiara.c"; path = "pwc_files/pwc-kiara.c"; sourceTree = "<group>"; };
+		F525143D0AE740E2006217A0 /* pwc-misc.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "pwc-misc.c"; path = "pwc_files/pwc-misc.c"; sourceTree = "<group>"; };
+		F525143E0AE740E2006217A0 /* pwc-timon.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "pwc-timon.c"; path = "pwc_files/pwc-timon.c"; sourceTree = "<group>"; };
+		F525143F0AE740E2006217A0 /* pwc-uncompress.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "pwc-uncompress.c"; path = "pwc_files/pwc-uncompress.c"; sourceTree = "<group>"; };
 		F5285DAB0248103E01AEB99D /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/DriverLocalizable.strings; sourceTree = "<group>"; };
 		F5285DAE0248104601AEB99D /* German */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/DriverLocalizable.strings; sourceTree = "<group>"; };
 		F52D2ED1025A7383016EC628 /* English */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = folder; name = English; path = English.lproj/WebcamHelp; sourceTree = "<group>"; };
@@ -1044,11 +1088,22 @@
 			path = images;
 			sourceTree = "<group>";
 		};
-		F51B953E0AB9DB0400179B4C /* Philips */ = {
+		F51B953E0AB9DB0400179B4C /* pwc_files */ = {
 			isa = PBXGroup;
 			children = (
+				F525143B0AE740E2006217A0 /* pwc-dec23.c */,
+				F525143C0AE740E2006217A0 /* pwc-kiara.c */,
+				F525143D0AE740E2006217A0 /* pwc-misc.c */,
+				F525143E0AE740E2006217A0 /* pwc-timon.c */,
+				F525143F0AE740E2006217A0 /* pwc-uncompress.c */,
+				F525140B0AE73B2B006217A0 /* pwc-dec23.h */,
+				F525140D0AE73B2B006217A0 /* pwc-ioctl.h */,
+				F525140E0AE73B2B006217A0 /* pwc-kiara.h */,
+				F52514110AE73B2B006217A0 /* pwc-timon.h */,
+				F52514130AE73B2B006217A0 /* pwc-uncompress.h */,
+				F52514150AE73B2B006217A0 /* pwc.h */,
 			);
-			name = Philips;
+			name = pwc_files;
 			sourceTree = "<group>";
 		};
 		F55A58C002572BFE014CA2B1 /* stv600_sensors */ = {
@@ -1211,7 +1266,7 @@
 		F5F79A800212038E01E152CA /* cameras */ = {
 			isa = PBXGroup;
 			children = (
-				F51B953E0AB9DB0400179B4C /* Philips */,
+				F51B953E0AB9DB0400179B4C /* pwc_files */,
 				F5F79A830212038E01E152CA /* MyKiaraFamilyDriver.h */,
 				F5F79A840212038E01E152CA /* MyKiaraFamilyDriver.m */,
 				F5F79A850212038E01E152CA /* MyPhilipsCameraDriver.h */,
@@ -1453,6 +1508,12 @@
 				F5B92A9D0A39F1E700BAF43D /* SPCA501ADriver.h in Headers */,
 				F5ED13DF0A48752A00770B6A /* LookUpTable.h in Headers */,
 				F5F5FC7E0A66B26000AC9079 /* SPCA525Driver.h in Headers */,
+				F525142C0AE73B2B006217A0 /* pwc-dec23.h in Headers */,
+				F525142E0AE73B2B006217A0 /* pwc-ioctl.h in Headers */,
+				F525142F0AE73B2B006217A0 /* pwc-kiara.h in Headers */,
+				F52514320AE73B2B006217A0 /* pwc-timon.h in Headers */,
+				F52514340AE73B2B006217A0 /* pwc-uncompress.h in Headers */,
+				F52514360AE73B2B006217A0 /* pwc.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1550,6 +1611,12 @@
 				F5B92A9F0A39F1E800BAF43D /* SPCA501ADriver.h in Headers */,
 				F5ED13DD0A48752A00770B6A /* LookUpTable.h in Headers */,
 				F5F5FC7A0A66B26000AC9079 /* SPCA525Driver.h in Headers */,
+				F52514160AE73B2B006217A0 /* pwc-dec23.h in Headers */,
+				F52514180AE73B2B006217A0 /* pwc-ioctl.h in Headers */,
+				F52514190AE73B2B006217A0 /* pwc-kiara.h in Headers */,
+				F525141C0AE73B2B006217A0 /* pwc-timon.h in Headers */,
+				F525141E0AE73B2B006217A0 /* pwc-uncompress.h in Headers */,
+				F52514200AE73B2B006217A0 /* pwc.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1643,6 +1710,12 @@
 				F5B92AA10A39F1E800BAF43D /* SPCA501ADriver.h in Headers */,
 				F5ED13E10A48752A00770B6A /* LookUpTable.h in Headers */,
 				F5F5FC7C0A66B26000AC9079 /* SPCA525Driver.h in Headers */,
+				F52514210AE73B2B006217A0 /* pwc-dec23.h in Headers */,
+				F52514230AE73B2B006217A0 /* pwc-ioctl.h in Headers */,
+				F52514240AE73B2B006217A0 /* pwc-kiara.h in Headers */,
+				F52514270AE73B2B006217A0 /* pwc-timon.h in Headers */,
+				F52514290AE73B2B006217A0 /* pwc-uncompress.h in Headers */,
+				F525142B0AE73B2B006217A0 /* pwc.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1971,6 +2044,11 @@
 				F5B92A9E0A39F1E700BAF43D /* SPCA501ADriver.m in Sources */,
 				F5ED13E00A48752A00770B6A /* LookUpTable.m in Sources */,
 				F5F5FC7F0A66B26000AC9079 /* SPCA525Driver.m in Sources */,
+				F525144A0AE740E2006217A0 /* pwc-dec23.c in Sources */,
+				F525144B0AE740E2006217A0 /* pwc-kiara.c in Sources */,
+				F525144C0AE740E2006217A0 /* pwc-misc.c in Sources */,
+				F525144D0AE740E2006217A0 /* pwc-timon.c in Sources */,
+				F525144E0AE740E2006217A0 /* pwc-uncompress.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2047,6 +2125,11 @@
 				F5B92AA00A39F1E800BAF43D /* SPCA501ADriver.m in Sources */,
 				F5ED13DE0A48752A00770B6A /* LookUpTable.m in Sources */,
 				F5F5FC7B0A66B26000AC9079 /* SPCA525Driver.m in Sources */,
+				F52514400AE740E2006217A0 /* pwc-dec23.c in Sources */,
+				F52514410AE740E2006217A0 /* pwc-kiara.c in Sources */,
+				F52514420AE740E2006217A0 /* pwc-misc.c in Sources */,
+				F52514430AE740E2006217A0 /* pwc-timon.c in Sources */,
+				F52514440AE740E2006217A0 /* pwc-uncompress.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2121,6 +2204,11 @@
 				F5B92AA20A39F1E800BAF43D /* SPCA501ADriver.m in Sources */,
 				F5ED13E20A48752A00770B6A /* LookUpTable.m in Sources */,
 				F5F5FC7D0A66B26000AC9079 /* SPCA525Driver.m in Sources */,
+				F52514450AE740E2006217A0 /* pwc-dec23.c in Sources */,
+				F52514460AE740E2006217A0 /* pwc-kiara.c in Sources */,
+				F52514470AE740E2006217A0 /* pwc-misc.c in Sources */,
+				F52514480AE740E2006217A0 /* pwc-timon.c in Sources */,
+				F52514490AE740E2006217A0 /* pwc-uncompress.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

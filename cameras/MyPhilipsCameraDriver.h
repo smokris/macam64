@@ -18,16 +18,12 @@
  $Id$
 */
 
-#import <Cocoa/Cocoa.h>
 #import "MyCameraDriver.h"
-#include <Carbon/Carbon.h>
-#include <QuickTime/QuickTime.h>
-#include <IOKit/IOKitLib.h>
-#include <IOKit/IOCFPlugIn.h>
-#include <IOKit/usb/IOUSBLib.h>
 #include "GlobalDefs.h"
-/*
 
+#include "pwc_files/pwc.h"
+
+/*
  Maybe this is a good place to introduce the internal model:
 
  There are two additional threads: grabbingThread and decodingThread.
@@ -131,6 +127,10 @@ typedef struct PhilipsGrabContext {	//Everything the grabbing thread internals n
 //Camera Status
     short usbFrameBytes;
     short usbAltInterface;
+    
+// Use for decoding (code from pwc linux driver)
+	struct pwc_device * videoDevice;
+	struct pwc_frame_buf read_frame;
     
 //Video grabbing stuff
     PhilipsGrabContext grabContext;		//the grab context (everything the async usb read callbacks need)

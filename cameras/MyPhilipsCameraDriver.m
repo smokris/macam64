@@ -18,15 +18,14 @@
  $Id$
 */
 
-#include <IOKit/IOKitLib.h>
-#include <IOKit/IOCFPlugIn.h>
-#include <IOKit/usb/IOUSBLib.h>
-#import "MyCameraCentral.h"
 #import "MyPhilipsCameraDriver.h"
+#import "MyCameraCentral.h"
+
+#import "MiscTools.h"
 #import "Resolvers.h"
 #import "yuv2rgb.h"
-#import "MiscTools.h"
-#include "unistd.h"
+
+#include <unistd.h>
 
 //camera modes and the necessary data for them
 
@@ -52,6 +51,7 @@
 	if (self == NULL) 
         return NULL;
     
+    videoDevice = NULL;
     power_save = NO;
     
 	return self;
@@ -213,7 +213,10 @@
     grabContext.framesInRing=1000;
     grabContext.concurrentTransfers=3;
     grabContext.finishedTransfers=0;
-    grabContext.bytesPerChunk=[self height]*[self width]*6/4+chunkHeader+chunkFooter;	//4 yuv pixels fit into 4 bytes  + header + footer
+	if (videoDevice == NULL)
+		grabContext.bytesPerChunk = [self height] * [self width] * 6 / 4 + chunkHeader + chunkFooter;  // 4 yuv pixels fit into 4 bytes + header + footer
+	else
+		grabContext.bytesPerChunk = videoDevice->frame_size + videoDevice->frame_header_size + videoDevice->frame_trailer_size;
     grabContext.nextReadOffset=0;
     grabContext.bufferLength=grabContext.bytesPerFrame*grabContext.framesInRing+grabContext.bytesPerChunk;
     grabContext.droppedFrames=0;
@@ -376,10 +379,10 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                         [grabContext->chunkReadyLock unlock];
                     } else {						//broken frame -> drop
                         grabContext->droppedFrames++;
-//#ifdef VERBOSE
+#if VERBOSE
 //    commented out because it's useful for debugging but not for use. some people want important things on the console.
-//    NSLog(@"packet size %d instead of %d: frame dropped",(int)grabContext->bytesInChunkSoFar,(int)grabContext->bytesPerChunk);
-//#endif
+    NSLog(@"packet size %d instead of %d: frame dropped", (int) grabContext->bytesInChunkSoFar, (int) grabContext->bytesPerChunk);
+#endif
                     }
                     grabContext->currentChunkStart=-1;	//no matter what happened, we are now outside a chunk
                 }
@@ -519,10 +522,28 @@ static bool StartNextIsochRead(PhilipsGrabContext* grabContext, int transferIdx)
                                grabContext.buffer,
                                currChunk.end);		//Copy the second part at the end of the first part (into the Q-buffer appendix)
                     }
-                    chunkBuffer=grabContext.buffer+currChunk.start+chunkHeader;	//Our chunk starts here
-                    lineExtra=nextImageBufferRowBytes-width*nextImageBufferBPP;	//bytes to skip after each line in target buffer
-                    yuv2rgb (width,height,YUVPhilipsStyle,chunkBuffer,nextImageBuffer,
-                             nextImageBufferBPP,0,lineExtra,hFlip!=camHFlip);	//decode
+                    
+                    lineExtra = nextImageBufferRowBytes - width * nextImageBufferBPP;  // bytes to skip after each line in target buffer
+                    
+					if (videoDevice == NULL)  // Same as before
+					{
+						chunkBuffer = grabContext.buffer + currChunk.start + chunkHeader;  // Our chunk starts here
+	                    yuv2rgb(width, height, YUVPhilipsStyle, chunkBuffer, nextImageBuffer, 
+                                nextImageBufferBPP, 0, lineExtra, hFlip != camHFlip);  // decode
+ 				    }
+					else
+					{
+                        // Using the Linux driver code
+						chunkBuffer = grabContext.buffer + currChunk.start;  // Our chunk starts here
+						videoDevice->read_frame = &read_frame;
+						videoDevice->read_frame->data = chunkBuffer;
+						videoDevice->read_frame->filled = grabContext.bytesPerChunk;
+						videoDevice->read_frame->next = 0;
+                        
+						pwc_decompress(videoDevice);
+						yuv2rgb(width, height, YUVOV420Style, videoDevice->image_data, nextImageBuffer, 
+                                nextImageBufferBPP, 0, lineExtra, hFlip != camHFlip);  // decode
+					}
                 }
                 lastImageBuffer=nextImageBuffer;			//Copy nextBuffer info into lastBuffer
                 lastImageBufferBPP=nextImageBufferBPP;

@@ -22,11 +22,16 @@
 #import "MyPhilipsCameraDriver.h"
 
 
+#define WB_MODE_FORMATTER			0x1000
+
+
 @interface MyKiaraFamilyDriver : MyPhilipsCameraDriver 
 {
 }
 
 + (NSArray*) cameraUsbDescriptions;
+
+- (void) dealloc;
 
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 
@@ -34,6 +39,13 @@
 - (void) setResolution:(CameraResolution)r fps:(short)fr;	//Set a resolution and frame rate.
 - (CameraResolution) defaultResolutionAndRate:(short*)fps;
 - (void) setLed:(BOOL)v;		// switch LED on/off
+
+- (short) maxCompression;
+
+// White Balance
+- (BOOL) canSetWhiteBalanceMode;
+- (BOOL) canSetWhiteBalanceModeTo: (WhiteBalanceMode) newMode;
+- (void) setWhiteBalanceMode: (WhiteBalanceMode) newMode;
 
 @end
 
