@@ -138,7 +138,7 @@ void pwc_construct(struct pwc_device *pdev)
 
 int pwc_allocate_buffers(struct pwc_device *pdev)
 {
-	int i, err;
+	int i, err = 0;
 	void *kbuf;
 
 	PWC_DEBUG_MEMORY(">> pwc_allocate_buffers(pdev = 0x%p)\n", pdev);
@@ -149,6 +149,7 @@ int pwc_allocate_buffers(struct pwc_device *pdev)
 	/* Allocate decompressor table space */
 	if (DEVICE_USE_CODEC1(pdev->type))
 	{
+        err = 1;
 		//err = pwc_dec1_alloc(pdev);
 	}
 	else
