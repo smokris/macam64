@@ -205,6 +205,9 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
 #endif
     
+    if (buffer->numBytes < 2500) 
+        return;
+    
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
@@ -324,7 +327,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
             @"Sonix BTC PC380", @"name", NULL], 
         
-        // This is actually a SN9C103... hopefully it works anyway
+        // This is actually a SN9C103... hopefully it works anyway, not quite!
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x60af], @"idProduct",
