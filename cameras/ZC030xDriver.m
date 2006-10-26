@@ -252,7 +252,7 @@
     
     cameraOperation = &fzc3xx;
     
-    spca50x->qindex = 5; // Should probably be set before init_jpeg_decoder()
+    spca50x->qindex = 4; // Should probably be set before init_jpeg_decoder()
     forceRGB = 1;
     invert = NO;
     
@@ -273,7 +273,7 @@
 
 - (short) maxCompression 
 {
-    return 5;
+    return 4;
 }
 
 
