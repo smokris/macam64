@@ -209,6 +209,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[MySPCA500Driver class]];
     [self registerCameraDriver:[MyAiptekPocketDV class]];
     [self registerCameraDriver:[MyKiaraFamilyDriver class]];
+    [self registerCameraDriver:[MyKiaraFamilyPowerSaveDriver class]];
     [self registerCameraDriver:[MyKiaraFlippedDriver class]];
     [self registerCameraDriver:[MyTimonFamilyDriver class]];
     [self registerCameraDriver:[MyCPIACameraDriver class]];
