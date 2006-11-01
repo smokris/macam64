@@ -225,6 +225,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam Messenger (C)", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_LIVE_CAM_VIM], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Creative Live! Cam Video IM", @"name", NULL], 
+        
         NULL];
 }
 
@@ -440,6 +445,11 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:PRODUCT_SPC_200NC], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
             @"Philips SPC 200NC", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_SPC_210NC], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
+            @"Philips SPC 210NC", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_SPC_300NC], @"idProduct",

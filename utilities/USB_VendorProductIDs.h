@@ -29,6 +29,7 @@
 #define PRODUCT_CREATIVE_LIVE           0x4036      // ZC0301P
 #define PRODUCT_VISTA_C                 0x403b      // SPCA561A
 #define PRODUCT_VISTA_PLUS              0x4028      // PAC207
+#define PRODUCT_CREATIVE_LIVE_CAM_VIM   0x4053      // VC301P
 
 #define VENDOR_GENIUS           0x0458
 #define PRODUCT_VIDEOCAM_EXPRESS_V2     0x7004      // SPCA561A
@@ -127,6 +128,7 @@
 #define PRODUCT_SPC_200NC               0x0325      // VC0305
 #define PRODUCT_SPC_300NC               0x0326      // VC0305
 #define PRODUCT_SPC_900NC               0x0329      // Kiara
+#define PRODUCT_SPC_210NC               0x032d      // VC0305?
 
 #define VENDOR_CONNECTIX		0x0478
 #define PRODUCT_QUICKCAM_VC             0x0001      // uses USS720 USB <-> parallel converter
