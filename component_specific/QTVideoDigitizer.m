@@ -18,53 +18,64 @@
  $Id$
 */
 
-#include "QTVideoDigitizer.h"
-#include "Resolvers.h"
-#include <ApplicationServices/ApplicationServices.h>
-#include "MiscTools.h"
 #import "MyCameraCentral.h"
 
-//#define LOG_QT_CALLS
-//#define EXCEPT_COMPRESS_DONE
+#include "Resolvers.h"
+#include "MiscTools.h"
 
-pascal ComponentResult vdigMainEntry (ComponentParameters *params, Handle storage) {	
+#include "QTVideoDigitizer.h"
+
+
+pascal ComponentResult vdigMainEntry(ComponentParameters * params, Handle storage) 
+{
     ComponentResult err = 0;
     ProcPtr procPtr = 0;
     ProcInfoType procInfo;
-#ifdef LOG_QT_CALLS
+    
+#if LOG_QT_CALLS
     char selectorName[200];
     int cid = -1;
+    
     if (storage != NULL) 
     {
         vdigGlobals globals = (vdigGlobals) storage;
         cid = [(**globals).bridge cid];
     }
-#ifdef EXCEPT_COMPRESS_DONE
-    if (params->what!=kVDCompressDoneSelect) {
+#if EXCEPT_COMPRESS_DONE
+    if (params->what!=kVDCompressDoneSelect) 
+    {
 #endif
-        if(ResolveVDSelector(params->what, selectorName)) {
+        if (ResolveVDSelector(params->what, selectorName)) 
+        {
             NSLog(@"QT call to vdig (%d): %s\n", cid, selectorName);
-        } else {
+        } else 
+        {
             NSLog(@"QT call unknown selector %d\n",params->what);
         }
-#ifdef EXCEPT_COMPRESS_DONE
+#if EXCEPT_COMPRESS_DONE
     }
 #endif
-#endif
-    if (vdigLookupSelector(params->what,&procPtr,&procInfo)) {
-	err=CallComponentFunctionWithStorageProcInfo((Handle)storage, params, procPtr,procInfo);
-    } else {
-        err=badComponentSelector;
+#endif // LOG_QT_CALLS
+    
+    if (vdigLookupSelector(params->what,&procPtr,&procInfo)) 
+    {
+        err = CallComponentFunctionWithStorageProcInfo((Handle)storage, params, procPtr,procInfo);
+    } else 
+    {
+        err = badComponentSelector;
     }
-#ifdef LOG_QT_CALLS
-#ifdef EXCEPT_COMPRESS_DONE
-    if (params->what!=kVDCompressDoneSelect) {
+    
+#if LOG_QT_CALLS
+#if EXCEPT_COMPRESS_DONE
+    if (params->what!=kVDCompressDoneSelect) 
+    {
 #endif
-        NSLog(@"QT call resulted in %d\n",(int)err);
-#ifdef EXCEPT_COMPRESS_DONE
+        NSLog(@"QT call resulted in %d\n", (int) err);
+#if EXCEPT_COMPRESS_DONE
     }
 #endif
-#endif
+#endif // LOG_QT_CALLS
+    
     return err;
 }
 
@@ -177,9 +188,9 @@ bool vdigLookupSelector(short what,ProcPtr* ptr,ProcInfoType* info) {
 //          case kVDGetPreferredImageDimensionsSelect: *info=uppVDGetPreferredImageDimensionsProcInfo;
 //                                                *ptr=(ComponentRoutineUPP)vdigGetPreferredImageDimensions; break;
             
-			case kVDGetDeviceNameAndFlagsSelect:    *info = uppVDGetDeviceNameAndFlagsProcInfo;
-                                                    *ptr = (ComponentRoutineUPP) vdigGetDeviceNameAndFlags; 
-                                                    break;
+//			case kVDGetDeviceNameAndFlagsSelect:    *info = uppVDGetDeviceNameAndFlagsProcInfo;
+//                                                  *ptr = (ComponentRoutineUPP) vdigGetDeviceNameAndFlags; 
+//                                                  break;
             
 			case kVDCaptureStateChangingSelect:     *info = uppVDCaptureStateChangingProcInfo;
                                                     *ptr = (ComponentRoutineUPP) vdigCaptureStateChanging; 
@@ -215,47 +226,70 @@ bool vdigLookupSelector(short what,ProcPtr* ptr,ProcInfoType* info) {
    cases, CountComponentInstances() still counts the old, freshly closed instance. 
    That's why I let the bridge decide if other instances exist. */
  
-pascal ComponentResult vdigOpen(vdigGlobals storage, ComponentInstance self) {
+pascal ComponentResult vdigOpen(vdigGlobals storage, ComponentInstance self) 
+{
     OSErr err;
-    ComponentResult result=0;
-    MyBridge* bridge;
+    ComponentResult result = 0;
+    MyBridge * bridge;
 
-    storage=NULL;
-    bridge=(MyBridge*)(GetComponentRefcon((Component)self));
+    storage = NULL;
+    bridge = (MyBridge*) (GetComponentRefcon((Component) self));
 
-    if (!bridge) result=badCallOrderErr;		//It's a lie but what should we say else?
-    if (!result) {
-        if ([bridge isStarted]) {			
-            result=validInstancesExist;
-            bridge=NULL;				//Unset to avoid shutting it down on error handling below
+    if (!bridge) 
+        result = badCallOrderErr;		// It's a lie but what should we say else?
+    
+    if (!result) 
+    {
+        if ([bridge isStarted]) 
+        {			
+            result = validInstancesExist;
+            bridge = NULL;				// Unset to avoid shutting it down on error handling below
         }
     }
-    if (!result) {
-        if (![bridge startup]) result=mFulErr;
+    
+    if (!result) 
+    {
+        if (![bridge startup]) 
+            result = mFulErr;
     }
-    if (!result) {
-        storage = (vdigGlobals)NewHandleClear(sizeof(VDGlobals));
-        if (err = MemError()) result=mFulErr;
+    
+    if (!result) 
+    {
+        storage = (vdigGlobals) NewHandleClear(sizeof(VDGlobals));
+        if (err = MemError()) 
+            result = mFulErr;
     }
-    if (!result) {
+    
+    if (!result) 
+    {
         (**storage).self = self;
-        (**storage).bridge=bridge;
+        (**storage).bridge = bridge;
         [bridge nativeBounds:&((**storage).digitizerRect)];
-        (**storage).fps=Long2Fix(5);
-//        (**storage).timeBase=NewTimeBase();
-        (**storage).timeBase=NULL;
-        (**storage).fieldPreference=vdUseAnyField;
-        (**storage).inputStandard=palIn;
-//Copy values from the bridge so we're in sync
-        SetComponentInstanceStorage(self, (Handle)storage);
+        (**storage).fps = Long2Fix(5);
+//      (**storage).timeBase = NewTimeBase();
+        (**storage).timeBase = NULL;
+        (**storage).fieldPreference = vdUseAnyField;
+        (**storage).inputStandard = palIn;
+        // Copy values from the bridge so we're in sync [hxr - not sure what this refers to]
+        SetComponentInstanceStorage(self, (Handle) storage);
     }
-    if (result) {					//error handling
+    
+    // Error handling
+    
+    if (result) 
+    {
         SetComponentInstanceStorage(self, NULL);
-        if (bridge) {
-            if ([bridge isStarted]) [bridge shutdown];
+        
+        if (bridge) 
+        {
+            if ([bridge isStarted]) 
+                [bridge shutdown];
         }
-        if (storage) DisposeHandle((Handle)storage);
+        
+        if (storage) 
+            DisposeHandle((Handle) storage);
     }
+    
     return result;
 }
 
@@ -612,11 +646,30 @@ pascal VideoDigitizerError vdigGetDataRate(vdigGlobals storage, long* mspf, Fixe
     return 0;
 }
 
-pascal VideoDigitizerError vdigGetInputName(vdigGlobals storage, long videoInput, Str255 name) {
-    char cstr[256];
-    if (!name) return qtParamErr;
+pascal VideoDigitizerError vdigGetInputName(vdigGlobals storage, long videoInput, Str255 name) 
+{
+    short index;
+    char cstr[256], nstr[256];
     MyBridge * bridge = (**storage).bridge;
+    
+    if (!name) 
+        return qtParamErr;
+    
+    // Get the name
     [bridge->central getName:cstr forID:bridge->cid];
+    
+    // Append #1, or #2 etc to the camera name to make it unique
+    index = [bridge->central indexOfCamera:bridge->driver];
+    sprintf(nstr, " #%d", index);
+    if (strlen(cstr) + strlen(nstr) < 256) 
+        strcpy(cstr + strlen(cstr), nstr);
+    else 
+        strcpy(cstr + 255 - strlen(nstr), nstr);
+    
+#if LOG_QT_CALLS
+    printf("vdigGetInputName: returning name: <%s>\n", cstr);
+#endif
+    
     CStr2PStr(cstr, name);
     return 0;
 }
@@ -625,6 +678,7 @@ pascal VideoDigitizerError vdigSetPreferredPacketSize(vdigGlobals storage, long 
     //We don't care about other people's preferences!
     return 0;
 }
+
 pascal VideoDigitizerError vdigGetMaxAuxBuffer(vdigGlobals storage, PixMapHandle* outPM, Rect* outBounds) {
     //we don't give anything!
     if (outPM) *outPM=NULL;
@@ -824,6 +878,10 @@ pascal VideoDigitizerError vdigGetDeviceNameAndFlags(vdigGlobals storage, Str255
         strcpy(cstr + strlen(cstr), nstr);
     else 
         strcpy(cstr + 255 - strlen(nstr), nstr);
+    
+#if LOG_QT_CALLS
+    printf("vdigGetDeviceNameAndFlags: returning name: <%s>\n", cstr);
+#endif
     
     CStr2PStr(cstr, outName);
     
