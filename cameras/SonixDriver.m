@@ -941,6 +941,40 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 @end
 
 
+@implementation SN9CxxxDriverVariant8
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x613e], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Skype Video Pack Camera (Model C7)", @"name", NULL], 
+        
+        NULL];
+}
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->desc = Pccam168;  // not true
+    spca50x->sensor = SENSOR_OV7630;
+    spca50x->customid = SN9C120;
+    
+    spca50x->i2c_ctrl_reg = 0x81;
+    spca50x->i2c_base = 0x21;
+    spca50x->i2c_trigger_on_write = 0;
+    
+	return self;
+}
+
+@end
+
+
 // Look at the datasheets for all the valid IDs
 // Really need to do sensor detection here instead
 // Just two classes: proprietary compression or JPEG compression?

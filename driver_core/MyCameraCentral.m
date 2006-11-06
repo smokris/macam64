@@ -288,6 +288,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SN9CxxxDriverVariant5 class]];
     [self registerCameraDriver:[SN9CxxxDriverVariant6 class]];
     [self registerCameraDriver:[SN9CxxxDriverVariant7 class]];
+    [self registerCameraDriver:[SN9CxxxDriverVariant8 class]];
     
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time

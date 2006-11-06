@@ -166,3 +166,11 @@
 - (id) initWithCentral: (id) c;
 
 @end
+
+
+@interface SN9CxxxDriverVariant8 : SN9CxxxDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
+
+@end
