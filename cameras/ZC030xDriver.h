@@ -55,3 +55,11 @@
 - (id) initWithCentral: (id) c;
 
 @end
+
+
+@interface ZC030xDriverMic : ZC030xDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (BOOL) setGrabInterfacePipe;
+
+@end

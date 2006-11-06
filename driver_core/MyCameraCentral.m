@@ -258,6 +258,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[ZC030xDriver class]];     // Based on SPCA5XX - seems to work
     [self registerCameraDriver:[ZC030xDriverBGR class]];
     [self registerCameraDriver:[ZC030xDriverInverted class]];
+    [self registerCameraDriver:[ZC030xDriverMic class]];
     
     [self registerCameraDriver:[SPCA501ADriver class]];   // Based on SPCA5XX - testing
     [self registerCameraDriver:[SPCA501ADriverVariant1 class]];

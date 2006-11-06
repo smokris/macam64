@@ -166,16 +166,6 @@
             @"Vimicro Generic VC0305", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMMUNICATE_STX], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
-            @"Logitech Communicate STX", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMM_STX_PLUS], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
-            @"Logitech Communicate STX Plus", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_NOTEBOOK_DELUXE], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam NoteBook Deluxe", @"name", NULL], 
@@ -472,4 +462,32 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 @end
+
+
+@implementation ZC030xDriverMic
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMMUNICATE_STX], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech Communicate STX", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMM_STX_PLUS], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech Communicate STX Plus", @"name", NULL], 
+        
+        NULL];
+}
+
+- (BOOL) setGrabInterfacePipe
+{
+    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:6  numAltInterfaces:-1];
+}
+
+@end
+
 
