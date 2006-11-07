@@ -1316,7 +1316,12 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
         [NSNumber numberWithUnsignedShort:PRODUCT_VIVICAM3350B],@"idProduct",
         @"Vivitar ViviCam 3350B",@"name",NULL];
     
-    return [NSArray arrayWithObjects:dict1,NULL];
+    NSDictionary* dict2=[NSDictionary dictionaryWithObjectsAndKeys:
+        [NSNumber numberWithUnsignedShort:VENDOR_SONIX],@"idVendor",
+        [NSNumber numberWithUnsignedShort:0x8001],@"idProduct",
+        @"Digital Spy Camera",@"name",NULL];
+    
+    return [NSArray arrayWithObjects:dict1,dict2,NULL];
 }
 
 //  Class methods needed
