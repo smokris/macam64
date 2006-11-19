@@ -117,6 +117,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_MICROSOFT], @"idVendor",
             @"Microsoft Xbox Video Chat", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x4052], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Creative Live! Cam Vista IM", @"name", NULL], 
+        
         NULL];
 }
 
