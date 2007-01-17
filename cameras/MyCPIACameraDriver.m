@@ -367,7 +367,7 @@ Third is the SkipFrames count in intStreamCap to send only the n-th image, so we
     grabContext.numFullBuffers=0;
     grabContext.fillingChunk=false;
     grabContext.finishedTransfers=0;
-    grabContext.intf=intf;
+    grabContext.intf=streamIntf;
     grabContext.shouldBeGrabbing=&shouldBeGrabbing;
     grabContext.err=CameraErrorOK;
     grabContext.framesSinceLastChunk=0;
@@ -622,7 +622,7 @@ static bool StartNextIsochRead(CPIAGrabContext* grabContext, int transferIdx) {
     }
 
     if (ok) {
-        err = (*intf)->CreateInterfaceAsyncEventSource(intf, &cfSource);	//Create an event source
+        err = (*streamIntf)->CreateInterfaceAsyncEventSource(streamIntf, &cfSource);	//Create an event source
         CheckError(err,"CreateInterfaceAsyncEventSource");
         CFRunLoopAddSource(CFRunLoopGetCurrent(), cfSource, kCFRunLoopDefaultMode);	//Add it to our run loop
         for (i=0;(i<CPIA_NUM_TRANSFERS)&&ok;i++) {	//Initiate transfers
