@@ -34,6 +34,8 @@ $Id$
 another application</string>
 	<key>CameraErrorInternal</key>
 	<string>Internal error</string>
+	<key>CameraErrorDecoding</key>
+	<string>Image data decoding error</string>
 	<key>CameraErrorNoBandwidth</key>
 	<string>Not enough
 USB bandwidth</string>
