@@ -27,38 +27,46 @@ This is the global definitions file. It includes some compiling options, some co
 #ifndef _GLOBALDEFS_
 #define _GLOBALDEFS_
 
-typedef enum WhiteBalanceMode {
+typedef enum WhiteBalanceMode 
+{
     WhiteBalanceLinear		= 1,
     WhiteBalanceIndoor		= 2,
     WhiteBalanceOutdoor		= 3,
-    WhiteBalanceAutomatic 	= 4
+    WhiteBalanceAutomatic 	= 4,
+    WhiteBalanceManual    	= 5,
 } WhiteBalanceMode;
 
-typedef enum CameraResolution {
-    ResolutionInvalid = 0,	//Indicates a wrong or not applicable resolution
-    ResolutionSQSIF = 1,	//sqsif = 128 x  96
-    ResolutionQSIF  = 2,	//qsif  = 160 x 120
-    ResolutionQCIF  = 3,	//qcif  = 176 x 144
-    ResolutionSIF   = 4,	//sif   = 320 x 240
-    ResolutionCIF   = 5,	//cif   = 352 x 288
-    ResolutionVGA   = 6,	//vga   = 640 x 480
-    ResolutionSVGA  = 7		//svga  = 800 x 600
+typedef enum CameraResolution 
+{
+    ResolutionInvalid = 0,	// Indicates a wrong or not applicable resolution
+    ResolutionSQSIF = 1,	// SQSIF =  128 x  96
+    ResolutionQSIF  = 2,	//  QSIF =  160 x 120, also known as QQVGA
+    ResolutionQCIF  = 3,	//  QCIF =  176 x 144
+    ResolutionSIF   = 4,	//   SIF =  320 x 240, also known as QVGA
+    ResolutionCIF   = 5,	//   CIF =  352 x 288
+    ResolutionVGA   = 6,	//   VGA =  640 x 480
+    ResolutionSVGA  = 7,	//  SVGA =  800 x 600
+    ResolutionXGA   = 8,	//   XGA = 1024 x 768
+    ResolutionUXGA  = 9,	//  UXGA = 1600 x 1200
 } CameraResolution;
 
-typedef enum CameraError {
-    CameraErrorOK		= 0,	//Everything's fine
-    CameraErrorBusy		= 1,	//Access to device denied - probably already in use somewhere else
-    CameraErrorNoPower		= 2,	//Not enough usb power to use device (there's also an independent system alert)
-    CameraErrorNoCam		= 3,	//No camera found
-    CameraErrorNoMem		= 4,	//Some memory allocation failed
-    CameraErrorNoBandwidth	= 5,	//The usb data bandwidth would be exceeded
-    CameraErrorTimeout		= 6,	//Failed to maintain the data stream in time
-    CameraErrorUSBProblem	= 7,	//An important USB command failed for no known reason
-    CameraErrorUnimplemented	= 8,	//A feature that is not (yet) implemented
-    CameraErrorInternal		= 9	//Some other, probably serious, error
+typedef enum CameraError 
+{
+    CameraErrorOK		     = 0,	// Everything's fine
+    CameraErrorBusy		     = 1,	// Access to device denied - probably already in use somewhere else
+    CameraErrorNoPower		 = 2,	// Not enough usb power to use device (there's also an independent system alert)
+    CameraErrorNoCam		 = 3,	// No camera found
+    CameraErrorNoMem		 = 4,	// Some memory allocation failed
+    CameraErrorNoBandwidth	 = 5,	// The usb data bandwidth would be exceeded
+    CameraErrorTimeout		 = 6,	// Failed to maintain the data stream in time
+    CameraErrorUSBProblem	 = 7,	// An important USB command failed for no known reason
+    CameraErrorUnimplemented = 8,	// A feature that is not (yet) implemented
+    CameraErrorInternal		 = 9,	// Some other, probably serious, error
+    CameraErrorDecoding		 = 10,	// An error related to the decoding of image data
 } CameraError;
 
-typedef enum ColorMode {
+typedef enum ColorMode 
+{
     ColorModeColor		= 1,
     ColorModeGray		= 2
 } ColorMode;
