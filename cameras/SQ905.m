@@ -1828,7 +1828,7 @@ sq_decompress (SQModel model, unsigned char *output, unsigned char *data,
         return error;
     
     UInt32 length = size;
-    IOReturn result = (*intf)->ReadPipe(intf, 1, data, &length);
+    IOReturn result = (*streamIntf)->ReadPipe(streamIntf, 1, data, &length);
     
     if (length != size) 
         printf("readData: expected to read %d bytes, instead got %d\n", size, (int) length);

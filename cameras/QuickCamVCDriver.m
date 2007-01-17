@@ -454,7 +454,7 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     void * buf = malloc(totalLength + 1);
     
-    IOReturn ret = (*intf)->ReadPipe(intf, [self getGrabbingPipe], buf, &totalLength);
+    IOReturn ret = (*streamIntf)->ReadPipe(streamIntf, [self getGrabbingPipe], buf, &totalLength);
 
     if (ret != kIOReturnSuccess) 
     {
@@ -650,7 +650,7 @@ return size;
     
     if (ok && length > 0 && buffer != NULL) 
     {
-        IOReturn result = (*intf)->WritePipe(intf, 1, buffer, length);
+        IOReturn result = (*streamIntf)->WritePipe(streamIntf, 1, buffer, length);
         CheckError(result, "QuickCamVCDriver:setCameraRegister");
         ok = (result) ? NO : YES;
     }
@@ -689,7 +689,7 @@ return size;
     if (ok && length > 0 && buffer != NULL) 
     {
 //      IOReturn result = (*intf)->ReadPipe(intf, 2, buffer, &length);
-        IOReturn result = (*intf)->ReadPipe(intf, 2, readBuffer, &actualLength);
+        IOReturn result = (*streamIntf)->ReadPipe(streamIntf, 2, readBuffer, &actualLength);
         CheckError(result, "QuickCamVCDriver:getCameraRegister");
         ok = (result) ? NO : YES;
         [self resetUSS720];
@@ -775,7 +775,7 @@ return size;
     
     if (ok && length > 0 && buffer != NULL) 
     {
-        IOReturn result = (*intf)->ReadPipe(intf, 2, buffer, &length);
+        IOReturn result = (*streamIntf)->ReadPipe(streamIntf, 2, buffer, &length);
         CheckError(result, "QuickCamVCDriver:readStream");
         ok = (result) ? NO : YES;
     }

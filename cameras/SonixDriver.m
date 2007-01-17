@@ -191,7 +191,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     BOOL result = [super startupGrabStream];
     
     // clear interrupt pipe from any stall
-    (*intf)->ClearPipeStall(intf, 3);
+    (*streamIntf)->ClearPipeStall(streamIntf, 3);
     
     return result;
 }
