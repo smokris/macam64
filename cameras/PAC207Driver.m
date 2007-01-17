@@ -251,13 +251,15 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
     
     MALLOC(decodingBuffer, UInt8 *, 356 * 292 + 1000, "decodingBuffer");
     
+    compressionType = proprietaryCompression;
+    
     init_pixart_decoder(spca50x);
     
     cameraOperation = &fpac207;
     
 	return self;
 }
-/*
+
 //
 // Provide feedback about which resolutions and rates are supported
 //
@@ -281,7 +283,7 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
             return NO;
     }
 }
-*/
+
 //
 // Returns the pipe used for grabbing
 //
