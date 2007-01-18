@@ -61,9 +61,9 @@
 
 - (void) startupCamera
 {
-    [self sendCommand:0xC9 value:0x0 index:0x01];   // frame size
-    int rate = 1;
-    [self sendCommand:0xCA value:rate index:0x0];   // frame rate [1,15]
+//    int rate = 1;
+//    [self sendCommand:0xCA value:rate index:0x0];   // frame rate [1,15]
+//    [self sendCommand:0xC9 value:0x0 index:0x01];   // frame size
     
     [super startupCamera];
 }
@@ -91,11 +91,11 @@
     compressionType = quicktimeImage;
     compressionType = proprietaryCompression;
     quicktimeCodec = kComponentVideoUnsigned;  // kYUVSPixelFormat
-    
+    /*
     LUT = [[LookUpTable alloc] init];
 	if (LUT == NULL) 
         return NULL;
-    
+    */
     framesize = 0;
     
 	return self;
@@ -114,7 +114,7 @@
     buffer[0] = 0x00FF & (data);
     buffer[1] = 0x00FF & (data >> 8);
     
-    return [self usbControlCmdWithBRequestType:USBmakebmRequestType(kUSBOut, kUSBVendor, kUSBInterface) bRequest:0x01 wValue:control wIndex:0x0300 buf:buffer len:length];
+    return [self usbControlCmdWithBRequestType:USBmakebmRequestType(kUSBOut, kUSBClass, kUSBInterface) bRequest:0x01 wValue:control wIndex:0x0300 buf:buffer len:length];
 }
 
 // [self setControl:0x0200 data:value]; // brightness [1,100] = 50
@@ -128,7 +128,7 @@
     UInt8 buffer[4];
     UInt16 length = 0;
     
-    if (command == 0xC6)  // Video Start, send trensfer size
+    if (command == 0xC6)  // Video Start, send transfer size
     {
         UInt32 size = 2 * [self width] * [self height] + 2;
         buffer[0] = 0x00FF & (size >> 0);
@@ -143,17 +143,14 @@
     {
         UInt16 w = [self width];
         UInt16 h = [self height];
-        buffer[0] = 0x00FF & (h);
-        buffer[1] = 0x00FF & (h >> 8);
-        buffer[2] = 0x00FF & (w);
-        buffer[3] = 0x00FF & (w >> 8);
+        buffer[2] = 0x00FF & (h);
+        buffer[3] = 0x00FF & (h >> 8);
+        buffer[0] = 0x00FF & (w);
+        buffer[1] = 0x00FF & (w >> 8);
         length = 4;
     }
     
-    if (command == 0xC6 || command == 0xC7) 
-        return [self usbStreamCmdWithBRequestType:USBmakebmRequestType(kUSBOut, kUSBVendor, kUSBInterface) bRequest:command wValue:value wIndex:index buf:buffer len:length];
-    else 
-        return [self usbControlCmdWithBRequestType:USBmakebmRequestType(kUSBOut, kUSBVendor, kUSBInterface) bRequest:command wValue:value wIndex:index buf:buffer len:length];
+    return [self usbStreamCmdWithBRequestType:USBmakebmRequestType(kUSBOut, kUSBVendor, kUSBInterface) bRequest:command wValue:value wIndex:index buf:buffer len:length];
 }
 
 // [self sendCommand:0xCC value:mirror index:0x0]; // mirror == 1 for mirroring, 0 otherwise
@@ -196,8 +193,8 @@
         resolution = res;
         fps = rate;
         
-        [self sendCommand:0xCA value:rate index:0x0];   // frame rate [1,15]
         [self sendCommand:0xC9 value:0x0 index:0x01];   // frame size
+        [self sendCommand:0xCA value:rate index:0x0];   // frame rate [1,15]
     }
     [stateLock unlock];
 }
@@ -216,8 +213,8 @@
 - (void) setBrightness:(float) v 
 {
     UInt16 value = 100 * v;
-    if (v < 1) v = 1;
-    if (v > 100) v = 100;
+    if (value < 1) value = 1;
+    if (value > 100) value = 100;
     [self setControl:0x0200 data:value]; // brightness [1,100] = 50
     [super setBrightness:v];
 }
@@ -225,27 +222,27 @@
 - (void) setContrast:(float) v
 {
     UInt16 value = 100 * v;
-    if (v < 1) v = 1;
-    if (v > 100) v = 100;
-//    [self setControl:0x0300 data:value]; // contrast [1,100] = 50
+    if (value < 1) value = 1;
+    if (value > 100) value = 100;
+    [self setControl:0x0300 data:value]; // contrast [1,100] = 50
     [super setContrast:v];
 }
 
 - (void) setHue:(float) v
 {
     UInt16 value = 100 * v;
-    if (v < 1) v = 1;
-    if (v > 100) v = 100;
-//    [self setControl:0x0600 data:value]; // hue [1,100] = 50
+    if (value < 1) value = 1;
+    if (value > 100) value = 100;
+    [self setControl:0x0600 data:value]; // hue [1,100] = 50
 //    [super setHue:v];
 }
 
 - (void) setSaturation:(float) v
 {
     UInt16 value = 100 * v;
-    if (v < 1) v = 1;
-    if (v > 100) v = 100;
-//    [self setControl:0x0700 data:value]; // saturation [1,100] = 50
+    if (value < 1) value = 1;
+    if (value > 100) value = 100;
+    [self setControl:0x0700 data:value]; // saturation [1,100] = 50
     [super setSaturation:v];
 }
 
@@ -314,14 +311,15 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
 {
     videoBulkReadsPending--;
     
+#if VERBOSE
     printf("read a chunk with %ld bytes\n", readSize);
+#endif
     
     if (err != kIOReturnSuccess) 
     {
-        CheckError(err, "handleFullChunkWithReadBytes");
-        
         if (err != kIOReturnUnderrun && err != kIOReturnOverrun) 
         {
+            CheckError(err, "handleFullChunkWithReadBytes");
             shouldBeGrabbing = NO;
             if (grabContext.contextError == CameraErrorOK) 
                 grabContext.contextError = CameraErrorUSBProblem;
@@ -413,7 +411,9 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
         if ((err == kIOUSBPipeStalled) && (streamIntf != NULL)) 
         {
             newReadPending = NO;
+#if VERBOSE
             printf("pipe stalled, clearing\n");
+#endif
             if (interfaceID >= 190) 
                 err = ((IOUSBInterfaceInterface190*) *streamIntf)->ClearPipeStallBothEnds(streamIntf, [self getGrabbingPipe]);
             else 
