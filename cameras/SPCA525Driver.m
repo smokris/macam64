@@ -101,12 +101,9 @@
 }
 
 
-// These cameras use the second interface (#1)
-- (io_service_t) findInterface: (io_iterator_t) iterator
+- (BOOL) separateControlAndStreamingInterfaces
 {
-    IOIteratorNext(iterator);
-    
-    return IOIteratorNext(iterator);
+    return YES;
 }
 
 
@@ -395,7 +392,7 @@ IsocFrameResult  spca525IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     UInt16 probeValue = (probeVal ? VS_PROBE_CONTROL : VS_COMMIT_CONTROL) << 8;
     UInt16 indexValue = 1 << 8 | 0; // unit << 8 | interface-number
     
-    return [self usbCmdWithBRequestType:USBmakebmRequestType(direction, kUSBClass, kUSBDevice)
+    return [self usbControlCmdWithBRequestType:USBmakebmRequestType(direction, kUSBClass, kUSBDevice)
                                bRequest:request
                                  wValue:probeValue
                                  wIndex:indexValue
