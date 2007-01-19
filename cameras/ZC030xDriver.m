@@ -473,12 +473,12 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMMUNICATE_STX], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
-            @"Logitech Communicate STX", @"name", NULL], 
+            @"Logitech Communicate STX (A)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMM_STX_PLUS], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
-            @"Logitech Communicate STX Plus", @"name", NULL], 
+            @"Logitech Communicate STX (B) Plus?", @"name", NULL], 
         
         NULL];
 }
