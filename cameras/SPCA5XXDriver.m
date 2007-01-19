@@ -161,6 +161,8 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
+    compressionType = proprietaryCompression;  // Remove this eventually, when all subclasses work properly
+    
     return self;
 }
 
