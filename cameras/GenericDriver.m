@@ -69,6 +69,8 @@
 	if (self == NULL) 
         return NULL;
     
+    driverType = isochronousDriver; // This is the default
+    
     grabbingThreadRunning = NO;
 	bayerConverter = NULL;
     LUT = NULL;
@@ -79,13 +81,15 @@
     hardwareGamma = NO;
     hardwareSharpness = NO;   
     
-    CocoaJPEG.rect = CGRectMake(0, 0, [self width], [self height]);
-    CocoaJPEG.imageRep = NULL;
-    CocoaJPEG.bitmapGC = NULL;
-    CocoaJPEG.imageContext = NULL;
+    CocoaDecoding.rect = CGRectMake(0, 0, [self width], [self height]);
+    CocoaDecoding.imageRep = NULL;
+    CocoaDecoding.bitmapGC = NULL;
+    CocoaDecoding.imageContext = NULL;
     
     compressionType = unknownCompression;
     jpegVersion = 0;
+    quicktimeCodec = 0;
+    decodingSkipBytes = 0;
     
 	return self;
 }
@@ -359,7 +363,7 @@
 - (BOOL) setGrabInterfacePipe
 {
 //  return [self usbSetAltInterfaceTo:7 testPipe:[self getGrabbingPipe]]; // copy and change the alt-interface
-    return NO;
+    return (driverType == bulkDriver) ? YES : NO;
 }
 
 //
@@ -428,14 +432,23 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     BOOL ok = YES;
     int i, j;
     
-    grabContext.numberOfTransfers = GENERIC_NUM_TRANSFERS;
-    grabContext.numberOfFramesPerTransfer = GENERIC_FRAMES_PER_TRANSFER;
+    if (driverType == isochronousDriver) 
+    {
+        grabContext.numberOfTransfers = GENERIC_NUM_TRANSFERS;
+        grabContext.numberOfFramesPerTransfer = GENERIC_FRAMES_PER_TRANSFER;
+    }
+    else 
+    {
+        grabContext.numberOfTransfers = 0;
+        grabContext.numberOfFramesPerTransfer = 0;
+    }
     grabContext.numberOfChunkBuffers = GENERIC_NUM_CHUNK_BUFFERS;
     
     grabContext.imageWidth = [self width];
     grabContext.imageHeight = [self height];
+    grabContext.chunkBufferLength = [self width] * [self height] * 4 + 10000; // That should be more than enough, but should include any JPEG header
     
-    [self setIsocFrameFunctions];  // can also adjust number of transfers, frames, buffers
+    [self setIsocFrameFunctions];  // can also adjust number of transfers, frames, buffers, buffer-sizes
     
     if (grabContext.numberOfTransfers > GENERIC_MAX_TRANSFERS) 
         grabContext.numberOfTransfers = GENERIC_MAX_TRANSFERS;
@@ -456,9 +469,9 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     
     // Setup simple things
     
-    grabContext.intf = intf;
+    grabContext.intf = streamIntf;
     grabContext.grabbingPipe = [self getGrabbingPipe];
-    grabContext.bytesPerFrame = [self usbGetIsocFrameSize];
+    grabContext.bytesPerFrame = (driverType == isochronousDriver) ? [self usbGetIsocFrameSize] : 0;
     
     grabContext.shouldBeGrabbing = &shouldBeGrabbing;
     grabContext.contextError = CameraErrorOK;
@@ -470,7 +483,6 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     grabContext.numFullBuffers = 0;
     grabContext.numEmptyBuffers = 0;
     grabContext.fillingChunk = false;
-    grabContext.chunkBufferLength = [self width] * [self height] * 4 + 10000; // That should be more than enough, but should include any JPEG header
     
     // Setup JPEG header stuff here in the future
     
@@ -875,7 +887,7 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     
     if (ok) 
     {
-        error = (*intf)->CreateInterfaceAsyncEventSource(intf, &cfSource); // Create an event source
+        error = (*streamIntf)->CreateInterfaceAsyncEventSource(streamIntf, &cfSource); // Create an event source
         CheckError(error, "CreateInterfaceAsyncEventSource");
         CFRunLoopAddSource(CFRunLoopGetCurrent(), cfSource, kCFRunLoopDefaultMode); // Add it to our run loop
         
@@ -909,60 +921,170 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
 
 - (BOOL) setupDecoding 
 {
-    BOOL ok = YES;
+    BOOL ok = NO;
     
+    switch (compressionType) 
+    {
+        case noCompression: 
+            ok = YES;
+            break;
+            
+        case jpegCompression:
 #if VERBOSE
-    if (compressionType == jpegCompression) 
-    {
-        printf("JPEG compression is being used, ");
-        printf("decompression using method %d\n", jpegVersion);
-    }
+            printf("JPEG compression is being used, ");
+            printf("decompression using method %d\n", jpegVersion);
 #endif
+            ok = [self setupJpegCompression];
+            break;
+            
+        case quicktimeImage:
+#if VERBOSE
+            printf("QuickTime image-based decoding is being used.\n");
+#endif
+            ok = [self setupQuicktimeImageCompression];
+            break;
+            
+        case quicktimeSequence:
+#if VERBOSE
+            printf("QuickTime sequence-based decoding is being used.\n");
+#endif
+            ok = [self setupQuicktimeSequenceCompression];
+            break;
+            
+        case proprietaryCompression:
+            ok = YES;
+            break;
+            
+        case unknownCompression: 
+        default:
+            break;
+    }
     
-    if (compressionType == jpegCompression && jpegVersion == 1) 
-    {
-        CocoaJPEG.rect = CGRectMake(0, 0, [self width], [self height]);
-        
-        CocoaJPEG.imageRep = [NSBitmapImageRep alloc];
-        CocoaJPEG.imageRep = [CocoaJPEG.imageRep initWithBitmapDataPlanes:NULL
-                                                                     pixelsWide:[self width]
-                                                                     pixelsHigh:[self height]
-                                                                  bitsPerSample:8
-                                                                samplesPerPixel:4
-                                                                       hasAlpha:YES
-                                                                       isPlanar:NO
-                                                                 colorSpaceName:NSDeviceRGBColorSpace
-                                                                    bytesPerRow:4 * [self width]
-                                                                   bitsPerPixel:4 * 8];
-        
-        // use CGBitmapContextCreate() instead??
-/*
-00270                 CGColorSpaceRef colorspace_ref = (image_depth == 8) ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
-00271                 
-00272                 if (!colorspace_ref)
-00273                         return false;
-00274                 
-00275                 CGImageAlphaInfo alpha_info = (image_depth == 8) ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast; //kCGImageAlphaLast; //RGBA format
-00276 
-00277                 context_ref = CGBitmapContextCreate(buffer->data, (size_t)image_size.width, (size_t)image_size.height, 8, buffer_rowbytes, colorspace_ref, alpha_info);
-00278 
-00279                 if (context_ref)
-00280                 {
-00281                         CGContextSetFillColorSpace(context_ref, colorspace_ref);
-00282                         CGContextSetStrokeColorSpace(context_ref, colorspace_ref);
-00283                         // move down, and flip vertically 
-00284                         // to turn postscript style coordinates to "screen style"
-00285                         CGContextTranslateCTM(context_ref, 0.0, image_size.height);
-00286                         CGContextScaleCTM(context_ref, 1.0, -1.0);
-00287                 }
-00288                 
-00289                 CGColorSpaceRelease(colorspace_ref);
-00290                 colorspace_ref = NULL;
-*/
-        
-/*
-CGColorSpaceRef CreateSystemColorSpace () 
+    return ok;
+}
+
+
+- (BOOL) setupJpegCompression
 {
+    BOOL result = NO;
+    
+    switch (jpegVersion) 
+    {
+        case 0:
+            printf("Error: [setupJpegCompression] should be implemented in current driver!\n");
+            break;
+            
+        case 1:
+            result = [self setupJpegVersion1];
+            break;
+            
+        case 2:
+            result = [self setupJpegVersion2];
+            break;
+            
+        case 3:
+            quicktimeCodec = kJPEGCodecType;
+            compressionType = quicktimeImage;
+            break;
+            
+        case 4:
+            quicktimeCodec = kJPEGCodecType;
+            compressionType = quicktimeSequence;
+            break;
+            
+        case 5:
+            quicktimeCodec = kMotionJPEGACodecType;
+            compressionType = quicktimeImage;
+            break;
+            
+        case 6:
+            quicktimeCodec = kMotionJPEGACodecType;
+            compressionType = quicktimeSequence;
+            break;
+            
+        case 7:
+            quicktimeCodec = kMotionJPEGBCodecType;
+            compressionType = quicktimeImage;
+            break;
+            
+        case 8:
+            quicktimeCodec = kMotionJPEGBCodecType;
+            compressionType = quicktimeSequence;
+            break;
+            
+        default:
+            printf("Error: JPEG decoding version %d does not exist yet!\n", jpegVersion);
+            break;
+    }
+    
+    if (compressionType != jpegCompression) 
+        result = [self setupDecoding];  // Call this again in the same chain, hope this works OK
+    
+    return result;
+}
+
+
+- (BOOL) setupJpegVersion1
+{
+    CocoaDecoding.rect = CGRectMake(0, 0, [self width], [self height]);
+    
+    CocoaDecoding.imageRep = [NSBitmapImageRep alloc];
+    CocoaDecoding.imageRep = [CocoaDecoding.imageRep initWithBitmapDataPlanes:NULL
+                                                               pixelsWide:[self width]
+                                                               pixelsHigh:[self height]
+                                                            bitsPerSample:8
+                                                          samplesPerPixel:4
+                                                                 hasAlpha:YES
+                                                                 isPlanar:NO
+                                                           colorSpaceName:NSDeviceRGBColorSpace
+                                                              bytesPerRow:4 * [self width]
+                                                             bitsPerPixel:4 * 8];
+    
+    // use CGBitmapContextCreate() instead??
+    /*
+     00270                 CGColorSpaceRef colorspace_ref = (image_depth == 8) ? CGColorSpaceCreateDeviceGray() : CGColorSpaceCreateDeviceRGB();
+     00271                 
+     00272                 if (!colorspace_ref)
+     00273                         return false;
+     00274                 
+     00275                 CGImageAlphaInfo alpha_info = (image_depth == 8) ? kCGImageAlphaNone : kCGImageAlphaPremultipliedLast; //kCGImageAlphaLast; //RGBA format
+     00276 
+     00277                 context_ref = CGBitmapContextCreate(buffer->data, (size_t)image_size.width, (size_t)image_size.height, 8, buffer_rowbytes, colorspace_ref, alpha_info);
+     00278 
+     00279                 if (context_ref)
+     00280                 {
+         00281                         CGContextSetFillColorSpace(context_ref, colorspace_ref);
+         00282                         CGContextSetStrokeColorSpace(context_ref, colorspace_ref);
+         00283                         // move down, and flip vertically 
+             00284                         // to turn postscript style coordinates to "screen style"
+             00285                         CGContextTranslateCTM(context_ref, 0.0, image_size.height);
+         00286                         CGContextScaleCTM(context_ref, 1.0, -1.0);
+         00287                 }
+     00288                 
+     00289                 CGColorSpaceRelease(colorspace_ref);
+     00290                 colorspace_ref = NULL;
+     */
+    
+    /*
+     CGColorSpaceRef CreateSystemColorSpace () 
+     {
+         CMProfileRef sysprof = NULL;
+         CGColorSpaceRef dispColorSpace = NULL;
+         
+         // Get the Systems Profile for the main display
+         if (CMGetSystemProfile(&sysprof) == noErr)
+         {
+             // Create a colorspace with the systems profile
+             dispColorSpace = CGColorSpaceCreateWithPlatformColorSpace(sysprof);
+             
+             // Close the profile
+             CMCloseProfile(sysprof);
+         }
+         
+         return dispColorSpace;
+     }
+     */
+    
     CMProfileRef sysprof = NULL;
     CGColorSpaceRef dispColorSpace = NULL;
     
@@ -976,69 +1098,67 @@ CGColorSpaceRef CreateSystemColorSpace ()
         CMCloseProfile(sysprof);
     }
     
-    return dispColorSpace;
-}
-*/
-        
-        CMProfileRef sysprof = NULL;
-        CGColorSpaceRef dispColorSpace = NULL;
-        
-        // Get the Systems Profile for the main display
-        if (CMGetSystemProfile(&sysprof) == noErr)
-        {
-            // Create a colorspace with the systems profile
-            dispColorSpace = CGColorSpaceCreateWithPlatformColorSpace(sysprof);
-            
-            // Close the profile
-            CMCloseProfile(sysprof);
-        }
-        
-        CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
-        
-        CocoaJPEG.imageContext = CGBitmapContextCreate( [CocoaJPEG.imageRep bitmapData],
-                                            [self width], [self height], 8, 4 * [self width],
-                                            colorspace, kCGImageAlphaPremultipliedLast);
-        
-        CGColorSpaceRelease(colorspace);
-        CGColorSpaceRelease(dispColorSpace);
-    }
+    CGColorSpaceRef colorspace = CGColorSpaceCreateDeviceRGB();
     
-    if (compressionType == jpegCompression && jpegVersion == 2) 
-    {
-        CocoaJPEG.rect = CGRectMake(0, 0, [self width], [self height]);
-        
-        CocoaJPEG.imageRep = [NSBitmapImageRep alloc];
-        CocoaJPEG.imageRep = [CocoaJPEG.imageRep initWithBitmapDataPlanes:NULL
-                                                                     pixelsWide:[self width]
-                                                                     pixelsHigh:[self height]
-                                                                  bitsPerSample:8
-                                                                samplesPerPixel:4
-                                                                       hasAlpha:YES
-                                                                       isPlanar:NO
-                                                                 colorSpaceName:NSDeviceRGBColorSpace
-                                                                    bytesPerRow:4 * [self width]
-                                                                   bitsPerPixel:4 * 8];
-        
-        //  This only works with 32 bits/pixel ARGB
-        //  bitmapGC = [NSGraphicsContext graphicsContextWithBitmapImageRep:imageRep];
-        
-        //  Need this for pre 10.4 compatibility?
-        CocoaJPEG.bitmapGC = [NSGraphicsContext graphicsContextWithAttributes:
-            [NSDictionary dictionaryWithObject:CocoaJPEG.imageRep forKey:NSGraphicsContextDestinationAttributeName]];
-        //  NSGraphicsContext * bitmapGC = [NSGraphicsContext graphicsContextWithAttributes:<#(NSDictionary *)attributes#>];
-        
-        CocoaJPEG.imageContext = (CGContextRef) [CocoaJPEG.bitmapGC graphicsPort];
-    }
+    CocoaDecoding.imageContext = CGBitmapContextCreate( [CocoaDecoding.imageRep bitmapData],
+                                                        [self width], [self height], 8, 4 * [self width],
+                                                        colorspace, kCGImageAlphaPremultipliedLast);
     
-    return ok;
+    CGColorSpaceRelease(colorspace);
+    CGColorSpaceRelease(dispColorSpace);
+    
+    return YES;
 }
 
 
-- (void) cleanupDecoding;
+- (BOOL) setupJpegVersion2
 {
-    if (CocoaJPEG.imageRep != NULL) 
-        [CocoaJPEG.imageRep release];
-    CocoaJPEG.imageRep = NULL;
+    CocoaDecoding.rect = CGRectMake(0, 0, [self width], [self height]);
+    
+    CocoaDecoding.imageRep = [NSBitmapImageRep alloc];
+    CocoaDecoding.imageRep = [CocoaDecoding.imageRep initWithBitmapDataPlanes:NULL
+                                                                   pixelsWide:[self width]
+                                                                   pixelsHigh:[self height]
+                                                                bitsPerSample:8
+                                                              samplesPerPixel:4
+                                                                     hasAlpha:YES
+                                                                     isPlanar:NO
+                                                               colorSpaceName:NSDeviceRGBColorSpace
+                                                                  bytesPerRow:4 * [self width]
+                                                                 bitsPerPixel:4 * 8];
+    
+    //  This only works with 32 bits/pixel ARGB
+    //  bitmapGC = [NSGraphicsContext graphicsContextWithBitmapImageRep:imageRep];
+    
+    //  Need this for pre 10.4 compatibility?
+    CocoaDecoding.bitmapGC = [NSGraphicsContext graphicsContextWithAttributes:
+        [NSDictionary dictionaryWithObject:CocoaDecoding.imageRep forKey:NSGraphicsContextDestinationAttributeName]];
+    //  NSGraphicsContext * bitmapGC = [NSGraphicsContext graphicsContextWithAttributes:<#(NSDictionary *)attributes#>];
+    
+    CocoaDecoding.imageContext = (CGContextRef) [CocoaDecoding.bitmapGC graphicsPort];
+    
+    return YES;
+}
+
+- (BOOL) setupQuicktimeImageCompression
+{
+    BOOL result = NO;
+    
+    return result;
+}
+
+- (BOOL) setupQuicktimeSequenceCompression
+{
+    BOOL result = NO;
+    
+    return result;
+}
+
+- (void) cleanupDecoding
+{
+    if (CocoaDecoding.imageRep != NULL) 
+       [CocoaDecoding.imageRep release];
+    CocoaDecoding.imageRep = NULL;
 }
 
 //
@@ -1058,11 +1178,19 @@ CGColorSpaceRef CreateSystemColorSpace ()
         shouldBeGrabbing = NO;
     }
     
-    // Initialize
+    // Initialize grab context
     
-    if (shouldBeGrabbing && (![self setupGrabContext] || ![self setupDecoding])) 
+    if (shouldBeGrabbing && ![self setupGrabContext]) 
     {
         error = CameraErrorNoMem;
+        shouldBeGrabbing = NO;
+    }
+    
+    // Initialize image decoding
+    
+    if (shouldBeGrabbing && ![self setupDecoding]) 
+    {
+        error = CameraErrorDecoding;
         shouldBeGrabbing = NO;
     }
     
@@ -1156,14 +1284,14 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer->buffer, buffer->numBytes, BufferProviderRelease);
     CGImageRef image = CGImageCreateWithJPEGDataProvider(provider, NULL, false, kCGRenderingIntentDefault);
     
-    CGContextDrawImage(CocoaJPEG.imageContext, CocoaJPEG.rect, image);
+    CGContextDrawImage(CocoaDecoding.imageContext, CocoaDecoding.rect, image);
     
-    CGContextFlush(CocoaJPEG.imageContext);
+    CGContextFlush(CocoaDecoding.imageContext);
     
     CGDataProviderRelease(provider);
     CGImageRelease(image);
     
-    [LUT processImageRep:CocoaJPEG.imageRep 
+    [LUT processImageRep:CocoaDecoding.imageRep 
                   buffer:nextImageBuffer 
                  numRows:[self height] 
                 rowBytes:nextImageBufferRowBytes 
@@ -1171,9 +1299,19 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
 }
 
 
-- (void) decodeBufferJPEGversion3: (GenericChunkBuffer *) buffer
+- (void) decodeBufferQuicktimeImage: (GenericChunkBuffer *) buffer
 {
     // QuickTime
+}
+
+- (void) decodeBufferQuicktimeSequence: (GenericChunkBuffer *) buffer
+{
+    // QuickTime
+}
+
+- (void) decodeBufferJPEG: (GenericChunkBuffer *) buffer
+{
+    NSLog(@"Oops: [decodeBufferJPEG] needs to be implemented in current driver!");
 }
 
 //
@@ -1186,8 +1324,8 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     {
         switch (jpegVersion) 
         {
-            case 3:
-                [self decodeBufferJPEGversion3:buffer];
+            case 0:
+                [self decodeBufferJPEG:buffer];
                 break;
                 
             default:
@@ -1198,8 +1336,31 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
                 break;
         }
     }
+    else if (compressionType == quicktimeImage) 
+    {
+    }
+    else if (compressionType == quicktimeSequence) 
+    {
+    }
+    else if (compressionType == noCompression) 
+    {
+    }
     else 
         NSLog(@"GenericDriver - decodeBuffer must be implemented");
 }
 
 @end
+
+
+// The Image Description structure
+// http://developer.apple.com/documentation/QuickTime/RM/CompressDecompress/ImageComprMgr/F-Chapter/chapter_1000_section_15.html
+//
+// http://developer.apple.com/documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/G-Chapter/chapter_1000_section_5.html#//apple_ref/doc/uid/TP40000878-HowtoCompressandDecompressSequencesofImages-ASampleProgramforCompressingandDecompressingaSequenceofImages
+// http://developer.apple.com/quicktime/icefloe/dispatch008.html
+// http://www.extremetech.com/article2/0,1697,1843577,00.asp
+// http://www.cs.cf.ac.uk/Dave/Multimedia/node292.html
+// http://developer.apple.com/documentation/QuickTime/RM/Fundamentals/QTOverview/QTOverview_Document/chapter_1000_section_2.html
+// http://developer.apple.com/documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/A-Intro/chapter_1000_section_1.html
+// http://homepage.mac.com/gregcoats/jp2.html
+// http://www.google.com/search?client=safari&rls=en&q=quicktime+decompress+image+sample+code&ie=UTF-8&oe=UTF-8
+// 

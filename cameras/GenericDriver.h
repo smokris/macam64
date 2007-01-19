@@ -41,6 +41,12 @@
 #include "BayerConverter.h"
 #include "LookUpTable.h"
 
+typedef enum DriverType
+{
+    isochronousDriver,
+    bulkDriver,
+} DriverType;
+
 // These seem to work well for many cameras
 
 #define GENERIC_FRAMES_PER_TRANSFER  50
@@ -49,13 +55,17 @@
 #define GENERIC_NUM_CHUNK_BUFFERS     5
 
 // Define some compression constants
+// In general, these are for general algorithms that are used by more than one driver
+// Proprietary compression code is provided in the specific drivers (e.g. Sonix)
 
 typedef enum CompressionType
 {
     unknownCompression,
     noCompression,
     jpegCompression,
-    sonixCompression1,
+    quicktimeImage,
+    quicktimeSequence,
+    proprietaryCompression,
 } CompressionType;
 
 // Some constants and functions for proccessing isochronous frames
@@ -103,7 +113,7 @@ typedef struct GenericGrabContext
     int imageHeight;
     
     IOUSBInterfaceInterface ** intf; // Just a copy of our interface interface so the callback can issue USB
-    BOOL* shouldBeGrabbing;          // Ref to the global indicator if the grab should go on
+    BOOL * shouldBeGrabbing;         // Ref to the global indicator if the grab should go on
     CameraError contextError;        // Return value for common errors during grab
     
     // function pointers for scanning the frames, different cameras have different frame information
@@ -137,6 +147,8 @@ typedef struct GenericGrabContext
 
 @interface GenericDriver : MyCameraDriver 
 {
+    DriverType driverType;
+    
     GenericGrabContext grabContext;
     BOOL grabbingThreadRunning;
     
@@ -148,25 +160,31 @@ typedef struct GenericGrabContext
     BOOL hardwareSaturation;
     BOOL hardwareGamma;
     BOOL hardwareSharpness;
+    BOOL hardwareHue;
+    BOOL hardwareFlicker;
+    int  hardwareFlickerValue;
+    
+    int decodingSkipBytes;
     
     CompressionType compressionType;
     int jpegVersion;
+    UInt32 quicktimeCodec;
     
-    struct // Using Cocoa JPEG decompression (version 1 & 2)
+    struct // Using Cocoa decoding
     {
         CGRect              rect;
         NSBitmapImageRep  * imageRep;
         NSGraphicsContext * bitmapGC;
         CGContextRef        imageContext;
-    } CocoaJPEG;
+    } CocoaDecoding;
     
-    struct // Using QuickTime decompression
+    struct // Using QuickTime decoding
     {
-    } JPEGversion3;
+    } QuicktimeDecoding;
     
-    struct // Using Image Compression Manager
+    struct // Using Image Compression Manager for decoding
     {
-    } JPEGversion4;
+    } ICManagerDecoding;
 }
 
 #pragma mark -> Subclass Unlikely to Implement (generic implementation) <-
@@ -177,6 +195,18 @@ typedef struct GenericGrabContext
 - (void) cleanupGrabContext;
 - (void) grabbingThread: (id) data;
 - (CameraError) decodingThread;
+
+- (BOOL) setupDecoding;
+- (BOOL) setupJpegCompression;
+- (BOOL) setupJpegVersion1;
+- (BOOL) setupJpegVersion2;
+- (BOOL) setupQuicktimeImageCompression;
+- (BOOL) setupQuicktimeSequenceCompression;
+
+- (void) decodeBufferCocoaJPEG: (GenericChunkBuffer *) buffer;
+- (void) decodeBufferQuicktimeImage: (GenericChunkBuffer *) buffer;
+- (void) decodeBufferQuicktimeSequence: (GenericChunkBuffer *) buffer;
+
 
 #pragma mark -> Subclass May Implement (works for BayerConverter) <-
 
