@@ -63,6 +63,7 @@ typedef enum CameraError
     CameraErrorUnimplemented = 8,	// A feature that is not (yet) implemented
     CameraErrorInternal		 = 9,	// Some other, probably serious, error
     CameraErrorDecoding		 = 10,	// An error related to the decoding of image data
+    CameraErrorUSBNeedsUSB2  = 11,  // This camera *needs* USB2
 } CameraError;
 
 typedef enum ColorMode 

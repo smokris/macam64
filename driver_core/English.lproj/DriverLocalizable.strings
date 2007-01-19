@@ -36,6 +36,8 @@ another application</string>
 	<string>Internal error</string>
 	<key>CameraErrorDecoding</key>
 	<string>Image data decoding error</string>
+	<key>CameraErrorUSBNeedsUSB2</key>
+	<string>Sorry, this camera requires USB2</string>
 	<key>CameraErrorNoBandwidth</key>
 	<string>Not enough
 USB bandwidth</string>
