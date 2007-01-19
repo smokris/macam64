@@ -274,6 +274,9 @@
 #define VENDOR_AROWANA          0x1776
 #define PRODUCT_300KCMOS                0x501c      // SPCA501A? [not yet]
 
+#define VENDOR_PICO_INSTRUMENTS 0x18cd
+#define PRODUCT_PICO_IMAGE_WEBCAM       0xcafe      // PicoDriver - UVC Bulk
+
 #define VENDOR_SQ               0x2770
 #define VENDOR_SQ905            0x2770
 #define PRODUCT_SQ905                   0x9120      // common for many SQ905 cameras
