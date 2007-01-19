@@ -600,6 +600,12 @@
 		F5ED13E00A48752A00770B6A /* LookUpTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F5ED13DC0A48752A00770B6A /* LookUpTable.m */; };
 		F5ED13E10A48752A00770B6A /* LookUpTable.h in Headers */ = {isa = PBXBuildFile; fileRef = F5ED13DB0A48752A00770B6A /* LookUpTable.h */; };
 		F5ED13E20A48752A00770B6A /* LookUpTable.m in Sources */ = {isa = PBXBuildFile; fileRef = F5ED13DC0A48752A00770B6A /* LookUpTable.m */; };
+		F5F087C50B4D9AE100C57AF8 /* PicoDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F087C30B4D9AE100C57AF8 /* PicoDriver.h */; };
+		F5F087C60B4D9AE100C57AF8 /* PicoDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F087C40B4D9AE100C57AF8 /* PicoDriver.m */; };
+		F5F087C70B4D9AE100C57AF8 /* PicoDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F087C30B4D9AE100C57AF8 /* PicoDriver.h */; };
+		F5F087C80B4D9AE100C57AF8 /* PicoDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F087C40B4D9AE100C57AF8 /* PicoDriver.m */; };
+		F5F087C90B4D9AE100C57AF8 /* PicoDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F087C30B4D9AE100C57AF8 /* PicoDriver.h */; };
+		F5F087CA0B4D9AE100C57AF8 /* PicoDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F087C40B4D9AE100C57AF8 /* PicoDriver.m */; };
 		F5F17B6F09BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
 		F5F17B7009BCD671000AEB63 /* GenericDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F17B6E09BCD671000AEB63 /* GenericDriver.m */; };
 		F5F17B7109BCD671000AEB63 /* GenericDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F17B6D09BCD671000AEB63 /* GenericDriver.h */; };
@@ -929,6 +935,8 @@
 		F5EDFAD5036876210166D062 /* MyOV511Driver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyOV511Driver.m; sourceTree = "<group>"; };
 		F5EDFAD6036876210166D062 /* MyOV511Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyOV511Driver.h; sourceTree = "<group>"; wrapsLines = 1; };
 		F5EF7FFB0364C3BD01E9B502 /* JFIFHeaderTemplate.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = JFIFHeaderTemplate.c; sourceTree = "<group>"; };
+		F5F087C30B4D9AE100C57AF8 /* PicoDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PicoDriver.h; sourceTree = "<group>"; };
+		F5F087C40B4D9AE100C57AF8 /* PicoDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PicoDriver.m; sourceTree = "<group>"; };
 		F5F17B2F09BCD2FF000AEB63 /* zc3xx.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = zc3xx.h; path = spca5xx_files/zc3xx.h; sourceTree = "<group>"; };
 		F5F17B6D09BCD671000AEB63 /* GenericDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenericDriver.h; sourceTree = "<group>"; };
 		F5F17B6E09BCD671000AEB63 /* GenericDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GenericDriver.m; sourceTree = "<group>"; };
@@ -1367,6 +1375,8 @@
 				F589EB0F02268A6901D99A1F /* MySTV680Driver.m */,
 				F5C5790603049095010B006D /* MyIntelPCCameraPro.h */,
 				F5C5790703049095010B006D /* MyIntelPCCameraPro.m */,
+				F5F087C30B4D9AE100C57AF8 /* PicoDriver.h */,
+				F5F087C40B4D9AE100C57AF8 /* PicoDriver.m */,
 			);
 			path = cameras;
 			sourceTree = "<group>";
@@ -1514,6 +1524,7 @@
 				F52514320AE73B2B006217A0 /* pwc-timon.h in Headers */,
 				F52514340AE73B2B006217A0 /* pwc-uncompress.h in Headers */,
 				F52514360AE73B2B006217A0 /* pwc.h in Headers */,
+				F5F087C50B4D9AE100C57AF8 /* PicoDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1617,6 +1628,7 @@
 				F525141C0AE73B2B006217A0 /* pwc-timon.h in Headers */,
 				F525141E0AE73B2B006217A0 /* pwc-uncompress.h in Headers */,
 				F52514200AE73B2B006217A0 /* pwc.h in Headers */,
+				F5F087C70B4D9AE100C57AF8 /* PicoDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1716,6 +1728,7 @@
 				F52514270AE73B2B006217A0 /* pwc-timon.h in Headers */,
 				F52514290AE73B2B006217A0 /* pwc-uncompress.h in Headers */,
 				F525142B0AE73B2B006217A0 /* pwc.h in Headers */,
+				F5F087C90B4D9AE100C57AF8 /* PicoDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2049,6 +2062,7 @@
 				F525144C0AE740E2006217A0 /* pwc-misc.c in Sources */,
 				F525144D0AE740E2006217A0 /* pwc-timon.c in Sources */,
 				F525144E0AE740E2006217A0 /* pwc-uncompress.c in Sources */,
+				F5F087C60B4D9AE100C57AF8 /* PicoDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2130,6 +2144,7 @@
 				F52514420AE740E2006217A0 /* pwc-misc.c in Sources */,
 				F52514430AE740E2006217A0 /* pwc-timon.c in Sources */,
 				F52514440AE740E2006217A0 /* pwc-uncompress.c in Sources */,
+				F5F087C80B4D9AE100C57AF8 /* PicoDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2209,6 +2224,7 @@
 				F52514470AE740E2006217A0 /* pwc-misc.c in Sources */,
 				F52514480AE740E2006217A0 /* pwc-timon.c in Sources */,
 				F52514490AE740E2006217A0 /* pwc-uncompress.c in Sources */,
+				F5F087CA0B4D9AE100C57AF8 /* PicoDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
