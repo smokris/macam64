@@ -423,6 +423,8 @@ Here is a table of sniffed data. I have no idea what this means
             res=PSZ_VGA;
             break;
         case ResolutionSVGA: 	//svga  = 800 x 600
+        case ResolutionXGA:
+        case ResolutionUXGA:
             break;
         case ResolutionInvalid:
             break;
@@ -574,7 +576,7 @@ Here is a table of sniffed data. I have no idea what this means
 */        
         UInt16 id;
 //      long err=
-            (*intf)->GetDeviceProduct(intf, &id);
+            (*streamIntf)->GetDeviceProduct(streamIntf, &id);
         
         // [self usbWriteCmdWithBRequest:GRP_SET_STREAM wValue:SEL_FORMAT wIndex:INTF_VIDEO buf:Kiara_table[res][frameRate][i].mode len:12];
         usbFrameBytes=Kiara_table[res][frameRate][i].packetsize;
