@@ -661,8 +661,8 @@ static void transferComplete(void *refcon, IOReturn result, void *arg0)
 
 - (BOOL) startTransfer
 {
-	IOReturn result = (*intf)->ReadIsochPipeAsync(
-		intf,										// self			Pointer to the IOUSBInterfaceInterface
+	IOReturn result = (*streamIntf)->ReadIsochPipeAsync(
+		streamIntf,									// self			Pointer to the IOUSBInterfaceInterface
 		5,											// pipeRef		Index for the desired pipe (1 - GetNumEndpoints)
 		transferBuffer,								// buf			Buffer to hold the data
 	//	transfers[fillingTransfer].buffer,			// buf			Buffer to hold the data
@@ -708,7 +708,7 @@ static void transferComplete(void *refcon, IOReturn result, void *arg0)
 
 	// Run the grabbing loop
     if(shouldBeGrabbing){
-        err = (*intf)->CreateInterfaceAsyncEventSource(intf, &cfSource);	// Create an event source
+        err = (*streamIntf)->CreateInterfaceAsyncEventSource(streamIntf, &cfSource);	// Create an event source
         CheckError(err, "CreateInterfaceAsyncEventSource");
         if(err){
             if(!grabbingError) grabbingError = CameraErrorNoMem;
