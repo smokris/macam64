@@ -61,7 +61,7 @@
 
 - (void) shutdown {
     buttonThreadShouldBeRunning=NO;
-    if ((intf)&&(isUSBOK)) (*intf)->AbortPipe(intf,2);
+    if ((streamIntf)&&(isUSBOK)) (*streamIntf)->AbortPipe(streamIntf,2);
     while (buttonThreadRunning) { usleep(10000); }
     if (buttonToMainThreadConnection) [buttonToMainThreadConnection release];
     if (mainToButtonThreadConnection) [mainToButtonThreadConnection release];
@@ -80,7 +80,7 @@
     }
     while ((buttonThreadShouldBeRunning)&&(isUSBOK)) {
         length=1;
-        (*intf)->ReadPipe(intf,2,&camData,&length);
+        (*streamIntf)->ReadPipe(streamIntf,2,&camData,&length);
         if (length==1) {
             switch (camData) {
                 case 16:	//Button down
@@ -131,8 +131,8 @@
     if (ok) ok=[sensor resetSensor];
 
     if (ok) {
-        if (intf&&isUSBOK) {
-            err=(*intf)->GetPipeProperties(intf,1,&direction,&number,&transferType,&maxPacketSize,&interval);
+        if (streamIntf&&isUSBOK) {
+            err=(*streamIntf)->GetPipeProperties(streamIntf,1,&direction,&number,&transferType,&maxPacketSize,&interval);
             if (err) ok=NO;
         } else ok=NO;
     }

@@ -464,7 +464,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     }
 //start the bulk read
     if (shouldBeGrabbing) {
-        err=((IOUSBInterfaceInterface182*)(*intf))->ReadPipeAsyncTO(intf,1,
+        err=((IOUSBInterfaceInterface182*)(*streamIntf))->ReadPipeAsyncTO(streamIntf,1,
                                      [fillingChunk mutableBytes],
                                      grabBufferSize,1000,2000,
                                      (IOAsyncCallback1)(handleFullChunk),self);	//Read one chunk
@@ -486,7 +486,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 
 //Run the grabbing loob
     if (shouldBeGrabbing) {
-        err = (*intf)->CreateInterfaceAsyncEventSource(intf, &cfSource);	//Create an event source
+        err = (*streamIntf)->CreateInterfaceAsyncEventSource(streamIntf, &cfSource);	//Create an event source
         CheckError(err,"CreateInterfaceAsyncEventSource");
         if (err) {
             if (!grabbingError) grabbingError=CameraErrorNoMem;

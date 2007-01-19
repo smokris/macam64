@@ -391,7 +391,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     }
 //start the bulk read
     if (shouldBeGrabbing) {
-        err=(*intf)->ReadPipeAsync(intf,1,
+        err=(*streamIntf)->ReadPipeAsync(streamIntf,1,
                                      [fillingChunk mutableBytes]+sizeof(unsigned long),
                                      grabBufferSize+STV680_CHUNK_SPARE-sizeof(unsigned long),
                                      (IOAsyncCallback1)(handleFullChunk),self);	//Read one chunk
@@ -412,7 +412,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 
 //Run the grabbing loob
     if (shouldBeGrabbing) {
-        err = (*intf)->CreateInterfaceAsyncEventSource(intf, &cfSource);	//Create an event source
+        err = (*streamIntf)->CreateInterfaceAsyncEventSource(streamIntf, &cfSource);	//Create an event source
         CheckError(err,"CreateInterfaceAsyncEventSource");
         if (err) {
             if (!grabbingError) grabbingError=CameraErrorNoMem;
@@ -550,7 +550,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 //Read image data
     if (ok) {
         bulkSize=rawBufferSize+STV680_CHUNK_SPARE;
-        err=(*intf)->ReadPipe(intf,1, [rawBuffer mutableBytes], &bulkSize);	//Read one chunk
+        err=(*streamIntf)->ReadPipe(streamIntf,1, [rawBuffer mutableBytes], &bulkSize);	//Read one chunk
         CheckError(err,"getStoredMediaObject-ReadBulkPipe");
         if (err) ok=NO;
     }

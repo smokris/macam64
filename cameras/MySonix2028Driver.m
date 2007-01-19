@@ -322,7 +322,7 @@ typedef enum SonixSensorType {
     grabContext.numFullBuffers=0;
     grabContext.fillingChunk=false;
     grabContext.finishedTransfers=0;
-    grabContext.intf=intf;
+    grabContext.intf=streamIntf;
     grabContext.shouldBeGrabbing=&shouldBeGrabbing;
     grabContext.err=CameraErrorOK;
     grabContext.framesSinceLastChunk=0;
@@ -610,7 +610,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     }
 
     if (ok) {
-        err = (*intf)->CreateInterfaceAsyncEventSource(intf, &cfSource);	//Create an event source
+        err = (*streamIntf)->CreateInterfaceAsyncEventSource(streamIntf, &cfSource);	//Create an event source
         CheckError(err,"CreateInterfaceAsyncEventSource");
         CFRunLoopAddSource(CFRunLoopGetCurrent(), cfSource, kCFRunLoopDefaultMode);	//Add it to our run loop
         for (i=0;(i<SONIX_NUM_TRANSFERS)&&ok;i++) {	//Initiate transfers
@@ -1011,7 +1011,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
         //Read raw image data
         rawLength=((rawLength+63)/64)*64;	//Round up to n*64
         readLength=rawLength;
-        ioErr=(*intf)->ReadPipe(intf,2, [rawBuffer mutableBytes]+writeSkipBytes, &readLength);	//Read image data
+        ioErr=(*streamIntf)->ReadPipe(streamIntf,2, [rawBuffer mutableBytes]+writeSkipBytes, &readLength);	//Read image data
         CheckError(ioErr,"getStoredMediaObject-ReadBulkPipe");
         if (rawLength!=readLength) {
             NSLog(@"getStoredMediaObject: problem: wanted %i bytes, got %i, trying to continue...",rawLength,readLength);

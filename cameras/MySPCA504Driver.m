@@ -452,7 +452,7 @@ extern UInt8 ZigZagLookup[];
     //Setup simple things    
     grabContext.bytesPerFrame=1023;
     grabContext.finishedTransfers=0;
-    grabContext.intf=intf;
+    grabContext.intf=streamIntf;
     grabContext.initiatedUntil=0;	//Will be set later (directly before start)
     grabContext.shouldBeGrabbing=&shouldBeGrabbing;
     grabContext.err=CameraErrorOK;
@@ -735,7 +735,7 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
     }
 
     if (ok) {
-        err = (*intf)->CreateInterfaceAsyncEventSource(intf, &cfSource);	//Create an event source
+        err = (*streamIntf)->CreateInterfaceAsyncEventSource(streamIntf, &cfSource);	//Create an event source
         CheckError(err,"CreateInterfaceAsyncEventSource");
         CFRunLoopAddSource(CFRunLoopGetCurrent(), cfSource, kCFRunLoopDefaultMode);	//Add it to our run loop
     

@@ -369,14 +369,14 @@ VicamInfo	gVicamInfo[] =
     req.wIndex=wIdx;
     req.wLength=len;
     req.pData=buf;
-    if ((!isUSBOK)||(!intf)) return NO;
-    err=(*intf)->ControlRequest(intf,0,&req);
+    if ((!isUSBOK)||(!streamIntf)) return NO;
+    err=(*streamIntf)->ControlRequest(streamIntf,0,&req);
 #ifdef LOG_USB_CALLS
     NSLog(@"usb write req:%i val:%i idx:%i len:%i ret:%i",bReq,wVal,wIdx,len,err);
     if (len>0) DumpMem(buf,len);
 #endif
     CheckError(err,"usbWriteCmdWithBRequest");
-    if ((err==kIOUSBPipeStalled)&&(intf)) (*intf)->ClearPipeStall(intf,0);
+    if ((err==kIOUSBPipeStalled)&&(streamIntf)) (*streamIntf)->ClearPipeStall(streamIntf,0);
     return (!err);
 }
 
@@ -715,7 +715,7 @@ Why CFRunLoops? Somehow, I didn't manage to get the NSRunLoop stopped after inva
 
     //Run the grabbing loop
     if (shouldBeGrabbing) {
-        err = (*intf)->CreateInterfaceAsyncEventSource(intf, &cfSource);	//Create an event source
+        err = (*streamIntf)->CreateInterfaceAsyncEventSource(streamIntf, &cfSource);	//Create an event source
         CheckError(err,"CreateInterfaceAsyncEventSource");
         if (err) {
             if (!grabbingError) grabbingError=CameraErrorNoMem;
@@ -756,8 +756,8 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     
     if (err) {
         ShowError(err,"ReadPipe");
-        if ((err==kIOUSBPipeStalled)&&(intf)) {
-            (*intf)->ClearPipeStall(intf, 1);
+        if ((err==kIOUSBPipeStalled)&&(streamIntf)) {
+            (*streamIntf)->ClearPipeStall(streamIntf, 1);
         } else {
             if (!grabbingError) grabbingError=CameraErrorUSBProblem;
             shouldBeGrabbing=NO;				//Inside decodingThread, always set shouldBeGrabbing to NO on error
@@ -827,7 +827,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     }
     //start the bulk read
     if (shouldBeGrabbing) {
-        err=(*intf)->ReadPipeAsync(intf,1,
+        err=(*streamIntf)->ReadPipeAsync(streamIntf,1,
                                    [fillingChunk mutableBytes],
                                    CHUNK_SIZE,
                                    (IOAsyncCallback1)(handleFullChunk),self);	//Read one chunk

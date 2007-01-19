@@ -388,7 +388,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
         }
         if (!changedSetting) {
             UInt8 buf=0;
-            IOReturn err=(*intf)->WritePipe(intf, 1, &buf, 1);
+            IOReturn err=(*streamIntf)->WritePipe(streamIntf, 1, &buf, 1);
             CheckError(err,"MyQCProBeigeDriver: fillNextChunk: write a zero");
             if (err) {
                 if (!grabbingError) grabbingError=CameraErrorUSBProblem;
@@ -398,7 +398,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     }
     //3. Start the bulk read
     if (shouldBeGrabbing) {
-        err=((IOUSBInterfaceInterface182*)(*intf))->ReadPipeAsyncTO(intf,2,
+        err=((IOUSBInterfaceInterface182*)(*streamIntf))->ReadPipeAsyncTO(streamIntf,2,
                                      [fillingChunk mutableBytes],
                                      grabBufferSize,2000,3000,
                                      (IOAsyncCallback1)(handleFullChunk),self);	//Read one chunk
@@ -419,7 +419,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 
 //Run the grabbing loob
     if (shouldBeGrabbing) {
-        err = (*intf)->CreateInterfaceAsyncEventSource(intf, &cfSource);	//Create an event source
+        err = (*streamIntf)->CreateInterfaceAsyncEventSource(streamIntf, &cfSource);	//Create an event source
         CheckError(err,"CreateInterfaceAsyncEventSource");
         if (err) {
             if (!grabbingError) grabbingError=CameraErrorNoMem;
@@ -677,7 +677,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     ok=ok&&[self usbWriteCmdWithBRequest:0x04 wValue:0x0206 wIndex:0x0000 buf:NULL len:0];
     ok=ok&&[self resetUSS720];
     if ((ok)&&(len>0)) {
-        IOReturn ret=(*intf)->WritePipe(intf, 1, buf, len);
+        IOReturn ret=(*streamIntf)->WritePipe(streamIntf, 1, buf, len);
         CheckError(ret,"MyQCProBeigeDriver:writeCameraRegister");
         ok=(ret)?NO:YES;
     }
@@ -708,7 +708,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     ok=ok&&[self resetUSS720];
     if (ok) {
         UInt32 actLen=len;
-        IOReturn ret=((IOUSBInterfaceInterface182*)(*intf))->ReadPipeTO(intf, 2, retBuf, &actLen, 2000, 3000);
+        IOReturn ret=((IOUSBInterfaceInterface182*)(*streamIntf))->ReadPipeTO(streamIntf, 2, retBuf, &actLen, 2000, 3000);
         CheckError(ret,"MyQCProBeigeDriver:writeCameraRegister");
         ok=(ret)?NO:YES;
     }
@@ -867,7 +867,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
         if (!changedSetting) 
         {
             UInt8 buf=0;
-            IOReturn err=(*intf)->WritePipe(intf, 1, &buf, 1);
+            IOReturn err=(*streamIntf)->WritePipe(streamIntf, 1, &buf, 1);
             CheckError(err,"MyQCProBeigeDriver: fillNextChunk: write a zero");
             if (err) {
                 if (!grabbingError) grabbingError=CameraErrorUSBProblem;
@@ -878,7 +878,7 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     }
     //3. Start the bulk read
     if (shouldBeGrabbing) {
-        err=((IOUSBInterfaceInterface182*)(*intf))->ReadPipeAsyncTO(intf,2,
+        err=((IOUSBInterfaceInterface182*)(*streamIntf))->ReadPipeAsyncTO(streamIntf,2,
                                                                     [fillingChunk mutableBytes],
                                                                     grabBufferSize,2000,3000,
                                                                     (IOAsyncCallback1)(handleFullChunk),self);	//Read one chunk
