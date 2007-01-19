@@ -66,6 +66,7 @@
 #import "SonixDriver.h"
 #import "SPCA501ADriver.h"
 #import "SPCA525Driver.h"
+#import "PicoDriver.h"
 
 #include "unistd.h"
 
@@ -166,6 +167,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [[self class] localizedCStrFor:"CameraErrorUSBProblem" into:localizedErrorCStrs[CameraErrorUSBProblem]];
     [[self class] localizedCStrFor:"CameraErrorUnimplemented" into:localizedErrorCStrs[CameraErrorUnimplemented]];
     [[self class] localizedCStrFor:"CameraErrorInternal" into:localizedErrorCStrs[CameraErrorInternal]];
+    [[self class] localizedCStrFor:"CameraErrorDecoding" into:localizedErrorCStrs[CameraErrorDecoding]];
     [[self class] localizedCStrFor:"UnknownError" into:localizedUnknownErrorCStr];
     return self;
 }
@@ -289,6 +291,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SN9CxxxDriverVariant6 class]];
     [self registerCameraDriver:[SN9CxxxDriverVariant7 class]];
     [self registerCameraDriver:[SN9CxxxDriverVariant8 class]];
+    
+    [self registerCameraDriver:[PicoDriver class]];
     
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
