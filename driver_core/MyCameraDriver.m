@@ -57,23 +57,28 @@
 //setup simple defaults
     central=c;
     dev=NULL;
-    intf=NULL;
+    controlIntf = NULL;
+    streamIntf = NULL;
+    confDesc = NULL;
+    interfaceID = 0;
     
-    descriptor = NULL;
     altInterfacesAvailable = -1;
     currentMaxPacketSize = -1;
     
     brightness=0.0f;
     contrast=0.0f;
     saturation=0.0f;
+    hue=0.0f;
     gamma=0.0f;
     shutter=0.0f;
     gain=0.0f;
     autoGain=NO;
     hFlip=NO;
     compression=0;
+    usbReducedBandwidth = NO;
     whiteBalanceMode=WhiteBalanceLinear;
     blackWhiteMode = FALSE;
+    
     isStarted=NO;
     isGrabbing=NO;
     shouldBeGrabbing=NO;
@@ -304,6 +309,21 @@
     [stateLock unlock];
 }
 
+- (BOOL) canSetUSBReducedBandwidth
+{
+    return NO;
+}
+
+- (BOOL) usbReducedBandwidth 
+{
+    return usbReducedBandwidth;
+}
+
+- (void) setUSBReducedBandwidth:(BOOL)v 
+{
+    usbReducedBandwidth = v;
+}
+
 - (BOOL) canSetWhiteBalanceMode {
     return NO;
 }
@@ -384,7 +404,10 @@
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr {	//Does this combination work?
     return NO;
 }
-- (void) setResolution:(CameraResolution)r fps:(short)fr {	//Set a resolution and frame rate. Returns success.
+
+// No need to return result as drivers that need to over-ride this
+// probably must do thing inside the "lock" anyway
+- (void) setResolution:(CameraResolution)r fps:(short)fr {	// Set a resolution and frame rate. 
     if (![self supportsResolution:r fps:fr]) return;
     [stateLock lock];
     if (!isGrabbing) {
@@ -697,10 +720,13 @@
        cameraInfo = info;
 }
 
-//USB Tool functions for subclasses
+// USB Tool functions for subclasses
 
-//Sends a generic command
-- (BOOL) usbCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len {
+//
+// Sends a generic command
+//
+- (BOOL) usbGenericCmd:(IOUSBInterfaceInterface**)intf BRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len 
+{
     IOReturn err;
     IOUSBDevRequest req;
     req.bmRequestType=bReqType;
@@ -718,6 +744,31 @@
     CheckError(err,"usbCmdWithBRequestType");
     if ((err==kIOUSBPipeStalled)&&(intf)) (*intf)->ClearPipeStall(intf,0);
     return (!err);
+}
+
+// remove this soon
+- (BOOL) usbCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len 
+{
+    return [self usbControlCmdWithBRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
+}
+
+//
+// Send a request to the control interface
+//
+- (BOOL) usbControlCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len 
+{
+    if (controlIntf != NULL) 
+        return [self usbGenericCmd:controlIntf BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
+    else 
+        return [self usbGenericCmd:streamIntf BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
+}
+
+//
+// Send a request to the streaming interface
+//
+- (BOOL) usbStreamCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len 
+{
+    return [self usbGenericCmd:streamIntf BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
 }
 
 //sends a USB IN|VENDOR|DEVICE command
@@ -763,15 +814,15 @@
 - (BOOL) usbSetAltInterfaceTo:(short)alt testPipe:(short)pipe {
     IOReturn err;
     BOOL ok=YES;
-    if ((!isUSBOK)||(!intf)) ok=NO;
+    if ((!isUSBOK)||(!streamIntf)) ok=NO;
     if (ok) {
-        err=(*intf)->SetAlternateInterface(intf,alt);			//set alternate interface
+        err=(*streamIntf)->SetAlternateInterface(streamIntf,alt);			//set alternate interface
         CheckError(err,"setAlternateInterface");
         if (err) ok=NO;
     }
-    if ((!isUSBOK)||(!intf)) ok=NO;
+    if ((!isUSBOK)||(!streamIntf)) ok=NO;
     if (ok&&(alt!=0)&&(pipe!=0)) {
-        err=(*intf)->GetPipeStatus(intf,pipe);				//is the pipe ok?
+        err=(*streamIntf)->GetPipeStatus(streamIntf,pipe);				//is the pipe ok?
         CheckError(err,"getPipeStatus");
         if (err) ok=NO;
     }
@@ -802,7 +853,7 @@
     int maxBandWidthAlt = 0;
     int maxBandWidthPS = -1;
     
-    if ((!isUSBOK) || (!intf)) 
+    if ((!isUSBOK) || (!streamIntf)) 
         return NO;
     
     if (maxAlt < 0) // number of alt interfaces is not known
@@ -850,7 +901,7 @@
 #if DEBUG
         printf("Trying alt %d, ", alt);
 #endif
-        err = (*intf)->SetAlternateInterface(intf, alt);
+        err = (*streamIntf)->SetAlternateInterface(streamIntf, alt);
 #if DEBUG
         printf("return is %d\n", err);
 #endif
@@ -870,7 +921,7 @@
                 UInt8				direction, number, transferType, interval;
                 UInt16				maxPacketSize;
                 
-                err = (*intf)->GetPipeProperties(intf, pipe, &direction, &number, &transferType, &maxPacketSize, &interval);
+                err = (*streamIntf)->GetPipeProperties(streamIntf, pipe, &direction, &number, &transferType, &maxPacketSize, &interval);
                 
                 if (err != kIOReturnSuccess) 
                 {
@@ -988,7 +1039,7 @@
 #if VERBOSE
         printf("Setting alt to %d, (with packet-size = %d), ", alt, maxBandWidthPS);
 #endif
-        err = (*intf)->SetAlternateInterface(intf, alt);
+        err = (*streamIntf)->SetAlternateInterface(streamIntf, alt);
 #if VERBOSE
         printf("return is %d\n", err);
 #endif
@@ -1002,7 +1053,7 @@
 #if VERBOSE
             printf("Checking pipe status, ");
 #endif
-            err = (*intf)->GetPipeStatus(intf, pipe);
+            err = (*streamIntf)->GetPipeStatus(streamIntf, pipe);
 #if VERBOSE
             printf("return is %d\n", err);
 #endif
@@ -1022,7 +1073,7 @@
             
             printf("Checking pipe properties, ");
 #endif
-            err = (*intf)->GetPipeProperties(intf, pipe, &direction, &number, &transferType, &maxPacketSize, &interval);
+            err = (*streamIntf)->GetPipeProperties(streamIntf, pipe, &direction, &number, &transferType, &maxPacketSize, &interval);
 #if VERBOSE
             printf("return is %d\n", err);
             
@@ -1132,20 +1183,16 @@
     return ok;
 }
 
-
-// for most (99%) the first one is correct
-- (io_service_t) findInterface: (io_iterator_t) iterator
+- (BOOL) separateControlAndStreamingInterfaces
 {
-    return IOIteratorNext(iterator);
+    return NO;
 }
-
 
 - (CameraError) usbConnectToCam:(UInt32)usbLocationId configIdx:(short)configIdx{
     IOReturn				err;
     IOCFPlugInInterface 		**iodev;		// requires <IOKit/IOCFPlugIn.h>
     SInt32 				score;
     UInt8				numConf;
-    IOUSBConfigurationDescriptorPtr	confDesc;
     IOUSBFindInterfaceRequest		interfaceRequest;
     io_iterator_t			iterator;
     io_service_t			usbInterfaceRef;
@@ -1216,7 +1263,8 @@
         }            
     }
 
-    IOObjectRelease(iterator); iterator=IO_OBJECT_NULL;
+    IOObjectRelease(iterator);
+    iterator=IO_OBJECT_NULL;
     
     if (!dev) return CameraErrorNoCam;
     
@@ -1249,7 +1297,8 @@
             dev=NULL;
             return CameraErrorInternal;
         }
-        err = (*dev)->GetConfigurationDescriptorPtr(dev, configIdx, &confDesc);		        	CheckError(err,"usbConnectToCam-GetConfigurationDescriptorPtr");
+        err = (*dev)->GetConfigurationDescriptorPtr(dev, configIdx, &confDesc);
+        CheckError(err,"usbConnectToCam-GetConfigurationDescriptorPtr");
         retries=3;
         do {
             err = (*dev)->SetConfiguration(dev, confDesc->bConfigurationValue);
@@ -1274,98 +1323,153 @@
     interfaceRequest.bInterfaceProtocol = kIOUSBFindInterfaceDontCare;		// requested protocol
     interfaceRequest.bAlternateSetting = kIOUSBFindInterfaceDontCare;		// requested alt setting
     
-//take an iterator over the device interfaces...
+// take an iterator over the device interfaces...
     err = (*dev)->CreateInterfaceIterator(dev, &interfaceRequest, &iterator);
     CheckError(err,"usbConnectToCam-CreateInterfaceIterator");
     
-//and find the right interface
-    usbInterfaceRef = [self findInterface:iterator];
-    assert (usbInterfaceRef);
-
-    //we don't need the iterator any more
+// and find the right interface(s)
+    if ([self separateControlAndStreamingInterfaces]) 
+    {
+        usbInterfaceRef = IOIteratorNext(iterator);
+        assert(usbInterfaceRef);
+        err = [self usbOpenInterface:&controlIntf using:usbInterfaceRef];
+        
+        usbInterfaceRef = IOIteratorNext(iterator);
+        assert(usbInterfaceRef);
+        err = [self usbOpenInterface:&streamIntf using:usbInterfaceRef];
+    }
+    else 
+    {
+        usbInterfaceRef = IOIteratorNext(iterator);
+        assert(usbInterfaceRef);
+        err = [self usbOpenInterface:&streamIntf using:usbInterfaceRef];
+    }
+    
+    // We don't need the iterator any more
     IOObjectRelease(iterator);
-    iterator = 0;
-    
-    // function to take usbInterfaceRef -> intf ?
-    
-//get a plugin interface for the interface interface
-    err = IOCreatePlugInInterfaceForService(usbInterfaceRef, kIOUSBInterfaceUserClientTypeID, kIOCFPlugInInterfaceID, &iodev, &score);
-    CheckError(err,"usbConnectToCam-IOCreatePlugInInterfaceForService");
-    assert(iodev);
-    IOObjectRelease(usbInterfaceRef);
-    
-//get access to the interface interface
-#if 1
-    interfaceID = 220;
-    err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID220), (LPVOID)&intf);
-    
-    if (err) 
-    {
-        interfaceID = 197;
-        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID197), (LPVOID)&intf);
-    }
-    if (err) 
-    {
-        interfaceID = 197;
-        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID192), (LPVOID)&intf);
-    }
-    if (err) 
-    {
-        interfaceID = 190;
-        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID190), (LPVOID)&intf);
-    }
-    if (err) 
-#endif
-    {
-        interfaceID = 183;
-        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID183), (LPVOID)&intf);
-    }
-    if (err) 
-    {
-        interfaceID = 182;
-        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID182), (LPVOID)&intf);
-    }
-    if (err) 
-    {
-        interfaceID = 0;
-        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID), (LPVOID)&intf);
-    }
-    CheckError(err,"usbConnectToCam-QueryInterface2");
-    assert(intf);
-    (*iodev)->Release(iodev);					// done with this
+    iterator = IO_OBJECT_NULL;
     
 #if VERBOSE
     printf("USB Interface ID = %d\n", interfaceID);
 #endif
+    if (interfaceID >= 197) 
+    {
+        NumVersion lib;
+        NumVersion family;
+        
+        err = (* ((IOUSBInterfaceInterface197 **) streamIntf))->GetIOUSBLibVersion(streamIntf, &lib, &family);  // 197 and up
+        
+        if (!err) 
+        {
+#if VERBOSE
+            printf("USB Library Version = %d %d %d %d\n", lib.majorRev, lib.minorAndBugRev, lib.stage, lib.nonRelRev);
+            printf("USB Family Version = %d %d %d %d\n", family.majorRev, family.minorAndBugRev, family.stage, family.nonRelRev);
+#endif
+        }
+    }
     
-//open interface
-    err = (*intf)->USBInterfaceOpen(intf);
-    CheckError(err,"usbConnectToCam-USBInterfaceOpen");
+    // Set alternate on stream interface
     
-//set alternate interface
-    err = (*intf)->SetAlternateInterface(intf,0);
-    CheckError(err,"usbConnectToCam-SetAlternateInterface");
-
+    err = (*streamIntf)->SetAlternateInterface(streamIntf, 0);
+    CheckError(err, "usbConnectToCam-SetAlternateInterface");
+    
     return CameraErrorOK;
 }
 
-- (void) usbCloseConnection {
-    IOReturn err;
-    if (intf) {							//close our interface interface
-        if (isUSBOK) {
-            err = (*intf)->USBInterfaceClose(intf);
-        }
-        err = (*intf)->Release(intf);
-        CheckError(err,"usbCloseConnection-Release Interface");
-        intf=NULL;
+//
+// function that takes the usbInterfaceRef and creates and opens the interface
+//
+- (IOReturn) usbOpenInterface:(IOUSBInterfaceInterface ***)intfPtr using:(io_service_t)usbInterfaceRef
+{
+    IOReturn			   err;
+    IOCFPlugInInterface ** iodev;		// requires <IOKit/IOCFPlugIn.h>
+    SInt32 				   score;
+    
+    // Get a plugin interface for the interface interface
+    
+    err = IOCreatePlugInInterfaceForService(usbInterfaceRef, kIOUSBInterfaceUserClientTypeID, kIOCFPlugInInterfaceID, &iodev, &score);
+    CheckError(err, "usbOpenInterface-IOCreatePlugInInterfaceForService");
+    assert(iodev);
+    
+    IOObjectRelease(usbInterfaceRef);  // Done with this
+    
+    // Get access to the interface interface
+    
+    interfaceID = 220;
+    err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID220), (LPVOID) intfPtr);
+    
+    if (err) 
+    {
+        interfaceID = 197;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID197), (LPVOID) intfPtr);
     }
-    if (dev) {							//close our device interface
-        if (isUSBOK) {
+    if (err) 
+    {
+        interfaceID = 197;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID192), (LPVOID) intfPtr);
+    }
+    if (err) 
+    {
+        interfaceID = 190;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID190), (LPVOID) intfPtr);
+    }
+    if (err) 
+    {
+        interfaceID = 183;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID183), (LPVOID) intfPtr);
+    }
+    if (err) 
+    {
+        interfaceID = 182;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID182), (LPVOID) intfPtr);
+    }
+    if (err) 
+    {
+        interfaceID = 0;
+        err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID), (LPVOID) intfPtr);
+    }
+    CheckError(err,"usbOpenInterface-QueryInterface");
+    assert(*intfPtr);
+    (*iodev)->Release(iodev);  // Done with this
+    
+    // Open interface
+    
+    err = (**intfPtr)->USBInterfaceOpen(*intfPtr);
+    CheckError(err,"usbOpenInterface-USBInterfaceOpen");
+    
+    return err;
+}
+
+- (void) usbCloseConnection 
+{
+    IOReturn err = kIOReturnSuccess;
+    
+    if (streamIntf != NULL && streamIntf != controlIntf)  // Close the stream interface interface
+    {
+        if (isUSBOK) 
+            err = (*streamIntf)->USBInterfaceClose(streamIntf);
+        err = (*streamIntf)->Release(streamIntf);
+        CheckError(err,"usbCloseConnection-Release Stream Interface");
+        streamIntf = NULL;
+    }
+    
+    if (controlIntf != NULL)  // Close the control interface interface
+    {
+        if (isUSBOK) 
+            err = (*controlIntf)->USBInterfaceClose(controlIntf);
+        err = (*controlIntf)->Release(controlIntf);
+        CheckError(err,"usbCloseConnection-Release Interface");
+        controlIntf = NULL;
+        streamIntf = NULL;
+    }
+    
+    if (dev != NULL)  // Close the device interface
+    {
+        if (isUSBOK) 
             err = (*dev)->USBDeviceClose(dev);
-        }
         err = (*dev)->Release(dev);
         CheckError(err,"usbCloseConnection-Release Device");
-        dev=NULL;
+        dev = NULL;
     }
 }
 
@@ -1374,8 +1478,8 @@
     IOReturn err;
     UInt64 frame;
     
-    if ((!to)||(!intf)||(!isUSBOK)) return NO;
-    err=(*intf)->GetBusFrameNumber(intf, &frame, &at);
+    if ((!to)||(!streamIntf)||(!isUSBOK)) return NO;
+    err=(*streamIntf)->GetBusFrameNumber(streamIntf, &frame, &at);
     CheckError(err,"usbGetSoon");
     if (err) return NO;
     *to=frame+100;					//give it a little time to start
@@ -1392,7 +1496,7 @@
     
     if (interfaceID >= 197) 
     {
-        err = (*(IOUSBInterfaceInterface197 **) intf)->GetFrameListTime(intf, &microsecondsInFrame);
+        err = (*(IOUSBInterfaceInterface197 **) streamIntf)->GetFrameListTime(streamIntf, &microsecondsInFrame);
         CheckError(err,"usbGetIsocFrameSize:GetFrameListTime");
     }
     

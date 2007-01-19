@@ -49,24 +49,27 @@ struct code_table
 
 
 
-@interface MyCameraDriver : NSObject {
-//General stuff
-    id delegate;			//The delegate to notify [imageReady], [grabFinished] and [cameraHasShutDown].
-    id central;				//The central singleton to indicate [cameraHasShutDown].
+@interface MyCameraDriver : NSObject 
+{
+// General stuff
+    id delegate;			// The delegate to notify [imageReady], [grabFinished] and [cameraHasShutDown].
+    id central;				// The central singleton to indicate [cameraHasShutDown].
     
-//usb connection camera interfaces
-    IOUSBDeviceInterface** dev;		//An interface to the device
-    IOUSBInterfaceInterface** intf;     //An interface to the interface
-    int interfaceID;                    //Store the interface version so we know what functions are available
+// USB connection camera interfaces
+    IOUSBDeviceInterface ** dev;                // An interface to the device
+    IOUSBInterfaceInterface ** controlIntf;     // An interface to the control interface
+    IOUSBInterfaceInterface ** streamIntf;      // An interface to the streaming interface (most of the time these are the same!)
+    IOUSBConfigurationDescriptorPtr	confDesc;
+    int interfaceID;                            // Store the interface version so we know what functions are available
     
-    char * descriptor;
-    int altInterfacesAvailable;
-    int currentMaxPacketSize;
+    int altInterfacesAvailable;     // For isochronous devices, keep track of the the number of alternate interfaces
+    int currentMaxPacketSize;       // Keep track of this to avoid figuring it out unecessarily
     
-//Camera settings. 
+// Camera settings. 
     float brightness;
     float contrast;
     float saturation;
+    float hue;
     float gamma;
     float sharpness;
     float shutter;
@@ -76,11 +79,12 @@ struct code_table
     CameraResolution resolution;
     WhiteBalanceMode whiteBalanceMode;
     BOOL blackWhiteMode;	// is color or Black and White (greyscale)
-    BOOL LEDon;			// is the LED on or off (Philips cameras)
+    BOOL LEDon;             // is the LED on or off (Philips cameras)
     short fps;
-    short compression;			//0 = uncompressed, higher means more compressed
+    short compression;		// 0 = uncompressed, higher means more compressed
+    BOOL usbReducedBandwidth;   // Reduce the USB bandwidth to accomodate audio, other devices etc.
 
-    //Driver states. Sorry, this has changed - the old version was too sensitive to racing conditions. Everything except atomic read access has to be mutexed with stateLock (there is an exception: drivers may unset shouldBeGrabbing from within their internal grabbing and decoding since it's for sure that isGrabbing is set in that situation)
+// Driver states. Sorry, this has changed - the old version was too sensitive to racing conditions. Everything except atomic read access has to be mutexed with stateLock (there is an exception: drivers may unset shouldBeGrabbing from within their internal grabbing and decoding since it's for sure that isGrabbing is set in that situation)
         
     BOOL isStarted;		//If the driver has been started up
     BOOL isGrabbing;		//If the driver is in grabbing state
@@ -294,6 +298,9 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 
 //USB tool functions - should be used internally only
 - (BOOL) usbCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;//Sends a generic command
+- (BOOL) usbGenericCmd:(IOUSBInterfaceInterface**)intf BRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;
+- (BOOL) usbControlCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;
+- (BOOL) usbStreamCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;
 
 - (BOOL) usbReadCmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len;//Sends a IN|VENDOR|DEVICE command
 - (BOOL) usbReadVICmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len;//Sends a IN|VENDOR|INTERFACE command
@@ -305,6 +312,8 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 
 - (CameraError) usbConnectToCam:(UInt32)usbLocationId configIdx:(short)configIdx;
     //Standard open dev, reset device, set config (if>=0), open intf 
+- (BOOL) separateControlAndStreamingInterfaces;
+- (IOReturn) usbOpenInterface:(IOUSBInterfaceInterface ***)intfPtr using:(io_service_t)usbInterfaceRef;
 - (void) usbCloseConnection;				//Close and release intf and dev
 - (BOOL) usbGetSoon:(UInt64*)to;			//Get a bus frame number in the near future
 - (int) usbGetIsocFrameSize;                //Get the isoc frame size
