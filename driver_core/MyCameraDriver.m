@@ -1309,6 +1309,26 @@
                 dev=NULL;
                 return CameraErrorNoPower;
             }
+            if (err == kIOReturnNoResources)  // USB2 camera on USB1-only bus
+            {
+                IOUSBDevRequest req;
+                req.bmRequestType = 0x40;
+                req.bRequest = 0x52;
+                req.wValue = 0x0101;
+                req.wIndex = 1;  // Flip to the other speed
+                req.wLength = 0;
+                req.pData = NULL;
+                err = (*dev)->DeviceRequest(dev, &req);
+                CheckError(err,"usbConnectToCam-DeviceRequest");
+                
+                (*dev)->Release(dev);
+                dev = NULL;
+                
+                if (err) 
+                    return CameraErrorUSBNeedsUSB2;
+                else 
+                    return CameraErrorUSBProblem;
+            }
         } while((err)&&((--retries)>0));
         if (err) {					//error opening interface?
             err = (*dev)->Release(dev);
@@ -1317,7 +1337,9 @@
             return CameraErrorUSBProblem;
         }
     }
-
+//    kIOReturnNoResources
+//  GetFullConfigurationDescriptor
+    
     interfaceRequest.bInterfaceClass = kIOUSBFindInterfaceDontCare;		// requested class
     interfaceRequest.bInterfaceSubClass = kIOUSBFindInterfaceDontCare;		// requested subclass
     interfaceRequest.bInterfaceProtocol = kIOUSBFindInterfaceDontCare;		// requested protocol
