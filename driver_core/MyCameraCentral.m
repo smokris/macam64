@@ -168,6 +168,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [[self class] localizedCStrFor:"CameraErrorUnimplemented" into:localizedErrorCStrs[CameraErrorUnimplemented]];
     [[self class] localizedCStrFor:"CameraErrorInternal" into:localizedErrorCStrs[CameraErrorInternal]];
     [[self class] localizedCStrFor:"CameraErrorDecoding" into:localizedErrorCStrs[CameraErrorDecoding]];
+    [[self class] localizedCStrFor:"CameraErrorUSBNeedsUSB2" into:localizedErrorCStrs[CameraErrorUSBNeedsUSB2]];
     [[self class] localizedCStrFor:"UnknownError" into:localizedUnknownErrorCStr];
     return self;
 }
@@ -196,9 +197,11 @@ MyCameraCentral* sharedCameraCentral=NULL;
     CFRunLoopSourceRef		runLoopSource;
     CFNumberRef			numberRef;
     kern_return_t		ret;
-    SInt32			usbVendor;
-    SInt32			usbProduct;
+    SInt32              usbVendor;
+    SInt32              usbProduct;
     io_iterator_t		iterator;
+    SInt32              osVersion;
+    BOOL                useMacamInsteadofBuiltin;
     
     NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
     assert(cameraTypes);
@@ -292,7 +295,22 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SN9CxxxDriverVariant7 class]];
     [self registerCameraDriver:[SN9CxxxDriverVariant8 class]];
     
-    [self registerCameraDriver:[PicoDriver class]];
+    obj = [self prefsForKey:@"Use macam driver instead of built-in UVC driver"];
+    if (obj) 
+        useMacamInsteadofBuiltin = [obj boolValue];
+    else 
+        useMacamInsteadofBuiltin = NO;  // This is the default unless otherwise specified
+    
+    if (Gestalt(gestaltSystemVersion, &osVersion) != noErr)
+        osVersion = 0x1047;  // Assume recent
+    
+    printf("Looks like we are running on Mac OS %4lx.\n", (UInt32) osVersion);
+    
+    if (osVersion < 0x1043 || useMacamInsteadofBuiltin)  // Mac OS X 10.4.3 introduced built-in USB Video Class drivers
+    {
+        printf("Using macam driver for UVC.\n");
+        [self registerCameraDriver:[PicoDriver class]];
+    }
     
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
