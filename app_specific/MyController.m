@@ -946,15 +946,36 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
     }
 }
 
-- (void) toggleSettingsDrawer:(id) sender {
-    NSDrawerState state=[settingsDrawer state];
-    if ((state==NSDrawerOpeningState)||(state==NSDrawerOpenState)) {
+- (void) toggleSettingsDrawer:(id) sender 
+{
+    NSDrawerState state = [settingsDrawer state];
+    
+    if ((state == NSDrawerOpeningState) || (state == NSDrawerOpenState)) 
+    {
         [settingsDrawer close];
         [inspectorDrawer close];
-    } else {
-        [settingsDrawer openOnEdge:NSMaxXEdge];
-        if (inspector) {
+    } 
+    else 
+    {
+        if (inspector) 
+        {
             [inspectorDrawer openOnEdge:NSMinXEdge];
+            [settingsDrawer openOnEdge:NSMaxXEdge];
+        }
+        else 
+        {
+            // need window position, screen size
+            
+            NSRect visibleFrame = [[NSScreen mainScreen] visibleFrame];
+            NSRect windowFrame = [window frame];
+            
+            int leftMargin = windowFrame.origin.x - visibleFrame.origin.x;
+            int rightMargin = visibleFrame.origin.x + visibleFrame.size.width - windowFrame.origin.x - windowFrame.size.width;
+            
+            if (rightMargin >= leftMargin)
+                [settingsDrawer openOnEdge:NSMaxXEdge];
+            else 
+                [settingsDrawer openOnEdge:NSMinXEdge];
         }
     }
 }
