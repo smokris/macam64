@@ -2,6 +2,7 @@
     IBClasses = (
         {
             ACTIONS = {
+                "" = id; 
                 magnify100 = id; 
                 magnify200 = id; 
                 magnify50 = id; 
@@ -45,10 +46,12 @@
                 doSaveImage = id; 
                 doSavePrefs = id; 
                 doTakeStillImage = id; 
+                flickerChanged = id; 
                 formatChanged = id; 
                 gainChanged = id; 
                 gammaChanged = id; 
                 horizontalFlipChanged = id; 
+                hueChanged = id; 
                 ledCheckboxChanged = id; 
                 manGainChanged = id; 
                 saturationChanged = id; 
@@ -66,10 +69,12 @@
                 compressionSlider = NSSlider; 
                 contrastSlider = NSSlider; 
                 disclaimerWindow = NSWindow; 
+                flickerPopup = NSPopUpButton; 
                 fpsPopup = NSPopUpButton; 
                 gainSlider = NSSlider; 
                 gammaSlider = NSSlider; 
                 horizontalFlipCheckbox = NSButton; 
+                hueSlider = NSSlider; 
                 inspectorDrawer = NSDrawer; 
                 ledCheckbox = id; 
                 manGainCheckbox = NSButton; 
