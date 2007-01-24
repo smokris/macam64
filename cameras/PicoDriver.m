@@ -84,7 +84,6 @@
     hardwareHue = YES;
     hardwareSaturation = YES;
     hardwareFlicker = YES;
-    hardwareFlickerValue = 60;
     
     decodingSkipBytes = 2;
     
@@ -234,7 +233,7 @@
     if (value < 1) value = 1;
     if (value > 100) value = 100;
     [self setControl:0x0600 data:value]; // hue [1,100] = 50
-//    [super setHue:v];
+    [super setHue:v];
 }
 
 - (void) setSaturation:(float) v
@@ -246,7 +245,24 @@
     [super setSaturation:v];
 }
 
-// [self setControl:0x0500 data:value]; // anti-flicker 0, 1, 2
+- (void) setFlicker:(FlickerType) v
+{
+    UInt16 value = v;
+    [self setControl:0x0500 data:value]; // anti-flicker 0, 1, 2
+    [super setFlicker:v];
+}
+
+- (BOOL) canSetHFlip 
+{
+    return YES;
+}
+
+- (void) setHFlip:(BOOL)v 
+{
+    UInt16 mirror = (v) ? 0x01 : 0x00;
+    [self sendCommand:0xCC value:mirror index:0x0]; // mirror == 1 for mirroring, 0 otherwise
+    [super setHFlip:v];
+}
 
 - (void) setIsocFrameFunctions
 {
