@@ -223,6 +223,18 @@
     saturation=v;
 }
 
+- (BOOL) canSetHue {
+    return NO;
+}
+
+- (float) hue {
+    return hue;
+}
+
+- (void) setHue:(float)v {
+    hue=v;
+}
+
 - (BOOL) canSetGamma {
     return NO;
 }
@@ -293,6 +305,18 @@
 
 - (void) setHFlip:(BOOL)v {
     hFlip=v;
+}
+
+- (BOOL) canSetFlicker {
+    return NO;
+}
+
+- (FlickerType) flicker {
+    return flicker;
+}
+
+- (void) setFlicker:(FlickerType)v {
+    flicker=v;
 }
 
 - (short) maxCompression {

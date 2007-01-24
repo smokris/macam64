@@ -194,6 +194,10 @@ extern NSString* SnapshotQualityPrefsKey;
     [driver setSaturation:[saturationSlider floatValue]];
 }
 
+- (IBAction)hueChanged:(id)sender {
+    [driver setHue:[hueSlider floatValue]];
+}
+
 - (IBAction)manGainChanged:(id)sender {
     float gain=[gainSlider floatValue];
     float shutter=[shutterSlider floatValue];
@@ -275,6 +279,11 @@ extern NSString* SnapshotQualityPrefsKey;
 - (IBAction)compressionChanged:(id)sender {
     short c=[compressionSlider floatValue]*(float)[driver maxCompression]+0.2f;
     [driver setCompression:c];
+}
+
+- (IBAction)flickerChanged:(id)sender {
+    FlickerType f=[flickerPopup indexOfSelectedItem];
+    [driver setFlicker:f];
 }
 
 - (IBAction)whiteBalanceChanged:(id)sender {
@@ -1136,9 +1145,11 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
             [gammaSlider setEnabled:[driver canSetGamma]];
             [sharpnessSlider setEnabled:[driver canSetSharpness]];
             [saturationSlider setEnabled:[driver canSetSaturation]];
+            [hueSlider setEnabled:[driver canSetHue]];
             [manGainCheckbox setEnabled:[driver canSetAutoGain]];
             [sizePopup setEnabled:YES];
             [fpsPopup setEnabled:YES];
+            [flickerPopup setEnabled:[driver canSetFlicker]];
             [whiteBalancePopup setEnabled:[driver canSetWhiteBalanceMode]];
             [horizontalFlipCheckbox setEnabled:[driver canSetHFlip]];
             [blackwhiteCheckbox setEnabled:[driver canBlackWhiteMode]];
@@ -1157,6 +1168,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
             [brightnessSlider setFloatValue:[driver brightness]];
             [contrastSlider setFloatValue:[driver contrast]];
             [saturationSlider setFloatValue:[driver saturation]];
+            [hueSlider setFloatValue:[driver hue]];
             [gammaSlider setFloatValue:[driver gamma]];
             [sharpnessSlider setFloatValue:[driver sharpness]];
             [gainSlider setFloatValue:[driver gain]];
@@ -1164,6 +1176,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
             [manGainCheckbox setIntValue:([driver isAutoGain]==NO)?1:0];
             [sizePopup selectItemAtIndex:[driver resolution]-1];
             [fpsPopup selectItemAtIndex:([driver fps]/5)-1];
+            [flickerPopup selectItemAtIndex:[driver flicker]];
             [compressionSlider setFloatValue:((float)[driver compression])
                 /((float)(([driver maxCompression]>0)?[driver maxCompression]:1))];
             [horizontalFlipCheckbox setIntValue:([driver hFlip]==YES)?1:0];
@@ -1272,11 +1285,13 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
     [gammaSlider setEnabled:NO];
     [sharpnessSlider setEnabled:NO];
     [saturationSlider setEnabled:NO];
+    [hueSlider setEnabled:NO];
     [manGainCheckbox setEnabled:NO];
     [gainSlider setEnabled:NO];
     [shutterSlider setEnabled:NO];
     [sizePopup setEnabled:NO];
     [fpsPopup setEnabled:NO];
+    [flickerPopup setEnabled:NO];
     [whiteBalancePopup setEnabled:NO];
     [compressionSlider setEnabled:NO];
     [horizontalFlipCheckbox setEnabled:NO];

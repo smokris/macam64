@@ -162,7 +162,6 @@ typedef struct GenericGrabContext
     BOOL hardwareSharpness;
     BOOL hardwareHue;
     BOOL hardwareFlicker;
-    int  hardwareFlickerValue;
     
     int decodingSkipBytes;
     
@@ -218,8 +217,10 @@ typedef struct GenericGrabContext
 - (void) setGamma: (float) v;
 - (BOOL) canSetSaturation;
 - (void) setSaturation: (float) v;
+- (BOOL) canSetHue;
 - (BOOL) canSetSharpness;
 - (void) setSharpness: (float) v;
+- (BOOL) canSetFlicker;
 - (BOOL) canSetWhiteBalanceMode;
 - (BOOL) canSetWhiteBalanceModeTo: (WhiteBalanceMode) newMode;
 - (void) setWhiteBalanceMode: (WhiteBalanceMode) newMode;

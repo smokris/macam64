@@ -221,6 +221,14 @@
 }
 
 //
+// Hue
+//
+- (BOOL) canSetHue 
+{ 
+    return (hardwareSaturation) ? YES : NO;
+}
+
+//
 // Sharpness
 //
 - (BOOL) canSetSharpness 
@@ -263,6 +271,14 @@
 - (BOOL) canSetHFlip 
 {
     return (bayerConverter != NULL) ? YES : NO;
+}
+
+//
+// Flicker
+//
+- (BOOL) canSetFlicker
+{ 
+    return (hardwareFlicker) ? YES : NO;
 }
 
 //

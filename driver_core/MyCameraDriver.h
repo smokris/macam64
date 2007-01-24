@@ -47,6 +47,14 @@ struct code_table
 	int val;
 };
 
+// Exactly as defined in the USB Video Class standard
+
+typedef enum FlickerType
+{
+    disableFlicker = 0,
+    enableFlicker50Hz = 1,
+    enableFlicker60Hz = 2,
+} FlickerType;
 
 
 @interface MyCameraDriver : NSObject 
@@ -76,6 +84,8 @@ struct code_table
     float gain;
     BOOL autoGain;
     BOOL hFlip;
+    FlickerType flicker;
+    
     CameraResolution resolution;
     WhiteBalanceMode whiteBalanceMode;
     BOOL blackWhiteMode;	// is color or Black and White (greyscale)
@@ -151,71 +161,81 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (BOOL) hasSpecificName; // Returns is the camera has a more specific name (derived from USB connection perhaps)
 - (NSString *) getSpecificName;
 
-//Image / camera property get/set: All continuous data in the range [0 .. 1]. Their use should be quite obvious.
+// Image / camera property get/set: All continuous data in the range [0 .. 1]. Their use should be quite obvious.
 
-//Brightness
+// Brightness
 - (BOOL) canSetBrightness;
 - (float) brightness;
 - (void) setBrightness:(float)v;
 
-//Contrast
+// Contrast
 - (BOOL) canSetContrast;
 - (float) contrast;
 - (void) setContrast:(float)v;
 
-//Saturation - colorfulness
+// Saturation - colorfulness
 - (BOOL) canSetSaturation;
 - (float) saturation;
 - (void) setSaturation:(float)v;
 
-//Gamma value - grey value
+// Hue
+- (BOOL) canSetHue;
+- (float) hue;
+- (void) setHue:(float)v;
+
+// Gamma value - grey value
 - (BOOL) canSetGamma;
 - (float) gamma;
 - (void) setGamma:(float)v;
 
-//Sharpness value - contour enhancement
+// Sharpness value - contour enhancement
 - (BOOL) canSetSharpness;
 - (float) sharpness;
 - (void) setSharpness:(float)v;
 
-//gain - electronic amplification
+// gain - electronic amplification
 - (BOOL) canSetGain;
 - (float) gain;
 - (void) setGain:(float)v;
 
-//Shutter speed
+// Shutter speed
 - (BOOL) canSetShutter;
 - (float) shutter;
 - (void) setShutter:(float)v;
 
-//Automatic exposure - will affect shutter and gain
+// Automatic exposure - will affect shutter and gain
 - (BOOL) canSetAutoGain;
 - (BOOL) isAutoGain;
 - (void) setAutoGain:(BOOL)v;
 
-//LED ON / OFF
+// LED ON / OFF
 - (BOOL) canSetLed;
 - (BOOL) isLedOn;
 - (void) setLed:(BOOL)v;
 
-//Horizontal flipping
+// Horizontal flipping
 - (BOOL) canSetHFlip;		//Horizontal flipping
 - (BOOL) hFlip;
 - (void) setHFlip:(BOOL)v;
 
-//Compression
+// Flicker conmtrol
+- (BOOL) canSetFlicker;
+- (FlickerType) flicker;
+- (void) setFlicker:(FlickerType)v;
+
+// Compression
 - (short) maxCompression;	//0 = no compression available
 - (short) compression;
 - (void) setCompression:(short)v;
 
-//White Balance
+// White Balance
 - (BOOL) canSetWhiteBalanceMode;
 - (BOOL) canSetWhiteBalanceModeTo:(WhiteBalanceMode)newMode;
 - (WhiteBalanceMode) defaultWhiteBalanceMode;
 - (WhiteBalanceMode) whiteBalanceMode;
 - (void) setWhiteBalanceMode:(WhiteBalanceMode)newMode;
 
-//Black & White Mode
+// Black & White Mode
 - (BOOL) canBlackWhiteMode;
 - (BOOL) blackWhiteMode;
 - (void) setBlackWhiteMode:(BOOL)newMode;
@@ -224,7 +244,7 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 //Resolution and frame rate
 - (short) width;						//Current image width
 - (short) height;						//Current image height
-- (CameraResolution) resolution;				//Current image predefined format constant
+- (CameraResolution) resolution;		//Current image predefined format constant
 - (short) fps;							//Current frames per second
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;	//Does this combination work?
 - (void) setResolution:(CameraResolution)r fps:(short)fr;	//Set a resolution and frame rate

@@ -35,6 +35,7 @@
     IBOutlet NSSlider* gammaSlider;
     IBOutlet NSSlider* sharpnessSlider;
     IBOutlet NSSlider* saturationSlider;
+    IBOutlet NSSlider* hueSlider;
     IBOutlet NSButton* manGainCheckbox;
     IBOutlet NSSlider* gainSlider;
     IBOutlet NSSlider* shutterSlider;
@@ -46,6 +47,7 @@
     IBOutlet NSPopUpButton* colorModePopup;
     IBOutlet NSPopUpButton* sizePopup;
     IBOutlet NSPopUpButton* fpsPopup;
+    IBOutlet NSPopUpButton* flickerPopup;
     IBOutlet MyCameraCentral* central;
     IBOutlet NSWindow* disclaimerWindow;
     IBOutlet NSDrawer* settingsDrawer;
@@ -84,10 +86,12 @@
 - (IBAction)gammaChanged:(id)sender;
 - (IBAction)sharpnessChanged:(id)sender;
 - (IBAction)saturationChanged:(id)sender;
+- (IBAction)hueChanged:(id)sender;
 - (IBAction)manGainChanged:(id)sender;
 - (IBAction)gainChanged:(id)sender;
 - (IBAction)shutterChanged:(id)sender;
 - (IBAction)formatChanged:(id)sender;		//Handles both size and fps popups
+- (IBAction)flickerChanged:(id)sender;
 - (IBAction)compressionChanged:(id)sender;
 - (IBAction)whiteBalanceChanged:(id)sender;
 - (IBAction)horizontalFlipChanged:(id)sender;
