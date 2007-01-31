@@ -32,6 +32,8 @@
 }
 
 + (NSArray *) cameraUsbDescriptions;
++ (BOOL) isUVC;
+
 - (id) initWithCentral: (id) c;
 
 - (BOOL) setControl: (UInt16) control  data: (UInt16) data;

@@ -59,13 +59,9 @@
         NULL];
 }
 
-- (void) startupCamera
++ (BOOL) isUVC
 {
-//    int rate = 1;
-//    [self sendCommand:0xCA value:rate index:0x0];   // frame rate [1,15]
-//    [self sendCommand:0xC9 value:0x0 index:0x01];   // frame size
-    
-    [super startupCamera];
+    return YES;
 }
 
 //
