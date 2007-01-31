@@ -80,16 +80,19 @@
     hardwareSaturation = NO;
     hardwareGamma = NO;
     hardwareSharpness = NO;   
+    hardwareHue = NO;   
+    hardwareFlicker = NO;   
+    
+    decodingSkipBytes = 0;
+    
+    compressionType = unknownCompression;
+    jpegVersion = 0;
+    quicktimeCodec = 0;
     
     CocoaDecoding.rect = CGRectMake(0, 0, [self width], [self height]);
     CocoaDecoding.imageRep = NULL;
     CocoaDecoding.bitmapGC = NULL;
     CocoaDecoding.imageContext = NULL;
-    
-    compressionType = unknownCompression;
-    jpegVersion = 0;
-    quicktimeCodec = 0;
-    decodingSkipBytes = 0;
     
 	return self;
 }
@@ -119,6 +122,7 @@
 	[self setContrast:0.5];
 	[self setGamma:0.5];
 	[self setSaturation:0.5];
+	[self setHue:0.5];
 	[self setSharpness:0.5];
 }
 
@@ -225,7 +229,7 @@
 //
 - (BOOL) canSetHue 
 { 
-    return (hardwareSaturation) ? YES : NO;
+    return (hardwareHue) ? YES : NO;
 }
 
 //
