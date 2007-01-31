@@ -132,6 +132,7 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 + (unsigned short) cameraUsbProductID;
 + (unsigned short) cameraUsbVendorID;
 + (NSString*) cameraName;
++ (BOOL) isUVC;  // Do the cameras supported by this driver implement the USB Video Class?
 
 //Get info - new mechanism. Overload this one if you have more than one idVendor/idProduct pair
 
@@ -155,6 +156,10 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (void) enableNotifyOnMainThread;	//Has to be enabled before [startupWithUsbLocationId]! Cannot be unset - anymore!
 - (void) setCentral:(id)c;		//Don't use unless you know what you're doing!
 - (id) central;				//Don't use unless you know what you're doing!
+
+- (BOOL) canSetDisabled;
+- (void) setDisabled:(BOOL)disable;
+- (BOOL) disabled;
 
 //Camera introspection
 - (BOOL) realCamera;	//Returns if the camera is a real image grabber or a dummy

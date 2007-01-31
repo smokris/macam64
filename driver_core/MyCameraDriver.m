@@ -50,6 +50,11 @@
     return [NSArray arrayWithObject:dict];
 }
 
++ (BOOL) isUVC
+{
+    return NO;
+}
+
 - (id) initWithCentral:(id)c {
 //init superclass
     self=[super init];
@@ -172,6 +177,30 @@
 
 - (id) central {
     return central;
+}
+
+- (BOOL) canSetDisabled
+{
+    if (!central) 
+        return NO;
+    
+    return YES;  // This is true for almost all cameras (not dummy cameras though)
+}
+
+- (void) setDisabled:(BOOL)disable
+{
+    if (!central) 
+        return;
+    
+    [central setDisableCamera:self yesNo:disable];
+}
+
+- (BOOL) disabled
+{
+    if (!central) 
+        return NO;
+    
+    return [central isCameraDisabled:self];
 }
 
 - (BOOL) realCamera {	//Returns if the camera is a real image grabber or a dummy
