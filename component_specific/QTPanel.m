@@ -142,6 +142,7 @@ pascal ComponentResult sgpnRegister(sgpnGlobals storage) {
     Str255 pname;
     central=[MyCameraCentral sharedCameraCentral];
     if (!central) return 0;
+    [central setVDIG:YES];
     if (![central startupWithNotificationsOnMainThread:NO recognizeLaterPlugins:NO]) return 0;
     num=[central numCameras];
     cd.componentType='vdig';
