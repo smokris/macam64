@@ -47,6 +47,11 @@
     return [super startupWithUsbLocationId:usbLocationId];
 }
 
+- (BOOL) canSetDisabled
+{
+    return NO;  // Dummy cameras can not be disabled
+}
+
 - (BOOL) realCamera {	//Returns if the camera is a real image grabber or a dummy
     return (errMsg==CameraErrorOK);		//We're a dummy - if error is ok, we display a test image and act like a real one
 }

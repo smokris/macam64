@@ -37,6 +37,7 @@
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId;
 
 //Camera introspection
+- (BOOL) canSetDisabled;
 - (BOOL) realCamera;
 
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;
