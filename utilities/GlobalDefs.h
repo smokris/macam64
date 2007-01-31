@@ -64,6 +64,7 @@ typedef enum CameraError
     CameraErrorInternal		 = 9,	// Some other, probably serious, error
     CameraErrorDecoding		 = 10,	// An error related to the decoding of image data
     CameraErrorUSBNeedsUSB2  = 11,  // This camera *needs* USB2
+    NumberOfCameraErrors = 12
 } CameraError;
 
 typedef enum ColorMode 
