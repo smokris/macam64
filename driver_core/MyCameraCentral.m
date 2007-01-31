@@ -86,6 +86,9 @@ MyCameraCentral* sharedCameraCentral=NULL;
 - (void) registerCameraDriver:(Class)driver;
 - (CameraError) locationIdOfUSBDeviceRef:(io_service_t)usbDeviceRef to:(UInt32*)outVal;
 
+- (NSString *) cameraDisabledKeyFromVendorID:(UInt16)vid andProductID:(UInt16)pid;
+- (NSString *) cameraDisabledKeyFromDriver:(MyCameraDriver *)camera;
+
 @end
     
 
@@ -150,13 +153,19 @@ MyCameraCentral* sharedCameraCentral=NULL;
 
 //Init, startup, shutdown, dealloc
 
-- (id) init {
+- (id) init 
+{
     [super init];
     cameraTypes=[[NSMutableArray alloc] initWithCapacity:10];
     cameras=[[NSMutableArray alloc] initWithCapacity:10];
     delegate=NULL;
+    inVDIG = NO;
+    
+    if (Gestalt(gestaltSystemVersion, &osVersion) != noErr)
+        osVersion = 0x1047;  // Assume recent OS version
 
-    //Cache localized error codes
+    // Cache localized error codes
+    
     [[self class] localizedCStrFor:"CameraErrorOK" into:localizedErrorCStrs[CameraErrorOK]];
     [[self class] localizedCStrFor:"CameraErrorBusy" into:localizedErrorCStrs[CameraErrorBusy]];
     [[self class] localizedCStrFor:"CameraErrorNoPower" into:localizedErrorCStrs[CameraErrorNoPower]];
@@ -170,6 +179,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [[self class] localizedCStrFor:"CameraErrorDecoding" into:localizedErrorCStrs[CameraErrorDecoding]];
     [[self class] localizedCStrFor:"CameraErrorUSBNeedsUSB2" into:localizedErrorCStrs[CameraErrorUSBNeedsUSB2]];
     [[self class] localizedCStrFor:"UnknownError" into:localizedUnknownErrorCStr];
+    
     return self;
 }
 
@@ -200,8 +210,6 @@ MyCameraCentral* sharedCameraCentral=NULL;
     SInt32              usbVendor;
     SInt32              usbProduct;
     io_iterator_t		iterator;
-    SInt32              osVersion;
-    BOOL                useMacamInsteadofBuiltin;
     
     NSAutoreleasePool* pool=[[NSAutoreleasePool alloc] init];
     assert(cameraTypes);
@@ -210,7 +218,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
     doNotificationsOnMainThread=nomt;
     recognizeLaterPlugins=rlp;
     
-    //Add Driver classes (this is where we have to add new model classes!)
+    // Add Driver classes (this is where we have to add new model classes!)
+    
     [self registerCameraDriver:[MySPCA500Driver class]];
     [self registerCameraDriver:[MyAiptekPocketDV class]];
     [self registerCameraDriver:[MyKiaraFamilyDriver class]];
@@ -295,22 +304,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SN9CxxxDriverVariant7 class]];
     [self registerCameraDriver:[SN9CxxxDriverVariant8 class]];
     
-    obj = [self prefsForKey:@"Use macam driver instead of built-in UVC driver"];
-    if (obj) 
-        useMacamInsteadofBuiltin = [obj boolValue];
-    else 
-        useMacamInsteadofBuiltin = NO;  // This is the default unless otherwise specified
-    
-    if (Gestalt(gestaltSystemVersion, &osVersion) != noErr)
-        osVersion = 0x1047;  // Assume recent
-    
-    printf("Looks like we are running on Mac OS %4lx.\n", (UInt32) osVersion);
-    
-    if (osVersion < 0x1043 || useMacamInsteadofBuiltin)  // Mac OS X 10.4.3 introduced built-in USB Video Class drivers
-    {
-        printf("Using macam driver for UVC.\n");
-        [self registerCameraDriver:[PicoDriver class]];
-    }
+    [self registerCameraDriver:[PicoDriver class]];
     
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
@@ -430,6 +424,11 @@ MyCameraCentral* sharedCameraCentral=NULL;
 
 - (BOOL) doNotificationsOnMainThread {
     return doNotificationsOnMainThread;
+}
+
+- (void) setVDIG:(BOOL)v
+{
+    inVDIG = v;
 }
 
 - (short) numCameras {
@@ -816,13 +815,24 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
     [prefsDict writeToFile:pathName atomically:YES];
 }
 
-- (void) registerCameraDriver:(Class)driver {
-    NSArray* arr=[driver cameraUsbDescriptions];
+- (void) registerCameraDriver:(Class)driver 
+{
+    NSArray * arr = [driver cameraUsbDescriptions];
     int i;
-    for (i=0;i<[arr count];i++) {
-        NSDictionary* dict=[arr objectAtIndex:i];
-        MyCameraInfo* info=[[MyCameraInfo alloc] init];
-        if (info!=NULL) {
+    
+    for (i = 0; i < [arr count]; i++) 
+    {
+        NSDictionary * dict = [arr objectAtIndex:i];
+        UInt16 vid = [[dict objectForKey:@"idVendor"] unsignedShortValue];
+        UInt16 pid = [[dict objectForKey:@"idProduct"] unsignedShortValue];
+        
+        if (inVDIG) 
+            if ([self cameraDisabled:driver withVendorID:vid andProductID:pid]) 
+                continue;  // Skip this one
+        
+        MyCameraInfo * info = [[MyCameraInfo alloc] init];
+        if (info != NULL) 
+        {
             [info setCameraName:[dict objectForKey:@"name"]];
             [info setVendorID:[[dict objectForKey:@"idVendor"] unsignedShortValue]];
             [info setProductID:[[dict objectForKey:@"idProduct"] unsignedShortValue]];
@@ -831,6 +841,85 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
             [cameraTypes addObject:info];
         }
     }
+}
+
+- (NSString *) cameraDisabledKeyFromVendorID:(UInt16)vid andProductID:(UInt16)pid
+{
+    return [NSString stringWithFormat:@"Disable 0x%04x:0x%04x", vid, pid];
+}
+
+- (NSString *) cameraDisabledKeyFromDriver:(MyCameraDriver *)camera
+{
+    short idx;
+    UInt16 vid, pid;
+    MyCameraInfo * info = NULL;
+    
+    idx = [self indexOfCamera:camera];
+    if (idx < 0)  // This camera is not listed as connected
+        return NULL;
+    
+    info = [cameras objectAtIndex:idx];
+    vid = [info vendorID];
+    pid = [info productID];
+    
+    return [self cameraDisabledKeyFromVendorID:vid andProductID:pid];
+}
+
+//
+//
+//
+- (BOOL) cameraDisabled:(Class)driver withVendorID:(UInt16)vid andProductID:(UInt16)pid
+{
+    BOOL disable = NO;  // default setting
+    NSString * key = NULL;
+    id obj = NULL;
+    
+    if ([driver isUVC]) 
+        if (osVersion >= 0x1043) 
+            disable = YES;
+    
+    key = [self cameraDisabledKeyFromVendorID:vid andProductID:pid];
+    
+    obj = [self prefsForKey:key];
+    if (obj) 
+        disable = [obj boolValue];
+    
+    return disable;
+}
+
+//
+// set this camera to be disabled in the preferences
+// this has no effect on the macam application
+//
+- (void) setDisableCamera:(MyCameraDriver *)camera yesNo:(BOOL)disable
+{
+    NSString * key = [self cameraDisabledKeyFromDriver:camera];
+    
+    if (key == NULL) 
+        return;
+    
+    [self setPrefs:[NSNumber numberWithBool:disable] forKey:key];
+}
+
+//
+// return whether the camera is set to be disabled in the preferences,
+// not whether it is actually disabled now or not
+//
+- (BOOL) isCameraDisabled:(MyCameraDriver *)camera
+{
+    short idx;
+    UInt16 vid, pid;
+    MyCameraInfo * info = NULL;
+    
+    idx = [self indexOfCamera:camera];
+    if (idx < 0)  // This camera is not listed as connected
+        return NO;
+    
+    info = [cameras objectAtIndex:idx];
+    vid = [info vendorID];
+    pid = [info productID];
+    
+    return [self cameraDisabled:[camera class] withVendorID:vid andProductID:pid];
 }
 
 - (CameraError) locationIdOfUSBDeviceRef:(io_service_t)usbDeviceRef to:(UInt32*)outVal {

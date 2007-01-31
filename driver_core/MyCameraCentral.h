@@ -47,12 +47,13 @@
     BOOL recognizeLaterPlugins;
     
 //Localized error messages
-    char localizedErrorCStrs[10][256];
+    char localizedErrorCStrs[NumberOfCameraErrors][256];
     char localizedUnknownErrorCStr[256];
 
     IONotificationPortRef notifyPort;	//Port for notifications from IOKit to mainThread
 
-
+    BOOL                inVDIG;
+    SInt32              osVersion;
 }
 
 //Access to the shared instance of MyCameraCentral
@@ -84,6 +85,8 @@
 - (void) setDelegate:(id)d;
 - (BOOL) doNotificationsOnMainThread;
 
+- (void) setVDIG:(BOOL)v;
+
 //Camera management
 
 - (short) numCameras;
@@ -100,6 +103,10 @@
 //Camera defaults managements
 - (BOOL) setCameraToDefaults:(MyCameraDriver*) camera;
 - (BOOL) saveCameraSettingsAsDefaults:(MyCameraDriver*) camera;
+
+- (BOOL) cameraDisabled:(Class)driver withVendorID:(UInt16)vid andProductID:(UInt16)pid;
+- (void) setDisableCamera:(MyCameraDriver *)camera yesNo:(BOOL)disable;
+- (BOOL) isCameraDisabled:(MyCameraDriver *)camera;
 
 //wiring stuff
 - (void) deviceRemoved:(unsigned long)cid;
