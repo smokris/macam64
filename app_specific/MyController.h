@@ -54,6 +54,7 @@
     IBOutlet NSDrawer* inspectorDrawer;
     IBOutlet id blackwhiteCheckbox;
 	IBOutlet id ledCheckbox;
+	IBOutlet id cameraDisableCheckbox;
 	
     MyCameraInspector* inspector;
     MyCameraDriver* driver;
@@ -97,6 +98,7 @@
 - (IBAction)horizontalFlipChanged:(id)sender;
 - (IBAction)blackwhiteCheckboxChanged:(id)sender;
 - (IBAction)ledCheckboxChanged:(id)sender;
+- (IBAction)cameraDisableChanged:(id)sender;
 
 //UI: Actions to do
 - (IBAction)doGrab:(id)sender;

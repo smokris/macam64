@@ -306,6 +306,12 @@ extern NSString* SnapshotQualityPrefsKey;
     [driver setHFlip:flip];
 }
 
+- (IBAction)cameraDisableChanged:(id)sender
+{
+    BOOL disable = [cameraDisableCheckbox intValue];
+    [driver setDisabled:disable];
+}
+
 - (void) setImageOfToolbarItem:(NSString*)ident to:(NSString*)img {
     NSToolbar* toolbar=[window toolbar];
     if (toolbar) {
@@ -1154,6 +1160,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
             [horizontalFlipCheckbox setEnabled:[driver canSetHFlip]];
             [blackwhiteCheckbox setEnabled:[driver canBlackWhiteMode]];
             [ledCheckbox setEnabled:[driver canSetLed]];
+            [cameraDisableCheckbox setEnabled:[driver canSetDisabled]];
 
             [whiteBalancePopup selectItemAtIndex:[driver whiteBalanceMode]-1];
             [gainSlider setEnabled:([driver canSetGain])&&(![driver isAutoGain])];
@@ -1180,6 +1187,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
             [compressionSlider setFloatValue:((float)[driver compression])
                 /((float)(([driver maxCompression]>0)?[driver maxCompression]:1))];
             [horizontalFlipCheckbox setIntValue:([driver hFlip]==YES)?1:0];
+            [cameraDisableCheckbox setIntValue:([driver disabled] == YES) ? 1 : 0];
             [self formatChanged:self];
             cameraGrabbing=NO;
             if ([driver supportsCameraFeature:CameraFeatureInspectorClassName]) {
@@ -1295,6 +1303,7 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
     [whiteBalancePopup setEnabled:NO];
     [compressionSlider setEnabled:NO];
     [horizontalFlipCheckbox setEnabled:NO];
+    [cameraDisableCheckbox setEnabled:NO];
     [self updateCameraMediaCount];
     [inspectorDrawer close];
     if (inspector) {
