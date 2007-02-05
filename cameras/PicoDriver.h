@@ -27,7 +27,6 @@
 
 @interface PicoDriver : GenericDriver 
 {
-    UInt32 framesize;
     int videoBulkReadsPending;
 }
 
@@ -46,6 +45,6 @@
 - (BOOL) startupGrabStream;
 - (void) shutdownGrabStream;
 
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
+- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer;
 
 @end

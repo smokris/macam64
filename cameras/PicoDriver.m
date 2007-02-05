@@ -84,15 +84,12 @@
     decodingSkipBytes = 2;
     
     compressionType = quicktimeImage;
-    compressionType = proprietaryCompression;
     quicktimeCodec = kComponentVideoUnsigned;  // kYUVSPixelFormat
-    /*
+/*    
     LUT = [[LookUpTable alloc] init];
 	if (LUT == NULL) 
         return NULL;
-    */
-    framesize = 0;
-    
+*/
 	return self;
 }
 
@@ -131,7 +128,6 @@
         buffer[2] = 0x00FF & (size >> 16);
         buffer[3] = 0x00FF & (size >> 24);
         length = 4;
-        framesize = size;
     }
     
     if (command == 0xC9)  // Set Frame Size
@@ -286,7 +282,7 @@
 //
 // This is the method that takes the raw chunk data and turns it into an image
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer
 {
     long w, h;
     UInt8 * src = buffer->buffer + decodingSkipBytes;
@@ -341,6 +337,8 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
 	if (shouldBeGrabbing && readSize > 0)  // No usb error and no empty chunk
     {
         int j;
+        
+        grabContext.fillingChunkBuffer.numBytes = readSize;
         
         // Pass the complete chunk to the full list
         // Move full buffers one up
