@@ -179,11 +179,16 @@ typedef struct GenericGrabContext
     
     struct // Using QuickTime decoding
     {
+        GWorldPtr               gworldPtr;
+        Rect                    boundsRect;
+        NSBitmapImageRep  *     imageRep;
+        ImageDescriptionHandle  imageDescription;
     } QuicktimeDecoding;
     
-    struct // Using Image Compression Manager for decoding
+    struct // Using Image Compression Manager for decoding sequences
     {
-    } ICManagerDecoding;
+        ImageSequence           sequenceIdentifier;
+    } SequenceDecoding;
 }
 
 #pragma mark -> Subclass Unlikely to Implement (generic implementation) <-
@@ -232,6 +237,7 @@ typedef struct GenericGrabContext
 // specificIsocDataCopier()   // The existing version should work for most
 // specificIsocFrameScanner() // If a suitable one does not already exist
 - (void) decodeBuffer: (GenericChunkBuffer *) buffer;  // Works for JPEG anyway
+- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer;  // Works for JPEG anyway
 
 #pragma mark -> Subclass Must Implement! (Mostly stub implementations) <-
 

@@ -94,6 +94,12 @@
     CocoaDecoding.bitmapGC = NULL;
     CocoaDecoding.imageContext = NULL;
     
+    QuicktimeDecoding.imageDescription = NULL;
+    QuicktimeDecoding.gworldPtr = NULL;
+    SetQDRect(&QuicktimeDecoding.boundsRect, 0, 0, [self width], [self height]);
+    
+    SequenceDecoding.sequenceIdentifier = 0;
+    
 	return self;
 }
 
@@ -1162,16 +1168,98 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
 
 - (BOOL) setupQuicktimeImageCompression
 {
-    BOOL result = NO;
+    OSErr err;
+    BOOL ok = YES;
     
-    return result;
+    SetQDRect(&QuicktimeDecoding.boundsRect, 0, 0, [self width], [self height]);
+    
+/*    
+    err = QTNewGWorld(&QuicktimeDecoding.gworldPtr,     // returned GWorld
+    				  k32ARGBPixelFormat,               // pixel format
+    				  &QuicktimeDecoding.boundsRect,    // bounding rectangle
+    				  0,                                // color table
+    				  NULL,                             // graphic device handle
+    				  0);                               // flags
+    
+    if (err) 
+        ok = NO;
+    
+    QuicktimeDecoding.imageRep = [NSBitmapImageRep alloc];
+    QuicktimeDecoding.imageRep = [QuicktimeDecoding.imageRep initWithBitmapDataPlanes:GetPixBaseAddr(GetGWorldPixMap(QuicktimeDecoding.gworldPtr)) 
+                                                                   pixelsWide:[self width]
+                                                                   pixelsHigh:[self height]
+                                                                bitsPerSample:8
+                                                              samplesPerPixel:4
+                                                                     hasAlpha:YES
+                                                                     isPlanar:NO
+                                                               colorSpaceName:NSDeviceRGBColorSpace
+                                                                  bytesPerRow:4 * [self width]
+                                                                 bitsPerPixel:4 * 8];
+    
+    if (QuicktimeDecoding.imageRep == NULL) 
+        ok = NO;
+*/    
+    
+    QuicktimeDecoding.imageDescription = (ImageDescriptionHandle) NewHandle(sizeof(ImageDescription));
+        
+    (**QuicktimeDecoding.imageDescription).idSize = sizeof(ImageDescription);
+    (**QuicktimeDecoding.imageDescription).cType = quicktimeCodec;
+    (**QuicktimeDecoding.imageDescription).resvd1 = 0;
+    (**QuicktimeDecoding.imageDescription).resvd2 = 0;
+    (**QuicktimeDecoding.imageDescription).dataRefIndex = 0;
+    (**QuicktimeDecoding.imageDescription).version = 1;
+    (**QuicktimeDecoding.imageDescription).revisionLevel = 1;
+    (**QuicktimeDecoding.imageDescription).vendor = 'appl';
+    (**QuicktimeDecoding.imageDescription).temporalQuality = codecNormalQuality;
+    (**QuicktimeDecoding.imageDescription).spatialQuality = codecNormalQuality;
+    
+    (**QuicktimeDecoding.imageDescription).width = [self width];
+    (**QuicktimeDecoding.imageDescription).height = [self height];
+    (**QuicktimeDecoding.imageDescription).hRes = (72 << 16);
+    (**QuicktimeDecoding.imageDescription).vRes = (72 << 16);
+    (**QuicktimeDecoding.imageDescription).dataSize = 0;
+    (**QuicktimeDecoding.imageDescription).frameCount = 1;
+    (**QuicktimeDecoding.imageDescription).name[0] =  6;
+    (**QuicktimeDecoding.imageDescription).name[1] = 'C';
+    (**QuicktimeDecoding.imageDescription).name[2] = 'a';
+    (**QuicktimeDecoding.imageDescription).name[3] = 'm';
+    (**QuicktimeDecoding.imageDescription).name[4] = 'e';
+    (**QuicktimeDecoding.imageDescription).name[5] = 'r';
+    (**QuicktimeDecoding.imageDescription).name[6] = 'a';
+    (**QuicktimeDecoding.imageDescription).name[7] =  0;
+    (**QuicktimeDecoding.imageDescription).depth = 24;
+    (**QuicktimeDecoding.imageDescription).clutID = -1;
+    
+    return ok;
 }
 
+// Not working yet
 - (BOOL) setupQuicktimeSequenceCompression
 {
-    BOOL result = NO;
+    BOOL ok = [self setupQuicktimeImageCompression];
+    MatrixRecord scaleMatrix;
+    OSErr err;
     
-    return result;
+    RectMatrix(&scaleMatrix, &QuicktimeDecoding.boundsRect, &QuicktimeDecoding.boundsRect);
+    
+    err = DecompressSequenceBeginS(&SequenceDecoding.sequenceIdentifier, 
+                            QuicktimeDecoding.imageDescription, 
+                                   NULL, 
+                                   0, 
+                            QuicktimeDecoding.gworldPtr, 
+                            NULL, 
+                            NULL, 
+                            &scaleMatrix, 
+                            srcCopy,
+                            NULL, 
+                            codecFlagUseImageBuffer, // codecFlagUseImageBuffer ? or 0 ?
+                            codecNormalQuality, 
+                            NULL);
+    
+    if (err) 
+        ok = NO;
+    
+    return ok;
 }
 
 - (void) cleanupDecoding
@@ -1179,6 +1267,18 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     if (CocoaDecoding.imageRep != NULL) 
        [CocoaDecoding.imageRep release];
     CocoaDecoding.imageRep = NULL;
+    
+    if (QuicktimeDecoding.imageDescription != NULL) 
+        DisposeHandle((Handle) QuicktimeDecoding.imageDescription);
+    QuicktimeDecoding.imageDescription = NULL;
+    
+    // gworld
+    
+    // imagerep
+    
+    if (SequenceDecoding.sequenceIdentifier != 0) 
+        CDSequenceEnd(SequenceDecoding.sequenceIdentifier);
+    SequenceDecoding.sequenceIdentifier = 0;
 }
 
 //
@@ -1321,17 +1421,86 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
 
 - (void) decodeBufferQuicktimeImage: (GenericChunkBuffer *) buffer
 {
-    // QuickTime
+    OSErr err;
+    GWorldPtr gw;
+    CGrafPtr oldPort;
+    GDHandle oldGDev;
+    
+    err = QTNewGWorldFromPtr(&gw, (nextImageBufferBPP == 4) ? k32ARGBPixelFormat : k24RGBPixelFormat,
+                             &QuicktimeDecoding.boundsRect,
+                             NULL, NULL, 0,
+                             nextImageBuffer,
+                             nextImageBufferRowBytes);
+    if (err) 
+        return;
+    
+    (**QuicktimeDecoding.imageDescription).dataSize = buffer->numBytes - decodingSkipBytes;
+    
+    GetGWorld(&oldPort,&oldGDev);
+    SetGWorld(gw, NULL);
+    
+    err = DecompressImage(buffer->buffer + decodingSkipBytes, 
+                          QuicktimeDecoding.imageDescription,
+                          GetGWorldPixMap(gw), 
+                          NULL, 
+                          &QuicktimeDecoding.boundsRect, 
+                          srcCopy, NULL);
+    
+    SetGWorld(oldPort, oldGDev);
+    DisposeGWorld(gw);
 }
+
+/*
+- (void) decodeBufferQuicktimeImageSaved: (GenericChunkBuffer *) buffer
+{
+    OSErr err;
+    CGrafPtr oldPort;
+    GDHandle oldGDev;
+    
+    (**QuicktimeDecoding.imageDescription).dataSize = buffer->numBytes - decodingSkipBytes;
+    
+    GetGWorld(&oldPort,&oldGDev);
+    SetGWorld(QuicktimeDecoding.gworldPtr, NULL);
+    
+    err = DecompressImage(buffer->buffer + decodingSkipBytes, QuicktimeDecoding.imageDescription,
+                    GetGWorldPixMap(QuicktimeDecoding.gworldPtr), 
+                    &QuicktimeDecoding.boundsRect, 
+                    &QuicktimeDecoding.boundsRect, 
+                    srcCopy, NULL);
+    
+    SetGWorld(oldPort,oldGDev);
+    
+    [LUT processImageRep:QuicktimeDecoding.imageRep 
+                  buffer:nextImageBuffer 
+                 numRows:[self height] 
+                rowBytes:nextImageBufferRowBytes 
+                     bpp:nextImageBufferBPP];
+}
+*/
 
 - (void) decodeBufferQuicktimeSequence: (GenericChunkBuffer *) buffer
 {
-    // QuickTime
+    OSErr err;
+    
+    err = DecompressSequenceFrameS(SequenceDecoding.sequenceIdentifier, 
+                             buffer->buffer + decodingSkipBytes,
+                             buffer->numBytes - decodingSkipBytes, 0, NULL, NULL);
+    
+    [LUT processImageRep:QuicktimeDecoding.imageRep 
+                  buffer:nextImageBuffer 
+                 numRows:[self height] 
+                rowBytes:nextImageBufferRowBytes 
+                     bpp:nextImageBufferBPP];
 }
 
 - (void) decodeBufferJPEG: (GenericChunkBuffer *) buffer
 {
     NSLog(@"Oops: [decodeBufferJPEG] needs to be implemented in current driver!");
+}
+
+- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer
+{
+    NSLog(@"Oops: [decodeBufferProprietary] needs to be implemented in current driver!");
 }
 
 //
@@ -1358,12 +1527,19 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     }
     else if (compressionType == quicktimeImage) 
     {
+        [self decodeBufferQuicktimeImage:buffer];
     }
     else if (compressionType == quicktimeSequence) 
     {
+        [self decodeBufferQuicktimeSequence:buffer];
     }
     else if (compressionType == noCompression) 
     {
+        // ???
+    }
+    else if (compressionType == proprietaryCompression) 
+    {
+        [self decodeBufferProprietary:buffer];
     }
     else 
         NSLog(@"GenericDriver - decodeBuffer must be implemented");
@@ -1371,7 +1547,8 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
 
 @end
 
-
+// Some web-references for QuickTime image decoding
+//
 // The Image Description structure
 // http://developer.apple.com/documentation/QuickTime/RM/CompressDecompress/ImageComprMgr/F-Chapter/chapter_1000_section_15.html
 //
