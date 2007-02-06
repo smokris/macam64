@@ -68,6 +68,8 @@
 	if (LUT == NULL) 
         return NULL;
     
+    decodingSkipBytes = 6;
+    
     compressionType = quicktimeImage;
     quicktimeCodec = kJPEG2000CodecType;
 //    quicktimeCodec = kH264CodecType; 
@@ -514,7 +516,7 @@ IsocFrameResult  pac7311IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     *tailLength = 0;
     
 #if REALLY_VERBOSE
-//    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
 #endif
     
     if (frameLength < 6) 
@@ -522,7 +524,7 @@ IsocFrameResult  pac7311IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         *dataLength = 0;
         
 #if REALLY_VERBOSE
-//        printf("Invalid frame!\n");
+        printf("Invalid frame!\n");
 #endif
         return invalidFrame;
     }
@@ -538,7 +540,7 @@ IsocFrameResult  pac7311IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             (buffer[position+4] == 0x96))
         {
 #if REALLY_VERBOSE
-//            printf("New chunk!\n");
+            printf("New chunk!\n");
 #endif
             if (position > 0) 
             {
