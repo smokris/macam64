@@ -151,6 +151,7 @@ typedef struct GenericGrabContext
     
     GenericGrabContext grabContext;
     BOOL grabbingThreadRunning;
+    int videoBulkReadsPending;
     
     BayerConverter * bayerConverter; // Our decoder for Bayer Matrix sensors, will be NULL if not a Bayer image
     LookUpTable * LUT; // Process brightness, contrast, saturation, and gamma for those without BayerConverters
@@ -200,6 +201,10 @@ typedef struct GenericGrabContext
 - (void) grabbingThread: (id) data;
 - (CameraError) decodingThread;
 
+// A couple of methods specific to the bulk driver
+- (void) handleFullChunkWithReadBytes: (UInt32) readSize  error: (IOReturn) err;
+- (void) fillNextChunk;
+
 - (BOOL) setupDecoding;
 - (BOOL) setupJpegCompression;
 - (BOOL) setupJpegVersion1;
@@ -237,7 +242,7 @@ typedef struct GenericGrabContext
 // specificIsocDataCopier()   // The existing version should work for most
 // specificIsocFrameScanner() // If a suitable one does not already exist
 - (void) decodeBuffer: (GenericChunkBuffer *) buffer;  // Works for JPEG anyway
-- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer;  // Works for JPEG anyway
+- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer;
 
 #pragma mark -> Subclass Must Implement! (Mostly stub implementations) <-
 

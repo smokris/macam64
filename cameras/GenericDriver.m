@@ -408,6 +408,7 @@
 //
 - (void) shutdownGrabStream 
 {
+//  [self usbSetAltInterfaceTo:0 testPipe:0]; // Reset to control pipe -- normal could be a different alt than 0!
 }
 
 //
@@ -870,28 +871,163 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
 }
 
 //
+// This is the callback function for the bulk driver
+// This should nao have to be sibclassed or otherwise recreated
+//
+static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
+{
+    GenericDriver * driver = (GenericDriver *) refcon;
+    UInt32 size = (UInt32) arg0;
+    [driver handleFullChunkWithReadBytes:size error:result];
+}
+
+//
+// Called by the above function
+//
+- (void) handleFullChunkWithReadBytes:(UInt32) readSize error:(IOReturn) err  
+{
+    videoBulkReadsPending--;
+    
+#if REALLY_VERBOSE
+    printf("read a chunk with %ld bytes\n", readSize);
+#endif
+    
+    if (err != kIOReturnSuccess) 
+    {
+        if (err != kIOReturnUnderrun && err != kIOReturnOverrun) 
+        {
+            CheckError(err, "handleFullChunkWithReadBytes");
+            shouldBeGrabbing = NO;
+            if (grabContext.contextError == CameraErrorOK) 
+                grabContext.contextError = CameraErrorUSBProblem;
+        }
+    }
+    
+	if (shouldBeGrabbing && readSize > 0)  // No USB error and not an empty chunk
+    {
+        int j;
+        
+        grabContext.fillingChunkBuffer.numBytes = readSize;
+        
+        // Pass the complete chunk to the full list
+        // Move full buffers one up
+        
+        [grabContext.chunkListLock lock];
+        
+        for (j = grabContext.numFullBuffers - 1; j >= 0; j--) 
+            grabContext.fullChunkBuffers[j + 1] = grabContext.fullChunkBuffers[j];
+        
+        grabContext.fullChunkBuffers[0] = grabContext.fillingChunkBuffer; // Insert the filling one as newest
+        grabContext.numFullBuffers++;				// We have inserted one buffer
+                                                    // What if the list was already full? - That is not possible
+        grabContext.fillingChunk = false;			// Now we're not filling (still in the lock to be sure no buffer is lost)
+        
+        [grabContext.chunkReadyLock unlock];		// Wake up the decoding thread
+        
+        [grabContext.chunkListLock unlock];        // Free access to the chunk buffers
+    } 
+    else  // Incorrect chunk -> ignore (but back to empty chunks)
+    {
+        // Put the chunk buffer back to the empty ones
+        
+        [grabContext.chunkListLock lock];   // Get access to the buffer lists
+        
+        grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers] = grabContext.fillingChunkBuffer;
+        grabContext.numEmptyBuffers++;
+        grabContext.fillingChunk = false;			// Now we're not filling (still in the lock to be sure no buffer is lost)
+        
+        [grabContext.chunkListLock unlock]; // Release access to the buffer lists            
+    }
+    
+//  [self doAutoResetLevel];
+    
+    if (shouldBeGrabbing) 
+        [self fillNextChunk];
+    
+    // We can only stop if there are no read request left. 
+    // If there is an error, no new one was issued.
+    
+    if (videoBulkReadsPending <= 0) 
+        CFRunLoopStop(CFRunLoopGetCurrent());
+}
+
+
+- (void) fillNextChunk 
+{
+    IOReturn err;
+    BOOL newReadPending = YES;
+    
+    // Get an empty chunk
+    
+    if (shouldBeGrabbing) 
+    {
+        [grabContext.chunkListLock lock];
+        
+        if (grabContext.numEmptyBuffers > 0) 			// There's an empty buffer to use
+        {
+            grabContext.numEmptyBuffers--;
+            grabContext.fillingChunkBuffer = grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers];
+        } 
+        else // No empty buffer: discard a full one (there are enough, both lists can't be empty)
+        {
+            grabContext.numFullBuffers--;             // Use the oldest one
+            grabContext.fillingChunkBuffer = grabContext.fullChunkBuffers[grabContext.numFullBuffers];
+        }
+        grabContext.fillingChunk = true;				// Now we're filling (still in the lock to be sure no buffer is lost)
+        grabContext.fillingChunkBuffer.numBytes = 0;	// Start with empty buffer
+        [grabContext.chunkListLock unlock];			// Free access to the chunk buffers
+    }
+    
+    // Start the bulk read
+    
+    if (shouldBeGrabbing) 
+    {
+        err = ((IOUSBInterfaceInterface182*) (*streamIntf))->ReadPipeAsyncTO(streamIntf, [self getGrabbingPipe],
+                                                                    grabContext.fillingChunkBuffer.buffer,
+                                                                    grabContext.chunkBufferLength, 1000, 2000,
+                                                                    (IOAsyncCallback1) (handleFullChunk), self);  // Read one chunk
+        
+        if ((err == kIOUSBPipeStalled) && (streamIntf != NULL)) 
+        {
+            newReadPending = NO;
+#if VERBOSE
+            printf("pipe stalled, clearing\n");
+#endif
+            if (interfaceID >= 190) 
+                err = ((IOUSBInterfaceInterface190*) *streamIntf)->ClearPipeStallBothEnds(streamIntf, [self getGrabbingPipe]);
+            else 
+                err = (*streamIntf)->ClearPipeStall(streamIntf, [self getGrabbingPipe]);
+            
+            if (err == kIOReturnSuccess) 
+                [self fillNextChunk];
+        }
+        
+        if (err) 
+        {
+            CheckError(err, "grabbingThread:ReadPipeAsync");
+            grabContext.contextError = CameraErrorUSBProblem;
+            shouldBeGrabbing = NO;
+        } 
+        else if (newReadPending) 
+            videoBulkReadsPending++;
+    }
+}
+
+//
 // Avoid subclassing this method if possible
 // Instead put functionality into [setGrabInterfacePipe], [startupGrabStream] and [shutdownGrabStream]
 //
-- (void) grabbingThread: (id) data 
+- (void) grabbingThread:(id) data 
 {
-    NSAutoreleasePool * pool=[[NSAutoreleasePool alloc] init];
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
     CFRunLoopSourceRef cfSource;
     IOReturn error;
-    bool ok = true;
+    BOOL ok = YES;
     long i;
     
-    ChangeMyThreadPriority(10);	// We need to update the isoch read in time, so timing is important for us
+    if (ok && driverType == isochronousDriver) 
+        ChangeMyThreadPriority(10);	// We need to update the isoch read in time, so timing is important for us
     
-    // Try to get as much bandwidth as possible somehow?
-/*    
-    if (![self setGrabInterfacePipe]) 
-    {
-        if (grabContext.contextError == CameraErrorOK) 
-            grabContext.contextError = CameraErrorNoBandwidth; // Probably means not enough bandwidth
-        ok = NO;
-    }
-*/    
     // Start the stream
     
     if (ok) 
@@ -899,10 +1035,11 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     
     // Get USB timing info
     
-    if (ok) 
+    if (ok && driverType == isochronousDriver) 
     {
         if (![self usbGetSoon:&(grabContext.initiatedUntil)]) 
         {
+            ok = NO;
             shouldBeGrabbing = NO;
             if (grabContext.contextError == CameraErrorOK) 
                 grabContext.contextError = CameraErrorUSBProblem; // Did the pipe stall perhaps?
@@ -915,10 +1052,25 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     {
         error = (*streamIntf)->CreateInterfaceAsyncEventSource(streamIntf, &cfSource); // Create an event source
         CheckError(error, "CreateInterfaceAsyncEventSource");
+        if (error) 
+        {
+            ok = NO;
+            shouldBeGrabbing = NO;
+            if (grabContext.contextError == CameraErrorOK) 
+                grabContext.contextError = CameraErrorNoMem;
+        }
+    }
+    
+    if (ok)
+    {
         CFRunLoopAddSource(CFRunLoopGetCurrent(), cfSource, kCFRunLoopDefaultMode); // Add it to our run loop
         
-        for (i = 0; ok && (i < grabContext.numberOfTransfers); i++) // Initiate transfers
-            ok = startNextIsochRead(&grabContext, i);
+        if (driverType == bulkDriver) 
+            [self fillNextChunk];
+        
+        if (driverType == isochronousDriver) 
+            for (i = 0; ok && (i < grabContext.numberOfTransfers); i++) // Initiate transfers
+                ok = startNextIsochRead(&grabContext, i);
     }
     
     // Go into the RunLoop until we are done
@@ -932,7 +1084,6 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     // Stop the stream, reset the USB, close down 
     
     [self shutdownGrabStream];
-//  [self usbSetAltInterfaceTo:0 testPipe:0]; // Reset to control pipe -- should be done in shutdownGrabStream, normal could be a different alt than 0!
     
     shouldBeGrabbing = NO; // Error in grabbingThread or abort? initiate shutdown of everything else
     [grabContext.chunkReadyLock unlock]; // Give the decodingThread a chance to abort
@@ -1168,7 +1319,7 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
 
 - (BOOL) setupQuicktimeImageCompression
 {
-    OSErr err;
+//    OSErr err;
     BOOL ok = YES;
     
     SetQDRect(&QuicktimeDecoding.boundsRect, 0, 0, [self width], [self height]);
@@ -1439,7 +1590,7 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     GetGWorld(&oldPort,&oldGDev);
     SetGWorld(gw, NULL);
     
-    err = DecompressImage(buffer->buffer + decodingSkipBytes, 
+    err = DecompressImage((Ptr) (buffer->buffer + decodingSkipBytes), 
                           QuicktimeDecoding.imageDescription,
                           GetGWorldPixMap(gw), 
                           NULL, 
@@ -1483,7 +1634,7 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     OSErr err;
     
     err = DecompressSequenceFrameS(SequenceDecoding.sequenceIdentifier, 
-                             buffer->buffer + decodingSkipBytes,
+                             (Ptr) (buffer->buffer + decodingSkipBytes),
                              buffer->numBytes - decodingSkipBytes, 0, NULL, NULL);
     
     [LUT processImageRep:QuicktimeDecoding.imageRep 
