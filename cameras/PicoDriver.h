@@ -27,7 +27,6 @@
 
 @interface PicoDriver : GenericDriver 
 {
-    int videoBulkReadsPending;
 }
 
 + (NSArray *) cameraUsbDescriptions;
