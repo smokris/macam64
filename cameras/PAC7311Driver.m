@@ -68,7 +68,10 @@
 	if (LUT == NULL) 
         return NULL;
     
-    jpegCompression = NO;
+    compressionType = quicktimeImage;
+    quicktimeCodec = kJPEG2000CodecType;
+//    quicktimeCodec = kH264CodecType; 
+    // kJPEGCodecType kMotionJPEGACodecType kMotionJPEGBCodecType kAVRJPEGCodecType kOpenDMLJPEGCodecType kH264CodecType
     
 	return self;
 }
@@ -758,7 +761,7 @@ int  pac7311IsocDataCopier(void * destination, const void * source, size_t lengt
 //
 // This is the method that takes the raw chunk data and turns it into an image
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer
 {
     static GenericChunkBuffer cleanBuffer = { NULL, 0 };
     static int counter = 0;
