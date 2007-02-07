@@ -70,6 +70,7 @@
         return NULL;
     
     driverType = isochronousDriver; // This is the default
+    exactBufferLength = 0;
     
     grabbingThreadRunning = NO;
 	bayerConverter = NULL;
@@ -889,7 +890,7 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
     videoBulkReadsPending--;
     
 #if REALLY_VERBOSE
-    printf("read a chunk with %ld bytes\n", readSize);
+    printf("read a chunk with %ld bytes (err = %d)\n", readSize, err);
 #endif
     
     if (err != kIOReturnSuccess) 
@@ -903,7 +904,7 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
         }
     }
     
-	if (shouldBeGrabbing && readSize > 0)  // No USB error and not an empty chunk
+	if (shouldBeGrabbing && (readSize > 0))  // No USB error and not an empty chunk
     {
         int j;
         
@@ -1660,6 +1661,13 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
 //
 - (void) decodeBuffer: (GenericChunkBuffer *) buffer
 {
+    if ((exactBufferLength > 0) && (exactBufferLength != buffer->numBytes)) 
+        return;
+    
+#if REALLY_VERBOSE
+    printf("decoding a chunk with %ld bytes\n", buffer->numBytes);
+#endif
+    
     if (compressionType == jpegCompression) 
     {
         switch (jpegVersion) 
