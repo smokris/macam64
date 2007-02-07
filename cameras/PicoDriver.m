@@ -118,6 +118,7 @@
         buffer[2] = 0x00FF & (size >> 16);
         buffer[3] = 0x00FF & (size >> 24);
         length = 4;
+        exactBufferLength = size;
     }
     
     if (command == 0xC9)  // Set Frame Size
