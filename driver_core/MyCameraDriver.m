@@ -1424,9 +1424,6 @@
     IOObjectRelease(iterator);
     iterator = IO_OBJECT_NULL;
     
-#if VERBOSE
-    printf("USB Interface ID = %d\n", interfaceID);
-#endif
     if (interfaceID >= 197) 
     {
         NumVersion lib;
@@ -1436,12 +1433,20 @@
         
         if (!err) 
         {
+            interfaceID = 100 * (family.majorRev) + 10 * (family.minorAndBugRev >> 4) + (family.minorAndBugRev & 0x0F);
 #if VERBOSE
-            printf("USB Library Version = %d %d %d %d\n", lib.majorRev, lib.minorAndBugRev, lib.stage, lib.nonRelRev);
-            printf("USB Family Version = %d %d %d %d\n", family.majorRev, family.minorAndBugRev, family.stage, family.nonRelRev);
+//          printf("USB Library Version = %d %d %d %d\n", lib.majorRev, lib.minorAndBugRev, lib.stage, lib.nonRelRev);
+//          printf("USB Library Version = 0x%04x 0x%04x 0x%04x 0x%04x\n", lib.majorRev, lib.minorAndBugRev, lib.stage, lib.nonRelRev);
+            printf("USB Library Version = %x.%x.%x\n", lib.majorRev, lib.minorAndBugRev >> 4, lib.minorAndBugRev & 0x0F);
+//          printf("USB Family Version = %d %d %d %d\n", family.majorRev, family.minorAndBugRev, family.stage, family.nonRelRev);
+//          printf("USB Family Version = 0x%04x 0x%04x 0x%04x 0x%04x\n", family.majorRev, family.minorAndBugRev, family.stage, family.nonRelRev);
+            printf("USB Family Version = %x.%x.%x\n", family.majorRev, family.minorAndBugRev >> 4, family.minorAndBugRev & 0x0F);
 #endif
         }
     }
+#if VERBOSE
+    printf("USB Interface ID = %d\n", interfaceID);
+#endif
     
     // Set alternate on stream interface
     
