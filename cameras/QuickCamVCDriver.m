@@ -559,7 +559,7 @@ return size;
 //
 // This is the method that takes the raw chunk data and turns it into an image
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
@@ -580,6 +580,8 @@ return size;
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
                          rotate180:YES]; // This might be different too
+    
+    return YES;
 }
 
 

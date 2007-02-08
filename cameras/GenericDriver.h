@@ -242,7 +242,7 @@ typedef struct GenericGrabContext
 - (UInt8) getGrabbingPipe;
 // specificIsocDataCopier()   // The existing version should work for most
 // specificIsocFrameScanner() // If a suitable one does not already exist
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer;  // Works for JPEG anyway
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;  // Works for JPEG anyway
 - (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer;
 
 #pragma mark -> Subclass Must Implement! (Mostly stub implementations) <-

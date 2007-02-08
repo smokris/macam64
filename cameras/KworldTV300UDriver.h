@@ -43,6 +43,6 @@
 - (BOOL) startupGrabStream;
 - (void) shutdownGrabStream;
 
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end

@@ -158,7 +158,7 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 //
 // other stuff, including decompression
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
 #ifdef REALLY_VERBOSE
     printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
@@ -202,6 +202,8 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     yuv_decode(spca50x->frame, 1);
     
     [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:NO];
+    
+    return YES;
 }
 
 @end

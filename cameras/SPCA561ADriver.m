@@ -214,7 +214,7 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 //
 // other stuff, including decompression
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
 #if REALLY_VERBOSE
     printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
@@ -248,6 +248,8 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
                          rotate180:NO];
+    
+    return YES;
 }
 
 @end

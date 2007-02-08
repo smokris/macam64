@@ -368,7 +368,7 @@ IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 // This is the method that takes the raw chunk data and turns it into an image
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
     //	NSLog(@"decode size=%d", [currChunk length]);
     
@@ -391,6 +391,8 @@ IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
                          rotate180:NO];
+    
+    return YES;
 }
 
 //

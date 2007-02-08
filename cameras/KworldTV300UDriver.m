@@ -242,7 +242,7 @@ IsocFrameResult  empiaIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 // This is the method that takes the raw chunk data and turns it into an image
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
     printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
     
@@ -266,6 +266,7 @@ IsocFrameResult  empiaIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                               flip:hFlip
                          rotate180:NO]; // This might be different too
 */
+    return YES;
 }
 
 @end

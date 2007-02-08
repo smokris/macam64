@@ -36,6 +36,6 @@
 - (id) initWithCentral: (id) c;
 - (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
 - (void) setIsocFrameFunctions;
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end

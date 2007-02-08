@@ -340,7 +340,7 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 // other stuff, including decompression
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
     int i;
 	short rawWidth  = [self width];
@@ -391,6 +391,8 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     jpeg_decode422(spca50x->frame, forceRGB);  // bgr = 1 (works better for SPCA508A...)
     
     [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:invert];
+    
+    return YES;
 }
 
 @end

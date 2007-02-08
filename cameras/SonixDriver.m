@@ -199,14 +199,14 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 // other stuff, including decompression
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
 #ifdef REALLY_VERBOSE
     printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
 #endif
     
     if (buffer->numBytes < 2500) 
-        return;
+        return NO;
     
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
@@ -233,6 +233,8 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
                          rotate180:NO];
+    
+    return YES;
 }
 
 @end
@@ -642,7 +644,7 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 // jpeg decoding here
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
     int i;
 	short rawWidth  = [self width];
@@ -693,6 +695,8 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     jpeg_decode422(spca50x->frame, 1);  // bgr = 1 (works better for SPCA508A...)
     
     [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:NO];
+    
+    return YES;
 }
 
 @end

@@ -170,7 +170,7 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 // other stuff, including decompression
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
     int i;
 	short rawWidth  = [self width];
@@ -212,6 +212,8 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     yuv_decode(spca50x->frame, 1);
     
     [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:NO];
+    
+    return YES;
 }
 
 @end

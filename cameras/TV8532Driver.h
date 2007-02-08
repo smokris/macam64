@@ -38,7 +38,7 @@
 - (void) spcaSetResolution: (int) spcaRes;
 - (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
 - (void) setIsocFrameFunctions;
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
 

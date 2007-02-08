@@ -39,6 +39,6 @@
 - (BOOL) setGrabInterfacePipe;
 - (void) setIsocFrameFunctions;
 - (CameraError) spca5xx_start;
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end

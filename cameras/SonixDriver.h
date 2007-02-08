@@ -37,7 +37,7 @@
 - (void) setIsocFrameFunctions;
 - (BOOL) setGrabInterfacePipe;
 - (BOOL) startupGrabStream;
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
 
@@ -51,7 +51,7 @@
 - (id) initWithCentral: (id) c;
 - (void) setIsocFrameFunctions;
 - (BOOL) setGrabInterfacePipe;
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
 

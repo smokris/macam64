@@ -198,8 +198,9 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 // This is the method that takes the raw chunk data and turns it into an image
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
+    BOOL ok = YES;
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
@@ -219,6 +220,8 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
                          rotate180:NO]; // This might be different too
+    
+    return ok;
 }
 
 @end

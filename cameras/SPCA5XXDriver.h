@@ -80,7 +80,7 @@ void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index,
 
 // Implement the following from GenericDriver
 
-//- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
+//- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
 

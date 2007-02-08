@@ -1495,20 +1495,25 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
             
             if (nextImageBufferSet) 
             {
+                BOOL decodingOK = NO;
+                
                 [imageBufferLock lock]; // Lock image buffer access
                 
                 if (nextImageBuffer != NULL) 
+                    decodingOK = [self decodeBuffer:&currentBuffer]; // Into nextImageBuffer
+                
+                if (decodingOK) 
                 {
-                    [self decodeBuffer:&currentBuffer]; // Into nextImageBuffer
+                    lastImageBuffer = nextImageBuffer; // Copy nextBuffer info into lastBuffer
+                    lastImageBufferBPP = nextImageBufferBPP;
+                    lastImageBufferRowBytes = nextImageBufferRowBytes;
+                    nextImageBufferSet = NO;  // nextBuffer has been eaten up
                 }
                 
-                lastImageBuffer = nextImageBuffer; // Copy nextBuffer info into lastBuffer
-                lastImageBufferBPP = nextImageBufferBPP;
-                lastImageBufferRowBytes = nextImageBufferRowBytes;
-                nextImageBufferSet = NO;  // nextBuffer has been eaten up
                 [imageBufferLock unlock]; // Release lock
                 
-                [self mergeImageReady];   // Notify delegate about the image. Perhaps get a new buffer
+                if (decodingOK) 
+                    [self mergeImageReady];   // Notify delegate about the image. Perhaps get a new buffer
             }
             
             // Put the chunk buffer back to the empty ones
@@ -1586,12 +1591,12 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     if (err) 
         return;
     
-    (**QuicktimeDecoding.imageDescription).dataSize = buffer->numBytes - decodingSkipBytes;
+    (**QuicktimeDecoding.imageDescription).dataSize = buffer->numBytes;
     
     GetGWorld(&oldPort,&oldGDev);
     SetGWorld(gw, NULL);
     
-    err = DecompressImage((Ptr) (buffer->buffer + decodingSkipBytes), 
+    err = DecompressImage((Ptr) (buffer->buffer), 
                           QuicktimeDecoding.imageDescription,
                           GetGWorldPixMap(gw), 
                           NULL, 
@@ -1659,38 +1664,49 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
 // Decode the chunk buffer into the nextImageBuffer
 // This *must* be subclassed as the decoding is camera dependent
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
+    BOOL ok = YES;
+    GenericChunkBuffer newBuffer;
+    
     if ((exactBufferLength > 0) && (exactBufferLength != buffer->numBytes)) 
-        return;
+        return NO;
     
 #if REALLY_VERBOSE
     printf("decoding a chunk with %ld bytes\n", buffer->numBytes);
+    {
+        int b;
+        for (b = 0; b < 256; b += 8) 
+            printf("buffer[%3d..%3d] = 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", b, b+7, buffer->buffer[b+0], buffer->buffer[b+1], buffer->buffer[b+2], buffer->buffer[b+3], buffer->buffer[b+4], buffer->buffer[b+5], buffer->buffer[b+6], buffer->buffer[b+7]);
+    }
 #endif
+    
+    newBuffer.numBytes = buffer->numBytes - decodingSkipBytes;
+    newBuffer.buffer = buffer->buffer + decodingSkipBytes;
     
     if (compressionType == jpegCompression) 
     {
         switch (jpegVersion) 
         {
             case 0:
-                [self decodeBufferJPEG:buffer];
+                [self decodeBufferJPEG:&newBuffer];
                 break;
                 
             default:
                 NSLog(@"GenericDriver - decodeBuffer encountered unknown jpegVersion (%i)", jpegVersion);
             case 2:
             case 1:
-                [self decodeBufferCocoaJPEG:buffer];
+                [self decodeBufferCocoaJPEG:&newBuffer];
                 break;
         }
     }
     else if (compressionType == quicktimeImage) 
     {
-        [self decodeBufferQuicktimeImage:buffer];
+        [self decodeBufferQuicktimeImage:&newBuffer];
     }
     else if (compressionType == quicktimeSequence) 
     {
-        [self decodeBufferQuicktimeSequence:buffer];
+        [self decodeBufferQuicktimeSequence:&newBuffer];
     }
     else if (compressionType == noCompression) 
     {
@@ -1698,10 +1714,12 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     }
     else if (compressionType == proprietaryCompression) 
     {
-        [self decodeBufferProprietary:buffer];
+        [self decodeBufferProprietary:&newBuffer];
     }
     else 
         NSLog(@"GenericDriver - decodeBuffer must be implemented");
+    
+    return ok;
 }
 
 @end

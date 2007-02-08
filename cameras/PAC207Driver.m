@@ -325,7 +325,7 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
 //
 // other stuff, including decompression
 //
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
@@ -352,6 +352,8 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
                          rotate180:NO];
+    
+    return YES;
 }
 
 @end
