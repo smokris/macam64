@@ -1020,15 +1020,19 @@ The data from the camera is similar to a usual GRBG Bayer matrix, but some color
     long rcSum=0;
     long bcSum=0;
     long gSum=0;
-    for (y=(height/2);y>0;y--) {			//Iterate through rows (2 lines each iteration)
-        s12=*(src1++);					//Read first two source bytes in row
-        s22=*(src2++);					//Read first two source bytes in row
+    for (y=(height/2);y>0;y--) {			// Iterate through rows (2 lines each iteration)
+        s12 = CFSwapInt16HostToBig(*src1);  // Read first two source bytes in row
+        src1++;
+        s22 = CFSwapInt16HostToBig(*src2);  // Read first two source bytes in row
+        src2++;
         for (x=(width/2)-1;x>0;x--) {			//Iterate through all but two columns (2 colums each iteration)
             s11=s12;					//shift source data
             s21=s22;					//shift source data
-            s12=*(src1++);				//Read next two source bytes in row
-            s22=*(src2++);				//Read next two source bytes in row
-
+            s12 = CFSwapInt16HostToBig(*src1);  // Read next two source bytes in row
+            src1++;
+            s22 = CFSwapInt16HostToBig(*src2);  // Read next two source bytes in row
+            src2++;
+            
             //calculate chroma color components (for all four pixels)
             rc=((	((((s11&0xff)+(s12&0xff))*rgai)>>9)		-((s12>>8)&0xff))	*sat)/256;
             bc=((	(((((s21>>8)&0xff)+((s22>>8)&0xff))*bgai)>>9)	-(s21&0xff))		*sat)/256;
@@ -1039,22 +1043,22 @@ The data from the camera is similar to a usual GRBG Bayer matrix, but some color
             g=(((((s11>>8)&0xff)+((s11)&0xff))*con)/256)+bri;
             r=g+rc;
             b=g+bc;
-            *(dst1++)=(CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8);
+            *(dst1++) = CFSwapInt32BigToHost((CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8));
 
             g=(((((s11)&0xff)+((s12>>8)&0xff))*con)/256)+bri;
             r=g+rc;
             b=g+bc;
-            *(dst1++)=(CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8);
+            *(dst1++) = CFSwapInt32BigToHost((CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8));
 
             g=(((((s21>>8)&0xff)+((s21)&0xff))*con)/256)+bri;
             r=g+rc;
             b=g+bc;
-            *(dst2++)=(CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8);
+            *(dst2++) = CFSwapInt32BigToHost((CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8));
 
             g=(((((s21)&0xff)+((s22>>8)&0xff))*con)/256)+bri;
             r=g+rc;
             b=g+bc;
-            *(dst2++)=(CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8);
+            *(dst2++) = CFSwapInt32BigToHost((CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8));
             gSum+=g;	//Sum up green component to get the average brightness
         }
         //write last two pixels in row
@@ -1067,14 +1071,14 @@ The data from the camera is similar to a usual GRBG Bayer matrix, but some color
         g=(((((s12>>8)&0xff)+((s12)&0xff))*con)/256)+bri;
         r=g+rc;
         b=g+bc;
-        *(dst1++)=(CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8);
-        *(dst1++)=(CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8);
+        *(dst1++) = CFSwapInt32BigToHost((CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8));
+        *(dst1++) = CFSwapInt32BigToHost((CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8));
 
         g=(((((s22>>8)&0xff)+((s22)&0xff))*con)/256)+bri;
         r=g+rc;
         b=g+bc;
-        *(dst2++)=(CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8);
-        *(dst2++)=(CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8);
+        *(dst2++) = CFSwapInt32BigToHost((CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8));
+        *(dst2++) = CFSwapInt32BigToHost((CLAMP(r,0,255)<<24)+(CLAMP(g,0,255)<<16)+(CLAMP(b,0,255)<<8));
         
         //Advance one row
         src1+=(width/2);
