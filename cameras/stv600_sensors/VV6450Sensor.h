@@ -35,6 +35,9 @@
 {
     UInt8 rawGainValue;
     UInt8 rawExposureValue;
+    UInt16 rawShutterValue;
+    int shutter;
+    int maxShutter;
 }
 
 - (id) initWithCamera:(MyQCExpressADriver*)cam;

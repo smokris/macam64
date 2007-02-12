@@ -78,9 +78,22 @@
 #import "MyQCWebDriver.h"
 
 
+#if 1
+// This really need some tuning... 300 seem to work good outdoor.
+//#define MIN_SHUTTER 5000
+#define MIN_SHUTTER 300
+#define MAX_SHUTTER 0x0000C000
+#define EXTREME_MAX_SHUTTER 0x0000FFFF
+#else
+#define MIN_SHUTTER 2500
+#define MAX_SHUTTER 15000
+#define EXTREME_MAX_SHUTTER 50000
+#endif
+
 @interface VV6450Sensor (Private)
 - (BOOL) writeGain:(short)value;
 - (BOOL) writeExposure:(short)value;
+- (BOOL) writeShutter:(int)value;
 @end
 
 @implementation VV6450Sensor
@@ -97,6 +110,9 @@
     exposure = 192;
 	rawGainValue = 0x38;
 	rawExposureValue = 0xf9;
+    rawShutterValue = 0x0080;
+    shutter = 0x008000;
+    maxShutter = MAX_SHUTTER;
     return self;
 }
 
@@ -152,6 +168,7 @@
     short newExposure, newGain;
     short maxExposure = 14 << 4;
     short maxGain = 15;
+    int newShutter;
     
     if ([camera isAutoGain]) {	//Do AEC
 
@@ -167,35 +184,49 @@ Gain:		high			low			low
         
         newExposure = exposure;		//Start from current situation
         newGain = gain;			//Start from current situation
+        newShutter = shutter;
+
+        if (newExposure == maxExposure && newGain == maxGain) {
+            maxShutter *= 2;
+            maxShutter = MIN(EXTREME_MAX_SHUTTER, maxShutter);
+        } else if (maxShutter > MAX_SHUTTER) {
+            maxShutter = MAX_SHUTTER;
+        }
 
         if (expCorr > 0) expCorr = MAX(0, expCorr - 3);
         else if (expCorr < 0) expCorr = MIN(0, expCorr + 3);
 
         if (expCorr > 0) {	//too dark - need to lighten up
-            if (newExposure < maxExposure) {
-                newExposure = MIN(maxExposure, newExposure + expCorr);
+            if (newExposure < maxExposure || newShutter < maxShutter) {
+                newExposure = MIN(maxExposure, newExposure + (expCorr / 2));
+                newShutter = MIN(maxShutter, newShutter + (expCorr * 64));
             } else {
-                newGain = MIN(maxGain, newGain + (expCorr) / 4 + 1);
+                newGain = MIN(maxGain, newGain + (expCorr / 4) + 1);
             }
         } else if (expCorr < 0) {	//too bright - need to darken
             if (newGain > 0) {
                 newGain = MAX(0, newGain + (expCorr / 4) - 1);
             } else {
-                newExposure = MAX(0, newExposure + expCorr);
+                newExposure = MAX(0, newExposure + (expCorr / 2));
+                newShutter = MAX(MIN_SHUTTER, newShutter + (expCorr * 64));
             }
         }
     } else {
         newExposure = [camera shutter] * 210.0f + 14.0f;
+        newShutter = [camera shutter] * 65235.0f + 300.0f;
         newGain = [camera gain] * 14.0f + 1.0f;
     }
     
-    if (newExposure != exposure || newGain != gain) {
+    if (newExposure != exposure || newGain != gain || newShutter != shutter) {
         exposure = newExposure;
         gain = newGain;
 		ok = [self writeGain:gain];
+        shutter = newShutter;
 		if (!ok) NSLog(@"setGain failed: %d", gain);
 		ok = [self writeExposure:(exposure >> 4)];
 		if (!ok) NSLog(@"setExposure failed: %d", (exposure >> 4));
+        ok = [self writeShutter:(shutter)];
+        if (!ok) NSLog(@"setShutter failed: %d", shutter);
     }
 }
 
@@ -230,6 +261,35 @@ Gain:		high			low			low
     if (ok) ok = [camera writeSTVRegister:0x143a value:a];
     if (ok) ok = [camera writeSTVRegister:0x143f value:0x01]; //commit settings
 	return ok;
+}
+
+- (BOOL) writeShutter:(int)value {
+    BOOL ok = YES;
+
+#define SHUTTER_SHIFT 8
+	/* rescale the value if greater than 0xC000 */
+    if (value > 0x00c000) {
+        value = 0x00c000 + (value & 0x3fff) * 8;
+    }
+    value >>= SHUTTER_SHIFT;
+	/*
+	  0xZZZZ -> 03 FF  (max value, but never used)
+	  0xFFFF -> 02 B0  (extreme light and slow frame rate)
+	  0xC100 -> 00 C8
+	  0xC000 -> 00 C0
+	  0x8000 -> 00 80  (normal value)
+	  0x0000 -> 00 00  (extreme dark and fast frame rate)
+	*/
+    
+    if (value == rawShutterValue) return YES;
+    
+	rawShutterValue = value;
+	DEBUGLOG(@"writeShutter: 0x%04x", value);
+    if (ok) ok = [camera writeSTVRegister:0x143d value:value & 0xff];
+    if (ok) ok = [camera writeSTVRegister:0x143e value:(value >> 8) & 0x03];
+    if (ok) ok = [camera writeSTVRegister:0x143f value:0x01]; //commit settings
+    
+    return ok;
 }
 
 - (BOOL) writeI2CSequence {
