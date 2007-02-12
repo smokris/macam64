@@ -1674,6 +1674,7 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     
 #if REALLY_VERBOSE
     printf("decoding a chunk with %ld bytes\n", buffer->numBytes);
+    if (0) 
     {
         int b;
         for (b = 0; b < 256; b += 8) 
