@@ -319,6 +319,7 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (void) mergeGrabFinishedWithError:(CameraError)err;
 - (void) mergeCameraHasShutDown;
 //There's no mergeCameraEventHappened because most likely you won't call it from decodingThread. Merge yourself.
+- (void) mergeCameraEventHappened:(CameraEvent)evt;  // Well. it seems useful now!
 
 //Notification forwarders - should not be called from outside but may be overridden by subclasses
 - (void) imageReady:(id)sender;				//sends "notification" to "delegate"

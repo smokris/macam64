@@ -765,6 +765,19 @@
     }
 }
 
+- (void) mergeCameraEventHappened:(CameraEvent)evt 
+{
+    if (doNotificationsOnMainThread) 
+        if ([NSRunLoop currentRunLoop] != mainThreadRunLoop) 
+            if (decodingThreadConnection) 
+            {
+                [(id)[decodingThreadConnection rootProxy] mergeCameraEventHappened:evt];
+                return;
+            }
+    
+    [self cameraEventHappened:self event:evt];
+}
+
 - (MyCameraInfo*) getCameraInfo {
        return cameraInfo;
 }
