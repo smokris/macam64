@@ -656,10 +656,10 @@ pascal VideoDigitizerError vdigGetInputName(vdigGlobals storage, long videoInput
         return qtParamErr;
     
     // Get the name
-    [bridge->central getName:cstr forID:bridge->cid];
+    [bridge getName:cstr];
     
     // Append #1, or #2 etc to the camera name to make it unique
-    index = [bridge->central indexOfCamera:bridge->driver];
+    index = [bridge getIndexOfCamera];
     sprintf(nstr, " #%d", index);
     if (strlen(cstr) + strlen(nstr) < 256) 
         strcpy(cstr + strlen(cstr), nstr);
@@ -869,10 +869,10 @@ pascal VideoDigitizerError vdigGetDeviceNameAndFlags(vdigGlobals storage, Str255
         return qtParamErr;
     
     // Get the name
-    [bridge->central getName:cstr forID:bridge->cid];
+    [bridge getName:cstr];
     
     // Append #1, or #2 etc to the camera name to make it unique
-    index = [bridge->central indexOfCamera:bridge->driver];
+    index = [bridge getIndexOfCamera];
     sprintf(nstr, " #%d", index);
     if (strlen(cstr) + strlen(nstr) < 256) 
         strcpy(cstr + strlen(cstr), nstr);
