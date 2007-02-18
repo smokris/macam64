@@ -155,6 +155,9 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
     spca50x = (struct usb_spca50x *) malloc(sizeof(struct usb_spca50x));
     spca50x->dev = (struct usb_device *) malloc(sizeof(struct usb_device));
     spca50x->dev->driver = self;
+
+    [super setAutoGain:YES];
+    spca50x->autoexpo = 1;
     
     cameraOperation = NULL;  // Set this in a sub-class!
     
@@ -308,6 +311,29 @@ short SPCA5xxResolution(CameraResolution res)
     [super setContrast:v];
 }
 
+
+// Gain and shutter combined
+- (BOOL) canSetAutoGain 
+{
+    if (cameraOperation != NULL && cameraOperation->set_autobright != NULL) 
+        return YES;
+    else 
+        return NO;
+}
+
+
+- (void) setAutoGain:(BOOL) v
+{
+    BOOL old = [self isAutoGain];
+    
+    [super setAutoGain:v];
+    
+    if (v == old) 
+        return;
+    
+    [self spca5xx_setAutobright];
+}
+
 //
 // Put in the alt-interface with the highest bandwidth (instead of 8)
 // This attempts to provide the highest bandwidth
@@ -451,7 +477,12 @@ short SPCA5xxResolution(CameraResolution res)
 {
     if (cameraOperation != NULL) 
     {
+        spca50x->autoexpo = ([self isAutoGain]) ? 1 : 0;
         (*cameraOperation->set_autobright)(spca50x);
+        
+#if VERBOSE
+        printf("called the spca50x->set-autobright with spca50x->autoexpo = %d\n", spca50x->autoexpo);
+#endif 
         
         return CameraErrorOK;
     }
