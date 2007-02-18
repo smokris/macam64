@@ -36,7 +36,8 @@
 
 - (id) initWithCentral: (id) c;
 - (void) setIsocFrameFunctions;
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
+- (BOOL) setupJpegCompression;
+- (BOOL) decodeBufferJPEG: (GenericChunkBuffer *) buffer;
 
 @end
 

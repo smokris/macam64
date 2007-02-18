@@ -247,12 +247,15 @@
     
     cameraOperation = &fzc3xx;
     
-    spca50x->qindex = 4; // Should probably be set before init_jpeg_decoder()
+    [self setCompression:1];
     forceRGB = 1;
     invert = NO;
     
     spca50x->bridge = BRIDGE_ZC3XX;
     spca50x->cameratype = JPGH;
+    
+    compressionType = jpegCompression;
+    jpegVersion = 0;
 
 	return self;
 }
@@ -337,12 +340,26 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
+
+- (BOOL) setupJpegCompression
+{
+    if (jpegVersion == 0) 
+    {
+        // any other initialization
+        
+        return YES;
+    }
+    else 
+        return [super setupJpegCompression];
+}
+
+
 //
 // other stuff, including decompression
 //
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBufferJPEG: (GenericChunkBuffer *) buffer
 {
-    int i;
+    int i, error;
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
@@ -388,7 +405,10 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     // do jpeg decoding
     
-    jpeg_decode422(spca50x->frame, forceRGB);  // bgr = 1 (works better for SPCA508A...)
+    error = jpeg_decode422(spca50x->frame, forceRGB);  // bgr = 1 (works better for SPCA508A...)
+    
+    if (error != 0) 
+        return NO;
     
     [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:invert];
     
