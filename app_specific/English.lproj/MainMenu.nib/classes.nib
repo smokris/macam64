@@ -55,6 +55,7 @@
                 hueChanged = id; 
                 ledCheckboxChanged = id; 
                 manGainChanged = id; 
+                reduceBandwidthChanged = id; 
                 saturationChanged = id; 
                 sharpnessChanged = id; 
                 shutterChanged = id; 
@@ -81,6 +82,7 @@
                 ledCheckbox = id; 
                 manGainCheckbox = NSButton; 
                 previewView = NSImageView; 
+                reduceBandwidthCheckbox = NSButton; 
                 saturationSlider = NSSlider; 
                 settingsDrawer = NSDrawer; 
                 sharpnessSlider = NSSlider; 
