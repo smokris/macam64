@@ -131,6 +131,9 @@
 	[self setSaturation:0.5];
 	[self setHue:0.5];
 	[self setSharpness:0.5];
+    
+    if ([self canSetAutoGain]) 
+        [self setAutoGain:YES];
 }
 
 //
@@ -265,9 +268,6 @@
 
 - (void) setAutoGain:(BOOL) v
 {
-    if (v == autoGain) 
-        return;
-    
     [super setAutoGain:v];
     
     if (bayerConverter != NULL) 
