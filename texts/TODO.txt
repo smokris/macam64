@@ -1,17 +1,17 @@
 Fix all (c) and license info
-Get matthias to pick a (c) and a name
+Get Matthias to pick a (c) and a name
 Make sure that things like the license
 	are copied into the binary app build.
 Ascii text file with supported drivers
 Write scripts to generate .dmg files and
-    automate versionnumbering based on 
+    automate version numbering based on 
     cvs tags
 Fixup all .cvsignore files and/or collect them
     in a CVSROOT/cvsignore file for things such
     as .DS_Store
 Domain - would it make sense to make this a 
     org.sourceforge.webcam-os in the application
-    settings field - or does the lattter not
+    settings field - or does the latter not
     do anything but has to be unique; in which
     case de.matthias-krauss.macam is fine and
     a nice historic reminder. (Dirk, you're 
@@ -23,10 +23,10 @@ Domain - would it make sense to make this a
 
 Added a whole slew of SPCA50x based camears in
 MyIntelPCCameraPro. These are not ready for
-public consuption. Perhaps we need an iface in
+public consumption. Perhaps we need an iface in
 which we can limit to just known/production cameras
 and an extra one where you can run time try out
-a driver with a camera by fidling the numbers.
+a driver with a camera by fiddling the numbers.
 -> the MyIntelPCCameraPro.h/m files need to be
    split up and/or we need a slightly more
    clever recognition system to cope with

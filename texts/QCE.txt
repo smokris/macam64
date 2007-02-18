@@ -86,7 +86,7 @@ Init sequence:
 set first config, reset, get interface, set alt 0
 disable isochronous transfer
 detect sensor type, set register 0x0423 appropriately
-(for sensor specific stuff, see their docs. It's publically available on the web.)
+(for sensor specific stuff, see their docs. It's publicly available on the web.)
 
 
 Start grabbing sequence:
@@ -124,7 +124,7 @@ This part differs a bit from the Linux docs, but I guess I'm right here:)
 
 The data sent via isochronous pipe is packetized. Each packet contains a two-byte type (Big-Endian) followed by a two-byte content length in bytes (also Big-Endian, excluding the header) followed by the content itself. The packets don't spread over multiple usb frames. The type seems to be a combination of enumeration and flags. I haven't figured out all of them, but here are some (enough to get some images):
 
-0x0200 - Image data - content data are sequential bayer samples
+0x0200 - Image data - content data are sequential Bayer samples
 0x8001 - Start of a new image - content is empty
 0x8002 - End of the current image - content is empty
 0x8005 - Same as 0x8001, but settings changes are pending (?)
