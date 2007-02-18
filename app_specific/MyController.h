@@ -55,6 +55,7 @@
     IBOutlet id blackwhiteCheckbox;
 	IBOutlet id ledCheckbox;
 	IBOutlet id cameraDisableCheckbox;
+	IBOutlet id reduceBandwidthCheckbox;
 	
     MyCameraInspector* inspector;
     MyCameraDriver* driver;
@@ -99,6 +100,7 @@
 - (IBAction)blackwhiteCheckboxChanged:(id)sender;
 - (IBAction)ledCheckboxChanged:(id)sender;
 - (IBAction)cameraDisableChanged:(id)sender;
+- (IBAction)reduceBandwidthChanged:(id)sender;
 
 //UI: Actions to do
 - (IBAction)doGrab:(id)sender;

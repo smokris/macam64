@@ -312,6 +312,12 @@ extern NSString* SnapshotQualityPrefsKey;
     [driver setDisabled:disable];
 }
 
+- (IBAction)reduceBandwidthChanged:(id)sender
+{
+    BOOL reduce = [reduceBandwidthCheckbox intValue];
+    [driver setUSBReducedBandwidth:reduce];
+}
+
 - (void) setImageOfToolbarItem:(NSString*)ident to:(NSString*)img {
     NSToolbar* toolbar=[window toolbar];
     if (toolbar) {
@@ -1161,6 +1167,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
             [blackwhiteCheckbox setEnabled:[driver canBlackWhiteMode]];
             [ledCheckbox setEnabled:[driver canSetLed]];
             [cameraDisableCheckbox setEnabled:[driver canSetDisabled]];
+            [reduceBandwidthCheckbox setEnabled:[driver canSetUSBReducedBandwidth]];
 
             [whiteBalancePopup selectItemAtIndex:[driver whiteBalanceMode]-1];
             [gainSlider setEnabled:([driver canSetGain])&&(![driver isAutoGain])];
@@ -1188,6 +1195,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
                 /((float)(([driver maxCompression]>0)?[driver maxCompression]:1))];
             [horizontalFlipCheckbox setIntValue:([driver hFlip]==YES)?1:0];
             [cameraDisableCheckbox setIntValue:([driver disabled] == YES) ? 1 : 0];
+            [reduceBandwidthCheckbox setIntValue:([driver usbReducedBandwidth] == YES) ? 1 : 0];
             [self formatChanged:self];
             cameraGrabbing=NO;
             if ([driver supportsCameraFeature:CameraFeatureInspectorClassName]) {
@@ -1304,6 +1312,8 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
     [compressionSlider setEnabled:NO];
     [horizontalFlipCheckbox setEnabled:NO];
     [cameraDisableCheckbox setEnabled:NO];
+    [reduceBandwidthCheckbox setEnabled:NO];
+    
     [self updateCameraMediaCount];
     [inspectorDrawer close];
     if (inspector) {
