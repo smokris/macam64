@@ -158,6 +158,17 @@
 	return self;
 }
 
+- (void) startupCamera
+{
+    [super startupCamera];
+    
+    // Block the debounce circuitry on the button
+    // This way we only get notice of button-press (not release)
+    // This is preferable, since they cannot be distinguished anyway
+    
+    [self usbWriteCmdWithBRequest:0 wValue:0x04 wIndex:0x8501 buf:NULL len:0];
+}
+
 //
 // Scan the frame and return the results
 //
@@ -230,11 +241,14 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 #if REALLY_VERBOSE
     printf("buffer[0] = 0x%02x, buffer[1] =  0x%02x\n", buffer->buffer[0], buffer->buffer[1]);
 #endif
+	
+    if (buffer->buffer[SPCA561_OFFSET_SNAP - 1] & SPCA561_SNAPBIT)
+        [self mergeCameraEventHappened:CameraEventSnapshotButtonDown];
     
-    if (buffer->buffer[1] & 0x10) 
-        decode_spca561(buffer->buffer, decodePtr, rawWidth, rawHeight);
+    if (buffer->buffer[SPCA561_OFFSET_TYPE - 1] & 0x10) 
+        decode_spca561(buffer->buffer, decodePtr, rawWidth, rawHeight);  // Compressed
     else 
-        decodePtr = buffer->buffer + 16;
+        decodePtr = buffer->buffer + 16;  // Uncompressed
     
     // Turn the Bayer data into an RGB image
     
