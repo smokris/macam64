@@ -27,7 +27,7 @@
 
 @interface MyBridge (Private)
 
-- (BOOL) privUpdateFormat;		//check format and update it (including grab world) if neeeded 
+- (BOOL) privUpdateFormat;		//check format and update it (including grab world) if needed 
 - (BOOL) privSetImageBuffer;		//update all if neccessary, ensure grab running, set image buffer to our temp buffer
 
 @end
@@ -266,6 +266,12 @@
 - (BOOL) getName:(char*)name {
     if (!driverStarted) return NO;
     return [central getName:name forID:cid];
+}
+
+- (short) getIndexOfCamera 
+{
+    return [central indexOfCamera:driver];
+	// FIXME: do I need to check for validity of central here?
 }
 
 - (BOOL)canSetContrast {

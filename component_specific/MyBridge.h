@@ -96,9 +96,10 @@ typedef enum BridgeClientState {
 //   Status requests
 //---------------------
 
-- (BOOL) isStarted;			//Returns if the bridge is currently started (in use) 
-- (BOOL) isCameraValid;			//Returns if there currently is a real, valid camera that can deliver real video
-- (BOOL) getName:(char*)name;		//Try to get the camera name
+- (BOOL) isStarted;                 // Returns if the bridge is currently started (in use) 
+- (BOOL) isCameraValid;             // Returns if there currently is a real, valid camera that can deliver real video
+- (BOOL) getName:(char*)name;		// Try to get the camera name
+- (short) getIndexOfCamera;         // Return the index of the camera
 
 //-----------------------
 //   Camera parameters
