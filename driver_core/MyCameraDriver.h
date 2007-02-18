@@ -233,6 +233,11 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (short) compression;
 - (void) setCompression:(short)v;
 
+// Reduced USB bandwidth
+- (BOOL) canSetUSBReducedBandwidth;
+- (BOOL) usbReducedBandwidth;
+- (void) setUSBReducedBandwidth:(BOOL)v;
+
 // White Balance
 - (BOOL) canSetWhiteBalanceMode;
 - (BOOL) canSetWhiteBalanceModeTo:(WhiteBalanceMode)newMode;
