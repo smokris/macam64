@@ -408,6 +408,7 @@ extern NSString* SnapshotQualityPrefsKey;
             [fpsPopup setEnabled:NO];
             [sizePopup setEnabled:NO];
             [compressionSlider setEnabled:NO];
+            [reduceBandwidthCheckbox setEnabled:NO];
             [driver setImageBuffer:[imageRep bitmapData] bpp:3 rowBytes:[driver width]*3];
         }
     }
@@ -1286,6 +1287,7 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
     [fpsPopup setEnabled:YES];
     [sizePopup setEnabled:YES];
     [compressionSlider setEnabled:[driver maxCompression]>0];
+    [reduceBandwidthCheckbox setEnabled:[driver canSetUSBReducedBandwidth]];
     [self updateCameraMediaCount];
 }
 
