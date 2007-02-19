@@ -1096,7 +1096,34 @@
     if ((altRequested >= 0) && (maxPacketSizeList[altRequested] > 0)) 
         alt = altRequested;
     else // none requested
+    {
         alt = maxBandWidthAlt;
+
+        // if usb bandwidth is reduced, then try a lower setting
+        
+        if ([self usbReducedBandwidth]) 
+        {
+            int reducedAlt = -1;
+            
+            // find the next highest one
+            
+            for (a = 0; a <= numAltInterfaces; a++) 
+            {
+                if (maxPacketSizeList[a] < maxPacketSizeList[maxBandWidthAlt]) 
+                {
+                    if (reducedAlt < 0)
+                        reducedAlt = a;
+                    else if (maxPacketSizeList[a] > maxPacketSizeList[reducedAlt]) 
+                        reducedAlt = a;
+                }
+#if VERBOSE
+                printf("a = %d, reducedAlt = %d, PS[a] = %d\n", a, reducedAlt, maxPacketSizeList[a]);
+#endif
+            }
+            
+            alt = reducedAlt;
+        }
+    }
     
     while (ok && !done) 
     {
