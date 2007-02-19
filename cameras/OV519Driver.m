@@ -697,6 +697,11 @@
 	return TRUE;
 }
 
+- (BOOL) canSetUSBReducedBandwidth
+{
+    return YES;
+}
+
 //
 // Scan the frame and return the results
 //

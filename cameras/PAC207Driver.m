@@ -284,6 +284,12 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
     }
 }
 
+
+- (BOOL) canSetUSBReducedBandwidth
+{
+    return YES;
+}
+
 //
 // Returns the pipe used for grabbing
 //
@@ -298,8 +304,9 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
 //
 - (BOOL) setGrabInterfacePipe
 {
-    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:8  numAltInterfaces:8];
-//    return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
+    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:8];
+    
+    //  return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
 }
 
 //
@@ -320,6 +327,11 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
     [self spca5xx_setcontrast];
     
     return error;
+}
+
+- (CameraError) spca5xx_setAutobright
+{
+    return CameraErrorUnimplemented;
 }
 
 //
