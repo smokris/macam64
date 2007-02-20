@@ -70,10 +70,10 @@
     
     spca50x->bridge = BRIDGE_TV8532;
     spca50x->sensor = SENSOR_INTERNAL;
-    spca50x->header_len = 4;
-    spca50x->i2c_ctrl_reg = 0;
-    spca50x->i2c_base = 0;
-    spca50x->i2c_trigger_on_write = 0;
+//    spca50x->header_len = 4;
+//    spca50x->i2c_ctrl_reg = 0;
+//    spca50x->i2c_base = 0;
+//    spca50x->i2c_trigger_on_write = 0;
     spca50x->cameratype = GBGR;
     
     cameraOperation = &ftv8532;

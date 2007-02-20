@@ -195,6 +195,7 @@ static int spca500_config(struct usb_spca50x *spca50x)
     spca50x->mode_cam[QSIF].method = 0;
     spca50x->mode_cam[QSIF].mode = 1;
     }
+    spca50x->qindex = 5;
   return 0;
 }
 /***************************************************************************/

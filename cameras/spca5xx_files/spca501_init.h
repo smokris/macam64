@@ -127,8 +127,7 @@ static void spca501_setbrightness(struct usb_spca50x *spca50x)
 			      spca50x->brightness >> 9);
 	spca50x_reg_write(spca50x->dev, SPCA501_REG_CCDSP, 0x13,
 			      spca50x->brightness >> 9);
-	spca50x_reg_write(spca50x->dev, SPCA501_REG_CCDSP, 0x14,
-                      spca50x->brightness >> 9);
+    // what about 0x14? [hxr]
 }
 static void spca501_setcontrast(struct usb_spca50x *spca50x)
 {
@@ -140,7 +139,7 @@ spca50x_reg_write(spca50x->dev,0x00, 0x01,
 static int spca501_init(struct usb_spca50x *spca50x)
 {
 	    PDEBUG(2, "Initializing SPCA501 started");
-	    if (spca50x->desc == ThreeComHomeConnectLite) {
+        if (spca50x->desc == ThreeComHomeConnectLite) {
 		/* Special handling for 3com data */
 		spca50x_write_vector(spca50x, spca501_3com_open_data);
 	    } else if (spca50x->desc == Arowana300KCMOSCamera ||

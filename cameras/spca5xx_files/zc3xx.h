@@ -21,6 +21,7 @@
 #                                                                           #
 ****************************************************************************/
 #include "tas5130c.h"
+#include "tas5130c_vf0250.h"
 #include "icm105a.h"
 #include "hdcs2020.h"
 #include "hv7131b.h"
@@ -45,6 +46,13 @@ static void zc3xx_shutdown(struct usb_spca50x *spca50x);
 static void zc3xx_setAutobright(struct usb_spca50x *spca50x);
 static void zc3xx_setquality(struct usb_spca50x *spca50x);
 static int zc3xx_sofdetect(struct usb_spca50x *spca50x,struct spca50x_frame *frame, unsigned char *cdata,int *iPix, int seqnum, int *datalength);
+/*******************      Banding flilter   ***********************/
+static void zc3xx_set50HZ(struct usb_spca50x *spca50x);
+static void zc3xx_set60HZ(struct usb_spca50x *spca50x);
+static void zc3xx_set50HZScale(struct usb_spca50x *spca50x);
+static void zc3xx_set60HZScale(struct usb_spca50x *spca50x);
+static void zc3xx_setNoFliker(struct usb_spca50x *spca50x);
+static void zc3xx_setNoFlikerScale(struct usb_spca50x *spca50x);
 /*******************     Camera Private     ***********************/
 static void zc3xx_stopN(struct usb_spca50x *spca50x){}
 /******************************************************************/
@@ -64,6 +72,12 @@ static struct cam_operation fzc3xx = {
 	.set_quality = zc3xx_setquality,
 	.cam_shutdown = zc3xx_shutdown,
 	.sof_detect = zc3xx_sofdetect,
+	.set_50HZ   = zc3xx_set50HZ,
+	.set_60HZ   = zc3xx_set60HZ,
+	.set_50HZScale   = zc3xx_set50HZScale,
+	.set_60HZScale   = zc3xx_set60HZScale,
+	.set_NoFliker    = zc3xx_setNoFliker,
+	.set_NoFlikerScale    = zc3xx_setNoFlikerScale,	
  };
  
 enum {
@@ -148,12 +162,12 @@ static int zcxx_probeSensor(struct usb_spca50x *spca50x)
 	spca5xxRegWrite(spca50x->dev, 0xa0, 0x01, 0x0001, NULL, 0);
 	spca5xxRegWrite(spca50x->dev, 0xa0, 0x03, 0x0012, NULL, 0);
 	spca5xxRegWrite(spca50x->dev, 0xa0, 0x01, 0x0012, NULL, 0);
-	//wait_ms(2);
-	if (zcxxi2cSensorSIF[i][reg8d] == 0x8d) {
+	wait_ms(2);
+	if (zcxxi2cSensorSIF[i][reg8d] == 0x8d){
 	    spca5xxRegWrite(spca50x->dev, 0xa0, zcxxi2cSensorSIF[i][val8d],
 			    0x008d, NULL, 0);
-	    wait_ms(150);
-	    checkword = ((zcxx_i2cRead(spca50x->dev,0x00) & 0x0f) << 4) 
+	wait_ms(150);
+	checkword = ((zcxx_i2cRead(spca50x->dev,0x00) & 0x0f) << 4) 
 	               | ((zcxx_i2cRead(spca50x->dev,0x01) & 0xf0) >> 4 );
 	
 	    if (checkword == 0x07){
@@ -168,11 +182,11 @@ static int zcxx_probeSensor(struct usb_spca50x *spca50x)
 	    zcxx_i2cWrite(spca50x->dev, zcxxi2cSensorSIF[i][SensorReg1],
 			  zcxxi2cSensorSIF[i][valSreg1L],
 			  zcxxi2cSensorSIF[i][valSreg1H]);
-	//wait_ms(2);
+	wait_ms(2);
 	retbyte =
 	    (zcxx_i2cRead(spca50x->dev, zcxxi2cSensorSIF[i][SensorReg1])) &
 	    0xff;
-	//wait_ms(2);
+	wait_ms(2);
 	PDEBUG(1, "sensor answer1  %d ", retbyte);
 	if (retbyte != zcxxi2cSensorSIF[i][valSreg1L])
 	    continue;
@@ -291,7 +305,7 @@ static int zcxx_probeSensor(struct usb_spca50x *spca50x)
 	    spca5xxRegRead(spca50x->dev, 0xa1, 0x01, 0x000a, &retbyte, 1);
 	    checkword |= retbyte;
 	    PDEBUG(1, "sensor 3w Vga ??? 0x%04X ", (checkword & 0xffff));
-	    if (checkword == 0xc001 || checkword == 0xe001) {
+	    if (checkword == 0xc001 || checkword == 0xe001 || checkword == 0x8001) {
 		spca50x->chip_revision = checkword;
 		spca5xxRegRead(spca50x->dev, 0xa1, 0x01, 0x0010, &retbyte,
 			       1);
@@ -333,14 +347,18 @@ static __u16 zc3xxWriteVector(struct usb_spca50x *spca50x, __u16 data[][3])
 
 #define CLAMP(x) (unsigned char)(((x)>0xFF)?0xff:(((x)<1)?1:(x)))
 
-static __u8 Tgamma[16] =
-    { 0x13, 0x38, 0x59, 0x79, 0x92, 0xa7, 0xb9, 0xc8, 0xd4, 0xdf, 0xe7,
-0xee, 0xf4, 0xf9, 0xfc, 0xff };
-static __u8 Tgradient[16] =
-    { 0x26, 0x22, 0x20, 0x1c, 0x16, 0x13, 0x10, 0x0d, 0x0b, 0x09, 0x07,
-0x06, 0x05, 0x04, 0x03, 0x02 };
-//static __u8 Tgamma[16]={0x24,0x44,0x64,0x84,0x9d,0xb2,0xc4,0xd3,0xe0,0xeb,0xf4,0xff,0xff,0xff,0xff,0xff}; //CS2102
-//static __u8 Tgradient[16]={0x18,0x20,0x20,0x1c,0x16,0x13,0x10,0x0e,0x0b,0x09,0x07,0x00,0x00,0x00,0x00,0x01};
+static __u8 Tgamma_default[16] =
+    { 0x13, 0x38, 0x59, 0x79, 0x92, 0xa7, 0xb9, 0xc8, 0xd4, 0xdf, 0xe7, 0xee, 0xf4, 0xf9, 0xfc, 0xff };
+static __u8 Tgradient_default[16] =
+    { 0x26, 0x22, 0x20, 0x1c, 0x16, 0x13, 0x10, 0x0d, 0x0b, 0x09, 0x07, 0x06, 0x05, 0x04, 0x03, 0x02 };
+static __u8 Tgamma_VF0250[16] =
+    { 0x04, 0x16, 0x30, 0x4e, 0x68, 0x81, 0x98, 0xac, 0xbe, 0xcd, 0xda, 0xe4, 0xed, 0xf5, 0xfb, 0xff };
+static __u8 Tgradient_VF0250[16] =
+    { 0x00, 0x16, 0x1b, 0x1c, 0x19, 0x18, 0x15, 0x12, 0x10, 0x0d, 0x0b, 0x09, 0x08, 0x06, 0x05, 0x00 };
+static __u8 Tgamma_CS2102[16] =
+    { 0x24, 0x44, 0x64, 0x84, 0x9d, 0xb2, 0xc4, 0xd3, 0xe0, 0xeb, 0xf4, 0xff, 0xff, 0xff, 0xff ,0xff }; 
+static __u8 Tgradient_CS2102[16] = 
+    { 0x18, 0x20, 0x20, 0x1c, 0x16, 0x13, 0x10, 0x0e, 0x0b, 0x09, 0x07, 0x00, 0x00, 0x00, 0x00, 0x01 };
 
 static __u16 zc3xx_getbrightness(struct usb_spca50x *spca50x)
 {
@@ -350,7 +368,6 @@ static __u16 zc3xx_getbrightness(struct usb_spca50x *spca50x)
 }
 static __u16 zc3xx_getcontrast(struct usb_spca50x *spca50x)
 {
-    spca50x->contrast = 0x80 << 8;
     return spca50x->contrast;
 }
 static void zc3xx_setbrightness(struct usb_spca50x *spca50x)
@@ -370,11 +387,24 @@ static void zc3xx_setcontrast(struct usb_spca50x *spca50x)
 {
 
     __u16 contrast;
-
+    __u8 *   Tgamma = Tgamma_default;
+    __u8 *   Tgradient = Tgradient_default;
     int gm0 = 0;
     int gr0 = 0;
     int index = 0;
     int i;
+
+    switch (spca50x->sensor) {
+     case SENSOR_TAS5130C_VF0250:
+       Tgamma = Tgamma_VF0250;
+       Tgradient = Tgradient_VF0250;
+     break;
+     case SENSOR_CS2102:
+       Tgamma = Tgamma_CS2102;
+       Tgradient = Tgradient_CS2102;
+     break;
+    }
+
     /* now get the index of gamma table */
     contrast = zc3xx_getcontrast(spca50x);
     if ((index = contrast >> 13) > 6)
@@ -387,6 +417,7 @@ static void zc3xx_setcontrast(struct usb_spca50x *spca50x)
 	spca5xxRegWrite(spca50x->dev, 0xa0, CLAMP(gr0), 0x0130 + i, NULL, 0);	// contrast
 	//PDEBUG(0,"i %d gamma %d gradient %d",i ,Tgamma[i],Tgradient[i]);
     }
+
 }
 
 
@@ -481,12 +512,20 @@ static int zc3xx_config(struct usb_spca50x *spca50x)
     int sensor = 0;
     __u8 bsensor = 0;
     spca50x->qindex = 1;
+    PDEBUG(0, "Sensor ID:%d",spca50x->sensor);
+
     sensor = zcxx_probeSensor(spca50x);
+    
     switch (sensor) {
     case -1:
-	PDEBUG(0, "Find Sensor UNKNOW_0 force Tas5130");
-	spca50x->sensor = SENSOR_TAS5130C;
-	set_zc3xxVGA(spca50x);
+         if(spca50x->sensor == SENSOR_TAS5130C_VF0250) {
+            PDEBUG(0, "Find Sensor Tas5130 (VF0250)");
+	    set_zc3xxVGA(spca50x);
+        } else { 	
+	    PDEBUG(0, "Find Sensor UNKNOW_0 force Tas5130");
+	    spca50x->sensor = SENSOR_TAS5130CXX;
+	    set_zc3xxVGA(spca50x);
+	}
 	break;
     case 0:
 	PDEBUG(0, "Find Sensor HV7131B");
@@ -551,7 +590,7 @@ static int zc3xx_config(struct usb_spca50x *spca50x)
 	break;
     case 0x10:
 	PDEBUG(0, "Find Sensor TAS5130");
-	spca50x->sensor = SENSOR_TAS5130C;
+	spca50x->sensor = SENSOR_TAS5130CXX;
 	set_zc3xxVGA(spca50x);
 	break;
     case 0x11:
@@ -561,7 +600,7 @@ static int zc3xx_config(struct usb_spca50x *spca50x)
 	break;
     case 0x12:
 	PDEBUG(0, "Find Sensor TAS5130");
-	spca50x->sensor = SENSOR_TAS5130C;
+	spca50x->sensor = SENSOR_TAS5130CXX;
 	set_zc3xxVGA(spca50x);
 	break;
     case 0x13:
@@ -570,6 +609,7 @@ static int zc3xx_config(struct usb_spca50x *spca50x)
 	set_zc3xxVGA(spca50x);
 	break;
     };
+
     if ((sensor == 0x02) || (sensor == 0x01) || (sensor == 0x05)
 	|| (sensor == 0x07) || (sensor == 0x09) || (sensor == 0x0b)
 	|| (sensor == 0x0d)) {
@@ -577,16 +617,16 @@ static int zc3xx_config(struct usb_spca50x *spca50x)
 	       "Our Sensor is unknow at the moment please report mxhaard@free.fr ");
 	return -EINVAL;
     }
+
     if ((sensor == -1) || (sensor == 0x10) || (sensor == 0x12)) {
 	spca5xxRegWrite(spca50x->dev, 0xa0, 0x02, 0x0010, NULL, 0);
 	spca5xxRegRead(spca50x->dev, 0xa1, 0x01, 0x0010, &bsensor, 1);
     } else {
-	sensor = sensor & 0x0f;
-	spca5xxRegWrite(spca50x->dev, 0xa0, sensor, 0x0010, NULL, 0);
+	spca5xxRegWrite(spca50x->dev, 0xa0, sensor & 0x0f, 0x0010, NULL, 0);
 	spca5xxRegRead(spca50x->dev, 0xa1, 0x01, 0x0010, &bsensor, 1);
     }
     /* switch the led off */
-    if( sensor == 0x06)
+    if( sensor == 0x06 || sensor == 0x11)
       spca5xxRegWrite(spca50x->dev,0xa0,0x01,0x0000,NULL,0);
 
     return 0;
@@ -594,8 +634,28 @@ static int zc3xx_config(struct usb_spca50x *spca50x)
 static void zc3xx_setquality(struct usb_spca50x *spca50x)
 {
     __u8 quality = 0;
-    quality = (spca50x->qindex) & 0xff;
+    __u8 frxt = 0x30;
+    quality = (spca50x->qindex) & 0x0f;
     spca5xxRegWrite(spca50x->dev, 0xa0, quality, 0x0008, NULL, 0);
+    spca5xxRegWrite(spca50x->dev, 0xa0, frxt, 0x0007, NULL, 0);
+    switch (quality){
+    case 0:
+    case 1:
+    case 2:
+    frxt = 0xff;
+    break;
+    case 3:
+    frxt = 0xf0;
+    break;
+    case 4:
+    frxt = 0xe0;
+    break;
+    case 5:
+    frxt = 0x20;
+    break;
+    }
+    spca5xxRegWrite(spca50x->dev, 0xa0, frxt, 0x0018, NULL, 0);
+    
 }
 static void zc3xx_setAutobright(struct usb_spca50x *spca50x)
 {
@@ -604,8 +664,7 @@ static void zc3xx_setAutobright(struct usb_spca50x *spca50x)
 	autoval = 0x42;
     else
 	autoval = 0x02;
-    spca5xxRegWrite(spca50x->dev, 0xa0, autoval, 0x0180, NULL, 0);
-
+	spca5xxRegWrite(spca50x->dev, 0xa0, autoval, 0x0180, NULL, 0);
 }
 static void zc3xx_start(struct usb_spca50x *spca50x)
 {
@@ -613,13 +672,22 @@ static void zc3xx_start(struct usb_spca50x *spca50x)
     /* Assume start use the good resolution from spca50x->mode */
     //err = zcxx_probeSensor(spca50x);
     switch (spca50x->sensor) {
-    case SENSOR_TAS5130C:
+    case SENSOR_TAS5130CXX:
 	if (spca50x->mode) {
 	    /* 320x240 */
 	    err = zc3xxWriteVector(spca50x, tas5130cxx_start_data);
 	} else {
 	    /* 640x480 */
 	    err = zc3xxWriteVector(spca50x, tas5130cxx_scale_data);
+	}
+	break;
+    case SENSOR_TAS5130C_VF0250: // Firmware version 0250
+	if (spca50x->mode) {
+	    /* 320x240 */
+	    err = zc3xxWriteVector(spca50x, tas5130c_vf0250_start_data);
+	} else {
+	    /* 640x480 */
+	    err = zc3xxWriteVector(spca50x, tas5130c_vf0250_scale_data);
 	}
 	break;
     case SENSOR_ICM105A:
@@ -673,14 +741,16 @@ static void zc3xx_start(struct usb_spca50x *spca50x)
 	if (spca50x->mode) {
 	    /* 320x240 */
 	    if ((spca50x->chip_revision == 0xc001)
-		|| (spca50x->chip_revision == 0xe001))
+		|| (spca50x->chip_revision == 0xe001)
+		|| (spca50x->chip_revision == 0x8001))
 		err = zc3xxWriteVector(spca50x, pb03303x_start_data);
 	    else
 		err = zc3xxWriteVector(spca50x, pb0330xx_start_data);
 	} else {
 	    /* 640x480 */
 	    if ((spca50x->chip_revision == 0xc001)
-		|| (spca50x->chip_revision == 0xe001))
+		|| (spca50x->chip_revision == 0xe001)
+		|| (spca50x->chip_revision == 0x8001))
 		err = zc3xxWriteVector(spca50x, pb03303x_scale_data);
 	    else
 		err = zc3xxWriteVector(spca50x, pb0330xx_scale_data);
@@ -768,4 +838,174 @@ static int zc3xx_sofdetect(struct usb_spca50x *spca50x,struct spca50x_frame *fra
 		*iPix = 0;
 		return (seqnum +1);
 }
+ 
+static void zc3xx_set50HZ(struct usb_spca50x *spca50x) {
+     switch (spca50x->sensor) {
+      case SENSOR_TAS5130C_VF0250:
+ 	  zc3xxWriteVector(spca50x, tas5130c_vf0250_50HZ);
+      break;
+      case SENSOR_TAS5130CXX:
+ 	  zc3xxWriteVector(spca50x, tas5130cxx_50HZ);
+      case SENSOR_PB0330:
+ 	  zc3xxWriteVector(spca50x, pb0330_50HZ);
+      break;
+      case SENSOR_PAS106:
+ 	  zc3xxWriteVector(spca50x, pas106b_50HZ);
+      break;
+      case SENSOR_ICM105A:
+ 	  zc3xxWriteVector(spca50x, icm105a_50HZ);
+      break;
+      case SENSOR_HDCS2020b:
+ 	  zc3xxWriteVector(spca50x, hdcs2020b_50HZ);
+      break;
+      case SENSOR_CS2102:
+ 	  zc3xxWriteVector(spca50x, cs2102_50HZ);
+      break;
+      default:     
+      break;
+     }
+ }
+ 
+static void zc3xx_set60HZ(struct usb_spca50x *spca50x) {
+     switch (spca50x->sensor) {
+      case SENSOR_TAS5130C_VF0250:
+ 	  zc3xxWriteVector(spca50x, tas5130c_vf0250_60HZ);
+      break;
+      case SENSOR_TAS5130CXX:
+ 	  zc3xxWriteVector(spca50x, tas5130cxx_60HZ);
+      break;
+      case SENSOR_PB0330:
+ 	  zc3xxWriteVector(spca50x, pb0330_60HZ);
+      break;
+      case SENSOR_PAS106:
+ 	  zc3xxWriteVector(spca50x, pas106b_60HZ);
+      break;
+      case SENSOR_ICM105A:
+ 	  zc3xxWriteVector(spca50x, icm105a_60HZ);
+      break;
+      case SENSOR_HDCS2020b:
+ 	  zc3xxWriteVector(spca50x, hdcs2020b_60HZ);
+      break;
+      case SENSOR_CS2102:
+ 	  zc3xxWriteVector(spca50x, cs2102_60HZ);
+      break;
+      default:     
+      break;
+     }
+ }
+ 
+static void zc3xx_set50HZScale(struct usb_spca50x *spca50x) {
+     switch (spca50x->sensor) {     
+      case SENSOR_TAS5130C_VF0250:
+ 	  zc3xxWriteVector(spca50x, tas5130c_vf0250_50HZScale);
+      break;
+      case SENSOR_TAS5130CXX:
+ 	  zc3xxWriteVector(spca50x, tas5130cxx_50HZScale);
+      break;
+      case SENSOR_PB0330:
+ 	  zc3xxWriteVector(spca50x, pb0330_50HZScale);
+      break;
+      case SENSOR_PAS106:
+ 	  zc3xxWriteVector(spca50x, pas106b_50HZ);
+      break;
+      case SENSOR_ICM105A:
+ 	  zc3xxWriteVector(spca50x, icm105a_50HZScale);
+      break;
+      case SENSOR_HDCS2020b:
+ 	  zc3xxWriteVector(spca50x, hdcs2020b_50HZScale);
+      break;
+      case SENSOR_CS2102:
+ 	  zc3xxWriteVector(spca50x, cs2102_50HZScale);
+      break;
+      default:
+      break;
+     }
+ 
+ }
+ 
+static void zc3xx_set60HZScale(struct usb_spca50x *spca50x) {
+     switch (spca50x->sensor) {
+      case SENSOR_TAS5130C_VF0250:
+ 	  zc3xxWriteVector(spca50x, tas5130c_vf0250_60HZScale);
+      break;
+      case SENSOR_TAS5130CXX:
+ 	  zc3xxWriteVector(spca50x, tas5130cxx_60HZScale);
+      break;
+      case SENSOR_PB0330:
+ 	  zc3xxWriteVector(spca50x, pb0330_60HZScale);
+      break;
+      case SENSOR_PAS106:
+ 	  zc3xxWriteVector(spca50x, pas106b_60HZ);
+      break;
+      case SENSOR_ICM105A:
+ 	  zc3xxWriteVector(spca50x, icm105a_60HZScale);
+      break;
+      case SENSOR_HDCS2020b:
+ 	  zc3xxWriteVector(spca50x, hdcs2020b_60HZScale);
+      break;
+      case SENSOR_CS2102:
+ 	  zc3xxWriteVector(spca50x, cs2102_60HZScale);
+      break;
+      default:
+      break;
+     }
+ 
+ }
+ 
+static void zc3xx_setNoFliker(struct usb_spca50x *spca50x) {
+     switch (spca50x->sensor) {
+      case SENSOR_TAS5130C_VF0250:
+ 	  zc3xxWriteVector(spca50x, tas5130c_vf0250_NoFliker);
+      break;
+      case SENSOR_TAS5130CXX:
+ 	  zc3xxWriteVector(spca50x, tas5130cxx_NoFliker);
+      break;
+      case SENSOR_PB0330:
+ 	  zc3xxWriteVector(spca50x, pb0330_NoFliker);
+      break;
+      case SENSOR_PAS106:
+ 	  zc3xxWriteVector(spca50x, pas106b_NoFliker);
+      break;
+      case SENSOR_ICM105A:
+ 	  zc3xxWriteVector(spca50x, icm105a_NoFliker);
+      break;
+      case SENSOR_HDCS2020b:
+ 	  zc3xxWriteVector(spca50x, hdcs2020b_NoFliker);
+      break;
+      case SENSOR_CS2102:
+ 	  zc3xxWriteVector(spca50x, cs2102_NoFliker);
+      break;
+      default:
+      break;
+     }
+ 
+ }
+ 
+static void zc3xx_setNoFlikerScale(struct usb_spca50x *spca50x) {
+     switch (spca50x->sensor) {
+      case SENSOR_TAS5130C_VF0250:
+ 	  zc3xxWriteVector(spca50x, tas5130c_vf0250_NoFlikerScale);
+      break;
+      case SENSOR_TAS5130CXX:
+ 	  zc3xxWriteVector(spca50x, tas5130cxx_NoFlikerScale);
+      break;
+      case SENSOR_PB0330:
+ 	  zc3xxWriteVector(spca50x, pb0330_NoFlikerScale);
+      break;
+      case SENSOR_PAS106:
+ 	  zc3xxWriteVector(spca50x, pas106b_NoFliker);
+      break;
+      case SENSOR_ICM105A:
+ 	  zc3xxWriteVector(spca50x, icm105a_NoFlikerScale);
+      break;
+      case SENSOR_HDCS2020b:
+ 	  zc3xxWriteVector(spca50x, hdcs2020b_NoFlikerScale);
+      break;
+      case SENSOR_CS2102:
+ 	  zc3xxWriteVector(spca50x, cs2102_NoFlikerScale);
+      break;
+      default:
+      break;
+     }
+ }
 #endif				// ZC3XXUSB_H

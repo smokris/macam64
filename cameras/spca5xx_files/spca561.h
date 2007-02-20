@@ -766,6 +766,9 @@ static int spca561_config(struct usb_spca50x *spca50x)
     case 0x403b:
     case 0x092b:
     case 0x092c:
+    case 0x092d:
+    case 0x092e:
+    case 0x092f:
 	spca50x->chip_revision = Rev012A;
 	break;
     default:
