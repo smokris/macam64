@@ -852,7 +852,7 @@ static void set_EtxxSIF(struct usb_spca50x *spca50x)
 static int Et_config(struct usb_spca50x *spca50x)
 {
     switch (spca50x->sensor) {
-    case SENSOR_TAS5130C:
+    case SENSOR_TAS5130CXX:
 	set_EtxxVGA(spca50x);
 	break;
     case SENSOR_PAS106:

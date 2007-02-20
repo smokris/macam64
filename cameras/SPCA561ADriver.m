@@ -149,10 +149,10 @@
 //  spca50x->desc = ??; // Not needed
     spca50x->bridge = BRIDGE_SPCA561;
     spca50x->sensor = SENSOR_INTERNAL;
-    spca50x->header_len = SPCA561_OFFSET_DATA;
-    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
-    spca50x->i2c_base = SPCA561_INDEX_I2C_BASE;
-    spca50x->i2c_trigger_on_write = 1;
+//    spca50x->header_len = SPCA561_OFFSET_DATA;  // gone
+//    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
+//    spca50x->i2c_base = SPCA561_INDEX_I2C_BASE;
+//    spca50x->i2c_trigger_on_write = 1;
     spca50x->cameratype = S561;
     
 	return self;

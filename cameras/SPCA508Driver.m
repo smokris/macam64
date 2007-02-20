@@ -94,8 +94,8 @@ enum
     
     spca50x->desc = ViewQuestVQ110;
     spca50x->bridge = BRIDGE_SPCA508;
-    spca50x->sensor = SENSOR_INTERNAL;;
-    spca50x->header_len = SPCA508_OFFSET_DATA;
+    spca50x->sensor = SENSOR_INTERNAL;
+//    spca50x->header_len = SPCA508_OFFSET_DATA;
     spca50x->i2c_ctrl_reg = 0;
     spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
     spca50x->i2c_trigger_on_write = 1;
@@ -250,9 +250,10 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->desc = IntelEasyPCCamera;
     spca50x->bridge = BRIDGE_SPCA508;
     spca50x->sensor = SENSOR_PB100_BA;
-    spca50x->header_len = SPCA508_OFFSET_DATA;
+//    spca50x->header_len = SPCA508_OFFSET_DATA;
     
-    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
+//    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
+    spca50x->i2c_ctrl_reg = 0;
     spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
     spca50x->i2c_trigger_on_write = 1;
     spca50x->cameratype = YUVY;
@@ -291,11 +292,14 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->desc = HamaUSBSightcam;
     spca50x->bridge = BRIDGE_SPCA508;
     spca50x->sensor = SENSOR_INTERNAL;
-    spca50x->header_len = SPCA508_OFFSET_DATA;
+//    spca50x->header_len = SPCA508_OFFSET_DATA;
     
-    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
-    spca50x->i2c_base = 0;
-    spca50x->i2c_trigger_on_write = 0;
+//    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
+//    spca50x->i2c_base = 0;
+//    spca50x->i2c_trigger_on_write = 0;
+    spca50x->i2c_ctrl_reg = 0;
+    spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
+    spca50x->i2c_trigger_on_write = 1;
     spca50x->cameratype = YUVY;
     
 	return self;
@@ -332,11 +336,14 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->desc = HamaUSBSightcam2;
     spca50x->bridge = BRIDGE_SPCA508;
     spca50x->sensor = SENSOR_INTERNAL;
-    spca50x->header_len = SPCA508_OFFSET_DATA;
+//    spca50x->header_len = SPCA508_OFFSET_DATA;
     
-    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
-    spca50x->i2c_base = 0;
-    spca50x->i2c_trigger_on_write = 0;
+//    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
+//    spca50x->i2c_base = 0;
+//    spca50x->i2c_trigger_on_write = 0;
+    spca50x->i2c_ctrl_reg = 0;
+    spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
+    spca50x->i2c_trigger_on_write = 1;
     spca50x->cameratype = YUVY;
     
 	return self;
@@ -375,11 +382,11 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->desc = CreativeVista;
     spca50x->bridge = BRIDGE_SPCA508;
     spca50x->sensor = SENSOR_PB100_BA;
-    spca50x->header_len = SPCA50X_OFFSET_DATA;
+//    spca50x->header_len = SPCA50X_OFFSET_DATA;
     
-    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
-    spca50x->i2c_base = 0;
-    spca50x->i2c_trigger_on_write = 0;
+    spca50x->i2c_ctrl_reg = 0;
+    spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
+    spca50x->i2c_trigger_on_write = 1;
     spca50x->cameratype = YUVY;
     
 	return self;

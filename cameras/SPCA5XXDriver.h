@@ -25,7 +25,7 @@
 
 #import <GenericDriver.h>
 
-#include "spca5xx_files/spca5xx.h"
+#include "spca5xx_files/gspca.h"
 
 
 // Prototypes for low-level USB access functions used by the spca5xx code

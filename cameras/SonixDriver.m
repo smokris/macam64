@@ -305,7 +305,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         return NULL;
     
     spca50x->desc = Sonix6025;
-    spca50x->sensor = SENSOR_TAS5130C;
+    spca50x->sensor = SENSOR_TAS5130CXX;
     spca50x->customid = SN9C102;
     
     spca50x->i2c_ctrl_reg = 0x20;

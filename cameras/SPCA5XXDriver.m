@@ -576,5 +576,9 @@ void spin_lock_irqsave(spinlock_t * lock, long flags) {}
 
 void spin_unlock_irqrestore(spinlock_t * lock, long flags) {}
 
+void spin_lock_irq(spinlock_t * lock) {}
+
+void spin_unlock_irq(spinlock_t * lock) {}
+
 
 
