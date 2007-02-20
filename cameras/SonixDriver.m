@@ -181,7 +181,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 
 - (BOOL) setGrabInterfacePipe
 {
-    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:8  numAltInterfaces:8];
+    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:8];
 //  return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
 }
 
@@ -637,7 +637,7 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 
 - (BOOL) setGrabInterfacePipe
 {
-    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:8  numAltInterfaces:8];
+    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:8];
 //  return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
 }
 

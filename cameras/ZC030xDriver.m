@@ -505,9 +505,15 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         NULL];
 }
 
-- (BOOL) setGrabInterfacePipe
+- (id) initWithCentral: (id) c 
 {
-    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:6  numAltInterfaces:-1];
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    usbReducedBandwidth = YES;
+    
+	return self;
 }
 
 @end
