@@ -323,6 +323,9 @@ static int pac_decompress_row(struct code_table *table, unsigned char *inp, unsi
         case WhiteBalanceAutomatic:
             [bayerConverter setGainsDynamic:YES];
             break;
+        case WhiteBalanceManual:
+            // not handled yet
+            break;
     }
 }
 

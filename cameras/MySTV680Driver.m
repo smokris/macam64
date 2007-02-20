@@ -177,6 +177,9 @@
         case WhiteBalanceAutomatic:
             [bayerConverter setGainsDynamic:YES];
             break;
+        case WhiteBalanceManual:
+            // not handled yet
+            break;
     }
 }
 

@@ -521,6 +521,8 @@ Here is a table of sniffed data. I have no idea what this means
             width=800;
             height=600;
             break;
+        case ResolutionXGA:
+        case ResolutionUXGA:
         case ResolutionInvalid:
             break;
 	}

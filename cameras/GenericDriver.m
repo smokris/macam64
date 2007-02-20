@@ -367,6 +367,10 @@
             if (bayerConverter != NULL) 
                 [bayerConverter setGainsDynamic:YES];
             break;
+            
+        case WhiteBalanceManual:
+            // not handled yet
+            break;
     }
 }
 
