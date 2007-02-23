@@ -603,6 +603,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
             [cam setWhiteBalanceMode:(WhiteBalanceMode)[[camDict objectForKey:@"white balance"] shortValue]];
        	if ([camDict objectForKey:@"flicker control"])
             [cam setFlicker:(FlickerType)[[camDict objectForKey:@"flicker control"] shortValue]];
+       	if ([camDict objectForKey:@"bandwidth reduction"])
+            [cam setUSBReducedBandwidth:[[camDict objectForKey:@"bandwidth reduction"] boolValue]];
     }
     [pool release];
     return ok;
@@ -656,6 +658,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
             [camDict setObject:[NSNumber numberWithShort:(short)[cam whiteBalanceMode]] forKey:@"white balance"];
         if ([cam canSetFlicker])
             [camDict setObject:[NSNumber numberWithShort:(short)[cam flicker]] forKey:@"flicker control"];
+        if ([cam canSetUSBReducedBandwidth])
+            [camDict setObject:[NSNumber numberWithBool:[cam usbReducedBandwidth]] forKey:@"bandwidth reduction"];
         
         [camDict setObject:[NSNumber numberWithShort:[cam resolution]] forKey:@"resolution"];
         [camDict setObject:[NSNumber numberWithShort:[cam fps]] forKey:@"fps"];
