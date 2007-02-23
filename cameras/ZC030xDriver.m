@@ -468,6 +468,11 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
             @"Philips SPC 300NC", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_SPC_315NC], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
+            @"Philips SPC 315NC", @"name", NULL], 
+        
         NULL];
 }
 
