@@ -122,6 +122,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative Live! Cam Vista IM", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x4802], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x17ef], @"idVendor",
+            @"Lenovo USB Webcam (40Y8519)", @"name", NULL], 
+        
         NULL];
 }
 
