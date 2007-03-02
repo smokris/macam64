@@ -86,6 +86,7 @@
 - (BOOL) doNotificationsOnMainThread;
 
 - (void) setVDIG:(BOOL)v;
+- (SInt32) osVersion;
 
 //Camera management
 

@@ -431,6 +431,11 @@ MyCameraCentral* sharedCameraCentral=NULL;
     inVDIG = v;
 }
 
+- (SInt32) osVersion
+{
+    return osVersion;
+}
+
 - (short) numCameras {
     return [cameras count];
 }
