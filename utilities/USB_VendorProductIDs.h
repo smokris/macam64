@@ -55,6 +55,9 @@
 #define PRODUCT_QUICKCAM_EXPRESS_B      0x0870
 #define PRODUCT_QUICKCAM_TRAVELER       0x0890
 
+#define PRODUCT_ORBICAM_A               0x0892      // VC032x ?
+#define PRODUCT_ORBICAM_B               0x0896      // VC032x ?
+
 #define PRODUCT_QUICKCAM_IM_A           0x08a0      // ZC030x
 #define PRODUCT_QUICKCAM_IM_MIC         0x08a1      // ZC030x
 #define PRODUCT_LABTEC_WEBCAM_PRO       0x08a2      // ZC0302
@@ -248,11 +251,17 @@
 #define PRODUCT_PIXART_CIF_SINGLE_CHIP  0x2468      // Most common PAC207 camera Product ID
 #define PRODUCT_PAC7311                 0x2600      // PAC7311 probably
 
-#define VENDOR_Z_STAR_MICRO     0x0ac8              // Z-Star Microelectronics Corp.
+#define VENDOR_JEILIN           0x0979
+#define PRODUCT_JL2005A_TOY_CAMERA      0x0224      // JL2005ADriver
+
+#define VENDOR_Z_STAR_MICRO     0x0ac8              // Z-Star Microelectronics Corp. aka Vimicro
 #define PRODUCT_GENERIC_ZC0301B         0x301b      // ZC0301P
 #define PRODUCT_GENERIC_ZC0302          0x0302      // ZC0302
 #define PRODUCT_GENERIC_ZC0303B         0x303b      // ZC0301P
 #define PRODUCT_GENERIC_ZC0305B         0x305b      // ZC0302 or VC0305??
+#define PRODUCT_VIMICRO_GENERIC_321     0x0321      // VC032x ?
+#define PRODUCT_SONY_C001               0xc001      // VC032x ?
+#define PRODUCT_SONY_C002               0xc002      // VC032x ?
 
 #define VENDOR_SONIX            0x0c45
 #define VENDOR_SWEDA			0x0c45
@@ -274,6 +283,9 @@
 
 #define VENDOR_AROWANA          0x1776
 #define PRODUCT_300KCMOS                0x501c      // SPCA501A? [not yet]
+
+#define VENDOR_LENOVO           0x17ef
+#define PRODUCT_LENOVO_USB_WEBCAM       0x4802      // VC032x ?
 
 #define VENDOR_PICO_INSTRUMENTS 0x18cd
 #define PRODUCT_PICO_IMAGE_WEBCAM       0xcafe      // PicoDriver - UVC Bulk
