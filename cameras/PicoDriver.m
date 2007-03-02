@@ -23,6 +23,7 @@
 
 
 #import "PicoDriver.h"
+#import "MyCameraCentral.h"
 
 #include "Resolvers.h"
 #include "MiscTools.h"
@@ -186,10 +187,21 @@
 //
 - (CameraResolution) defaultResolutionAndRate: (short *) rate
 {
-	if (rate) 
+    if (central != NULL) 
+    {
+        if ([(MyCameraCentral *) central osVersion] < 0x1040)
+        {
+            if (rate) 
+                *rate = 5;
+            
+            return ResolutionSIF;
+        }
+    }
+    
+    if (rate) 
         *rate = 15;
     
-	return ResolutionVGA;
+    return ResolutionVGA;
 }
 
 - (void) setBrightness:(float) v 
