@@ -26,7 +26,6 @@
 #import "PAC7311Driver.h"
 
 #include "USB_VendorProductIDs.h"
-#include "JpgDecompress.h"
 #include "spcadecoder.h"
 
 #define OUTVI USBmakebmRequestType(kUSBOut,kUSBVendor,kUSBInterface)
@@ -68,10 +67,11 @@
 	if (LUT == NULL) 
         return NULL;
     
-    decodingSkipBytes = 6;
+    decodingSkipBytes = 16;
     
     compressionType = quicktimeImage;
     quicktimeCodec = kJPEG2000CodecType;
+    quicktimeCodec = kJPEGCodecType;
 //    quicktimeCodec = kH264CodecType; 
     // kJPEGCodecType kMotionJPEGACodecType kMotionJPEGBCodecType kAVRJPEGCodecType kOpenDMLJPEGCodecType kH264CodecType
     
@@ -516,7 +516,7 @@ IsocFrameResult  pac7311IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     *tailLength = 0;
     
 #if REALLY_VERBOSE
-    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+//    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
 #endif
     
     if (frameLength < 6) 
@@ -524,7 +524,7 @@ IsocFrameResult  pac7311IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         *dataLength = 0;
         
 #if REALLY_VERBOSE
-        printf("Invalid frame!\n");
+//        printf("Invalid frame!\n");
 #endif
         return invalidFrame;
     }
@@ -540,7 +540,7 @@ IsocFrameResult  pac7311IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             (buffer[position+4] == 0x96))
         {
 #if REALLY_VERBOSE
-            printf("New chunk!\n");
+//            printf("New chunk!\n");
 #endif
             if (position > 0) 
             {
@@ -603,7 +603,7 @@ int  pac7311IsocDataCopier(void * destination, const void * source, size_t lengt
 - (void) setIsocFrameFunctions
 {
     grabContext.isocFrameScanner = pac7311IsocFrameScanner;
-    grabContext.isocDataCopier = pac7311IsocDataCopier;
+//  grabContext.isocDataCopier = pac7311IsocDataCopier;
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
@@ -704,7 +704,7 @@ int  pac7311IsocDataCopier(void * destination, const void * source, size_t lengt
 
 - (BOOL) canSetSaturation 
 { 
-    return YES;
+    return NO;
 }
 
 - (void) setSaturation: (float) v 
@@ -765,6 +765,11 @@ int  pac7311IsocDataCopier(void * destination, const void * source, size_t lengt
 //
 - (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer
 {
+    
+    
+//    pac7311CreateCleanJPEG();
+    
+    
     static GenericChunkBuffer cleanBuffer = { NULL, 0 };
     static int counter = 0;
 //    int i, skip = 16;
