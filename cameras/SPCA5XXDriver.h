@@ -27,6 +27,9 @@
 
 #include "spca5xx_files/gspca.h"
 
+#define mdelay(x) wait_ms(x)
+#define msleep(x) wait_ms(x)
+
 
 // Prototypes for low-level USB access functions used by the spca5xx code
 
