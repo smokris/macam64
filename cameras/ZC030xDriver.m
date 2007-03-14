@@ -25,7 +25,7 @@
 
 #import "ZC030xDriver.h"
 
-#include "spcadecoder.h"
+#include "gspcadecoder.h"
 #include "USB_VendorProductIDs.h"
 
 
