@@ -31,7 +31,8 @@
 
 @interface VC032xDriver : SPCA5XXDriver 
 {
-	UInt8 * decodingBuffer;
+    int forceRGB;
+    BOOL invert;
 }
 
 + (NSArray *) cameraUsbDescriptions;

@@ -31,7 +31,7 @@
 #import "VC032xDriver.h"
 
 #include "MiscTools.h"
-#include "spcadecoder.h"
+#include "gspcadecoder.h"
 #include "USB_VendorProductIDs.h"
 
 
@@ -93,15 +93,18 @@
 	if (self == NULL) 
         return NULL;
     
-    bayerConverter = [[BayerConverter alloc] init];
-	if (bayerConverter == NULL) 
+    LUT = [[LookUpTable alloc] init];
+	if (LUT == NULL) 
         return NULL;
     
     // Don't know if these work yet
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
-    compressionType = proprietaryCompression;  // Remove this eventually, when all subclasses work properly
+    compressionType = proprietaryCompression;
+    
+    forceRGB = 1;
+    invert = NO;
     
     // Set to reflect actual values
 //    spca50x->desc = Vimicro0321;
@@ -116,6 +119,8 @@
     
     // This is important
     cameraOperation = &fvc0321;
+    
+    decodingSkipBytes = (spca50x->sensor == SENSOR_OV7660) ? 44 : 46;
     
 	return self;
 }
@@ -205,34 +210,48 @@ IsocFrameResult  vc032xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 - (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
-#ifdef REALLY_VERBOSE
-    printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
-#endif
-    
+    int i, error;
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
+#ifdef VERBOSE
+    printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
+#endif
+    
 	// Decode the bytes
     
+    spca50x->frame->width = rawWidth;
+    spca50x->frame->height = rawHeight;
     spca50x->frame->hdrwidth = rawWidth;
     spca50x->frame->hdrheight = rawHeight;
-    spca50x->frame->data = buffer->buffer + decodingSkipBytes;
-    spca50x->frame->tmpbuffer = decodingBuffer;
     
-    tv8532_preprocess(spca50x->frame);  // Re-use the spca5xx code
+    spca50x->frame->tmpbuffer = buffer->buffer + decodingSkipBytes;
+    spca50x->frame->data = nextImageBuffer;
     
-    // Turn the Bayer data into an RGB image
+    spca50x->frame->decoder = &spca50x->maindecode;
     
-    [bayerConverter setSourceFormat:6];
-    [bayerConverter setSourceWidth:rawWidth height:rawHeight];
-    [bayerConverter setDestinationWidth:rawWidth height:rawHeight];
-    [bayerConverter convertFromSrc:decodingBuffer
-                            toDest:nextImageBuffer
-                       srcRowBytes:rawWidth
-                       dstRowBytes:nextImageBufferRowBytes
-                            dstBPP:nextImageBufferBPP
-                              flip:hFlip
-                         rotate180:YES];
+    for (i = 0; i < 256; i++) 
+    {
+        spca50x->frame->decoder->Red[i] = i;
+        spca50x->frame->decoder->Green[i] = i;
+        spca50x->frame->decoder->Blue[i] = i;
+    }
+    
+    spca50x->frame->cameratype = spca50x->cameratype;
+    
+    spca50x->frame->format = VIDEO_PALETTE_RGB24;
+    
+    spca50x->frame->cropx1 = 0;
+    spca50x->frame->cropx2 = 0;
+    spca50x->frame->cropy1 = 0;
+    spca50x->frame->cropy2 = 0;
+    
+    error = yvyu_translate(spca50x->frame, forceRGB);
+    
+    if (error != 0) 
+        return NO;
+    
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:invert];
     
     return YES;
 }
