@@ -64,3 +64,11 @@
 - (id) initWithCentral: (id) c;
 
 @end
+
+
+@interface ZC030xDriverVF0250 : ZC030xDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
+
+@end

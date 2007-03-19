@@ -161,11 +161,6 @@
             @"Creative Instant (B)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_GENERIC_ZC0305B], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
-            @"Vimicro Generic VC0305", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_NOTEBOOK_DELUXE], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam NoteBook Deluxe", @"name", NULL], 
@@ -215,11 +210,6 @@
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam Messenger (C)", @"name", NULL], 
         
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_LIVE_CAM_VIM], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
-            @"Creative Live! Cam Video IM", @"name", NULL], 
-        
         NULL];
 }
 
@@ -253,6 +243,7 @@
     
     spca50x->bridge = BRIDGE_ZC3XX;
     spca50x->cameratype = JPGH;
+    spca50x->sensor = SENSOR_TAS5130CXX;  // Assume this sensor, will get overwritten
     
     compressionType = jpegCompression;
     jpegVersion = 0;
@@ -523,4 +514,41 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 
 @end
 
+
+@implementation ZC030xDriverVF0250
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_LIVE_CAM_VIM], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Creative Live! Cam Video IM", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_LIVE_CAM_NTB_P], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Creative Live! Cam Notebook Pro", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_GENERIC_ZC0305B], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
+            @"Vimicro VC0305P Generic", @"name", NULL], 
+        
+        NULL];
+}
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->sensor = SENSOR_TAS5130C_VF0250;
+    
+	return self;
+}
+
+@end
 
