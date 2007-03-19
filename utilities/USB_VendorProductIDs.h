@@ -29,6 +29,7 @@
 #define PRODUCT_CREATIVE_LIVE           0x4036      // ZC0301P
 #define PRODUCT_VISTA_C                 0x403b      // SPCA561A
 #define PRODUCT_VISTA_PLUS              0x4028      // PAC207
+#define PRODUCT_CREATIVE_LIVE_CAM_NTB_P 0x4051      // VC301P
 #define PRODUCT_CREATIVE_LIVE_CAM_VIM   0x4053      // VC301P
 
 #define VENDOR_GENIUS           0x0458
@@ -38,7 +39,12 @@
 #define PRODUCT_VIDEOCAM_WEB            0x700f      // ZC0301P
 
 #define VENDOR_MICROSOFT        0x045e
+#define PRODUCT_LIFECAM_VX_1000         0x00f7      // SN9C105R
+#define PRODUCT_LIFECAM_VX_3000         0x00f5      // SN9C105R
+#define PRODUCT_LIFECAM_VX_6000         0x00f4      // SN9C202
+#define PRODUCT_LIFECAM_NX_6000         0x00f8      // OV531?
 #define PRODUCT_XBOX_VIDEO_CHAT         0x028c      // in Japan only?
+#define PRODUCT_XBOX_LIVE_VISION        0x0294      // UVC chipset
 
 #define VENDOR_MICRO_INNOVATION 0x0461
 #define PRODUCT_IC_150                  0x0815      // SPCA561A
@@ -258,7 +264,7 @@
 #define PRODUCT_GENERIC_ZC0301B         0x301b      // ZC0301P
 #define PRODUCT_GENERIC_ZC0302          0x0302      // ZC0302
 #define PRODUCT_GENERIC_ZC0303B         0x303b      // ZC0301P
-#define PRODUCT_GENERIC_ZC0305B         0x305b      // ZC0302 or VC0305??
+#define PRODUCT_GENERIC_ZC0305B         0x305b      // VC0301P
 #define PRODUCT_VIMICRO_GENERIC_321     0x0321      // VC032x ?
 #define PRODUCT_SONY_C001               0xc001      // VC032x ?
 #define PRODUCT_SONY_C002               0xc002      // VC032x ?
