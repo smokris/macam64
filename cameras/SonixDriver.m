@@ -52,6 +52,7 @@ enum
     Lic300,
     PhilipsSPC700NC,
     Rainbow5790P,
+    M$VX1000,
 };
 
 
@@ -90,6 +91,8 @@ enum
     // Set as appropriate
     hardwareBrightness = YES;
     hardwareContrast = YES;
+    
+    decodingSkipBytes = 6;
     
     // Again, use if needed
     MALLOC(decodingBuffer, UInt8 *, 644 * 484 + 1000, "decodingBuffer");
@@ -159,7 +162,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             if (position > 0) 
                 *tailLength = position;
             
-            *dataStart = position + 12;
+            *dataStart = position + 6;
             *dataLength = frameLength - *dataStart;
             
             return newChunkFrame;
@@ -215,7 +218,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     spca50x->frame->hdrwidth = rawWidth;
     spca50x->frame->hdrheight = rawHeight;
-    spca50x->frame->data = buffer->buffer;
+    spca50x->frame->data = buffer->buffer + decodingSkipBytes;
     spca50x->frame->tmpbuffer = decodingBuffer;
     spca50x->frame->decoder = &spca50x->maindecode;  // has the code table
     
@@ -328,13 +331,6 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:0x6028], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
             @"Sonix BTC PC380", @"name", NULL], 
-        
-        // This is actually a SN9C103... hopefully it works anyway, not quite!
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x60af], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"Trust HiRes Webcam WB-3400T", @"name", NULL], 
         
         NULL];
 }
@@ -510,6 +506,50 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     spca50x->i2c_ctrl_reg = 0x81;
     spca50x->i2c_base = 0x11;
+    spca50x->i2c_trigger_on_write = 0;
+    
+	return self;
+}
+
+@end
+
+
+@implementation SonixDriverVariant8
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        // This is actually a SN9C103... hopefully it works anyway
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x60af], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Trust HiRes Webcam WB-3400T", @"name", NULL], 
+        
+        NULL];
+}
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    decodingSkipBytes = 12;
+    
+    // Green is like '105 and '120
+    // valid up to 0x7f instead of 0x0f
+    // into register 0x07 instead of 0x11?
+    
+//  cameraOperation->set_contrast = fsn9cxx.set_contrast;
+    
+    spca50x->desc = BtcPc380;
+    spca50x->sensor = SENSOR_PAS202;
+    spca50x->customid = SN9C103;
+    
+    spca50x->i2c_ctrl_reg = 0x80;
+    spca50x->i2c_base = 0x40;
     spca50x->i2c_trigger_on_write = 0;
     
 	return self;
@@ -968,6 +1008,48 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->desc = Pccam168;  // not true
     spca50x->sensor = SENSOR_OV7630;
     spca50x->customid = SN9C120;
+    
+    spca50x->i2c_ctrl_reg = 0x81;
+    spca50x->i2c_base = 0x21;
+    spca50x->i2c_trigger_on_write = 0;
+    
+	return self;
+}
+
+@end
+
+
+@implementation SN9CxxxDriverVariant9
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_LIFECAM_VX_1000], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_MICROSOFT], @"idVendor",
+            @"Microsoft LifeCam VX-1000", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_LIFECAM_VX_3000], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_MICROSOFT], @"idVendor",
+            @"Microsoft LifeCam VX-3000", @"name", NULL], 
+        
+        NULL];
+}
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->desc = M$VX1000;
+//    spca50x->sensor = SENSOR_HV7131R; // NOT in VX-3000 base = 0x11
+//    spca50x->sensor = SENSOR_MI0360;  // NOT in VX-3000 base = 0x5d
+//    spca50x->sensor = SENSOR_MO4000;  // NOT in VX-3000 base = 0.21 (seems unlikely)
+    spca50x->sensor = SENSOR_OV7660;  // for LifeCam VX-1000 base = 0x21, seems to work for VX-3000 as well
+    spca50x->customid = SN9C105;
     
     spca50x->i2c_ctrl_reg = 0x81;
     spca50x->i2c_base = 0x21;

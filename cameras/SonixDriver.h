@@ -112,6 +112,14 @@
 @end
 
 
+@interface SonixDriverVariant8 : SonixDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
+
+@end
+
+
 @interface SN9CxxxDriverVariant1 : SN9CxxxDriver
 
 + (NSArray *) cameraUsbDescriptions;
@@ -169,6 +177,14 @@
 
 
 @interface SN9CxxxDriverVariant8 : SN9CxxxDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
+
+@end
+
+
+@interface SN9CxxxDriverVariant9 : SN9CxxxDriver
 
 + (NSArray *) cameraUsbDescriptions;
 - (id) initWithCentral: (id) c;
