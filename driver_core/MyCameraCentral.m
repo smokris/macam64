@@ -275,7 +275,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[ZC030xDriverBGR class]];
     [self registerCameraDriver:[ZC030xDriverInverted class]];
     [self registerCameraDriver:[ZC030xDriverMic class]];
-//    [self registerCameraDriver:[ZC030xDriverVF250 class]];
+    [self registerCameraDriver:[ZC030xDriverVF0250 class]];
     
     [self registerCameraDriver:[VC032xDriver class]];
     
@@ -299,6 +299,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SonixDriverVariant5 class]];
     [self registerCameraDriver:[SonixDriverVariant6 class]];
     [self registerCameraDriver:[SonixDriverVariant7 class]];
+    [self registerCameraDriver:[SonixDriverVariant8 class]];
     
     [self registerCameraDriver:[SN9CxxxDriver class]];
     [self registerCameraDriver:[SN9CxxxDriverVariant1 class]];
@@ -309,6 +310,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SN9CxxxDriverVariant6 class]];
     [self registerCameraDriver:[SN9CxxxDriverVariant7 class]];
     [self registerCameraDriver:[SN9CxxxDriverVariant8 class]];
+    [self registerCameraDriver:[SN9CxxxDriverVariant9 class]];
     
     [self registerCameraDriver:[PicoDriver class]];
     
