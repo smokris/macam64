@@ -638,20 +638,20 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         *dataLength = 0;
         
 #ifdef REALLY_VERBOSE
-        printf("Invalid packet.\n");
+//        printf("Invalid packet.\n");
 #endif
         return invalidFrame;
     }
     
 #ifdef REALLY_VERBOSE
-    printf("buffer[0] = 0x%02x (length = %d) 0x%02x ... [length-64] = 0x%02x 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
-           buffer[0], frameLength, buffer[1], buffer[frameLength-64], buffer[frameLength-63], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
+//    printf("buffer[0] = 0x%02x (length = %d) 0x%02x ... [length-64] = 0x%02x 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
+//           buffer[0], frameLength, buffer[1], buffer[frameLength-64], buffer[frameLength-63], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
 #endif
     
     if (position >= 0 && buffer[position] == 0xFF && buffer[position+1] == 0xD9) // JPEG Image-End marker
     {
 #ifdef REALLY_VERBOSE
-        printf("New image start!\n");
+//        printf("New image start!\n");
 #endif
         if (position > 0) 
             *tailLength = position + 2;
