@@ -109,7 +109,7 @@
 // This is an example that will have to be tailored to the specific camera or chip
 // Scan the frame and return the results
 //
-IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
+IsocFrameResult  jl2005aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
                                          UInt32 * dataStart, UInt32 * dataLength, 
                                          UInt32 * tailStart, UInt32 * tailLength)
 {
@@ -140,7 +140,7 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 - (void) setIsocFrameFunctions
 {
-    grabContext.isocFrameScanner = exampleIsocFrameScanner;
+    grabContext.isocFrameScanner = jl2005aIsocFrameScanner;
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
