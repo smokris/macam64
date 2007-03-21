@@ -25,6 +25,10 @@
 
 #import <GenericDriver.h>
 
+#if DEBUG
+#define GSPCA_ENABLE_DEBUG 1
+#endif
+
 #include "spca5xx_files/gspca.h"
 
 #define mdelay(x) wait_ms(x)
