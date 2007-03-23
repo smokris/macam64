@@ -29,6 +29,7 @@
 @interface SonixDriver : SPCA5XXDriver 
 {
 	UInt8 * decodingBuffer;
+    int bayerFormat;
 }
 
 + (NSArray *) cameraUsbDescriptions;
