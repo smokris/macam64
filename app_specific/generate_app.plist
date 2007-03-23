@@ -108,7 +108,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.9.0(+) © 2002-2007 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.9.1 © 2002-2007 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>WebcamHelp</string>
 	<key>CFBundleHelpBookName</key>
@@ -124,11 +124,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.9.0(+)</string>
+	<string>0.9.1</string>
 	<key>CFBundleSignature</key>
 	<string>wC?!</string>
 	<key>CFBundleVersion</key>
-	<string>0.9.0(+)</string>
+	<string>0.9.1</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
