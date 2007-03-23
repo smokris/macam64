@@ -88,6 +88,8 @@ enum
 	if (bayerConverter == NULL) 
         return NULL;
     
+    bayerFormat = 6;
+    
     // Set as appropriate
     hardwareBrightness = YES;
     hardwareContrast = YES;
@@ -226,7 +228,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     // Turn the Bayer data into an RGB image
     
-    [bayerConverter setSourceFormat:6];
+    [bayerConverter setSourceFormat:bayerFormat];
     [bayerConverter setSourceWidth:rawWidth height:rawHeight];
     [bayerConverter setDestinationWidth:rawWidth height:rawHeight];
     [bayerConverter convertFromSrc:decodingBuffer
@@ -537,6 +539,8 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         return NULL;
     
     decodingSkipBytes = 12;
+    
+    bayerFormat = 4;
     
     // Green is like '105 and '120
     // valid up to 0x7f instead of 0x0f
