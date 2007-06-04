@@ -26,7 +26,7 @@
 #import "PAC207Driver.h"
 
 #include "USB_VendorProductIDs.h"
-#include "spcadecoder.h"
+#include "gspcadecoder.h"
 
 
 @implementation PAC207Driver

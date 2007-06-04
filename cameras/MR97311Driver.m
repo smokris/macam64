@@ -27,7 +27,7 @@
 
 
 #include "MiscTools.h"
-#include "spcadecoder.h"
+#include "gspcadecoder.h"
 #include "USB_VendorProductIDs.h"
 
 

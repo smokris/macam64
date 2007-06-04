@@ -1514,10 +1514,15 @@
     IOObjectRelease(usbInterfaceRef);  // Done with this
     
     // Get access to the interface interface
+	err = 12345;
     
-    interfaceID = 220;
-    err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID220), (LPVOID) intfPtr);
-    
+#if defined(kIOUSBInterfaceInterfaceID220)
+	if (err) 
+	{
+		interfaceID = 220;
+		err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID220), (LPVOID) intfPtr);
+    }
+#endif
     if (err) 
     {
         interfaceID = 197;
@@ -1610,12 +1615,14 @@
 // Depends on whether it is high-speed device on a high-speed hub
 - (int) usbGetIsocFrameSize
 {
-    IOReturn err;
     int result, defaultSize = 1023;
+	
+#if defined(kUSBMaxHSIsocEndpointReqCount)
     UInt32 microsecondsInFrame = kUSBFullSpeedMicrosecondsInFrame;
     
     if (interfaceID >= 197) 
     {
+		IOReturn err;
         err = (*(IOUSBInterfaceInterface197 **) streamIntf)->GetFrameListTime(streamIntf, &microsecondsInFrame);
         CheckError(err,"usbGetIsocFrameSize:GetFrameListTime");
     }
@@ -1624,7 +1631,8 @@
         defaultSize = kUSBMaxHSIsocEndpointReqCount;
     else 
         defaultSize = kUSBMaxFSIsocEndpointReqCount;
-    
+#endif
+	
     result = (currentMaxPacketSize < 0) ? defaultSize : currentMaxPacketSize;
     
 #if VERBOSE
