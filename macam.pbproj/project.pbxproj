@@ -169,12 +169,6 @@
 			settings = {
 			};
 		};
-		1A9572F009433AE700672483 = {
-			fileRef = 1A9572E409433AE700672483;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		1A9572F109433AE700672483 = {
 			fileRef = 1A9572E509433AE700672483;
 			isa = PBXBuildFile;
@@ -266,8 +260,8 @@
 				F538BD1D01E5D0440166DE0F,
 				F538BD1B01E5D03A0166DE0F,
 				39FE215504030E7E00BAABE7,
-				F51324730C00216F0076284C,
-				F513246C0C0020C00076284C,
+				F57801120C16F09300AD1DF0,
+				F5D2DA9E0C15163000EDF342,
 			);
 			isa = PBXGroup;
 			name = Frameworks;
@@ -284,11 +278,13 @@
 				39A2B4820593E4A8009C5934,
 			);
 			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
 				FRAMEWORK_SEARCH_PATHS = "";
-				HEADER_SEARCH_PATHS = cameras/spca5xx_files;
+				HEADER_SEARCH_PATHS = "";
 				INSTALL_PATH = "$(HOME)/Applications";
+				JAVA_COMPILER_DEPRECATED_WARNINGS = YES;
 				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O0";
+				OPTIMIZATION_CFLAGS = "-O3";
 				OTHER_CFLAGS = "-DMACAM=1";
 				OTHER_LDFLAGS = "-lgcc";
 				PREBINDING = NO;
@@ -374,7 +370,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.8.2 © 2005 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.9.1 or later © 2007 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>WebcamHelp</string>
 	<key>CFBundleHelpBookName</key>
@@ -390,11 +386,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.8.2</string>
+	<string>0.9.1</string>
 	<key>CFBundleSignature</key>
 	<string>wC?!</string>
 	<key>CFBundleVersion</key>
-	<string>0.8.2</string>
+	<string>0.9.1 or later (built using XCode 1.5)</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -528,6 +524,7 @@
 				F51324980C0026600076284C,
 				F51324B30C0026A80076284C,
 				F51324B90C0026B00076284C,
+				F5D2DA620C147BA800EDF342,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -560,6 +557,10 @@
 				F5E6AA670371F8920166D062,
 				F589724B0374636B01159FE2,
 				F5B1CC470375DAF501159FE2,
+				F57802040C17250500AD1DF0,
+				F57802050C17250500AD1DF0,
+				F57802060C17250500AD1DF0,
+				F57802070C17250500AD1DF0,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -664,8 +665,6 @@
 				F5AA417701DA8EF70157C38C,
 				F5AA417901DA8F350157C38C,
 				F5E9C93A036489100181E072,
-				F513246D0C0020C00076284C,
-				F51324740C00216F0076284C,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -725,13 +724,6 @@
 			isa = PBXBuildFile;
 			settings = {
 			};
-		};
-		391D477005921F4200ADF722 = {
-			containerPortal = 29B97313FDCFA39411CA2CEA;
-			isa = PBXContainerItemProxy;
-			proxyType = 1;
-			remoteGlobalIDString = 396639D80402FCF000435B6F;
-			remoteInfo = "ica module";
 		};
 		391D477105921F4200ADF722 = {
 			containerPortal = 29B97313FDCFA39411CA2CEA;
@@ -1003,6 +995,7 @@
 				F51324AD0C0026600076284C,
 				F51324AE0C0026600076284C,
 				F51324B70C0026A80076284C,
+				F5D2DA600C147BA800EDF342,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1653,8 +1646,6 @@
 				39663A560402FCF000435B6F,
 				39FE215604030E7E00BAABE7,
 				395E9AD704044198007E00C6,
-				F513246F0C0020C00076284C,
-				F51324760C00216F0076284C,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1689,11 +1680,6 @@
 			path = macamDSC.app;
 			refType = 3;
 			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		39663A5A0402FD1400435B6F = {
-			isa = PBXTargetDependency;
-			target = 396639D80402FCF000435B6F;
-			targetProxy = 391D477005921F4200ADF722;
 		};
 		39663A620402FEAC00435B6F = {
 			children = (
@@ -1843,9 +1829,8 @@
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
 			};
 			dependencies = (
-				39AE92CD03C513490066D062,
 				39AE92CC03C513420066D062,
-				39663A5A0402FD1400435B6F,
+				39AE92CD03C513490066D062,
 			);
 			isa = PBXAggregateTarget;
 			name = all;
@@ -2667,12 +2652,6 @@
 			settings = {
 			};
 		};
-		F51322C50BFFFF650076284C = {
-			fileRef = F51322790BFFFF640076284C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F51322C60BFFFF650076284C = {
 			fileRef = F513227A0BFFFF640076284C;
 			isa = PBXBuildFile;
@@ -3429,12 +3408,6 @@
 			settings = {
 			};
 		};
-		F51323400BFFFFB00076284C = {
-			fileRef = F51323100BFFFFB00076284C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F51323410BFFFFB00076284C = {
 			fileRef = F51323110BFFFFB00076284C;
 			isa = PBXBuildFile;
@@ -3741,6 +3714,11 @@
 		};
 		F513238A0C0005E70076284C = {
 			children = (
+				F57801FC0C17250500AD1DF0,
+				F57801FD0C17250500AD1DF0,
+				F57801FE0C17250500AD1DF0,
+				F57801FF0C17250500AD1DF0,
+				F5D2DA5F0C147BA800EDF342,
 				F513238D0C0006490076284C,
 				F513238E0C0006490076284C,
 				F513238F0C0006490076284C,
@@ -4409,12 +4387,6 @@
 			settings = {
 			};
 		};
-		F51323E40C0006490076284C = {
-			fileRef = F51323920C0006490076284C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F51323E50C0006490076284C = {
 			fileRef = F51323930C0006490076284C;
 			isa = PBXBuildFile;
@@ -4511,12 +4483,6 @@
 			settings = {
 			};
 		};
-		F51323F50C0006490076284C = {
-			fileRef = F51323A30C0006490076284C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
 		F51323F60C0006490076284C = {
 			fileRef = F51323A40C0006490076284C;
 			isa = PBXBuildFile;
@@ -4561,12 +4527,6 @@
 		};
 		F51323FD0C0006490076284C = {
 			fileRef = F51323AB0C0006490076284C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F51323FE0C0006490076284C = {
-			fileRef = F51323AC0C0006490076284C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -4867,58 +4827,6 @@
 		};
 		F51324300C0006490076284C = {
 			fileRef = F51323B50C0006490076284C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F513246C0C0020C00076284C = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = libgcc.a;
-			path = /Developer/SDKs/MacOSX10.3.0.sdk/usr/lib/gcc/darwin/3.3/libgcc.a;
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F513246D0C0020C00076284C = {
-			fileRef = F513246C0C0020C00076284C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F513246E0C0020C00076284C = {
-			fileRef = F513246C0C0020C00076284C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F513246F0C0020C00076284C = {
-			fileRef = F513246C0C0020C00076284C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F51324730C00216F0076284C = {
-			isa = PBXFileReference;
-			lastKnownFileType = archive.ar;
-			name = "libstdc++.a";
-			path = "/Developer/SDKs/MacOSX10.3.0.sdk/usr/lib/gcc/darwin/3.3/libstdc++.a";
-			refType = 0;
-			sourceTree = "<absolute>";
-		};
-		F51324740C00216F0076284C = {
-			fileRef = F51324730C00216F0076284C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F51324750C00216F0076284C = {
-			fileRef = F51324730C00216F0076284C;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F51324760C00216F0076284C = {
-			fileRef = F51324730C00216F0076284C;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -5666,14 +5574,15 @@
 				F538BD2801E5D23F0166DE0F,
 			);
 			buildSettings = {
-				DEBUGGING_SYMBOLS = NO;
-				INSTALL_PATH = /Library/Components;
-				JAVA_COMPILER_DEBUGGING_SYMBOLS = NO;
-				LIBRARY_SEARCH_PATHS = "\"$(SYSTEM_DEVELOPER_DIR)/SDKs/MacOSX10.3.0.sdk/usr/lib/gcc/darwin/3.3\"";
-				OPTIMIZATION_CFLAGS = "-O0";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "-bundle";
-				OTHER_REZFLAGS = "";
+				HEADER_SEARCH_PATHS = "";
+				INSTALL_PATH = /Library/QuickTime;
+				JAVA_COMPILER_DEPRECATED_WARNINGS = YES;
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "-DMACAM=1";
+				OTHER_LDFLAGS = "-lgcc -bundle";
+				OTHER_REZFLAGS = "-d __ppc__";
+				PREBINDING = NO;
 				PRODUCT_NAME = macam;
 				SECTORDER_FLAGS = "";
 				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
@@ -5683,7 +5592,7 @@
 			);
 			isa = PBXBundleTarget;
 			name = component;
-			productInstallPath = /Library/Components;
+			productInstallPath = /Library/QuickTime;
 			productName = component;
 			productReference = F538BD2201E5D23F0166DE0F;
 			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
@@ -5695,7 +5604,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.8.2 © 2005 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.9.1 or later © 2007 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -5707,11 +5616,11 @@
 	<key>CFBundlePackageType</key>
 	<string>thng</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.8.2</string>
+	<string>0.9.1 or later</string>
 	<key>CFBundleSignature</key>
 	<string>wCam</string>
 	<key>CFBundleVersion</key>
-	<string>0.8.2</string>
+	<string>0.9.1 or later (compiled with XCode 1.5)</string>
 </dict>
 </plist>
 ";
@@ -5839,6 +5748,7 @@
 				F51324A20C0026600076284C,
 				F51324A30C0026600076284C,
 				F51324B50C0026A80076284C,
+				F5D2DA610C147BA800EDF342,
 			);
 			isa = PBXHeadersBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5847,6 +5757,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				F5285DAD0248103E01AEB99D,
+				F57802000C17250500AD1DF0,
+				F57802010C17250500AD1DF0,
+				F57802020C17250500AD1DF0,
+				F57802030C17250500AD1DF0,
 			);
 			isa = PBXResourcesBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5894,12 +5808,10 @@
 				397B163E03CED9B900153FEE,
 				39CBD65303DC0D79000F7EFC,
 				1A9572EE09433AE700672483,
-				1A9572F009433AE700672483,
 				1A9572F209433AE700672483,
 				F51322BF0BFFFF650076284C,
 				F51322C10BFFFF650076284C,
 				F51322C30BFFFF650076284C,
-				F51322C50BFFFF650076284C,
 				F51322C70BFFFF650076284C,
 				F51322C90BFFFF650076284C,
 				F51322CB0BFFFF650076284C,
@@ -5917,7 +5829,6 @@
 				F513233B0BFFFFB00076284C,
 				F513233D0BFFFFB00076284C,
 				F513233E0BFFFFB00076284C,
-				F51323400BFFFFB00076284C,
 				F51323420BFFFFB00076284C,
 				F51323440BFFFFB00076284C,
 				F51323460BFFFFB00076284C,
@@ -5928,10 +5839,7 @@
 				F51323500BFFFFB00076284C,
 				F51323520BFFFFB00076284C,
 				F51323740BFFFFFB0076284C,
-				F51323E40C0006490076284C,
 				F51323E50C0006490076284C,
-				F51323F50C0006490076284C,
-				F51323FE0C0006490076284C,
 				F51324990C0026600076284C,
 				F513249C0C0026600076284C,
 				F513249E0C0026600076284C,
@@ -5945,13 +5853,13 @@
 		F538BD2701E5D23F0166DE0F = {
 			buildActionMask = 2147483647;
 			files = (
+				F5D2DA930C1514CE00EDF342,
 				F538BD3501E5D2DF0166DE0F,
 				F538BD3601E5D2DF0166DE0F,
 				F538BD3701E5D2DF0166DE0F,
 				F538BD3801E5D2DF0166DE0F,
-				F538BD3901E5D2DF0166DE0F,
-				F513246E0C0020C00076284C,
-				F51324750C00216F0076284C,
+				F5D2DA9F0C15163000EDF342,
+				F57801130C16F09300AD1DF0,
 			);
 			isa = PBXFrameworksBuildPhase;
 			runOnlyForDeploymentPostprocessing = 0;
@@ -5984,12 +5892,6 @@
 		};
 		F538BD3801E5D2DF0166DE0F = {
 			fileRef = F538BD1D01E5D0440166DE0F;
-			isa = PBXBuildFile;
-			settings = {
-			};
-		};
-		F538BD3901E5D2DF0166DE0F = {
-			fileRef = F538BD1B01E5D03A0166DE0F;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -6636,6 +6538,104 @@
 		};
 		F563AB4D0247FDC601BF65F7 = {
 			fileRef = F563AB480247FDC601BF65F7;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57801120C16F09300AD1DF0 = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = libgcc_s.1.dylib;
+			path = /usr/lib/libgcc_s.1.dylib;
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F57801130C16F09300AD1DF0 = {
+			fileRef = F57801120C16F09300AD1DF0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57801FC0C17250500AD1DF0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = spca500.dat;
+			path = spca5xx_files/spca500.dat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F57801FD0C17250500AD1DF0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = spca501.dat;
+			path = spca5xx_files/spca501.dat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F57801FE0C17250500AD1DF0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = spca505.dat;
+			path = spca5xx_files/spca505.dat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F57801FF0C17250500AD1DF0 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = text;
+			name = spca508.dat;
+			path = spca5xx_files/spca508.dat;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F57802000C17250500AD1DF0 = {
+			fileRef = F57801FC0C17250500AD1DF0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57802010C17250500AD1DF0 = {
+			fileRef = F57801FD0C17250500AD1DF0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57802020C17250500AD1DF0 = {
+			fileRef = F57801FE0C17250500AD1DF0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57802030C17250500AD1DF0 = {
+			fileRef = F57801FF0C17250500AD1DF0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57802040C17250500AD1DF0 = {
+			fileRef = F57801FC0C17250500AD1DF0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57802050C17250500AD1DF0 = {
+			fileRef = F57801FD0C17250500AD1DF0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57802060C17250500AD1DF0 = {
+			fileRef = F57801FE0C17250500AD1DF0;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F57802070C17250500AD1DF0 = {
+			fileRef = F57801FF0C17250500AD1DF0;
 			isa = PBXBuildFile;
 			settings = {
 			};
@@ -7376,6 +7376,53 @@
 		};
 		F5CBE0D003807F2301260355 = {
 			fileRef = F5EF7FFB0364C3BD01E9B502;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5D2DA5F0C147BA800EDF342 = {
+			fileEncoding = 30;
+			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
+			name = gspca.h;
+			path = spca5xx_files/gspca.h;
+			refType = 4;
+			sourceTree = "<group>";
+		};
+		F5D2DA600C147BA800EDF342 = {
+			fileRef = F5D2DA5F0C147BA800EDF342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5D2DA610C147BA800EDF342 = {
+			fileRef = F5D2DA5F0C147BA800EDF342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5D2DA620C147BA800EDF342 = {
+			fileRef = F5D2DA5F0C147BA800EDF342;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5D2DA930C1514CE00EDF342 = {
+			fileRef = F538BD1B01E5D03A0166DE0F;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5D2DA9E0C15163000EDF342 = {
+			isa = PBXFileReference;
+			lastKnownFileType = "compiled.mach-o.dylib";
+			name = "libstdc++.6.dylib";
+			path = "/usr/lib/libstdc++.6.dylib";
+			refType = 0;
+			sourceTree = "<absolute>";
+		};
+		F5D2DA9F0C15163000EDF342 = {
+			fileRef = F5D2DA9E0C15163000EDF342;
 			isa = PBXBuildFile;
 			settings = {
 			};
