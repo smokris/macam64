@@ -38,7 +38,7 @@
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x1112], @"idProduct",
             [NSNumber numberWithUnsignedShort:0x0932], @"idVendor",
-            @"Veo (Advanced?) Connect", @"name", NULL], 
+            @"Veo Velocity Connect", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x0210], @"idProduct",
@@ -101,6 +101,8 @@
 	if (bayerConverter == NULL) 
         return NULL;
     
+    compressionType = proprietaryCompression;
+    
     // Allocate memory
     // Initialize variable and other structures
     
@@ -138,10 +140,12 @@
 
 // Return the size needed for an isochronous frame
 // Depends on whether it is high-speed device on a high-speed hub
+/*
 - (int) usbGetIsocFrameSize
 {
     return 3072;
 }
+*/
 
 //
 // Returns the pipe used for grabbing
@@ -157,6 +161,7 @@
 //
 - (BOOL) setGrabInterfacePipe
 {
+//    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:3];
     return [self usbSetAltInterfaceTo:5 testPipe:[self getGrabbingPipe]];
 }
 
@@ -239,6 +244,8 @@ IsocFrameResult  ctdc1100IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
+    printf("decoding a chunk with %ld bytes\n", buffer->numBytes);
+
 	// Decode the bytes
     
     // Probably no decoding needs to be done here
