@@ -2,7 +2,7 @@ A glance at the SPCA504A / Aiptek MiniCam 1.3
 ---------------------------------------------
 
 
-The cam registers as a composite device. There are two interfaces: The irst one has the standard control pipe and an isochronous IN pipe. This interface is probably used for live camera applications. The second interface has the standard control pipe, a bulk in pipe (for reading data from the cam), a bulk out pipe (for sending data to the cam - I don't know if this is supported with the Aiptek firmware) and an interrupt pipe (for camera events - can we read the button?). 
+The cam registers as a composite device. There are two interfaces: The first one has the standard control pipe and an isochronous IN pipe. This interface is probably used for live camera applications. The second interface has the standard control pipe, a bulk in pipe (for reading data from the cam), a bulk out pipe (for sending data to the cam - I don't know if this is supported with the Aiptek firmware) and an interrupt pipe (for camera events - can we read the button?). 
 
 The remainder of this text is just about the second interface. For downloading images, only the control pipe and the bulk in pipe are used.
 
@@ -19,7 +19,7 @@ Control request (vendor,interface,out) req:0x00 value:0x00aa index:0xbbbb len=0 
 Read register
 -------------
 
-Control reauest (vendor,interface,out) req:0x00 value:0x0000 index:0xbbbb len=1 (bbbb=register address) -> returns value
+Control request (vendor,interface,out) req:0x00 value:0x0000 index:0xbbbb len=1 (bbbb=register address) -> returns value
 
 According to the SPCA500A specs, register blocks are:
 
@@ -41,7 +41,7 @@ The win driver accesses the following banks:
 global: 	0x2000 is set to 0x00 at the very start
 post buffer:	0x2301 is set to 0x13 on start. 0x2306 is set to 0x00 (not directly) before and to 0x01 after the image data transfer
 USB control:	0x2501 is set to 0x01 once (not directly) before the data transfer.
-JPEG control: 	The banks from 0x2800 to 0x283f and 0x2840 to 0x287f are set (interleavedly) - this would match setting of the Y and C quantization matrices
+JPEG control: 	The banks from 0x2800 to 0x283f and 0x2840 to 0x287f are set (interleaved) - this would match setting of the Y and C quantization matrices
 
 There seem to be more sensible commands than getting and setting registers (although they have a request code other than 0x00).
 
@@ -73,7 +73,7 @@ set reg 0x2306 to 0x00				???
 
 out: req 0x08 val 0x0000 idx 0x0006		???
 in:  req 0x01 val 0x0000 idx 0x0001 len 1 	called repeatedly - status request / wait for 0x86
-						You have wo wait a bit inside the loop -
+						You have to wait a bit inside the loop -
 						sleep(1) is slow but works
 
 out: req 0x01 val 0x0000 idx 0x000f		???
@@ -107,7 +107,7 @@ in:  req 0x0b val 0x0000 idx 0x0000 len 2	ask for number of objects
 out: req 0x0a val 0x00zz idx 0x000c		zz = number returned from previous call
 						Request buld read of TOC
 in : req 0x0b val 0x0000 idx 0x0004 len 1	query bulk transfer status: 1 = transfer ready, 0 otherwise
-						You have wo wait a bit inside the loop -
+						You have to wait a bit inside the loop -
 						sleep(1) is slow but works
 
 Bulk read (in blocks of 256 bytes)

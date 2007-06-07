@@ -19,7 +19,7 @@ Here are the steps I currently do:
 
 > /Developer/Tools/SetFile -a V background
 
-(Copy and arranage stuff in the window)
+(Copy and arrange stuff in the window)
 
 > df
 (find macam volume: /dev/... )
