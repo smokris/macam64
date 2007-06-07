@@ -30,6 +30,7 @@
 #define PRODUCT_VISTA_C                 0x403b      // SPCA561A
 #define PRODUCT_VISTA_PLUS              0x4028      // PAC207
 #define PRODUCT_CREATIVE_LIVE_CAM_NTB_P 0x4051      // VC301P
+#define PRODUCT_CREATIVE_LIVE_VISTA_IM  0x4052      // OV519
 #define PRODUCT_CREATIVE_LIVE_CAM_VIM   0x4053      // VC301P
 
 #define VENDOR_GENIUS           0x0458
