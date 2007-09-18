@@ -493,7 +493,6 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     
     // Clear things that have to be set back if init() fails
     
-    grabContext.chunkReadyLock = NULL;
     grabContext.chunkListLock = NULL;
     
     for (i = 0; i < grabContext.numberOfTransfers; i++) 
@@ -519,13 +518,6 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     // Setup JPEG header stuff here in the future
     
     // Setup things that have to be set back if init fails
-    
-    if (ok) 
-    {
-        grabContext.chunkReadyLock = [[NSLock alloc] init];
-        if (grabContext.chunkReadyLock == NULL) 
-            ok = NO;
-    }
     
     if (ok) 
     {
@@ -584,14 +576,6 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
 - (void) cleanupGrabContext 
 {
     int i;
-    
-    // Cleanup chunk ready lock
-    
-    if (grabContext.chunkReadyLock != NULL) 
-    {
-        [grabContext.chunkReadyLock release];
-        grabContext.chunkReadyLock = NULL;
-    }
     
     // Cleanup chunk list lock
     
@@ -776,7 +760,6 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
                     gCtx->numFullBuffers++;				// We have inserted one buffer
                                                         //  What if the list was already full? - That is not possible
                     gCtx->fillingChunk = false;			// Now we're not filling (still in the lock to be sure no buffer is lost)
-                    [gCtx->chunkReadyLock unlock];		// Wake up the decoding thread
                     gCtx->framesSinceLastChunk = 0;     // Reset watchdog
                 } 
                 // else // There was no current filling chunk. Just get a new one.
@@ -926,8 +909,6 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
         grabContext.numFullBuffers++;				// We have inserted one buffer
                                                     // What if the list was already full? - That is not possible
         grabContext.fillingChunk = false;			// Now we're not filling (still in the lock to be sure no buffer is lost)
-        
-        [grabContext.chunkReadyLock unlock];		// Wake up the decoding thread
         
         [grabContext.chunkListLock unlock];        // Free access to the chunk buffers
     } 
@@ -1091,7 +1072,6 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
     [self shutdownGrabStream];
     
     shouldBeGrabbing = NO; // Error in grabbingThread or abort? initiate shutdown of everything else
-    [grabContext.chunkReadyLock unlock]; // Give the decodingThread a chance to abort
     
     // Exit the thread cleanly
     
@@ -1482,7 +1462,8 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
     
     while (shouldBeGrabbing) 
     {
-        [grabContext.chunkReadyLock lock]; // Wait for chunks to become ready
+        if (grabContext.numFullBuffers == 0) 
+            usleep(1000); // 1 ms (1000 micro-seconds)
         
         while (shouldBeGrabbing && (grabContext.numFullBuffers > 0)) 
         {

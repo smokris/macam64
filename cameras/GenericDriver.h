@@ -52,7 +52,7 @@ typedef enum DriverType
 #define GENERIC_FRAMES_PER_TRANSFER  50
 #define GENERIC_MAX_TRANSFERS         5
 #define GENERIC_NUM_TRANSFERS         2
-#define GENERIC_NUM_CHUNK_BUFFERS     5
+#define GENERIC_NUM_CHUNK_BUFFERS     3
 
 // Define some compression constants
 // In general, these are for general algorithms that are used by more than one driver
@@ -127,8 +127,6 @@ typedef struct GenericGrabContext
     long framesSinceLastChunk;	  // Watchdog counter to detect invalid isoc data stream
     
     UInt8 grabbingPipe;           // The pipe used by the camer for grabbing, usually 1, but not always
-    
-    NSLock * chunkReadyLock;	  // Unlocked to signal decodingThread that there's an image
     
     NSLock * chunkListLock;		  // The lock for access to the empty buffer pool/ full chunk queue
     long chunkBufferLength;		  // The size of the chunk buffers

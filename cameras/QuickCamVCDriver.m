@@ -547,7 +547,6 @@ return size;
     [self shutdownGrabStream];
     
     shouldBeGrabbing = NO; // Error in grabbingThread or abort? initiate shutdown of everything else
-    [grabContext.chunkReadyLock unlock]; // Give the decodingThread a chance to abort
     
     // Exit the thread cleanly
     
