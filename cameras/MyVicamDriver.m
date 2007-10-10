@@ -254,6 +254,7 @@ no data
 
 #import "MyVicamDriver.h"
 #import "Resolvers.h"
+#import "MiscTools.h"
 #import "vicamurbs.h"
 #import "RGBScaler.h"
 #include "unistd.h"
