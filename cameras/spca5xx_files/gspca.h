@@ -40,6 +40,8 @@ void spin_unlock_irq(spinlock_t * lock);
 void spin_lock_irqsave(spinlock_t * lock, long flags);
 void spin_unlock_irqrestore(spinlock_t * lock, long flags);
 
+#define printk(args...) { printf(args); printf("\n"); }
+
 // This is a kludge since code from other Linux drivers is also used in some places... Hopefully OK
 #if !defined(VIDEO_PALETTE_RGB565)
 enum 
@@ -83,7 +85,8 @@ if (debug >= level) info("[%s:%d] " fmt, __PRETTY_FUNCTION__, __LINE__ , ## args
 #define PAC207_ENDPOINT_ADDRESS 5	/* Isoc endpoint number */
 /* only 2 or 4 frames are allowed here !!! */
 #define SPCA50X_NUMFRAMES 2
-#define SPCA50X_NUMSBUF 2
+#define SPCA50X_NUMSBUF 4	/* 2 is problematic on some systems */
+
 #if !defined(MACAM)
 #define VENDOR_SONIX 0x0c45
 #define VENDOR_ETOMS 0x102c
@@ -144,6 +147,7 @@ if (debug >= level) info("[%s:%d] " fmt, __PRETTY_FUNCTION__, __LINE__ , ## args
 #define BRIDGE_MR97311 17
 #define BRIDGE_PAC207 18
 #define BRIDGE_VC032X 19
+#define BRIDGE_PAC7311 20
 
 #define SENSOR_SAA7113 0
 #define SENSOR_INTERNAL 1
@@ -171,6 +175,7 @@ if (debug >= level) info("[%s:%d] " fmt, __PRETTY_FUNCTION__, __LINE__ , ## args
 #define SENSOR_MO4000 23
 #define SENSOR_OV7660 24
 #define SENSOR_PO3130NC 25
+#define SENSOR_PAC7311 26
 
 /* Alternate interface transfer sizes */
 #define SPCA50X_ALT_SIZE_0       0
@@ -219,6 +224,7 @@ enum {
 	S561,			// Sunplus Compressed stream
 	PGBRG,			// Pixart RGGB bayer
 	YUY2, // YUYV packed
+    PJPG, // Pixart jpeg used with PAC7311
 };
 enum { QCIF = 1,
 	QSIF,

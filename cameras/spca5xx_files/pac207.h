@@ -270,7 +270,7 @@ static void pac207_shutdown(struct usb_spca50x *spca50x)
     return;
 }
 
-#ifdef SPCA5XX_ENABLE_REGISTERPLAY
+#ifdef GSPCA_ENABLE_REGISTERPLAY
 static void pac207_RegRead(struct usb_spca50x *spca50x)
 {
     __u8 buffer;
@@ -371,5 +371,5 @@ static int pac207_sofdetect(struct usb_spca50x *spca50x,struct spca50x_frame *fr
 
 		}
 }
-			/* SPCA5XX_ENABLE_REGISTERPLAY */
+			/* GSPCA_ENABLE_REGISTERPLAY */
 #endif				// PAC207USB_H

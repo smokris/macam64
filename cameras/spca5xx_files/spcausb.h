@@ -63,6 +63,8 @@ static int spca50x_setup_qtable(struct usb_spca50x *spca50x,
 /* Alias setting */
 #define pac207RegWrite(dev,req,value,index,buffer,length) sonixRegWrite(dev,req,value,index,buffer,length)
 #define pac207RegRead(dev,req,value,index,buffer,length) sonixRegRead(dev,req,value,index,buffer,length)
+#define pac7311RegWrite(dev,req,value,index,buffer,length) spca5xxRegWrite(dev,req,value,index,buffer,length)
+#define pac7311RegRead(dev,req,value,index,buffer,length) spca5xxRegRead(dev,req,value,index,buffer,length)
 #define Et_RegWrite(dev,req,value,index,buffer,length) sonixRegWrite(dev,req,value,index,buffer,length)
 #define Et_RegRead(dev,req,value,index,buffer,length) sonixRegRead(dev,req,value,index,buffer,length)
 /***************************** Implementation ****************************/

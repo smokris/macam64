@@ -38,10 +38,13 @@ static __u16 vc0321_getcolors(struct usb_spca50x *spca50x);
 static void vc0321_setbrightness(struct usb_spca50x *spca50x);
 static void vc0321_setcontrast(struct usb_spca50x *spca50x);
 static void vc0321_setcolors(struct usb_spca50x *spca50x);
-;
 static void vc0321_setAutobright(struct usb_spca50x *spca50x);
 static void vc0321_setquality(struct usb_spca50x *spca50x);
 static int vc0321_sofdetect(struct usb_spca50x *spca50x,struct spca50x_frame *frame, unsigned char *cdata,int *iPix, int seqnum, int *datalength);
+/*******************      Banding flilter   ***********************/
+static void vc0321_set50HZ(struct usb_spca50x *spca50x);
+static void vc0321_set60HZ(struct usb_spca50x *spca50x);
+static void vc0321_setNoFliker(struct usb_spca50x *spca50x);
 /*******************     Camera Private     ***********************/
 
 /******************************************************************/
@@ -61,6 +64,12 @@ static struct cam_operation fvc0321 = {
 	.set_quality = vc0321_setquality,
 	.cam_shutdown = vc0321_shutdown,
 	.sof_detect = vc0321_sofdetect,
+	.set_50HZ   = vc0321_set50HZ,
+	.set_60HZ   = vc0321_set60HZ,
+	.set_50HZScale   = vc0321_set50HZ,
+	.set_60HZScale   = vc0321_set60HZ,
+	.set_NoFliker    = vc0321_setNoFliker,
+	.set_NoFlikerScale    = vc0321_setNoFliker,
  };
  typedef struct {
 	int sensorId;
@@ -508,14 +517,42 @@ static void vc0321_setcolors(struct usb_spca50x *spca50x)
  spca50x->colour = 0;
 }
 
+static void vc0321_set50HZ(struct usb_spca50x *spca50x) {
+     switch (spca50x->sensor) {
+      case SENSOR_OV7660:
+ 	  vc0321WriteVector(spca50x, ov7660_50HZ);
+      break;
+      default:     
+      break;
+     }
+ }
+ 
+static void vc0321_set60HZ(struct usb_spca50x *spca50x) {
+     switch (spca50x->sensor) {
+      case SENSOR_OV7660:
+ 	  vc0321WriteVector(spca50x, ov7660_60HZ);
+      break;
+      default:     
+      break;
+     }
+ }
+
+static void vc0321_setNoFliker(struct usb_spca50x *spca50x) {
+     switch (spca50x->sensor) {
+      case SENSOR_OV7660:
+ 	  vc0321WriteVector(spca50x, ov7660_NoFliker);
+      break;
+      default:
+      break;
+     }
+ 
+ }
+ 
 static int vc0321_sofdetect(struct usb_spca50x *spca50x,struct spca50x_frame *frame, unsigned char *cdata,int *iPix, int seqnum, int *datalength)
 {
 		
 		if (cdata[0] == 0xFF && cdata[1] == 0xD8) {
-		// FIXME how can we change Hstart ??
-			if(spca50x->sensor == SENSOR_OV7660)
-		    	*iPix = 44 ;// 46;	//18 remove 0xff 0xd8;
-		    	else 
+		
 			*iPix = 46 ;
 		     PDEBUG(5,
 			   "vc0321 header packet found datalength %d !!",

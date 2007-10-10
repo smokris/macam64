@@ -40,7 +40,7 @@
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC7311], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_PAC7311_GENERIC], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
             @"PixArt PAC7311 based camera (probably)", @"name", NULL], 
         

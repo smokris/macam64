@@ -102,7 +102,7 @@ enum {
 static void mr97311_stopN(struct usb_spca50x *pcam)
 {
     int result;
-    char data[2];
+    unsigned char data[2];
     memset(data, 0, 2);
     data[0] = 1;
     data[1] = 0;
@@ -111,6 +111,8 @@ static void mr97311_stopN(struct usb_spca50x *pcam)
 	printk("Camera Stop failed \n");
 
 }
+
+#if !defined(MACAM)
 static int pcam_reg_write(struct usb_device *dev,
 			  __u16 index, unsigned char *value, int length)
 {
@@ -136,6 +138,7 @@ static int pcam_reg_write(struct usb_device *dev,
     }
     return rc;
 }
+#endif
 
 static void mr97311_start(struct usb_spca50x *pcam)
 {
@@ -151,10 +154,12 @@ static void mr97311_start(struct usb_spca50x *pcam)
     PDEBUG(1,
 	   "usb_set_interface in pcamCameraStart , interface %d , alt 8 \n",
 	   pcam->iface);
+#if !defined(MACAM)
     if (usb_set_interface(pcam->dev, pcam->iface, 8) < 0) {
 	err("Set packet size: set interface error");
 	return ;
     }
+#endif
 
     data[0] = 0x01;		//address
     data[1] = 0x01;
@@ -407,7 +412,6 @@ static void mr97311_start(struct usb_spca50x *pcam)
     MISensor_BulkWrite(pcam->dev, MI_buf + 0xF1, 0xF1, 1, 0);
 
 
-
     intpipe = usb_sndintpipe(pcam->dev, 0);
     err_code = usb_clear_halt(pcam->dev, intpipe);
 
@@ -422,6 +426,8 @@ static void mr97311_start(struct usb_spca50x *pcam)
 
     return ;
 }
+
+#if !defined(MACAM)
 static void MISensor_BulkWrite(struct usb_device *dev, unsigned short *pch,
 			       char Address, int length, char controlbyte)
 {
@@ -451,6 +457,8 @@ static void MISensor_BulkWrite(struct usb_device *dev, unsigned short *pch,
     }
 
 }
+#endif
+
 static int mr97311_config(struct usb_spca50x *spca50x)
 {
     memset(spca50x->mode_cam, 0x00, TOTMODE * sizeof(struct mwebcam));

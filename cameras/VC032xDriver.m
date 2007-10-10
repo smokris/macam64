@@ -120,7 +120,7 @@
     // This is important
     cameraOperation = &fvc0321;
     
-    decodingSkipBytes = (spca50x->sensor == SENSOR_OV7660) ? 44 : 46;
+    decodingSkipBytes = 46;
     
 	return self;
 }

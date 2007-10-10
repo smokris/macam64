@@ -32,7 +32,7 @@
 * along with this program; if not, write to the Free Software Foundation,
 * Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 */
-static const char version[] = GSPCA_VERSION;
+static const char gspca_version[] = GSPCA_VERSION;
 #ifndef AUTOCONF_INCLUDED
 #include <linux/config.h>
 #endif
@@ -163,13 +163,6 @@ static int spca50x_move_data(struct usb_spca50x *spca50x, struct urb *urb);
 static int spca5xx_set_light_freq(struct usb_spca50x *spca50x, int freq);
 
 static struct usb_driver spca5xx_driver;
-#ifndef max
-static inline int
-max(int a, int b)
-{
-	return (a > b) ? a : b;
-}
-#endif				/* max */
 /**********************************************************************
 * List of known SPCA50X-based cameras
 **********************************************************************/
@@ -190,6 +183,7 @@ static struct palette_list Plist[] = {
 	{S561, "S561"},
 	{PGBRG, "GBRG"},
 	{YUY2, "YUYV"},
+	{PJPG, "JPEG"},
 	{-1, NULL}
 };
 static struct bridge_list Blist[] = {
@@ -213,6 +207,7 @@ static struct bridge_list Blist[] = {
 	{BRIDGE_MR97311, "MR97311"},
 	{BRIDGE_PAC207, "PAC207BCA"},
 	{BRIDGE_VC032X, "VC0321"},
+ 	{BRIDGE_PAC7311, "PAC7311"},
 	{-1, NULL}
 };
 /* Light frequency banding filter 50HZ/60HZ/NoFliker */
@@ -398,9 +393,16 @@ enum {
 	Sonyc002,
 	Vimicro0321,
 	Orbicam,
-	M$VX1000,
+	MSVX1000,
+	MSVX3000,
 	Trust610LCDPowerCamZoom,
-	Sonyc001,	
+	Sonyc001,
+	PhilipsSPC315NC,
+	Sonix0x6138,
+	GeniusEye311Q,	
+    	PAC7311,	
+    	PAC7312,
+	PhilipsDMVC1300K,	
 	LastCamera
 };
 static struct cam_list clist[] = {
@@ -580,9 +582,16 @@ static struct cam_list clist[] = {
 	{Sonyc002,"Vc0321"},
 	{Vimicro0321,"Vc0321"},
 	{Orbicam,"Logitech Orbicam"},
-	{M$VX1000,"MicroSoft VX1000"},
+	{MSVX1000,"MicroSoft VX1000"},
+	{MSVX3000,"MicroSoft VX3000"},
 	{Trust610LCDPowerCamZoom, "Trust 610 LCD PowerC@m Zoom"},
 	{Sonyc001,"Sony Visual Communication VGP-VCC1"},
+	{PhilipsSPC315NC, "Philips SPC315NC "},
+	{Sonix0x6138,"sn9c120+Mo4000"},
+	{GeniusEye311Q,"Genius Eye 311Q"},
+    	{PAC7311,"Pixart PAC7311"},
+    	{PAC7312,"Pixart PAC7312"},
+	{PhilipsDMVC1300K,"Philips DMVC 1300K"},
 	{-1, NULL}
 };
 static __devinitdata struct usb_device_id device_table[] = {
@@ -771,9 +780,21 @@ static __devinitdata struct usb_device_id device_table[] = {
 	{USB_DEVICE(0x046d, 0x0892)},	/* Logitech Orbicam */
 	{USB_DEVICE(0x046d, 0x0896)},	/* Logitech Orbicam */
 	{USB_DEVICE(0x045e, 0x00f7)},	/* MicroSoft VX1000 */
+	{USB_DEVICE(0x045e, 0x00f5)},	/* MicroSoft VX3000 */
 	{USB_DEVICE(0x0471, 0x032d)},	/* Philips spc210nc*/
 	{USB_DEVICE(0x06d6, 0x0031)},	/* Trust 610 LCD PowerC@m Zoom (webcam mode) */
 	{USB_DEVICE(0x0ac8, 0xc001)},	/* Sony embedded vimicro*/
+	{USB_DEVICE(0x0471, 0x032e)},	/* Philips spc315nc*/
+	{USB_DEVICE(0x0c45, 0x6138)},	/* Sn9c120 Mo4000 */
+	{USB_DEVICE(0x041E, 0x401a)},	/* Creative Webcam Vista (PD1100) */
+	{USB_DEVICE(0x0458, 0x7025)},	/* Genius Eye 311Q sn9c120+Mi360 */
+  	{USB_DEVICE(0x093a, 0x2600)},	/* PAC7311 Typhoon */
+  	{USB_DEVICE(0x093a, 0x2601)},	/* PAC7311 Phillips SPC610NC */
+  	{USB_DEVICE(0x093a, 0x2603)},	/* PAC7312  */
+  	{USB_DEVICE(0x093a, 0x2608)},	/* PAC7311 Trust WB-3300p */
+  	{USB_DEVICE(0x093a, 0x260e)},	/* PAC7311 Gigaware VGA PC Camera, Trust WB-3350p, SIGMA cam 2350 */
+  	{USB_DEVICE(0x093a, 0x260f)},   /* PAC7311 SnakeCam */
+	{USB_DEVICE(0x0471, 0x0322)},	/* Philips DMVC1300K */
 	{USB_DEVICE(0x0000, 0x0000)},	/* MystFromOri Unknow Camera */
 	{}			/* Terminating entry */
 };
@@ -798,6 +819,7 @@ Let's include the initialization data for each camera type
 #include "Etoms/et61xx51.h"
 #include "Mars-Semi/mr97311.h"
 #include "Pixart/pac207.h"
+#include "Pixart/pac7311.h"
 #include "Vimicro/vc032x.h"
 /* function for the tasklet */
 void outpict_do_tasklet(unsigned long ptr);
@@ -854,7 +876,7 @@ rvfree(void *mem, unsigned long size)
 * FIXME as I don't know how to set the bandwith budget
 * we allow the maximum
 **/
-struct usb_host_endpoint *
+static struct usb_host_endpoint *
 gspca_set_isoc_ep(struct usb_spca50x *spca50x, int nbalt)
 {
 	int i, j;
@@ -954,6 +976,9 @@ gspca_init_transfert(struct usb_spca50x *spca50x)
 		return -EBUSY;
 	intf = usb_ifnum_to_if(dev, spca50x->iface);
 	nbalt = intf->num_altsetting - 1;
+	/* Damned Sunplus fault */
+	if(spca50x->bridge == BRIDGE_SPCA561) 
+		nbalt =7;
 	PDEBUG(3, "get iso nbalt %d",nbalt);
 	spca50x->curframe = 0;	
 while (nbalt && (error == -ENOSPC)) {
@@ -1050,7 +1075,8 @@ spca5xx_get_depth(struct usb_spca50x *spca50x, int palette)
 		    spca50x->cameratype == JPGH ||
 		    spca50x->cameratype == JPGC ||
 		    spca50x->cameratype == JPGS ||
-		    spca50x->cameratype == JPGM) {
+  		    spca50x->cameratype == JPGM ||
+  		    spca50x->cameratype == PJPG) {
 			return 8;
 		} else
 			return 0;
@@ -1309,7 +1335,8 @@ spca5xx_setMode(struct usb_spca50x *spca50x, int width, int height, int format)
 			crop = (spca50x->hdrwidth - spca50x->width);
 			if (spca50x->cameratype == JPEG
 			    || spca50x->cameratype == JPGH
-			    || spca50x->cameratype == JPGS)
+			    || spca50x->cameratype == JPGS
+				|| spca50x->cameratype == PJPG)
 				crop = crop >> 4;
 			cropx1 = crop >> 1;
 			cropx2 = cropx1 + (crop % 2);
@@ -1321,7 +1348,8 @@ spca5xx_setMode(struct usb_spca50x *spca50x, int width, int height, int format)
 			if (spca50x->cameratype == JPEG)
 				crop = crop >> 4;
 			if (spca50x->cameratype == JPGH
-			    || spca50x->cameratype == JPGS)
+			    || spca50x->cameratype == JPGS
+			    || spca50x->cameratype == PJPG)
 				crop = crop >> 3;
 			cropy1 = crop >> 1;
 			cropy2 = cropy1 + (crop % 2);
@@ -1780,7 +1808,9 @@ spca5xx_isjpeg(struct usb_spca50x *spca50x)
 	if (spca50x->cameratype == JPGH
 	    || spca50x->cameratype == JPGC
 	    || spca50x->cameratype == JPGS
-	    || spca50x->cameratype == JPEG || spca50x->cameratype == JPGM)
+	    || spca50x->cameratype == JPEG
+		|| spca50x->cameratype == JPGM
+		|| spca50x->cameratype == PJPG)
 		return 1;
 	return 0;
 }
@@ -1853,6 +1883,7 @@ spca5xx_set_light_freq(struct usb_spca50x *spca50x, int freq)
 	case SENSOR_ICM105A:
 	case SENSOR_HDCS2020b:
 	case SENSOR_CS2102:
+	case SENSOR_OV7660:
 	    break;
 	default:
 		PDEBUG(0,"Sensor currently not support light frequency banding filters.");
@@ -2241,6 +2272,8 @@ spca5xx_do_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
 				if (RegStrobe == 1) {
 					if (spca50x->bridge == BRIDGE_PAC207) {
 						pac207_RegWrite(spca50x);
+  					} else if (spca50x->bridge == BRIDGE_PAC7311) {
+  						pac7311_RegWrite(spca50x);
 					} else {
 						Rval = RegValue & 0xFF;
 						spca5xxRegWrite(spca50x->dev,
@@ -2253,6 +2286,8 @@ spca5xx_do_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
 				} else {
 					if (spca50x->bridge == BRIDGE_PAC207) {
 						pac207_RegRead(spca50x);
+  					} else if (spca50x->bridge == BRIDGE_PAC7311) {
+  						pac7311_RegRead(spca50x);
 					} else {
 						spca5xxRegRead(spca50x->dev, 0xa1, 0x01, (__u16) (RegAddress & 0xFFFF), &Rval, 1);	// read Lowbyte
 						RegValue = Rval;
@@ -2260,7 +2295,7 @@ spca5xx_do_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
 				}
 				RegStrobe = 0;
 			}
-#endif				/* SPCA5XX_ENABLE_REGISTERPLAY */
+#endif				/* GSPCA_ENABLE_REGISTERPLAY */
 /* Mark it as ready */
 			spca50x->frame[vm->frame].grabstate = FRAME_READY;
 			return 0;
@@ -2520,6 +2555,9 @@ static struct file_operations spca5xx_fops = {
 	.read = spca5xx_read,
 	.mmap = spca5xx_mmap,
 	.ioctl = spca5xx_ioctl,
+#ifdef CONFIG_COMPAT
+	.compat_ioctl = v4l_compat_ioctl32,
+#endif
 	.llseek = no_llseek,
 };
 static struct video_device spca50x_template = {
@@ -2609,12 +2647,32 @@ show_pictsetting(struct class_device *cd, char *buf)
 }
 
 static CLASS_DEVICE_ATTR(pictsetting, S_IRUGO, show_pictsetting, NULL);
-static void
+static int
 spca50x_create_sysfs(struct video_device *vdev)
 {
+	int rc = 0 ;
+#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)	
+	rc = video_device_create_file(vdev, &class_device_attr_stream_id);
+	if (rc) goto err_stream_id;
+	rc = video_device_create_file(vdev, &class_device_attr_model);
+	if (rc) goto err_model;
+	rc = video_device_create_file(vdev, &class_device_attr_pictsetting);
+	if (rc) goto err_pictsetting;
+
+	return 0;
+
+err_pictsetting:
+	video_device_remove_file(vdev, &class_device_attr_pictsetting);
+err_model:
+	video_device_remove_file(vdev, &class_device_attr_model);
+err_stream_id:
+	video_device_remove_file(vdev, &class_device_attr_stream_id);
+#else
 	video_device_create_file(vdev, &class_device_attr_stream_id);
 	video_device_create_file(vdev, &class_device_attr_model);
 	video_device_create_file(vdev, &class_device_attr_pictsetting);
+#endif
+	return rc;
 }
 
 /****************************************************************************
@@ -2630,7 +2688,7 @@ gspca_attach_bridge(struct usb_spca50x *spca50x)
 	switch (spca50x->bridge) {
 	case BRIDGE_SPCA500:
 		spca50x->cameratype = JPEG;
-		info("USB SPCA5XX camera found.(SPCA500+unknown CCD)");
+		info("USB GSPCA camera found.(SPCA500+unknown CCD)");
 		memcpy(&spca50x->funct, &fspca500,
 		       sizeof (struct cam_operation));
 		break;
@@ -2639,7 +2697,7 @@ gspca_attach_bridge(struct usb_spca50x *spca50x)
 		spca50x->i2c_base = 0;
 		spca50x->i2c_trigger_on_write = 0;
 		spca50x->cameratype = YUYV;
-		info("USB SPCA5XX camera found. (SPCA501 )");
+		info("USB GSPCA camera found. (SPCA501 )");
 		memcpy(&spca50x->funct, &fspca501,
 		       sizeof (struct cam_operation));
 		break;
@@ -2648,7 +2706,7 @@ gspca_attach_bridge(struct usb_spca50x *spca50x)
 		spca50x->i2c_base = 0;
 		spca50x->i2c_trigger_on_write = 0;
 		spca50x->cameratype = YYUV;
-		info("USB SPCA5XX camera found.(SPCA505)");
+		info("USB GSPCA camera found.(SPCA505)");
 		memcpy(&spca50x->funct, &fspca505,
 		       sizeof (struct cam_operation));
 		break;
@@ -2657,7 +2715,7 @@ gspca_attach_bridge(struct usb_spca50x *spca50x)
 		spca50x->i2c_base = 0;
 		spca50x->i2c_trigger_on_write = 0;
 		spca50x->cameratype = YYUV;
-		info("USB SPCA5XX grabber found. (SPCA506+SAA7113)");
+		info("USB GSPCA grabber found. (SPCA506+SAA7113)");
 		memcpy(&spca50x->funct, &fspca506,
 		       sizeof (struct cam_operation));
 		break;
@@ -2666,13 +2724,13 @@ gspca_attach_bridge(struct usb_spca50x *spca50x)
 		spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
 		spca50x->i2c_trigger_on_write = 1;
 		spca50x->cameratype = YUVY;
-		info("USB SPCA5XX camera found.(SPCA508?)");
+		info("USB GSPCA camera found.(SPCA508?)");
 		memcpy(&spca50x->funct, &fspca508,
 		       sizeof (struct cam_operation));
 		break;
 	case BRIDGE_SPCA561:
 		spca50x->cameratype = S561;
-		info("USB SPCA5XX camera found.(SPCA561A)");
+		info("USB GSPCA camera found.(SPCA561A)");
 		memcpy(&spca50x->funct, &fspca561,
 		       sizeof (struct cam_operation));
 		break;
@@ -2682,59 +2740,66 @@ gspca_attach_bridge(struct usb_spca50x *spca50x)
 	case BRIDGE_SPCA504B:
 	case BRIDGE_SPCA504C:
 		spca50x->cameratype = JPEG;
-		info("USB SPCA5XX camera found.Sunplus FW 2");
+		info("USB GSPCA camera found.Sunplus FW 2");
 		memcpy(&spca50x->funct, &fsp5xxfw2,
 		       sizeof (struct cam_operation));
 		break;
 	case BRIDGE_ZC3XX:
 		spca50x->cameratype = JPGH;
-		info("USB SPCA5XX camera found.(ZC3XX) ");
+		info("USB GSPCA camera found.(ZC3XX) ");
 		memcpy(&spca50x->funct, &fzc3xx, sizeof (struct cam_operation));
 		break;
 	case BRIDGE_VC032X:
 	spca50x->epadr = 2;
 		spca50x->cameratype = YUY2;
-		info("USB SPCA5XX camera found.(VC0321) ");
+		info("USB GSPCA camera found.(VC0321) ");
 		memcpy(&spca50x->funct, &fvc0321, sizeof (struct cam_operation));
 		break;
 	case BRIDGE_SONIX:
 		spca50x->cameratype = SN9C;
-		info("USB SPCA5XX camera found. SONIX sn9c10[1 2]");
+		info("USB GSPCA camera found. SONIX sn9c10[1 2]");
 		memcpy(&spca50x->funct, &fsonix, sizeof (struct cam_operation));
 		break;
 	case BRIDGE_SN9CXXX:
 		spca50x->cameratype = JPGS;	// jpeg 4.2.2 whithout header ;
-		info("USB SPCA5XX camera found. SONIX JPEG (sn9c1xx) ");
+		info("USB GSPCA camera found. SONIX JPEG (sn9c1xx) ");
 		memcpy(&spca50x->funct, &fsn9cxx,
 		       sizeof (struct cam_operation));
 		break;
 	case BRIDGE_PAC207:
 	spca50x->epadr = 5;
 		spca50x->cameratype = PGBRG;
-		info("USB SPCA5XX camera found. (PAC207)");
+		info("USB GSPCA camera found. (PAC207)");
 		memcpy(&spca50x->funct, &fpac207,
+		       sizeof (struct cam_operation));
+		break;
+	case BRIDGE_PAC7311:
+	    spca50x->epadr = 5;
+		spca50x->cameratype = PJPG;
+		info("USB SPCA5XX camera found. (PAC7311)");
+		memcpy(&spca50x->funct, &fpac7311,
 		       sizeof (struct cam_operation));
 		break;
 	case BRIDGE_TV8532:
 		spca50x->cameratype = GBGR;
-		info("USB SPCA5xx camera found. (TV8532)");
+		info("USB GSPCA camera found. (TV8532)");
 		memcpy(&spca50x->funct, &ftv8532,
 		       sizeof (struct cam_operation));
 		break;
 	case BRIDGE_ETOMS:
 		spca50x->cameratype = GBRG;
-		info("USB SPCA5XX camera found (ET61X51) ");
+		info("USB GSPCA camera found (ET61X51) ");
 		memcpy(&spca50x->funct, &fet61x, sizeof (struct cam_operation));
 		break;
 	case BRIDGE_CX11646:
 		spca50x->cameratype = JPGC;
-		info("USB SPCA5XX camera found. Conexant(CX11646) ");
+		info("USB GSPCA camera found. Conexant(CX11646) ");
 		memcpy(&spca50x->funct, &fcx11646,
 		       sizeof (struct cam_operation));
 		break;
 	case BRIDGE_MR97311:
 		spca50x->cameratype = JPGM;
-		info("USB SPCA5XX camera found. PIXART MR97311 ");
+		info("USB GSPCA camera found. PIXART MR97311 ");
 		memcpy(&spca50x->funct, &fmr97311,
 		       sizeof (struct cam_operation));
 		break;
@@ -2742,7 +2807,8 @@ gspca_attach_bridge(struct usb_spca50x *spca50x)
 		return -ENODEV;
 	}
 	return 0;
-}
+} 
+
 static int
 spcaDetectCamera(struct usb_spca50x *spca50x)
 {
@@ -3124,7 +3190,15 @@ and should be a spca504b then overwrite that setting */
 	case 0x045e:
 		switch(product){
 		case 0x00f7:
-			spca50x->desc = M$VX1000;
+			spca50x->desc = MSVX1000;
+			spca50x->bridge = BRIDGE_SN9CXXX;
+			spca50x->sensor = SENSOR_OV7660;
+			spca50x->customid = SN9C105;
+			spca50x->i2c_ctrl_reg = 0x81;
+			spca50x->i2c_base = 0x21;
+		break;
+		case 0x00f5:
+			spca50x->desc = MSVX3000;
 			spca50x->bridge = BRIDGE_SN9CXXX;
 			spca50x->sensor = SENSOR_OV7660;
 			spca50x->customid = SN9C105;
@@ -3300,6 +3374,7 @@ and should be a spca504b then overwrite that setting */
 			spca50x->bridge = BRIDGE_ZC3XX;
 			spca50x->sensor = SENSOR_TAS5130CXX;
 			break;
+		case 0x401a:
 		case 0x403b:
 			spca50x->desc = CreativeVista3b;
 			spca50x->bridge = BRIDGE_SPCA561;
@@ -3551,6 +3626,14 @@ and should be a spca504b then overwrite that setting */
 			spca50x->bridge = BRIDGE_ZC3XX;
 			spca50x->sensor = SENSOR_TAS5130CXX;
 			break;
+		case 0x7025:
+			spca50x->desc = GeniusEye311Q;
+			spca50x->bridge = BRIDGE_SN9CXXX;
+			spca50x->sensor = SENSOR_MI0360;
+			spca50x->customid = SN9C120;
+			spca50x->i2c_ctrl_reg = 0x81;
+			spca50x->i2c_base = 0x5d;
+		break;
 		default:
 			goto error;
 		};
@@ -3719,6 +3802,14 @@ and should be a spca504b then overwrite that setting */
 			spca50x->i2c_ctrl_reg = 0x81;
 			spca50x->i2c_base = 0x11;
 			break;
+		case 0x6138:
+			spca50x->desc = Sonix0x6138;
+			spca50x->bridge = BRIDGE_SN9CXXX;
+			spca50x->sensor = SENSOR_MO4000;
+			spca50x->customid = SN9C120;
+			spca50x->i2c_ctrl_reg = 0x81;
+			spca50x->i2c_base = 0x21;
+			break;
 		case 0x612c:
 			spca50x->desc = TyphoonEasyCam1_3;
 			spca50x->bridge = BRIDGE_SN9CXXX;
@@ -3871,6 +3962,20 @@ and should be a spca504b then overwrite that setting */
 			spca50x->bridge = BRIDGE_PAC207;
 			spca50x->sensor = SENSOR_PAC207;
 			break;
+  		case 0x2600:
+  		case 0x2601:
+  		case 0x2608:
+  		case 0x260e:
+  		case 0x260f:
+  			spca50x->desc = PAC7311;
+  			spca50x->bridge = BRIDGE_PAC7311;
+  			spca50x->sensor = SENSOR_PAC7311;
+  			break;
+  		case 0x2603:
+  			spca50x->desc = PAC7312;
+  			spca50x->bridge = BRIDGE_PAC7311;
+  			spca50x->sensor = SENSOR_PAC7311;
+  			break;
 		default:
 			goto error;
 		};
@@ -3901,6 +4006,11 @@ and should be a spca504b then overwrite that setting */
 		break;
 	case 0x0471:		/* Philips Product */
 		switch (product) {
+		case 0x0322:
+			spca50x->desc =PhilipsDMVC1300K;
+			spca50x->bridge = BRIDGE_SPCA504B;
+			spca50x->sensor = SENSOR_INTERNAL;
+			break;
 		case 0x0325:	/* Low cost Philips Webcam */
 			spca50x->desc = PhilipsSPC200NC;
 			spca50x->bridge = BRIDGE_ZC3XX;
@@ -3911,6 +4021,11 @@ and should be a spca504b then overwrite that setting */
 			spca50x->bridge = BRIDGE_ZC3XX;
 			spca50x->sensor = SENSOR_PAS106;	//overwrite by the sensor detect routine
 			break;
+		case 0x032e:	/* Low cost Philips Webcam */
+			spca50x->desc = PhilipsSPC315NC;
+			spca50x->bridge = BRIDGE_ZC3XX;
+			spca50x->sensor = SENSOR_PAS106;	//overwrite by the sensor detect routine
+			break;	
 		case 0x0326:	/* Low cost Philips Webcam */
 			spca50x->desc = PhilipsSPC300NC;
 			spca50x->bridge = BRIDGE_ZC3XX;
@@ -4022,7 +4137,8 @@ spca5xx_probe(struct usb_interface *intf, const struct usb_device_id *id)
 	if (spca50x->force_rgb)
 		info("data format set to RGB");
 	usb_set_intfdata(intf, spca50x);
-	spca50x_create_sysfs(spca50x->vdev);
+	if (spca50x_create_sysfs(spca50x->vdev))
+		goto error;
 	tasklet_init(&spca50x->spca5xx_tasklet,
 		outpict_do_tasklet,(unsigned long) 0);
 	return 0;
@@ -4100,7 +4216,7 @@ usb_spca5xx_init(void)
 {
 	if (usb_register(&spca5xx_driver) < 0)
 		return -1;
-	info("gspca driver %s registered", version);
+	info("gspca driver %s registered", gspca_version);
 	return 0;
 }
 static void __exit

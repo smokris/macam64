@@ -242,6 +242,7 @@
 #define	PRODUCT_EASY_CAM_DV             0x0103		// SPCA500C
 #define PRODUCT_POCKET_DVII             0x0104      // SPCA533A [not yet]
 #define PRODUCT_POCKET_DV3100           0x0106      // SPCA533A [not yet]
+#define PRODUCT_PENCAM_VGA_PLUS         0x0111      // Mars MR97310A-0B
 #define PRODUCT_MINI_PENCAM_2M          0x2008      // SPCA504B [not yet]
 #define PRODUCT_POCKETCAM_3M            0x2010      // SPCA504B [not yet]
 #define PRODUCT_SLIM_3200               0x2012      // SPCA533A [not yet]
@@ -253,10 +254,16 @@
 #define PRODUCT_GENERIC_TV8532          0x010f      // TV8532
 
 #define VENDOR_PIXART           0x093a
-#define PRODUCT_VIVICAM_55              0x010f      // ??  // Webcam and stillcam [libgphoto2/camlibs/mars]
+#define PRODUCT_MR97310_TYPE_A          0x010e      // Mars MR97310 [most likely]
+#define PRODUCT_MR97310_TYPE_B          0x010f      // Mars MR97310 [most likely]
+#define PRODUCT_PCAM                    0x050f      // Mars MR97311
 #define PRODUCT_PAC207_BASE             0x2460      // PAC207 obviously
 #define PRODUCT_PIXART_CIF_SINGLE_CHIP  0x2468      // Most common PAC207 camera Product ID
-#define PRODUCT_PAC7311                 0x2600      // PAC7311 probably
+#define PRODUCT_PAC7311_GENERIC         0x2600      // PAC7311
+#define PRODUCT_SPC_610NC               0x2601      // PAC7311
+#define PRODUCT_SPC_500NC               0x2603      // PAC7312 (also a Typhoon?)
+#define PRODUCT_TRUST_WB_300P           0x2608      // PAC7311
+#define PRODUCT_TRUST_WB_3500P          0x260e      // PAC7311 (many cameras)
 
 #define VENDOR_JEILIN           0x0979
 #define PRODUCT_JL2005A_TOY_CAMERA      0x0224      // JL2005ADriver

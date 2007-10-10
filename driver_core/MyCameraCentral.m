@@ -69,6 +69,7 @@
 #import "PicoDriver.h"
 #import "M560xDriver.h"
 #import "VC032xDriver.h"
+#import "MR97311Driver.h"
 
 #include "unistd.h"
 
@@ -313,6 +314,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SN9CxxxDriverVariant9 class]];
     
     [self registerCameraDriver:[PicoDriver class]];
+    
+    [self registerCameraDriver:[MR97311Driver class]];
     
     [self registerCameraDriver:[M560xDriver class]];
     

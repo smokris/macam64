@@ -751,15 +751,16 @@ static int spca561_config(struct usb_spca50x *spca50x)
 	}
     switch (spca50x->customid) {
     case 0x0000: // try this
-        spca50x->customid = 0x0561; // fall through
+    spca50x->customid = 0x0561; // fall through
     case 0x7004:
     case 0xa001:
     case 0x0815:
     case 0x0561:
     case 0xcdee:
     case 0x7e50:
-	spca50x->chip_revision = Rev072A;
-	break;
+    case 0x401a:
+    spca50x->chip_revision = Rev072A;
+    break;
     case 0x0928:
     case 0x0929:
     case 0x092a:
