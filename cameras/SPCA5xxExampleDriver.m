@@ -26,7 +26,7 @@
 #import "SPCA5xxExampleDriver.h"
 
 #include "MiscTools.h"
-#include "spcadecoder.h"
+#include "gspcadecoder.h"
 #include "USB_VendorProductIDs.h"
 
 
