@@ -877,6 +877,16 @@
                                     len:len];
 }
 
+// returns OK?
+- (BOOL) usbClearPipeStall: (UInt8) pipe
+{
+    IOReturn ret;
+    
+    ret = (*controlIntf)->ClearPipeStall(controlIntf, pipe);
+    
+    return (ret == kIOReturnSuccess) ? YES : NO;
+}
+
 - (BOOL) usbSetAltInterfaceTo:(short)alt testPipe:(short)pipe {
     IOReturn err;
     BOOL ok=YES;
