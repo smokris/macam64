@@ -113,7 +113,7 @@ IsocFrameResult  jl2005aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                                          UInt32 * dataStart, UInt32 * dataLength, 
                                          UInt32 * tailStart, UInt32 * tailLength)
 {
-    int position, frameLength = frame->frActCount;
+    int frameLength = frame->frActCount;
     
     *dataStart = 0;
     *dataLength = frameLength;
