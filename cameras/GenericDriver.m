@@ -556,7 +556,11 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
         if (grabContext.emptyChunkBuffers[i].buffer == NULL) 
             ok = NO;
         else 
+		{
             grabContext.numEmptyBuffers = i + 1;
+			gettimeofday(&(grabContext.emptyChunkBuffers[i].tvStart), NULL); // initialize the time to something
+			gettimeofday(&grabContext.emptyChunkBuffers[i].tvDone, NULL); // initialize the time to something
+		}
     }
     
     // Cleanup if anything went wrong
@@ -750,6 +754,8 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
                     
 //                  printf("Chunk filled with %ld bytes\n", gCtx->fillingChunkBuffer.numBytes);
                     
+					gettimeofday(&gCtx->fillingChunkBuffer.tvDone, NULL); // set the time of the buffer
+					
                     // Pass the complete chunk to the full list
                     // Move full buffers one up
                     
@@ -779,6 +785,8 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
                 gCtx->fillingChunk = true;				// Now we're filling (still in the lock to be sure no buffer is lost)
                 gCtx->fillingChunkBuffer.numBytes = 0;	// Start with empty buffer
                 [gCtx->chunkListLock unlock];			// Free access to the chunk buffers
+				
+				gettimeofday(&gCtx->fillingChunkBuffer.tvStart, NULL); // set the time of the buffer
             }
             // else // validFrame 
             

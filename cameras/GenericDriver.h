@@ -41,6 +41,8 @@
 #include "BayerConverter.h"
 #include "LookUpTable.h"
 
+#include "sys/time.h"
+
 typedef enum DriverType
 {
     isochronousDriver,
@@ -101,6 +103,8 @@ typedef struct GenericChunkBuffer
 {
     unsigned char * buffer; // The raw data for an image, it will need to be decoded in various ways
     long numBytes;          // The amount of valid data filled in so far
+	struct timeval tvStart;
+	struct timeval tvDone;
 } GenericChunkBuffer;
 
 typedef struct GenericGrabContext 
