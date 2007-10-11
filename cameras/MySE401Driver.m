@@ -775,7 +775,8 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
 - (void) doAutoExposure {
 //Auto exposure currently only changes the exposure time, not the gain. This could improve frame rates with low light conditions, for example... ***
     float tolerance=0.05f;
-    float scale=0.2f;
+    //float scale=0.2f;
+    float scale=0.1f; // PRL 2007-07-10: Converge to wanted level more slowly.
     float wanted=0.5f;
 
     float avg=streamIsCompressed?lastMeanBrightness:[bayerConverter lastMeanBrightness];
