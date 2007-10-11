@@ -116,7 +116,6 @@ typedef struct PhilipsGrabContext {	//Everything the grabbing thread internals n
     long currCompleteChunks;	//current length of complete chunk list
     PhilipsCompleteChunk* chunkList;	//the complete chunk list itself
     NSLock* chunkListLock;	//lock for access to complete chunk list data (mutex between grabbingThread and decodingThread)
-    NSLock* chunkReadyLock;	//remote wake up for decodingThread from grabbingThread
     IOUSBInterfaceInterface** intf;	//Just a copy from our interface interface so the callback can issue usb commands
     BOOL* shouldBeGrabbing;	//Reference to the object's shouldBeGrabbing property
     CameraError err;		//Collector f errors occurred during grab. [cleanupGrabContext] will leave this as it is

@@ -230,7 +230,6 @@
 //preliminary set more complicated parameters to NULL, so there are no stale pointers if setup fails
     grabContext.initiatedUntil=0;
     grabContext.chunkListLock=NULL;
-    grabContext.chunkReadyLock=NULL;
     grabContext.buffer=NULL;
     grabContext.transferContexts=NULL;
     grabContext.chunkList=NULL;
@@ -238,13 +237,6 @@
     if (ok) {
         grabContext.chunkListLock=[[NSLock alloc] init];
         if ((grabContext.chunkListLock)==NULL) ok=NO;
-    }
-    if (ok) {
-        grabContext.chunkReadyLock=[[NSLock alloc] init];
-        if ((grabContext.chunkReadyLock)==NULL) ok=NO;
-        else {					//locked by standard, will be unlocked by isocComplete
-            [grabContext.chunkReadyLock tryLock];
-        }
     }
 //Setup ring buffer
     if (ok) {
@@ -313,10 +305,6 @@
         [grabContext.chunkListLock release];
         grabContext.chunkListLock=NULL;
     }
-    if (grabContext.chunkReadyLock) {			//throw away the chunk ready gate lock
-        [grabContext.chunkReadyLock release];
-        grabContext.chunkReadyLock=NULL;
-    }
     return YES;
 }
 
@@ -375,8 +363,6 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                             grabContext->transferContexts[transferIdx].bufferOffset+i*grabContext->bytesPerFrame+currFrameLength;
                         grabContext->currCompleteChunks++;
                         [grabContext->chunkListLock unlock];		//exit critical section
-                        [grabContext->chunkReadyLock tryLock];		//try to wake up the decoder
-                        [grabContext->chunkReadyLock unlock];
                     } else {						//broken frame -> drop
                         grabContext->droppedFrames++;
 #if VERBOSE
@@ -478,7 +464,6 @@ static bool StartNextIsochRead(PhilipsGrabContext* grabContext, int transferIdx)
     }
 
     shouldBeGrabbing=NO;			//error in grabbingThread or abort? initiate shutdown of everything else
-    [grabContext.chunkReadyLock unlock];	//give the decodingThread a chance to abort
     [pool release];
     grabbingThreadRunning=NO;
     [NSThread exit];
@@ -505,7 +490,9 @@ static bool StartNextIsochRead(PhilipsGrabContext* grabContext, int transferIdx)
     }
 
     while (shouldBeGrabbing) {
-        [grabContext.chunkReadyLock lock];				//wait for ready-to-decode chunks
+        if (grabContext.currCompleteChunks == 0) 
+            usleep(1000); // 1 ms (1000 micro-seconds)
+        
         while ((shouldBeGrabbing)&&(grabContext.currCompleteChunks>0)) {	//decode all chunks unless we should stop grabbing
             [grabContext.chunkListLock lock];			//lock for access to chunk list
             currChunk=grabContext.chunkList[0];			//take first (oldest) chunk
