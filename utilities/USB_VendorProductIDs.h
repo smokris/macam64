@@ -242,6 +242,7 @@
 #define	PRODUCT_EASY_CAM_DV             0x0103		// SPCA500C
 #define PRODUCT_POCKET_DVII             0x0104      // SPCA533A [not yet]
 #define PRODUCT_POCKET_DV3100           0x0106      // SPCA533A [not yet]
+#define PRODUCT_TRUST_SPYCAM_100        0x0110      // Mars MR97310A-0B
 #define PRODUCT_PENCAM_VGA_PLUS         0x0111      // Mars MR97310A-0B
 #define PRODUCT_MINI_PENCAM_2M          0x2008      // SPCA504B [not yet]
 #define PRODUCT_POCKETCAM_3M            0x2010      // SPCA504B [not yet]
