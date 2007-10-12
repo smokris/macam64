@@ -609,6 +609,7 @@ static int zc3xx_config(struct usb_spca50x *spca50x)
 	set_zc3xxVGA(spca50x);
 	break;
     };
+    PDEBUG(0, "Sensor ID:%d",spca50x->sensor);
 
     if ((sensor == 0x02) || (sensor == 0x01) || (sensor == 0x05)
 	|| (sensor == 0x07) || (sensor == 0x09) || (sensor == 0x0b)
