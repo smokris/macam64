@@ -34,8 +34,7 @@
 + (NSArray *) cameraUsbDescriptions;
 
 - (id) initWithCentral: (id) c;
-- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
 - (void) setIsocFrameFunctions;
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
+- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer;
 
 @end

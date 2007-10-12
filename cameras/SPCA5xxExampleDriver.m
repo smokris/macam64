@@ -85,30 +85,6 @@
 }
 
 //
-// Provide feedback about which resolutions and rates are supported
-//
-- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate 
-{
-    switch (res) 
-    {
-        case ResolutionCIF:
-            if (rate > 30)  // what is the spec?
-                return NO;
-            return YES;
-            break;
-            
-        case ResolutionQCIF:
-            if (rate > 30)  // what is the spec?
-                return NO;
-            return YES;
-            break;
-            
-        default: 
-            return NO;
-    }
-}
-
-//
 // Scan the frame and return the results
 //
 IsocFrameResult  spca5xxExampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
@@ -174,7 +150,7 @@ IsocFrameResult  spca5xxExampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * 
 //
 // other stuff, including decompression
 //
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
+- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer
 {
 #ifdef REALLY_VERBOSE
     printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
