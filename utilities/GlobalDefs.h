@@ -73,6 +73,14 @@ typedef enum ColorMode
     ColorModeGray		= 2
 } ColorMode;
 
+typedef enum OrientationMode 
+{
+    NormalOrientation = 1,
+    FlipHorizontal = 2, 
+    InvertVertical = 3, 
+    Rotate180 = 4,
+} OrientationMode;
+
 
 //Global build settings. Comment unwanted stuff out
 // set these in the configuration (Debug, Release etc) build settings (preprocessor macros) instead
