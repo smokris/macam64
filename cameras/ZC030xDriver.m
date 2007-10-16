@@ -239,7 +239,6 @@
     
     [self setCompression:1];
     forceRGB = 1;
-    invert = NO;
     
     spca50x->bridge = BRIDGE_ZC3XX;
     spca50x->cameratype = JPGH;
@@ -282,8 +281,9 @@
 // Scan the frame and return the results
 //
 IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
-                                          UInt32 * dataStart, UInt32 * dataLength, 
-                                          UInt32 * tailStart, UInt32 * tailLength)
+                                       UInt32 * dataStart, UInt32 * dataLength, 
+                                       UInt32 * tailStart, UInt32 * tailLength, 
+                                       GenericFrameInfo * frameInfo)
 {
     int frameLength = frame->frActCount;
     
@@ -401,7 +401,7 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     if (error != 0) 
         return NO;
     
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:invert];
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP orientation:orientation];
     
     return YES;
 }
@@ -474,7 +474,7 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	if (self == NULL) 
         return NULL;
     
-    invert = YES;
+    orientation = InvertVertical;
     
 	return self;
 }
