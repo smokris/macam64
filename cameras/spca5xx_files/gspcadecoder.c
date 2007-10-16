@@ -73,6 +73,10 @@ typedef unsigned int uint;
 
 #define JPEGHEADER_LENGTH 589
 
+#if !defined(MACAM)
+static int debug = 0;
+#endif
+
 const unsigned char JPEGHeader[JPEGHEADER_LENGTH] = {
     0xff, 0xd8, 0xff, 0xdb, 0x00, 0x84, 0x00, 0x06, 0x04, 0x05, 0x06,
     0x05, 0x04, 0x06, 0x06, 0x05,
@@ -624,6 +628,167 @@ or 0x1e 0xe1 for compressed line*/
     return 0;
 }
 
+#define PAC7311_JPEG_HEADER_SIZE 594
+#define PAC7311_JPEG_HEADER_GEO_START 12
+
+
+const unsigned char pac7311_jpeg_header[PAC7311_JPEG_HEADER_SIZE] = {
+
+  0xff, 0xd8, 0xff, 0xe0, 0x00, 0x03, 0x20, 0xff, 0xc0, 0x00, 
+  0x11, 0x08, 0x01, 0xe0, 0x02, 0x80, 0x03, 0x01, 0x21, 0x00, 
+  0x02, 0x11, 0x01, 0x03, 0x11, 0x01, 0xff, 0xdb, 0x00, 0x84, 
+  0x00, 0x10, 0x0b, 0x0c, 0x0e, 0x0c, 0x0a, 0x10, 0x0e, 0x0d, 
+  0x0e, 0x12, 0x11, 0x10, 0x13, 0x18, 0x28, 0x1a, 0x18, 0x16, 
+  0x16, 0x18, 0x31, 0x23, 0x25, 0x1d, 0x28, 0x3a, 0x33, 0x3d, 
+  0x3c, 0x39, 0x33, 0x38, 0x37, 0x40, 0x48, 0x5c, 0x4e, 0x40, 
+  0x44, 0x57, 0x45, 0x37, 0x38, 0x50, 0x6d, 0x51, 0x57, 0x5f, 
+  0x62, 0x67, 0x68, 0x67, 0x3e, 0x4d, 0x71, 0x79, 0x70, 0x64, 
+  0x78, 0x5c, 0x65, 0x67, 0x63, 0x01, 0x11, 0x12, 0x12, 0x18, 
+  0x15, 0x18, 0x2f, 0x1a, 0x1a, 0x2f, 0x63, 0x42, 0x38, 0x42, 
+  0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 
+  0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 
+  0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 
+  0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 
+  0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 0x63, 
+  0xff, 0xc4, 0x01, 0xa2, 0x00, 0x00, 0x01, 0x05, 0x01, 0x01, 
+  0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+  0x00, 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 
+  0x09, 0x0a, 0x0b, 0x10, 0x00, 0x02, 0x01, 0x03, 0x03, 0x02, 
+  0x04, 0x03, 0x05, 0x05, 0x04, 0x04, 0x00, 0x00, 0x01, 0x7d, 
+  0x01, 0x02, 0x03, 0x00, 0x04, 0x11, 0x05, 0x12, 0x21, 0x31, 
+  0x41, 0x06, 0x13, 0x51, 0x61, 0x07, 0x22, 0x71, 0x14, 0x32, 
+  0x81, 0x91, 0xa1, 0x08, 0x23, 0x42, 0xb1, 0xc1, 0x15, 0x52, 
+  0xd1, 0xf0, 0x24, 0x33, 0x62, 0x72, 0x82, 0x09, 0x0a, 0x16, 
+  0x17, 0x18, 0x19, 0x1a, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2a, 
+  0x34, 0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x43, 0x44, 0x45, 
+  0x46, 0x47, 0x48, 0x49, 0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 
+  0x58, 0x59, 0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 
+  0x6a, 0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x83, 
+  0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x92, 0x93, 0x94, 
+  0x95, 0x96, 0x97, 0x98, 0x99, 0x9a, 0xa2, 0xa3, 0xa4, 0xa5, 
+  0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6, 
+  0xb7, 0xb8, 0xb9, 0xba, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 
+  0xc8, 0xc9, 0xca, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 
+  0xd9, 0xda, 0xe1, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 
+  0xe9, 0xea, 0xf1, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 
+  0xf9, 0xfa, 0x01, 0x00, 0x03, 0x01, 0x01, 0x01, 0x01, 0x01, 
+  0x01, 0x01, 0x01, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+  0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 
+  0x0b, 0x11, 0x00, 0x02, 0x01, 0x02, 0x04, 0x04, 0x03, 0x04, 
+  0x07, 0x05, 0x04, 0x04, 0x00, 0x01, 0x02, 0x77, 0x00, 0x01, 
+  0x02, 0x03, 0x11, 0x04, 0x05, 0x21, 0x31, 0x06, 0x12, 0x41, 
+  0x51, 0x07, 0x61, 0x71, 0x13, 0x22, 0x32, 0x81, 0x08, 0x14, 
+  0x42, 0x91, 0xa1, 0xb1, 0xc1, 0x09, 0x23, 0x33, 0x52, 0xf0, 
+  0x15, 0x62, 0x72, 0xd1, 0x0a, 0x16, 0x24, 0x34, 0xe1, 0x25, 
+  0xf1, 0x17, 0x18, 0x19, 0x1a, 0x26, 0x27, 0x28, 0x29, 0x2a, 
+  0x35, 0x36, 0x37, 0x38, 0x39, 0x3a, 0x43, 0x44, 0x45, 0x46, 
+  0x47, 0x48, 0x49, 0x4a, 0x53, 0x54, 0x55, 0x56, 0x57, 0x58, 
+  0x59, 0x5a, 0x63, 0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6a, 
+  0x73, 0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7a, 0x82, 0x83, 
+  0x84, 0x85, 0x86, 0x87, 0x88, 0x89, 0x8a, 0x92, 0x93, 0x94, 
+  0x95, 0x96, 0x97, 0x98, 0x99, 0x9a, 0xa2, 0xa3, 0xa4, 0xa5, 
+  0xa6, 0xa7, 0xa8, 0xa9, 0xaa, 0xb2, 0xb3, 0xb4, 0xb5, 0xb6, 
+  0xb7, 0xb8, 0xb9, 0xba, 0xc2, 0xc3, 0xc4, 0xc5, 0xc6, 0xc7, 
+  0xc8, 0xc9, 0xca, 0xd2, 0xd3, 0xd4, 0xd5, 0xd6, 0xd7, 0xd8, 
+  0xd9, 0xda, 0xe2, 0xe3, 0xe4, 0xe5, 0xe6, 0xe7, 0xe8, 0xe9, 
+  0xea, 0xf2, 0xf3, 0xf4, 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 
+  0xff, 0xda, 0x00, 0x0c, 0x03, 0x01, 0x00, 0x02, 0x11, 0x03, 
+  0x11, 0x00, 0x3f, 0x00
+};
+
+int pac7311_make_jpg(struct spca50x_frame *myframe)
+{
+/* we should received a whole frame with header and EOF marker
+in myframe->data and return a clean JPEG in frame->tmpbuffer
+remove the header, the stream markers and the MCU markers and
+add a correct JPEG header*/
+
+    int i;
+    int decrease_scanlenght;
+    unsigned char *pdatasave;
+    unsigned char *ptempsave;
+    pdatasave = myframe->data;
+    ptempsave = myframe->tmpbuffer;
+
+    if (*(myframe->data) != 0xFF && *(myframe->data+1) != 0xFF && *(myframe->data+2) != 0x00 && *(myframe->data+3) != 0xFF && *(myframe->data+4) != 0x96) {
+        myframe->scanlength = 0;
+        return -1;
+    }
+    
+    memcpy(myframe->tmpbuffer, pac7311_jpeg_header, PAC7311_JPEG_HEADER_SIZE);
+    myframe->tmpbuffer += PAC7311_JPEG_HEADER_SIZE;
+    myframe->data += 7;
+    myframe->scanlength -= 7;
+    decrease_scanlenght = 7;
+
+    for (i=0;i<myframe->scanlength;++i) {
+        if (i < myframe->scanlength+4) {
+            if (*(myframe->data) == 0xff && *(myframe->data+1) == 0xff && *(myframe->data+2) == 0xff) {
+                myframe->data += 4;
+                decrease_scanlenght -= 4;
+            }
+        }
+        *myframe->tmpbuffer = *myframe->data;
+        myframe->tmpbuffer++;
+        myframe->data++;
+    }
+    
+
+    myframe->data = pdatasave;
+    myframe->tmpbuffer = ptempsave;
+    myframe->scanlength += (PAC7311_JPEG_HEADER_SIZE + decrease_scanlenght);
+    memcpy(myframe->data, myframe->tmpbuffer, myframe->scanlength);
+
+    return 1;
+}
+
+static int jpeg_decode422_PAC7311(struct spca50x_frame *myframe, int force_rgb);
+
+int pac7311_decode(struct spca50x_frame *myframe, int force_rgb)
+{
+/* we should received a whole frame with header and EOF marker
+in myframe->data and return a decoded frame in frame->tmpbuffer
+*/
+
+    int i;
+    int done;
+    unsigned char *pdatasave;
+    unsigned char *ptempsave;
+    pdatasave = myframe->data;
+    ptempsave = myframe->tmpbuffer;
+
+    if (*(myframe->data) != 0xFF && *(myframe->data+1) != 0xFF && *(myframe->data+2) != 0x00 && *(myframe->data+3) != 0xFF && *(myframe->data+4) != 0x96) {
+        myframe->scanlength = 0;
+        printf("bad header!!!!!!\n");
+        return -1;
+    }
+    
+    myframe->data += 7;
+    myframe->scanlength -= 7;
+
+    for (i=0;i<myframe->scanlength;++i) {
+        if (i < myframe->scanlength+4) {
+            if (*(myframe->data) == 0xff && *(myframe->data+1) == 0xff && *(myframe->data+2) == 0xff) {
+				if (*(myframe->data+3) == 0x00 || *(myframe->data+3) == 0x01 || *(myframe->data+3) == 0x02 ) {
+	                myframe->data += 4;
+				    myframe->scanlength -= 4;
+				} else {
+					PDEBUG(1, "Unknown FFFFFF marker value: 0x%2X", *(myframe->data+3));
+				}
+            }
+        }
+        *myframe->tmpbuffer = *myframe->data;
+        myframe->tmpbuffer++;
+        myframe->data++;
+    }
+    
+    myframe->data = pdatasave;
+    myframe->tmpbuffer = ptempsave;
+    done = jpeg_decode422_PAC7311(myframe, force_rgb);
+
+    return done;
+}
+
 /*
 #	Decoder for compressed spca561 images			    		#
 #	It was developed for "Labtec WebCam Elch 2(SPCA561A)" (046d:0929)	#
@@ -899,6 +1064,7 @@ static int fun_F(int cur_byte, int *bitfill)
     *bitfill += 7;
     return 0xff;
 }
+
 int internal_spca561_decode(int width, int height, unsigned char *inbuf, unsigned char *outbuf)	// {{{
 {
     // buffers
@@ -1369,6 +1535,7 @@ int internal_spca561_decode(int width, int height, unsigned char *inbuf, unsigne
 
     return 0;
 }
+
 void decode_spca561(unsigned char *inbuf, unsigned char *outbuf, int width,
 		    int height)
 {
@@ -1488,6 +1655,7 @@ static int dec_checkmarker(struct dec_data *decode)
 	dscans[i].dc = 0;
     return 0;
 }
+
 void
 jpeg_reset_input_context(struct dec_data *decode, unsigned char *buf,
 			 int oescap)
@@ -1861,6 +2029,414 @@ void init_qTable(struct usb_spca50x *spca50x, unsigned int qIndex)
     //scaleidctqtab (spca50x->maindecode.dquant[1], IFIX (0.7));
     //scaleidctqtab (spca50x->maindecode.dquant[2], IFIX (0.7));    
 }
+inline static void
+decode_mcus_PAC7311(struct in *in, int *dct, int n, struct scan *sc, int *maxp)
+{
+    struct dec_hufftbl *hu;
+    int i, r, t;
+    int le, bi;
+    char trash;
+
+    memset(dct, 0, n * 64 * sizeof(*dct));
+    le = in->left;
+    bi = in->bits;
+
+    while (n-- > 0) {
+	hu = sc->hudc.dhuff;
+	*dct++ = (sc->dc += DEC_REC(in, hu, r, t));
+
+	hu = sc->huac.dhuff;
+	i = 63;
+	while (i > 0) {
+	    t = DEC_REC(in, hu, r, t);
+	    if (t == 0 && r == 0) {
+		dct += i;
+		break;
+	    }
+	    dct += r;
+	    *dct++ = t;
+	    i -= r + 1;
+	}
+	*maxp++ = 64 - i;
+	if (n == sc->next)
+	    sc++;
+    }
+    trash = GETBITS(in, 8);
+    LEBI_PUT(in);
+}
+
+static int jpeg_decode422_PAC7311(struct spca50x_frame *myframe, int force_rgb)
+{
+    int mcusx, mcusy, mx, my;
+    int *dcts = myframe->dcts;
+    int *out = myframe->out;
+    int *max = myframe->max;
+    int bpp;
+    int framesize, frameUsize;
+    int k, j;
+    int nextline, nextuv, nextblk, nextnewline;
+    unsigned char *pic0, *pic1, *outv, *outu;
+    __u16 *pix1, *pix2;
+    int picy, picx, pocx, pocy;
+    unsigned char *U, *V;
+    int *outy, *inv, *inu;
+    int outy1, outy2;
+    int v, u, y1, v1, u1, u2;
+    int r_offset, g_offset, b_offset;
+
+    unsigned char *pic = myframe->data;	/* output surface */
+    unsigned char *buf = myframe->tmpbuffer;	/* input surface */
+    int width = myframe->hdrwidth;
+    int height = myframe->hdrheight;
+    int softwidth = myframe->width;
+    int softheight = myframe->height;
+    //int method = myframe->method;
+    int format = myframe->format;
+    int cropx1 = myframe->cropx1;
+    int cropx2 = myframe->cropx2;
+    int cropy1 = myframe->cropy1;
+    int cropy2 = myframe->cropy2;
+    unsigned char *red = myframe->decoder->Red;
+    unsigned char *green = myframe->decoder->Green;
+    unsigned char *blue = myframe->decoder->Blue;
+    struct dec_data *decode = myframe->decoder;
+    if ((height & 7) || (width & 7))
+	return 1;
+    if (width < softwidth || height < softheight)
+	return 1;
+
+    mcusx = width >> 4;
+    mcusy = height >> 3;
+    framesize = softwidth * softheight;
+    frameUsize = framesize >> 2;
+    jpeg_reset_input_context(decode, buf, 1);
+
+    /* for each component. Reset dc values. */
+    dec_initscans(decode);
+    /* rgb or bgr like U or V that's the question */
+    if (force_rgb) {
+	U = pic + framesize;
+	V = U + frameUsize;
+	r_offset = 2;
+	g_offset = 1;
+	b_offset = 0;
+    } else {
+	V = pic + framesize;
+	U = V + frameUsize;
+	r_offset = 0;
+	g_offset = 1;
+	b_offset = 2;
+    }
+
+    /* Decode to the correct format. */
+    switch (format) {
+    case VIDEO_PALETTE_RGB565:
+	{
+	    bpp = 2;
+	    nextline = ((softwidth << 1) - 16);	// *bpp;
+	    nextblk = bpp * (softwidth << 3);
+	    nextnewline = softwidth;	// *bpp;
+	    for (my = 0, picy = 0; my < mcusy; my++) {
+		for (mx = 0, picx = 0; mx < mcusx; mx++) {
+		    if (decode->info.dri && !--decode->info.nm)
+			if (dec_checkmarker(decode))
+			    return ERR_WRONG_MARKER;
+		    decode_mcus_PAC7311(&decode->in, dcts, 4, decode->dscans, max);
+		    if ((my >= cropy1)
+			&& (my < mcusy - cropy2)
+			&& (mx >= cropx1)
+			&& (mx < mcusx - cropx2)) {
+			idct(dcts, out,
+			     decode->dquant[0], IFIX(128.5), max[0]);
+			idct(dcts + 64,
+			     out + 64,
+			     decode->dquant[0], IFIX(128.5), max[1]);
+			idct(dcts + 128,
+			     out + 256,
+			     decode->dquant[1], IFIX(0.5), max[2]);
+			idct(dcts + 192,
+			     out + 320,
+			     decode->dquant[2], IFIX(0.5), max[3]);
+
+			pix1 = (__u16 *) (pic + picx + picy);
+			pix2 = pix1 + nextnewline;
+			outy = out;
+			outy1 = 0;
+			outy2 = 8;
+			inv = out + 64 * 4;
+			inu = out + 64 * 5;
+			for (j = 0; j < 4; j++) {
+			    for (k = 0; k < 8; k++) {
+				if (k == 4) {
+				    outy1 += 56;
+				    outy2 += 56;
+				}
+				/* outup 4 pixels Colors are treated as 411 */
+				/* get the UV colors need to change UV order for force rgb? */
+				if (force_rgb) {
+
+				    u = *inv++;
+				    v = *inu++;
+				} else {
+
+				    v = *inv++;
+				    u = *inu++;
+				}
+				/* MX color space why not? */
+				v1 = ((v << 10)
+				      + (v << 9))
+				    >> 10;
+				u1 = ((u <<
+				       8) + (u << 7) + (v << 9) + (v << 4))
+				    >> 10;
+				u2 = ((u << 11)
+				      + (u << 4))
+				    >> 10;
+				/* top pixel Right */
+				y1 = outy[outy1++];
+				*pix1++ = ((red[CLIP((y1 + v1))]
+					    & 0xF8)
+					   >> 3 |
+					   ((green[CLIP((y1 - u1))] & 0xFC)
+					    << 3) | ((blue[CLIP((y1 + u2))]
+						      & 0xF8) << 8));
+				/* top pixel Left */
+				y1 = outy[outy1++];
+				*pix1++ = ((red[CLIP((y1 + v1))]
+					    & 0xF8)
+					   >> 3 |
+					   ((green[CLIP((y1 - u1))] & 0xFC)
+					    << 3) | ((blue[CLIP((y1 + u2))]
+						      & 0xF8) << 8));
+
+				/* bottom pixel Right */
+				y1 = outy[outy2++];
+				*pix2++ = ((red[CLIP((y1 + v1))]
+					    & 0xF8)
+					   >> 3 |
+					   ((green[CLIP((y1 - u1))] & 0xFC)
+					    << 3) | ((blue[CLIP((y1 + u2))]
+						      & 0xF8) << 8));
+				/* bottom pixel Left */
+				y1 = outy[outy2++];
+				*pix2++ = ((red[CLIP((y1 + v1))]
+					    & 0xF8)
+					   >> 3 |
+					   ((green[CLIP((y1 - u1))] & 0xFC)
+					    << 3) | ((blue[CLIP((y1 + u2))]
+						      & 0xF8) << 8));
+
+			    }
+
+			    outy += 16;
+			    outy1 = 0;
+			    outy2 = 8;
+			    pix1 += nextline;
+			    pix2 += nextline;
+
+			}
+			picx += 16 * bpp;
+		    }
+		}
+		if (my >= cropy1)
+		    picy += nextblk;
+
+	    }
+
+	}
+	myframe->scanlength = (long) (softwidth * softheight * bpp);
+	break;
+    case VIDEO_PALETTE_RGB32:
+    case VIDEO_PALETTE_RGB24:
+	{
+	    bpp = (format == VIDEO_PALETTE_RGB32) ? 4 : 3;
+	    nextline = bpp * ((softwidth << 1) - 16);
+	    nextblk = bpp * (softwidth << 3);
+	    nextnewline = bpp * softwidth;
+
+	    for (my = 0, picy = 0; my < mcusy; my++) {
+		for (mx = 0, picx = 0; mx < mcusx; mx++) {
+		    if (decode->info.dri && !--decode->info.nm)
+			if (dec_checkmarker(decode))
+			    return ERR_WRONG_MARKER;
+		    decode_mcus_PAC7311(&decode->in, dcts, 4, decode->dscans, max);
+		    if ((my >= cropy1)
+			&& (my < mcusy - cropy2)
+			&& (mx >= cropx1)
+			&& (mx < mcusx - cropx2)) {
+			idct(dcts, out,
+			     decode->dquant[0], IFIX(128.5), max[0]);
+			idct(dcts + 64,
+			     out + 64,
+			     decode->dquant[0], IFIX(128.5), max[1]);
+			idct(dcts + 128,
+			     out + 256,
+			     decode->dquant[1], IFIX(0.5), max[2]);
+			idct(dcts + 192,
+			     out + 320,
+			     decode->dquant[2], IFIX(0.5), max[3]);
+
+			pic0 = pic + picx + picy;
+			pic1 = pic0 + nextnewline;
+			outy = out;
+			outy1 = 0;
+			outy2 = 8;
+			inv = out + 64 * 4;
+			inu = out + 64 * 5;
+
+			for (j = 0; j < 4; j++) {
+			    for (k = 0; k < 8; k++) {
+				if (k == 4) {
+				    outy1 += 56;
+				    outy2 += 56;
+				}
+				/* outup 4 pixels Colors are treated as 411 */
+
+				v = *inv++;
+				u = *inu++;
+
+				/* MX color space why not? */
+				v1 = ((v << 10)
+				      + (v << 9))
+				    >> 10;
+				u1 = ((u <<
+				       8) + (u << 7) + (v << 9) + (v << 4))
+				    >> 10;
+				u2 = ((u << 11)
+				      + (u << 4))
+				    >> 10;
+				/* top pixel Right */
+				y1 = outy[outy1++];
+				pic0[r_offset] = red[CLIP((y1 + v1))];
+				pic0[g_offset] = green[CLIP((y1 - u1))];
+				pic0[b_offset] = blue[CLIP((y1 + u2))];
+				pic0 += bpp;
+				/* top pixel Left */
+				y1 = outy[outy1++];
+				pic0[r_offset] = red[CLIP((y1 + v1))];
+				pic0[g_offset] = green[CLIP((y1 - u1))];
+				pic0[b_offset] = blue[CLIP((y1 + u2))];
+				pic0 += bpp;
+				/* bottom pixel Right */
+				y1 = outy[outy2++];
+				pic1[r_offset] = red[CLIP((y1 + v1))];
+				pic1[g_offset] = green[CLIP((y1 - u1))];
+				pic1[b_offset] = blue[CLIP((y1 + u2))];
+				pic1 += bpp;
+				/* bottom pixel Left */
+				y1 = outy[outy2++];
+				pic1[r_offset] = red[CLIP((y1 + v1))];
+				pic1[g_offset] = green[CLIP((y1 - u1))];
+				pic1[b_offset] = blue[CLIP((y1 + u2))];
+				pic1 += bpp;
+
+			    }
+
+			    outy += 16;
+			    outy1 = 0;
+			    outy2 = 8;
+			    pic0 += nextline;
+			    pic1 += nextline;
+
+			}
+
+			picx += 16 * bpp;
+		    }
+		}
+		if (my >= cropy1)
+		    picy += nextblk;
+
+	    }
+
+	}
+	myframe->scanlength = (long) (softwidth * softheight * bpp);
+	break;
+    case VIDEO_PALETTE_YUV420P:
+	{
+	    nextline = (softwidth << 1) - 16;
+	    nextuv = (softwidth >> 1) - 8;
+	    nextblk = softwidth << 3;
+	    nextnewline = softwidth << 1;	//2
+	    for (my = 0, picy = 0, pocy = 0; my < mcusy; my++) {
+		for (mx = 0, picx = 0, pocx = 0; mx < mcusx; mx++) {
+		    if (decode->info.dri && !--decode->info.nm)
+			if (dec_checkmarker(decode))
+			    return ERR_WRONG_MARKER;
+		    decode_mcus_PAC7311(&decode->in, dcts, 4, decode->dscans, max);
+		    if ((my >= cropy1)
+			&& (my < mcusy - cropy2)
+			&& (mx >= cropx1)
+			&& (mx < mcusx - cropx2)) {
+			idct(dcts, out,
+			     decode->dquant[0], IFIX(128.5), max[0]);
+			idct(dcts + 64,
+			     out + 64,
+			     decode->dquant[0], IFIX(128.5), max[1]);
+			idct(dcts + 128,
+			     out + 256,
+			     decode->dquant[1], IFIX(0.5), max[2]);
+			idct(dcts + 192,
+			     out + 320,
+			     decode->dquant[2], IFIX(0.5), max[3]);
+
+			pic0 = pic + picx + picy;
+			pic1 = pic0 + softwidth;
+			outv = V + (pocx + pocy);
+			outu = U + (pocx + pocy);
+			outy = out;
+			outy1 = 0;
+			outy2 = 8;
+			inv = out + 64 * 4;
+			inu = out + 64 * 5;
+			for (j = 0; j < 4; j++) {
+			    for (k = 0; k < 8; k++) {
+				if (k == 4) {
+				    outy1 += 56;
+				    outy2 += 56;
+				}
+				/* outup 4 pixels */
+
+				*pic0++ = CLIP(outy[outy1]);
+				outy1++;
+				*pic0++ = CLIP(outy[outy1]);
+				outy1++;
+				*pic1++ = CLIP(outy[outy2]);
+				outy2++;
+				*pic1++ = CLIP(outy[outy2]);
+				outy2++;
+				/* maybe one day yuv422P */
+				*outv++ = CLIP(128 + *inv);
+				inv++;
+				*outu++ = CLIP(128 + *inu);
+				inu++;
+			    }
+
+			    outy += 16;
+			    outy1 = 0;
+			    outy2 = 8;
+			    pic0 += nextline;
+			    pic1 += nextline;
+			    outv += nextuv;
+			    outu += nextuv;
+			}
+			picx += 16;
+			pocx += 8;
+		    }
+		}
+		if (my >= cropy1) {
+		    picy += nextblk;
+		    pocy += nextnewline;
+		}
+	    }
+	}
+	myframe->scanlength = (long) ((softwidth * softheight * 3) >> 1);
+	break;
+    default:
+	break;
+    }				// end case
+    return 0;
+}
+
 void init_jpeg_decoder(struct usb_spca50x *spca50x)
 {
     unsigned int i, j, k, l;
@@ -2089,6 +2665,12 @@ int spca50x_outpicture(struct spca50x_frame *myframe)
 	else
 	    done = jpeg_decode411(myframe, bgr);
 
+	break;
+    case PJPG:
+	if (myframe->format == VIDEO_PALETTE_RAW_JPEG)
+        done = pac7311_make_jpg(myframe);
+    else
+        done = pac7311_decode(myframe, bgr);
 	break;
     case YUVY:
     case YUYV:
