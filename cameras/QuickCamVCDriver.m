@@ -263,7 +263,8 @@
 /*
 IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
                                          UInt32 * dataStart, UInt32 * dataLength, 
-                                         UInt32 * tailStart, UInt32 * tailLength)
+                                         UInt32 * tailStart, UInt32 * tailLength, 
+                                         GenericFrameInfo * frameInfo)
 {
     int position, frameLength = frame->frActCount;
     

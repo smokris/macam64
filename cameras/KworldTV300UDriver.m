@@ -127,8 +127,9 @@
 // Scan the frame and return the results
 //
 IsocFrameResult  empiaIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
-                                         UInt32 * dataStart, UInt32 * dataLength, 
-                                         UInt32 * tailStart, UInt32 * tailLength)
+                                       UInt32 * dataStart, UInt32 * dataLength, 
+                                       UInt32 * tailStart, UInt32 * tailLength, 
+                                       GenericFrameInfo * frameInfo)
 {
 //  int position;
     int frameLength = frame->frActCount;

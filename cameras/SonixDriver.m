@@ -124,8 +124,9 @@ enum
 // Scan the frame and return the results
 //
 IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
-                                          UInt32 * dataStart, UInt32 * dataLength, 
-                                          UInt32 * tailStart, UInt32 * tailLength)
+                                       UInt32 * dataStart, UInt32 * dataLength, 
+                                       UInt32 * tailStart, UInt32 * tailLength, 
+                                       GenericFrameInfo * frameInfo)
 {
     int position, frameLength = frame->frActCount;
     
@@ -625,8 +626,9 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 // Scan the frame and return the results
 //
 IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
-                                                UInt32 * dataStart, UInt32 * dataLength, 
-                                                UInt32 * tailStart, UInt32 * tailLength)
+                                         UInt32 * dataStart, UInt32 * dataLength, 
+                                         UInt32 * tailStart, UInt32 * tailLength, 
+                                         GenericFrameInfo * frameInfo)
 {
     int frameLength = frame->frActCount;
     int position = frameLength - 64;
@@ -738,7 +740,7 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     jpeg_decode422(spca50x->frame, 1);  // bgr = 1 (works better for SPCA508A...)
     
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:NO];
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP orientation:NormalOrientation];
     
     return YES;
 }

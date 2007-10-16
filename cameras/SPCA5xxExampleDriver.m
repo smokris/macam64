@@ -88,8 +88,9 @@
 // Scan the frame and return the results
 //
 IsocFrameResult  spca5xxExampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
-                                          UInt32 * dataStart, UInt32 * dataLength, 
-                                          UInt32 * tailStart, UInt32 * tailLength)
+                                                UInt32 * dataStart, UInt32 * dataLength, 
+                                                UInt32 * tailStart, UInt32 * tailLength, 
+                                                GenericFrameInfo * frameInfo)
 {
     static int packet = 0;
     static int lastWasInvalid = 0;

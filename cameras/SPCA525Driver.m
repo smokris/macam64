@@ -199,7 +199,8 @@
 //
 IsocFrameResult  spca525IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
                                          UInt32 * dataStart, UInt32 * dataLength, 
-                                         UInt32 * tailStart, UInt32 * tailLength)
+                                         UInt32 * tailStart, UInt32 * tailLength, 
+                                         GenericFrameInfo * frameInfo)
 {
 //    static UInt8 lastFID = -1;
 //    UInt8 FIDbit;

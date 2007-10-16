@@ -184,7 +184,8 @@ static inline unsigned short getShort(unsigned char *pt)
 //
 IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
                                         UInt32 * dataStart, UInt32 * dataLength, 
-                                        UInt32 * tailStart, UInt32 * tailLength)
+                                        UInt32 * tailStart, UInt32 * tailLength, 
+                                        GenericFrameInfo * frameInfo)
 {
     int position, frameLength = frame->frActCount;
     
@@ -199,13 +200,13 @@ IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         *dataLength = 0;
         
 #if REALLY_VERBOSE
-        printf("Invalid chunk!\n");
+//        printf("Invalid chunk!\n");
 #endif
         return invalidFrame;
     }
     
 #if REALLY_VERBOSE
-    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+//    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
 #endif
     
     for (position = 0; position < frameLength - 6; position++) 
@@ -224,6 +225,12 @@ IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                 *tailStart = 0;
                 *tailLength = position;
             }
+            
+            frameInfo->averageLuminance = buffer[position + 9];
+            frameInfo->averageLuminanceSet = 1;
+#if REALLY_VERBOSE
+            printf("The average luminance is %d\n", frameInfo->averageLuminance);
+#endif
             
             *dataStart = position;
             *dataLength = frameLength - position;

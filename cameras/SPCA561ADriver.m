@@ -174,7 +174,8 @@
 //
 IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
                                           UInt32 * dataStart, UInt32 * dataLength, 
-                                          UInt32 * tailStart, UInt32 * tailLength)
+                                          UInt32 * tailStart, UInt32 * tailLength, 
+                                          GenericFrameInfo * frameInfo)
 {
     int frameLength = frame->frActCount;
     

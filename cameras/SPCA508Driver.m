@@ -117,7 +117,8 @@ enum
 //
 IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
                                          UInt32 * dataStart, UInt32 * dataLength, 
-                                         UInt32 * tailStart, UInt32 * tailLength)
+                                         UInt32 * tailStart, UInt32 * tailLength, 
+                                         GenericFrameInfo * frameInfo)
 {
     int frameLength = frame->frActCount;
     
@@ -211,7 +212,7 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     yuv_decode(spca50x->frame, 1);
     
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP invert:NO];
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP orientation:NormalOrientation];
     
     return YES;
 }
