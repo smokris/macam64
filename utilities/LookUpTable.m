@@ -24,8 +24,6 @@
 
 #import "LookUpTable.h"
 
-#include "GlobalDefs.h"
-
 
 @implementation LookUpTable
 
@@ -117,12 +115,16 @@
 }
 
 
-- (void) processImage: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp invert: (BOOL) invert
+- (void) processImage: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp orientation: (OrientationMode) orientation
 {
     UInt8 * ptr;
     long  w, h;
+    short obpp = bpp;
     
-    if (invert) 
+    if (orientation == Rotate180 || orientation == FlipHorizontal) 
+        obpp = - bpp;
+    
+    if (orientation == InvertVertical || orientation == Rotate180) 
     {
         UInt8 swap[3];
         UInt8 * opposite;
@@ -131,6 +133,50 @@
         {
             ptr = buffer + h * rowBytes;
             opposite = buffer + (numRows - h - 1) * rowBytes;
+            
+            if (orientation == Rotate180) 
+                opposite += rowBytes - bpp;
+            
+            if (bpp == 4) 
+            {
+                ptr++;
+                opposite++;
+            }
+            
+            for (w = 0; w < rowBytes; w += bpp, ptr += bpp, opposite += obpp) 
+            {
+                swap[0] = ptr[0];
+                swap[1] = ptr[1];
+                swap[2] = ptr[2];
+                
+                if (needsTransferLookup) 
+                {
+                    [self processTriplet:opposite toHere:ptr];
+                    [self processTriplet:swap toHere:opposite];
+                }
+                else 
+                {
+                    ptr[0] = opposite[0];
+                    ptr[1] = opposite[1];
+                    ptr[2] = opposite[2];
+                    
+                    opposite[0] = swap[0];
+                    opposite[1] = swap[1];
+                    opposite[2] = swap[2];
+                }
+            }
+        }
+    }
+    else if (orientation == FlipHorizontal) 
+    {
+        UInt8 swap[3];
+        UInt8 * opposite;
+        
+        for (h = 0; h < numRows; h++) 
+        {
+            ptr = buffer + h * rowBytes;
+            opposite = buffer + h * rowBytes;
+            opposite += rowBytes - bpp;
             
             if (bpp == 4) 
             {
@@ -162,7 +208,7 @@
             }
         }
     }
-    else if (needsTransferLookup) 
+    else if (needsTransferLookup) // orientation must be normal
     {
         for (h = 0; h < numRows; h++) 
         {
