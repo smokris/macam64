@@ -23,6 +23,7 @@
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOCFPlugIn.h>
 #include <IOKit/usb/IOUSBLib.h>
+#include "sys/time.h"
 #include "GlobalDefs.h"
 #import "MyCameraInfo.h"
 
@@ -117,24 +118,27 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 
 */
         
-    unsigned char* 	lastImageBuffer;
-    short 		lastImageBufferBPP;
-    long 		lastImageBufferRowBytes;
-    unsigned char* 	nextImageBuffer;
-    short 		nextImageBufferBPP;
-    long 		nextImageBufferRowBytes;
-    BOOL 		nextImageBufferSet;
-    NSLock* 		imageBufferLock;
-    MyCameraInfo*   cameraInfo;
+    unsigned char *	lastImageBuffer;
+    short 		    lastImageBufferBPP;
+    long 		    lastImageBufferRowBytes;
+	struct timeval  lastImageBufferTimeVal;
+    
+    unsigned char *	nextImageBuffer;
+    short 		    nextImageBufferBPP;
+    long 		    nextImageBufferRowBytes;
+    
+    BOOL            nextImageBufferSet;
+    NSLock * 		imageBufferLock;
+    MyCameraInfo *  cameraInfo;
 }
 
-//Get info about the camera specifics - simple mechanism
+// Get info about the camera specifics - simple mechanism
 + (unsigned short) cameraUsbProductID;
 + (unsigned short) cameraUsbVendorID;
 + (NSString*) cameraName;
 + (BOOL) isUVC;  // Do the cameras supported by this driver implement the USB Video Class?
 
-//Get info - new mechanism. Overload this one if you have more than one idVendor/idProduct pair
+// Get info - new mechanism. Overload this one if you have more than one idVendor/idProduct pair
 
 + (NSArray*) cameraUsbDescriptions;
 //Should return an array of dictionaries with keys "idVendor" (NSNumber), "idProduct" (NSNumber) and "name" (NSString). The default implementation creates an array with one entry with values of the above methods.
@@ -329,14 +333,21 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 
 //USB tool functions - should be used internally only
 - (BOOL) usbCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;//Sends a generic command
-- (BOOL) usbGenericCmd:(IOUSBInterfaceInterface**)intf BRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;
+- (BOOL) usbGenericCmd:(IOUSBInterfaceInterface**)intf onPipe:(UInt8)pipe BRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;
 - (BOOL) usbControlCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;
 - (BOOL) usbStreamCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;
+- (BOOL) usbControlCmdOnPipe:(UInt8)pipe withBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;
+- (BOOL) usbStreamCmdOnPipe:(UInt8)pipe withBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;
 
 - (BOOL) usbReadCmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len;//Sends a IN|VENDOR|DEVICE command
 - (BOOL) usbReadVICmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len;//Sends a IN|VENDOR|INTERFACE command
 - (BOOL) usbWriteCmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len;//Sends a OUT|VENDOR|DEVICE command
 - (BOOL) usbWriteVICmdWithBRequest:(short)bReq wValue:(short)wVal wIndex:(short)wIdx buf:(void*)buf len:(short)len;//Sends a OUT|VENDOR|INTERFACE command 
+
+- (BOOL) usbControlWritePipe:(UInt8)pipe buffer:(void *)buf length:(UInt32)size;
+- (BOOL) usbControlReadPipe:(UInt8)pipe buffer:(void *)buf length:(UInt32 *)size;
+- (BOOL) usbStreamWritePipe:(UInt8)pipe buffer:(void *)buf length:(UInt32)size;
+- (BOOL) usbStreamReadPipe:(UInt8)pipe buffer:(void *)buf length:(UInt32 *)size;
 
 - (BOOL) usbClearPipeStall: (UInt8) pipe;
 - (BOOL) usbSetAltInterfaceTo:(short)alt testPipe:(short)pipe;	//Sets the alt interface and optionally tests if a pipe exists

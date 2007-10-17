@@ -791,7 +791,7 @@
 //
 // Sends a generic command
 //
-- (BOOL) usbGenericCmd:(IOUSBInterfaceInterface**)intf BRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len 
+- (BOOL) usbGenericCmd:(IOUSBInterfaceInterface**)intf onPipe:(UInt8)pipe BRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len 
 {
     IOReturn err;
     IOUSBDevRequest req;
@@ -801,18 +801,25 @@
     req.wIndex=wIdx; // no need to swap, in host endianness
     req.wLength=len; // no need to swap, in host endianness
     req.pData=buf;
-    if ((!isUSBOK)||(!intf)) return NO;
-    err=(*intf)->ControlRequest(intf,0,&req);
+    
+    if ((!isUSBOK) || (!intf)) 
+        return NO;
+    
+    err = (*intf)->ControlRequest(intf, pipe, &req);
+    
 #if LOG_USB_CALLS
-    NSLog(@"usb command reqType:%i req:%i val:%i idx:%i len:%i ret:%i",bReqType,bReq,wVal,wIdx,len,err);
-    if (len>0) DumpMem(buf,len);
+    NSLog(@"usb command reqType:%i req:%i val:%i idx:%i len:%i ret:%i", bReqType, bReq, wVal, wIdx, len, err);
+    if (len > 0) 
+        DumpMem(buf, len);
 #endif
-    CheckError(err,"usbCmdWithBRequestType");
-    if ((err==kIOUSBPipeStalled)&&(intf)) (*intf)->ClearPipeStall(intf,0);
+    
+    CheckError(err, "usbCmdWithBRequestType");
+    if ((err == kIOUSBPipeStalled) && (intf)) 
+        (*intf)->ClearPipeStall(intf, pipe);
+    
     return (!err);
 }
 
-// remove this soon
 - (BOOL) usbCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len 
 {
     return [self usbControlCmdWithBRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
@@ -824,9 +831,28 @@
 - (BOOL) usbControlCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len 
 {
     if (controlIntf != NULL) 
-        return [self usbGenericCmd:controlIntf BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
+        return [self usbGenericCmd:controlIntf onPipe:0 BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
     else 
-        return [self usbGenericCmd:streamIntf BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
+        return [self usbGenericCmd:streamIntf onPipe:0 BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
+}
+
+//
+// Send a request to the control interface
+//
+- (BOOL) usbControlCmdOnPipe:(UInt8)pipe withBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len 
+{
+    if (controlIntf != NULL) 
+        return [self usbGenericCmd:controlIntf onPipe:pipe BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
+    else 
+        return [self usbGenericCmd:streamIntf onPipe:pipe BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
+}
+
+//
+// Send a request to the control interface
+//
+- (BOOL) usbStreamCmdOnPipe:(UInt8)pipe withBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len 
+{
+    return [self usbGenericCmd:streamIntf onPipe:pipe BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
 }
 
 //
@@ -834,7 +860,7 @@
 //
 - (BOOL) usbStreamCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len 
 {
-    return [self usbGenericCmd:streamIntf BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
+    return [self usbGenericCmd:streamIntf onPipe:0 BRequestType:bReqType bRequest:bReq wValue:wVal wIndex:wIdx buf:buf len:len];
 }
 
 //sends a USB IN|VENDOR|DEVICE command
@@ -877,12 +903,40 @@
                                     len:len];
 }
 
+- (BOOL) usbControlWritePipe:(UInt8)pipe buffer:(void *)buf length:(UInt32)size
+{
+    IOReturn err = (*controlIntf)->WritePipe(controlIntf, pipe, buf, size);
+    
+    return (err) ? NO : YES;
+}
+
+- (BOOL) usbControlReadPipe:(UInt8)pipe buffer:(void *)buf length:(UInt32 *)size
+{
+    IOReturn err = (*controlIntf)->ReadPipe(controlIntf, pipe, buf, size);
+    
+    return (err) ? NO : YES;
+}
+
+- (BOOL) usbStreamWritePipe:(UInt8)pipe buffer:(void *)buf length:(UInt32)size
+{
+    IOReturn err = (*streamIntf)->WritePipe(streamIntf, pipe, buf, size);
+    
+    return (err) ? NO : YES;
+}
+
+- (BOOL) usbStreamReadPipe:(UInt8)pipe buffer:(void *)buf length:(UInt32 *)size
+{
+    IOReturn err = (*streamIntf)->ReadPipe(streamIntf, pipe, buf, size);
+    
+    return (err) ? NO : YES;
+}
+
 // returns OK?
 - (BOOL) usbClearPipeStall: (UInt8) pipe
 {
     IOReturn ret;
     
-    ret = (*controlIntf)->ClearPipeStall(controlIntf, pipe);
+    ret = (*streamIntf)->ClearPipeStall(streamIntf, pipe);
     
     return (ret == kIOReturnSuccess) ? YES : NO;
 }
@@ -974,6 +1028,9 @@
     
     for (alt = 0; alt <= numAltInterfaces; alt++) 
     {
+        maxPacketSizeList[alt] = 0;
+        maxPacketSizePipe[alt] = 0;
+
 #if DEBUG
         printf("Trying alt %d, ", alt);
 #endif
@@ -1060,8 +1117,11 @@
                     
                     if (direction == kUSBIn && transferType == kUSBIsoc) 
                     {
-                        maxPacketSizeList[alt] = maxPacketSize;
-                        maxPacketSizePipe[alt] = pipe;
+                        if (maxPacketSizeList[alt] < maxPacketSize) 
+                        {
+                            maxPacketSizeList[alt] = maxPacketSize;
+                            maxPacketSizePipe[alt] = pipe;
+                        }
                         
                         if (maxBandWidthPS < maxPacketSize) 
                         {
