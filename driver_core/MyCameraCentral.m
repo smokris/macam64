@@ -317,6 +317,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[PAC7311Driver class]];
     
     [self registerCameraDriver:[MR97311Driver class]];
+    [self registerCameraDriver:[MR97310Driver class]];
     
     [self registerCameraDriver:[M560xDriver class]];
     

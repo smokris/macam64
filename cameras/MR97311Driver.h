@@ -36,6 +36,18 @@
 - (void) setIsocFrameFunctions;
 - (BOOL) setGrabInterfacePipe;
 
+@end
+
+
+@interface MR97310Driver : MR97311Driver 
+{
+}
+
++ (NSArray *) cameraUsbDescriptions;
+
+- (id) initWithCentral: (id) c;
+- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer;
+
 // dual-mode, download pictures?
 // more to come here
 

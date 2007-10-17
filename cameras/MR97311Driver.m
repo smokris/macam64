@@ -40,28 +40,6 @@
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
             @"Pcam (MR97311)", @"name", NULL], 
         
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_TRUST_SPYCAM_100], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_AIPTEK], @"idVendor",
-            @"Trust Spycam 100 (MR97310A)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PENCAM_VGA_PLUS], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_AIPTEK], @"idVendor",
-            @"Aiptek Pencam VGA+ or Maxcell Webcam (MR97310A)", @"name", NULL], 
-        
-        // MR97310A is like STV0680? from mr97310 sourceforge project // unlikely
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_MR97310_TYPE_A], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"Small Generic Camera (MR97310 id 0x010e)", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_MR97310_TYPE_B], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"Vivicam 55 or similar (MR97310 id 0x010f)", @"name", NULL], 
-        
         // more???
         
         NULL];
@@ -230,6 +208,64 @@ IsocFrameResult  mr97311FrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 - (BOOL) setGrabInterfacePipe
 {
     return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:8];
+}
+
+
+@end
+
+
+@implementation MR97310Driver
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_TRUST_SPYCAM_100], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_AIPTEK], @"idVendor",
+            @"Trust Spycam 100 (MR97310A)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_PENCAM_VGA_PLUS], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_AIPTEK], @"idVendor",
+            @"Aiptek Pencam VGA+ or Maxcell Webcam (MR97310A)", @"name", NULL], 
+        
+        // MR97310A is like STV0680? from mr97310 sourceforge project // unlikely
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_MR97310_TYPE_A], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
+            @"Small Generic Camera (MR97310 id 0x010e)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_MR97310_TYPE_B], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
+            @"Vivicam 55 or similar (MR97310 id 0x010f)", @"name", NULL], 
+        
+        // more???
+        
+        NULL];
+}
+
+//
+// Initialize the driver
+//
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->cameratype = -1;
+    
+    compressionType = proprietaryCompression;
+    
+	return self;
+}
+
+
+- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer
+{
 }
 
 /***** Still Camera Functionality *****/
