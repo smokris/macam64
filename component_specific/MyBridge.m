@@ -183,7 +183,9 @@
 
 - (BOOL) compressionDoneTo:(unsigned char **)data		//Returns if grabOneFrameCompressedAsync has finished
                       size:(long*)size
-                similarity:(UInt8*)similarity {
+                similarity:(UInt8*)similarity 
+                      time:(struct timeval *)time
+{
     BOOL ok=NO;
     if (clientImagePending) return NO;		//fast skip without lock
     [stateLock lock];				//mutex
@@ -195,6 +197,7 @@
             if (*data) {
                 if (size) *size=[scaler destinationDataSize];
                 if (similarity) *similarity=0;
+                if (time) *time = grabBuffers[clientBufferIdx].tv;
                 ok=YES;
             }
         }
@@ -535,7 +538,10 @@
     [stateLock lock];	 			//mutex
     if (driver==cam) {
         if ([driver imageBuffer]) {
-            if (clientImagePending) {
+            if (clientImagePending) 
+            {
+                grabBuffers[driverBufferIdx].tv = [driver imageBufferTimeVal];
+                
                 clientBufferIdx=driverBufferIdx;
                 clientImagePending=NO;
                 driverBufferIdx=(driverBufferIdx+1)%NUM_BRIDGE_GRAB_BUFFERS;
