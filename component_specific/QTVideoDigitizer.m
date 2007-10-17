@@ -20,6 +20,7 @@
 
 #import "MyCameraCentral.h"
 
+#include "sys/time.h"
 #include "Resolvers.h"
 #include "MiscTools.h"
 
@@ -597,23 +598,62 @@ pascal VideoDigitizerError vdigCompressOneFrameAsync(vdigGlobals storage) {
     return badCallOrderErr;
 }
 
-pascal VideoDigitizerError vdigCompressDone(vdigGlobals storage,Boolean* done,Ptr* theData,long* dataSize,
-                                            UInt8* similarity,TimeRecord* t) {
+pascal VideoDigitizerError vdigCompressDone(vdigGlobals storage, Boolean * done,
+                                            Ptr * theData, long * dataSize,
+                                            UInt8 * similarity, TimeRecord * t) 
+{
     unsigned char * myData;
     long mySize;
     UInt8 mySimilarity;
-    if (!done) return qtParamErr;
-    if (!((**storage).compressionEnabled)) return badCallOrderErr;
+    struct timeval myTime, currentTime, difference;
+    UInt32 delta;
+    
+    if (!done) 
+        return qtParamErr;
+    
+    if (!((**storage).compressionEnabled)) 
+        return badCallOrderErr;
+    
     OSXYieldToAnyThread();
-    if ([(**storage).bridge compressionDoneTo:&myData size:&mySize similarity:&mySimilarity]) {
-        *done=true;
-        if (theData) *theData = (Ptr) myData;
-        if (dataSize) *dataSize=mySize;
-        if (similarity) *similarity=mySimilarity;
-        if ((t)&&((**storage).timeBase)) {
-            GetTimeBaseTime((**storage).timeBase,600,t);	//This is no accurate time, but there are more serious problems
+    
+    if ([(**storage).bridge compressionDoneTo:&myData size:&mySize similarity:&mySimilarity time:&myTime]) 
+    {
+        *done = true;
+        
+        if (theData) 
+            *theData = (Ptr) myData;
+        
+        if (dataSize) 
+            *dataSize = mySize;
+        
+        if (similarity) 
+            *similarity = mySimilarity;
+        
+        if ((t) && ((**storage).timeBase)) 
+        {
+            GetTimeBaseTime((**storage).timeBase, 600, t);
+            
+            if (timerisset(&myTime)) 
+            {
+                gettimeofday(&currentTime, NULL);
+                timersub(&currentTime, &myTime, &difference);
+#if REALLY_VERBOSE
+                NSLog(@"Video frame delay = %d ms.\n", (int) (difference.tv_sec * 1000 + difference.tv_usec / 1000));
+#endif
+                delta = 600 * (difference.tv_sec * 1000000 + difference.tv_usec) / 1000000;
+                if (t->value.lo < delta) 
+                {
+                    t->value.hi -= 1;
+                    t->value.lo += (0xFFFFFFFF - delta + 1);
+                }
+                else 
+                    t->value.lo -= delta;
+            }
         }
-    } else *done=false;
+    } 
+    else 
+        *done = false;
+    
     return 0;
 }
 
