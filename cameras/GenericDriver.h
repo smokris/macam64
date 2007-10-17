@@ -67,6 +67,7 @@ typedef enum CompressionType
     jpegCompression,
     quicktimeImage,
     quicktimeSequence,
+    gspcaCompression,
     proprietaryCompression,
 } CompressionType;
 
@@ -80,14 +81,24 @@ typedef enum IsocFrameResult
     newChunkFrame
 } IsocFrameResult;
 
+typedef struct GenericFrameInfo
+{
+    int averageLuminance;
+    int averageLuminanceSet;
+    int averageBlueGreen;
+    int averageBlueGreenSet;
+    int averageRedGreen;
+    int averageRedGreenSet;
+} GenericFrameInfo;
+
 // The scanner is just a placeholder whereas the copier is fully usable
 
-IsocFrameResult  genericIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, UInt32 * dataStart, UInt32 * dataLength, UInt32 * tailStart, UInt32 * tailLength);
+IsocFrameResult  genericIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, UInt32 * dataStart, UInt32 * dataLength, UInt32 * tailStart, UInt32 * tailLength, GenericFrameInfo * frameInfo);
 int  genericIsocDataCopier(void * destination, const void * source, size_t length, size_t available);
 
 // Other versions can be added here in case of commonalities
 
-IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, UInt32 * dataStart, UInt32 * dataLength, UInt32 * tailStart, UInt32 * tailLength);
+IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, UInt32 * dataStart, UInt32 * dataLength, UInt32 * tailStart, UInt32 * tailLength, GenericFrameInfo * frameInfo);
 
 // ...
 
@@ -103,6 +114,7 @@ typedef struct GenericChunkBuffer
 {
     unsigned char * buffer; // The raw data for an image, it will need to be decoded in various ways
     long numBytes;          // The amount of valid data filled in so far
+	struct timeval tv;      // The one to use for synchronization purposes
 	struct timeval tvStart;
 	struct timeval tvDone;
 } GenericChunkBuffer;
@@ -122,7 +134,7 @@ typedef struct GenericGrabContext
     
     // function pointers for scanning the frames, different cameras have different frame information
     
-    IsocFrameResult (* isocFrameScanner)(IOUSBIsocFrame * frame, UInt8 * buffer, UInt32 * dataStart, UInt32 * dataLength, UInt32 * tailStart, UInt32 * tailLength);
+    IsocFrameResult (* isocFrameScanner)(IOUSBIsocFrame * frame, UInt8 * buffer, UInt32 * dataStart, UInt32 * dataLength, UInt32 * tailStart, UInt32 * tailLength, GenericFrameInfo * frameInfo);
     int (* isocDataCopier)(void * destination, const void * source, size_t length, size_t available);
     
     UInt64 initiatedUntil;		  // The next USB frame number to initiate a transfer for
@@ -141,6 +153,8 @@ typedef struct GenericGrabContext
     short numEmptyBuffers;		  // The number of empty (ready-to-fill) buffers in the array above
     short numFullBuffers;		  // The number of full (ready-to-decode) buffers in the array above
     bool  fillingChunk;			  // (true) if we're currently filling a buffer
+    
+    GenericFrameInfo frameInfo;   // Use this to get more information from the frame scanner
     
 //  ImageType imageType;          // Is it Bayer, JPEG or something else?
 } GenericGrabContext;
@@ -214,6 +228,7 @@ typedef struct GenericGrabContext
 - (BOOL) setupJpegVersion2;
 - (BOOL) setupQuicktimeImageCompression;
 - (BOOL) setupQuicktimeSequenceCompression;
+- (void) cleanupDecoding;
 
 - (void) decodeBufferCocoaJPEG: (GenericChunkBuffer *) buffer;
 - (void) decodeBufferQuicktimeImage: (GenericChunkBuffer *) buffer;
@@ -233,6 +248,7 @@ typedef struct GenericGrabContext
 - (BOOL) canSetHue;
 - (BOOL) canSetSharpness;
 - (void) setSharpness: (float) v;
+- (BOOL) canSetHFlip;
 - (BOOL) canSetFlicker;
 - (BOOL) canSetWhiteBalanceMode;
 - (BOOL) canSetWhiteBalanceModeTo: (WhiteBalanceMode) newMode;
@@ -245,6 +261,8 @@ typedef struct GenericGrabContext
 // specificIsocDataCopier()   // The existing version should work for most
 // specificIsocFrameScanner() // If a suitable one does not already exist
 - (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;  // Works for JPEG anyway
+- (void) decodeBufferJPEG: (GenericChunkBuffer *) buffer;
+- (void) decodeBufferGSPCA: (GenericChunkBuffer *) buffer;
 - (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer;
 
 #pragma mark -> Subclass Must Implement! (Mostly stub implementations) <-
