@@ -25,8 +25,12 @@
 
 #import "SPCA5XXDriver.h"
 
+#include "gspcadecoder.h"
 #include "MiscTools.h"
 #include <unistd.h>
+
+
+void spca5xx_initDecoder(struct usb_spca50x * spca50x);
 
 
 @implementation SPCA5XXDriver
@@ -152,6 +156,12 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 	if (self == NULL) 
         return NULL;
     
+    LUT = [[LookUpTable alloc] init];
+	if (LUT == NULL) 
+        return NULL;
+    
+    orientation = NormalOrientation;
+    
     spca50x = (struct usb_spca50x *) malloc(sizeof(struct usb_spca50x));
     spca50x->dev = (struct usb_device *) malloc(sizeof(struct usb_device));
     spca50x->dev->driver = self;
@@ -164,7 +174,8 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
-    compressionType = proprietaryCompression;  // Remove this eventually, when all subclasses work properly
+    compressionType = gspcaCompression;
+    spca50x->cameratype = -1; // Not yet defined
     
     return self;
 }
@@ -240,6 +251,7 @@ short SPCA5xxResolution(CameraResolution res)
     
     if (spca50x->mode_cam[mode].width == WidthOfResolution(res) && 
         spca50x->mode_cam[mode].height == HeightOfResolution(res) && 
+        spca50x->mode_cam[mode].method == 0 && 
         spca50x->mode_cam[mode].pipe > 0) 
         return YES;
     
@@ -371,6 +383,94 @@ short SPCA5xxResolution(CameraResolution res)
 }
 
 
+- (BOOL) setupDecoding 
+{
+    if (compressionType == gspcaCompression) 
+    {
+        int i;
+        short rawWidth  = [self width];
+        short rawHeight = [self height];
+        
+        spca5xx_initDecoder(spca50x);
+        
+        spca50x->frame->width = rawWidth;
+        spca50x->frame->height = rawHeight;
+        spca50x->frame->hdrwidth = rawWidth;
+        spca50x->frame->hdrheight = rawHeight;
+        
+        spca50x->frame->decoder = &spca50x->maindecode;
+        
+        spca50x->frame->pictsetting.change = 0x10; // possibly 0x01
+        
+        spca50x->frame->pictsetting.gamma = 3;
+        spca50x->frame->pictsetting.force_rgb = 1;
+        
+        spca50x->frame->pictsetting.GRed = 256;
+        spca50x->frame->pictsetting.OffRed = 0;
+        spca50x->frame->pictsetting.GGreen = 256;
+        spca50x->frame->pictsetting.OffGreen = 0;
+        spca50x->frame->pictsetting.GBlue = 256;
+        spca50x->frame->pictsetting.OffBlue = 0;
+        
+        for (i = 0; i < 256; i++) 
+        {
+            spca50x->frame->decoder->Red[i] = i;
+            spca50x->frame->decoder->Green[i] = i;
+            spca50x->frame->decoder->Blue[i] = i;
+        }
+        
+        spca50x->frame->cameratype = spca50x->cameratype;
+        
+        spca50x->frame->format = VIDEO_PALETTE_RGB24;
+        
+        spca50x->frame->cropx1 = 0;
+        spca50x->frame->cropx2 = 0;
+        spca50x->frame->cropy1 = 0;
+        spca50x->frame->cropy2 = 0;
+        
+        return YES;
+    }
+    else 
+        return [super setupDecoding];
+}
+
+
+- (void) decodeBufferGSPCA: (GenericChunkBuffer *) buffer
+{
+    int error;
+    short rawHeight = [self height];
+    
+    spca50x->frame->data = nextImageBuffer;
+    spca50x->frame->tmpbuffer = buffer->buffer;
+    spca50x->frame->scanlength = buffer->numBytes;
+    
+    memcpy(spca50x->frame->data, spca50x->frame->tmpbuffer, spca50x->frame->scanlength);
+    
+    // do decoding
+    
+    error = spca50x_outpicture(spca50x->frame);
+
+    if (error != 0) 
+    {
+        printf("There was an error in the decoding (%d).\n", error);
+    }
+    
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP orientation:orientation];
+}
+
+
+- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+{
+    if (grabContext.frameInfo.averageLuminanceSet) 
+    {
+        spca50x->avg_lum = grabContext.frameInfo.averageLuminance;
+        grabContext.frameInfo.averageLuminanceSet = 0;
+    }
+    
+    [super decodeBuffer:buffer];
+}
+
+
 // The following may be subclassed if necessary
 #pragma mark ----- SPCA5XX Specific -----
 
@@ -483,7 +583,7 @@ short SPCA5xxResolution(CameraResolution res)
     if (cameraOperation != NULL) 
     {
         spca50x->autoexpo = ([self isAutoGain]) ? 1 : 0;
-        (*cameraOperation->set_autobright)(spca50x);
+        (*cameraOperation->set_autobright)(spca50x); // may need to be called regularly!
         
 #if VERBOSE
         printf("called the spca50x->set-autobright with spca50x->autoexpo = %d\n", spca50x->autoexpo);
@@ -547,6 +647,37 @@ void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index,
                                wIndex:index 
                                   buf:buffer 
                                   len:length];
+}
+
+
+int spca5xx_isjpeg(struct usb_spca50x *spca50x)
+{
+    switch(spca50x->cameratype) 
+    {
+        case JPEG:
+        case JPGH:
+        case JPGC:
+        case JPGS:
+        case JPGM:
+        case PJPG:
+            return 1;
+        
+        default:
+            return 0;
+    }
+}
+
+
+void spca5xx_initDecoder(struct usb_spca50x * spca50x)
+{
+	if (spca5xx_isjpeg(spca50x))
+		init_jpeg_decoder(spca50x);
+    
+	if (spca50x->bridge == BRIDGE_SONIX)
+		init_sonix_decoder(spca50x);
+    
+	if (spca50x->bridge == BRIDGE_PAC207)
+		init_pixart_decoder(spca50x);
 }
 
 

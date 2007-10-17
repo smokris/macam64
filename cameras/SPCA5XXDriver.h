@@ -56,6 +56,8 @@ void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index,
 {
     struct usb_spca50x * spca50x;
     struct cam_operation * cameraOperation;
+    
+    OrientationMode orientation;
 }
 
 - (id) initWithCentral:(id) c;
@@ -67,9 +69,18 @@ void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index,
 - (void) setResolution: (CameraResolution) r fps: (short) fr;
 - (void) setBrightness:(float) v;
 - (void) setContrast:(float) v;
+- (BOOL) canSetAutoGain;
+- (void) setAutoGain:(BOOL) v;
+
 - (BOOL) setGrabInterfacePipe;
+- (BOOL) canSetUSBReducedBandwidth;
+
 - (BOOL) startupGrabStream;
 - (void) shutdownGrabStream;
+
+- (BOOL) setupDecoding;
+- (void) decodeBufferGSPCA: (GenericChunkBuffer *) buffer;
+- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 // The following must no longer be implemented by subclasses of the SPCA5XX driver
 // They still *can* be implemented, but they do not have to be.
@@ -181,22 +192,6 @@ struct usb_device
 
 @end
 
-/*
-@interface SPCA508Driver : SPCA501ADriver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA508ADriver : SPCA508Driver 
-{
-    
-}
-
-@end
-*/
 
 @interface SPCA533Driver : SPCA504ADriver 
 {
