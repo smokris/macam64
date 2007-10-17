@@ -283,6 +283,7 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (unsigned char*) imageBuffer;				//last filled image buffer
 - (short) imageBufferBPP;				//last BYTES per pixel
 - (long) imageBufferRowBytes;				//last bytes per image row
+- (struct timeval) imageBufferTimeVal;
 
 //DSC (Digital Still Camera) management - for cameras that can store media / also operate USB-unplugged
 - (BOOL) canStoreMedia;					//If the device supports DSC or similar functions

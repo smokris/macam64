@@ -93,6 +93,7 @@
     lastImageBuffer=NULL;
     lastImageBufferBPP=0;
     lastImageBufferRowBytes=0;
+    timerclear(&lastImageBufferTimeVal);
     nextImageBuffer=NULL;
     nextImageBufferBPP=0;
     nextImageBufferRowBytes=0;
@@ -613,6 +614,11 @@
 
 - (long) imageBufferRowBytes {
     return lastImageBufferRowBytes;
+}
+
+- (struct timeval) imageBufferTimeVal 
+{
+    return lastImageBufferTimeVal;
 }
 
 - (BOOL) canStoreMedia {
