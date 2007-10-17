@@ -422,7 +422,8 @@
 //
 IsocFrameResult  genericIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
                                          UInt32 * dataStart, UInt32 * dataLength, 
-                                         UInt32 * tailStart, UInt32 * tailLength)
+                                         UInt32 * tailStart, UInt32 * tailLength, 
+                                         GenericFrameInfo * frameInfo)
 {
     return invalidFrame;
 }
@@ -515,7 +516,12 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     grabContext.numEmptyBuffers = 0;
     grabContext.fillingChunk = false;
     
-    // Setup JPEG header stuff here in the future
+    grabContext.frameInfo.averageLuminance = 0;
+    grabContext.frameInfo.averageLuminanceSet = 0;
+    grabContext.frameInfo.averageBlueGreen = 0;
+    grabContext.frameInfo.averageBlueGreenSet = 0;
+    grabContext.frameInfo.averageRedGreen = 0;
+    grabContext.frameInfo.averageRedGreenSet = 0;
     
     // Setup things that have to be set back if init fails
     
@@ -716,7 +722,7 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
             frameBase = gCtx->transferContexts[transferIdx].buffer + gCtx->bytesPerFrame * i; // Is this right? It assumes possibly non-contiguous writing, if actual count < requested count [yes, seems to work, look at USB spec?]
             
             IsocFrameResult frameResult = (*gCtx->isocFrameScanner)(&myFrameList[i], frameBase, 
-                                                &dataStart, &dataLength, &tailStart, &tailLength);
+                                                &dataStart, &dataLength, &tailStart, &tailLength, &gCtx->frameInfo);
             
             if (frameResult == invalidFrame || myFrameList[i].frActCount == 0) 
             {
@@ -787,6 +793,7 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
                 [gCtx->chunkListLock unlock];			// Free access to the chunk buffers
 				
 				gettimeofday(&gCtx->fillingChunkBuffer.tvStart, NULL); // set the time of the buffer
+                gCtx->fillingChunkBuffer.tv = gCtx->fillingChunkBuffer.tvStart;
             }
             // else // validFrame 
             
@@ -910,6 +917,9 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
         
         [grabContext.chunkListLock lock];
         
+        gettimeofday(&grabContext.fillingChunkBuffer.tvDone, NULL); // set the time of the buffer
+        grabContext.fillingChunkBuffer.tv = grabContext.fillingChunkBuffer.tvDone;
+        
         for (j = grabContext.numFullBuffers - 1; j >= 0; j--) 
             grabContext.fullChunkBuffers[j + 1] = grabContext.fullChunkBuffers[j];
         
@@ -976,6 +986,8 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
     
     if (shouldBeGrabbing) 
     {
+        gettimeofday(&grabContext.fillingChunkBuffer.tvStart, NULL); // set the time of the buffer
+        
         err = ((IOUSBInterfaceInterface182*) (*streamIntf))->ReadPipeAsyncTO(streamIntf, [self getGrabbingPipe],
                                                                     grabContext.fillingChunkBuffer.buffer,
                                                                     grabContext.chunkBufferLength, 1000, 2000,
@@ -1119,6 +1131,10 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
             printf("QuickTime sequence-based decoding is being used.\n");
 #endif
             ok = [self setupQuicktimeSequenceCompression];
+            break;
+            
+        case gspcaCompression:
+            ok = YES;
             break;
             
         case proprietaryCompression:
@@ -1493,13 +1509,20 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
                 [imageBufferLock lock]; // Lock image buffer access
                 
                 if (nextImageBuffer != NULL) 
+                {
+                    // decode start time
                     decodingOK = [self decodeBuffer:&currentBuffer]; // Into nextImageBuffer
+                    // decode end time
+                }
                 
                 if (decodingOK) 
                 {
                     lastImageBuffer = nextImageBuffer; // Copy nextBuffer info into lastBuffer
                     lastImageBufferBPP = nextImageBufferBPP;
                     lastImageBufferRowBytes = nextImageBufferRowBytes;
+                    
+                    lastImageBufferTimeVal = currentBuffer.tv;
+                    
                     nextImageBufferSet = NO;  // nextBuffer has been eaten up
                 }
                 
@@ -1648,6 +1671,11 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     NSLog(@"Oops: [decodeBufferJPEG] needs to be implemented in current driver!");
 }
 
+- (void) decodeBufferGSPCA: (GenericChunkBuffer *) buffer
+{
+    NSLog(@"Oops: [decodeBufferGSPCA] needs to be implemented in current driver!");
+}
+
 - (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer
 {
     NSLog(@"Oops: [decodeBufferProprietary] needs to be implemented in current driver!");
@@ -1705,6 +1733,10 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     else if (compressionType == noCompression) 
     {
         // ???
+    }
+    else if (compressionType == gspcaCompression) 
+    {
+        [self decodeBufferGSPCA:&newBuffer];
     }
     else if (compressionType == proprietaryCompression) 
     {
