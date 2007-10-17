@@ -564,8 +564,9 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
         else 
 		{
             grabContext.numEmptyBuffers = i + 1;
-			gettimeofday(&(grabContext.emptyChunkBuffers[i].tvStart), NULL); // initialize the time to something
-			gettimeofday(&grabContext.emptyChunkBuffers[i].tvDone, NULL); // initialize the time to something
+            timerclear(&(grabContext.emptyChunkBuffers[i].tv));
+            timerclear(&(grabContext.emptyChunkBuffers[i].tvStart));
+            timerclear(&(grabContext.emptyChunkBuffers[i].tvDone));
 		}
     }
     
@@ -1491,13 +1492,20 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
         
         while (shouldBeGrabbing && (grabContext.numFullBuffers > 0)) 
         {
+            int j;
             GenericChunkBuffer currentBuffer;   // The buffer to decode
             
             // Get a full buffer
             
             [grabContext.chunkListLock lock];   // Get access to the buffer lists
             grabContext.numFullBuffers--;       // There's always one since no one else can empty it completely
-            currentBuffer = grabContext.fullChunkBuffers[grabContext.numFullBuffers];
+            
+//          currentBuffer = grabContext.fullChunkBuffers[grabContext.numFullBuffers];  // Grab oldest
+            
+            currentBuffer = grabContext.fullChunkBuffers[0];  // Grab newest
+            for (j = 0; j < grabContext.numFullBuffers; j++) 
+                grabContext.fullChunkBuffers[j] = grabContext.fullChunkBuffers[j + 1];
+            
             [grabContext.chunkListLock unlock]; // Release access to the buffer lists
             
             // Do the decoding
