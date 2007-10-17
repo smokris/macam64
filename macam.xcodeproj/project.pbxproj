@@ -2619,7 +2619,7 @@
 					"DEBUG=1",
 					"EXPERIMENTAL=1",
 					"LOG_USB_CALLS=0",
-					"LOG_QT_CALLS=1",
+					"LOG_QT_CALLS=0",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_LDFLAGS = "";
