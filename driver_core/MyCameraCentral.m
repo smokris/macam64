@@ -262,8 +262,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
 //  [self registerCameraDriver:[MyPixartDriver class]]; // Deprecated in favor of PixartDriver - has problems
 //  [self registerCameraDriver:[PixartDriver class]];   // Disabled because working on SPCA5XX-based version instead
 #if EXPERIMENTAL
-    [self registerCameraDriver:[SPCA525Driver class]];
-    [self registerCameraDriver:[PAC7311Driver class]];
+    [self registerCameraDriver:[SPCA525Driver class]];    
 //  [self registerCameraDriver:[OV518Driver class]];
 //  [self registerCameraDriver:[OV518PlusDriver class]];
 #endif
@@ -314,6 +313,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SN9CxxxDriverVariant9 class]];
     
     [self registerCameraDriver:[PicoDriver class]];
+    
+    [self registerCameraDriver:[PAC7311Driver class]];
     
     [self registerCameraDriver:[MR97311Driver class]];
     
