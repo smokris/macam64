@@ -26,7 +26,6 @@
 #import "PAC207Driver.h"
 
 #include "USB_VendorProductIDs.h"
-#include "gspcadecoder.h"
 
 
 @implementation PAC207Driver
@@ -242,20 +241,16 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
 	if (self == NULL) 
         return NULL;
     
-    bayerConverter = [[BayerConverter alloc] init];
-	if (bayerConverter == NULL) 
-        return NULL;
-    
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
-    MALLOC(decodingBuffer, UInt8 *, 356 * 292 + 1000, "decodingBuffer");
-    
-    compressionType = proprietaryCompression;
-    
-    init_pixart_decoder(spca50x);
-    
     cameraOperation = &fpac207;
+    
+    spca50x->cameratype = PGBRG;
+    spca50x->bridge = BRIDGE_PAC207;
+    spca50x->sensor = SENSOR_PAC207;
+    
+    compressionType = gspcaCompression;
     
 	return self;
 }
@@ -284,12 +279,6 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
     }
 }
 
-
-- (BOOL) canSetUSBReducedBandwidth
-{
-    return YES;
-}
-
 //
 // Returns the pipe used for grabbing
 //
@@ -305,8 +294,6 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
 - (BOOL) setGrabInterfacePipe
 {
     return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:8];
-    
-    //  return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
 }
 
 //
@@ -318,26 +305,11 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
-
-- (CameraError) spca5xx_start
-{
-    CameraError error = [super spca5xx_start];
-    
-    [self spca5xx_setbrightness];
-    [self spca5xx_setcontrast];
-    
-    return error;
-}
-
-- (CameraError) spca5xx_setAutobright
-{
-    return CameraErrorUnimplemented;
-}
-
+/*
 //
 // other stuff, including decompression
 //
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBufferProprietary: (GenericChunkBuffer *) buffer
 {
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
@@ -367,5 +339,6 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
     
     return YES;
 }
+*/
 
 @end

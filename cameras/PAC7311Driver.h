@@ -1,8 +1,8 @@
 //
-//  PAC7311.h
+//  PAC7311Driver.h
 //
 //  macam - webcam app and QuickTime driver component
-//  PAC7311 - driver for PixArt PAC7311 single chip VGA webcam solution
+//  PAC7311Driver - driver for PixArt PAC7311 single chip VGA webcam solution
 //
 //  Created by HXR on 1/15/06.
 //  Copyright (C) 2006 HXR (hxr@users.sourceforge.net) and Roland Schwemmer (sharoz@gmx.de).
@@ -23,31 +23,18 @@
 //
 
 
-#import <GenericDriver.h>
+#import <SPCA5XXDriver.h>
 
 
-@interface PAC7311Driver : GenericDriver 
+@interface PAC7311Driver : SPCA5XXDriver 
 {
-    UInt32 skipBytes;
 }
 
 + (NSArray *) cameraUsbDescriptions;
 
 - (id) initWithCentral: (id) c;
-
-- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
-- (CameraResolution) defaultResolutionAndRate: (short *) rate;
-
-//- (void) setBrightness: (float) v;
-//- (void) setContrast: (float) v;
-
 - (UInt8) getGrabbingPipe;
 - (BOOL) setGrabInterfacePipe;
 - (void) setIsocFrameFunctions;
-
-- (BOOL) startupGrabStream;
-- (void) shutdownGrabStream;
-
-- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer;
 
 @end

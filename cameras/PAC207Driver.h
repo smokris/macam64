@@ -28,17 +28,14 @@
 
 @interface PAC207Driver : SPCA5XXDriver 
 {
-	UInt8 * decodingBuffer;
 }
 
 + (NSArray *) cameraUsbDescriptions;
 
 - (id) initWithCentral: (id) c;
-//- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
+- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
 - (UInt8) getGrabbingPipe;
 - (BOOL) setGrabInterfacePipe;
 - (void) setIsocFrameFunctions;
-- (CameraError) spca5xx_start;
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
