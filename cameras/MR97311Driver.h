@@ -28,18 +28,15 @@
 
 @interface MR97311Driver : SPCA5XXDriver 
 {
-	UInt8 * decodingBuffer;
 }
 
 + (NSArray *) cameraUsbDescriptions;
 
 - (id) initWithCentral: (id) c;
-- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
 - (void) setIsocFrameFunctions;
 - (BOOL) setGrabInterfacePipe;
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 // dual-mode, download pictures?
-
+// more to come here
 
 @end
