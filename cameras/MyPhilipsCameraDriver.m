@@ -361,6 +361,7 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                         grabContext->chunkList[grabContext->currCompleteChunks].start=grabContext->currentChunkStart;	//insert new chunk
                         grabContext->chunkList[grabContext->currCompleteChunks].end=
                             grabContext->transferContexts[transferIdx].bufferOffset+i*grabContext->bytesPerFrame+currFrameLength;
+                        gettimeofday(&(grabContext->chunkList[grabContext->currCompleteChunks].tv), NULL);
                         grabContext->currCompleteChunks++;
                         [grabContext->chunkListLock unlock];		//exit critical section
                     } else {						//broken frame -> drop
@@ -535,6 +536,7 @@ static bool StartNextIsochRead(PhilipsGrabContext* grabContext, int transferIdx)
                 lastImageBuffer=nextImageBuffer;			//Copy nextBuffer info into lastBuffer
                 lastImageBufferBPP=nextImageBufferBPP;
                 lastImageBufferRowBytes=nextImageBufferRowBytes;
+                lastImageBufferTimeVal=currChunk.tv;
                 nextImageBufferSet=NO;				//nextBuffer has been eaten up
                 [imageBufferLock unlock];				//release lock
                 [self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer

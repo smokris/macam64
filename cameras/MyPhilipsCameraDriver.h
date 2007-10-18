@@ -90,6 +90,7 @@ Doing these amounts of defines is often called bad style. We should find a bette
 typedef struct PhilipsCompleteChunk {	//The description of a ready-to-decode chunk
     long start;			//start offset in grabBuffer
     long end;			//end offset in grabBuffer
+    struct timeval tv;
 } PhilipsCompleteChunk;
 
 typedef struct PhilipsTransferContext {//Everything a usb completion callback need to know
