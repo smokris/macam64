@@ -88,11 +88,16 @@
         return NULL;
     
     or
-        
-        LUT = [[LookUpTable alloc] init];
+    */
+    
+    LUT = [[LookUpTable alloc] init];
 	if (LUT == NULL) 
         return NULL;
-    */
+    
+    compressionType = jpegCompression;
+    jpegVersion = 8;
+//    compressionType = quicktimeImage;
+//    quicktimeCodec = JpegACodec;
     
     // Allocate memory
     // Initialize variable and other structures
@@ -116,10 +121,11 @@
 	probe.bFrameIndex = 0; // frame->bFrameIndex;
 	probe.dwFrameInterval = 0; // uvc_try_frame_interval(frame, interval);
     
-//  [self getVideoControl:&probe probe:YES request:GET_DEF];
-
+    [self getVideoControl:&probe probe:YES request:GET_DEF];
+    [self printVideoControl:&probe title:"probe - GET-DEF"]  ;
+    
     if ([self setVideoControl:&probe probe:YES]) 
-        [self printVideoControl:&probe title:"probe"]  ;
+        [self printVideoControl:&probe title:"probe - SET"]  ;
     
     if ([self getVideoControl:&min probe:YES request:GET_MIN]) 
         [self printVideoControl:&min title:"min"];
@@ -131,6 +137,7 @@
         [self printVideoControl:&control title:"default"];
     
     [self setVideoControl:&control probe:NO];
+    [self printVideoControl:&control title:"default - SET"];
 }
 
 //
@@ -140,8 +147,8 @@
 {
     switch (res) 
     {
-        case ResolutionCIF:
-            if (rate > 18) 
+        case ResolutionQSIF:
+            if (rate > 30) 
                 return NO;
             return YES;
             break;
@@ -159,7 +166,7 @@
 	if (rate) 
         *rate = 5;
     
-	return ResolutionCIF;
+	return ResolutionQSIF;
 }
 
 //
@@ -213,6 +220,7 @@ IsocFrameResult  spca525IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     *tailLength = 0;
     
 #ifdef REALLY_VERBOSE
+    if (frameLength > 12000) 
     printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
             buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7], 
             buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
@@ -232,8 +240,10 @@ IsocFrameResult  spca525IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         *tailLength = frameLength - *tailStart;
         
 #ifdef REALLY_VERBOSE
+        if (0) 
         printf("New image start!\n");
 #endif
+        
         return newChunkFrame;
     }
     
@@ -321,7 +331,7 @@ IsocFrameResult  spca525IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	int   size;
 	UInt8 buffer[34];
     
-    size = 34;
+    size = 26;
     
     if (![self queryUVC:request probe:probeVal buffer:buffer length:size])
     {
@@ -391,12 +401,12 @@ IsocFrameResult  spca525IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     UInt8  direction = (request & 0x80) ? kUSBIn : kUSBOut;
     UInt16 probeValue = (probeVal ? VS_PROBE_CONTROL : VS_COMMIT_CONTROL) << 8;
-    UInt16 indexValue = 1 << 8 | 0; // unit << 8 | interface-number
+    UInt16 probeIndex = 0 << 8 | 1; // unit << 8 | interface-number
     
-    return [self usbControlCmdWithBRequestType:USBmakebmRequestType(direction, kUSBClass, kUSBDevice)
+    return [self usbControlCmdWithBRequestType:USBmakebmRequestType(direction, kUSBClass, kUSBInterface)
                                bRequest:request
                                  wValue:probeValue
-                                 wIndex:indexValue
+                                 wIndex:probeIndex
                                     buf:buffer
                                     len:length];
 }
