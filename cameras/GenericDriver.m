@@ -1705,8 +1705,12 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     printf("decoding a chunk with %ld bytes\n", buffer->numBytes);
     if (0) 
     {
-        int b;
-        for (b = 0; b < 256; b += 8) 
+        int b = 0;
+        printf("buffer[%3d..%3d] = 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", b, b+7, buffer->buffer[b+0], buffer->buffer[b+1], buffer->buffer[b+2], buffer->buffer[b+3], buffer->buffer[b+4], buffer->buffer[b+5], buffer->buffer[b+6], buffer->buffer[b+7]);
+        b = buffer->numBytes - 8;
+        printf("buffer[%3d..%3d] = 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", b, b+7, buffer->buffer[b+0], buffer->buffer[b+1], buffer->buffer[b+2], buffer->buffer[b+3], buffer->buffer[b+4], buffer->buffer[b+5], buffer->buffer[b+6], buffer->buffer[b+7]);
+
+        for (b = 0; b < buffer->numBytes; b += 8) 
             printf("buffer[%3d..%3d] = 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", b, b+7, buffer->buffer[b+0], buffer->buffer[b+1], buffer->buffer[b+2], buffer->buffer[b+3], buffer->buffer[b+4], buffer->buffer[b+5], buffer->buffer[b+6], buffer->buffer[b+7]);
     }
 #endif
