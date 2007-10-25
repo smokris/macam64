@@ -24,6 +24,59 @@
 //
 
 
+/*
+USB\VID_0c45 and PID_6005       ; SN9C101 + TAS5110
+USB\VID_0c45 and PID_6009       ; SN9C101 + PAS106 
+
+USB\VID_0c45 and PID_6024       ; SN9C102 + TAS5130
+USB\VID_0c45 and PID_6025       ; SN9C102 + TAS5130
+USB\VID_0c45 and PID_6025  Mi_00; sn9c103 + TAS5130   ???? see sn9c102 ???
+USB\VID_0c45 and PID_6027       ; sn9c101 + OV7630
+USB\VID_0c45 and PID_6028       ; SN9C102 + PAS202 
+USB\VID_0c45 and PID_6029       ; SN9C102 + PAS106 
+USB\VID_0c45 and PID_602a       ; SN9C101 + HV7131 D/E
+USB\VID_0c45 and PID_602c       ; SN9C102 + OV7630
+USB\VID_0c45 and PID_602d       ; SN9C101 + HV7131 R
+
+USB\VID_0c45 and PID_6030       ; SN9C102 + MI0343 MI0360
+USB\VID_0c45 and PID_603f       ; SN9C101 + CISVF10
+
+USB\VID_0c45 and PID_6040       ; SN9C102P + MI0360
+
+USB\VID_0c45 and PID_607a       ; SN9C102P + OV7648
+USB\VID_0c45 amd PID_607c       ; SN9C102P + HV7131R
+USB\VID_0c45 and PID_607e       ; SN9C102P + OV7630
+
+USB\VID_0c45 and PID_6082  Mi_00; sn9c103 + MI0343,MI0360
+USB\VID_0c45 and PID_6083  Mi_00; sn9c103 + HY7131D/E
+USB\VID_0c45 and PID_608c  Mi_00; sn9c103 + HY7131/R
+USB\VID_0c45 and PID_608e  Mi_00; sn9c103 + CISVF10
+USB\VID_0c45 and PID_608f  Mi_00; sn9c103 + OV7630
+
+USB\VID_0c45 and PID_60a8  Mi_00; sn9c103 + PAS106
+USB\VID_0c45 and PID_60aa  Mi_00; sn9c103 + TAS5130
+USB\VID_0c45 and PID_60ab  Mi_00; sn9c103 + TAS5110
+USB\VID_0c45 and PID_60af  Mi_00; sn9c103 + PAS202
+
+USB\VID_0c45 and PID_60c0  MI_00; SN9C105 + MI0360
+
+USB\VID_0c45 and PID_60fa  MI_00; SN9C105 + OV7648
+USB\VID_0c45 and PID_60fc  MI_00; SN9C105 + HV7131R
+USB\VID_0c45 and PID_60fe  MI_00; SN9C105 + OV7630
+
+USB\VID_0c45 and PID_6100       ; SN9C128 + MI0360 / MT9V111 / MI0360B
+USB\VID_0c45 and PID_610a       ; SN9C128 + OV7648
+USB\VID_0c45 and PID_610c       ; SN9C128 + HV7131R
+USB\VID_0c45 and PID_610e       ; SN9C128 + OV7630
+USB\VID_0c45 and PID_610b       ; SN9C128 + OV7660
+
+USB\VID_0c45 and PID_6130       ; SN9C120 + MI0360
+USB\VID_0c45 and PID_613a       ; SN9C120 + OV7648
+USB\VID_0c45 and PID_613c       ; SN9C120 + HV7131R
+USB\VID_0c45 and PID_613e       ; SN9C120 + OV7630
+*/
+
+
 #import "SonixDriver.h"
 
 #include "MiscTools.h"
@@ -53,7 +106,11 @@ enum
     PhilipsSPC700NC,
     Rainbow5790P,
     M$VX1000,
+    
+    M$VX6000,
 };
+
+#define SENSOR_OV9650 27
 
 
 @implementation SonixDriver
@@ -1065,6 +1122,195 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 @end
+
+
+@implementation SN9C20xDriver
+
+/*
+
+[SN]
+;1.3 M
+%USBPCamDesc% =    SN.USBPCam,USB\VID_0c45&PID_6240		; SN9C201 + MI1300
+%USBPCamDesc% =    SN.USBPCam,USB\VID_0c45&PID_6242		; SN9C201 + MI1310
+%USBPCamDesc% =    SN.USBPCam,USB\VID_0c45&PID_624e		; SN9C201 + SOI968
+%USBPCamDesc% =    SN.USBPCam,USB\VID_0c45&PID_624f		; SN9C201 + OV9650
+%USBPCamDesc% =    SN.USBPCam,USB\VID_0c45&PID_627f		; EEPROM
+;VGA Sensor
+%USBPCamDesc% =    SN.USBPCam,USB\VID_0c45&PID_6270		; SN9C201 + MI0360
+%USBPCamDesc% =    SN.USBPCam,USB\VID_0c45&PID_627c		; SN9C201 + HV7131R
+%USBPCamDesc% =    SN.USBPCam,USB\VID_0c45&PID_627b		; SN9C201 + OV7660
+
+;
+; Usb2.0 PC Camera with Audio Function
+;
+%USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_6280&MI_00	; SN9C202 + MI1300
+%USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_6282&MI_00	; SN9C202 + MI1310
+%USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_628e&MI_00	; SN9C202 + SOI968
+%USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_628f&MI_00	; SN9C202 + OV9650
+%USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_628a&MI_00	; SN9C202 + ICM107
+%USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_62b0&MI_00	; SN9C202 + MI0360
+%USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_62bc&MI_00	; SN9C202 + HV7131R
+%USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_62bb&MI_00	; SN9C202 + Ov7660
+*/
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+		// SN9C201
+		
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x6240], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, 1.3M MI1300 (0x0c45:0x6240)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x6242], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, 1.3M MI1310 (0x0c45:0x6242)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x624f], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, 1.3M OV9650 (0x0c45:0x624f)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x624e], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, 1.3M SOI968 (0x0c45:0x624e)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x6270], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, VGA MI0360 (0x0c45:0x6270)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x627c], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, VGA HV7131R (0x0c45:0x627c)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x627b], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, VGA OV7660 (0x0c45:0x627b)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x627f], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, EEPROM (0x0c45:0x627f)", @"name", NULL], 
+        
+		// SN9C202
+		
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x6280], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, 1.3M MI1300 (0x0c45:0x6280)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x6282], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, 1.3M MI1310 (0x0c45:0x6282)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x628f], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, 1.3M OV9650 (0x0c45:0x628f)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x628e], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, 1.3M SOI968 (0x0c45:0x628e)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x628a], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, 1.0M ICM107 (0x0c45:0x628a)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x62b0], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, VGA MI0360 (0x0c45:0x62b0)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x62bb], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, VGA OV7660 (0x0c45:0x62bb)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x62bc], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"SN9C201, VGA HV7131R (0x0c45:0x62bc)", @"name", NULL], 
+        
+        // Others
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x00f4], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_MICROSOFT], @"idVendor",
+            @"SN9C20x, 1.3M OV9650? (0x045e:0x00f4)", @"name", NULL], 
+        
+        NULL];
+}
+
+//
+// Initialize the driver
+//
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+	// LUT set in super
+    
+    // Set as appropriate
+    hardwareBrightness = YES;
+    hardwareContrast = YES;
+    
+    // This is important
+    cameraOperation = &fsn9cxx;
+    
+    spca50x->qindex = 5; // Should probably be set before init_jpeg_decoder()
+
+    // Set to reflect actual values
+    spca50x->bridge = BRIDGE_SN9CXXX;
+    spca50x->cameratype = JPGS;	// jpeg 4.2.2 whithout header
+    
+    spca50x->desc = M$VX6000;
+    spca50x->sensor = SENSOR_OV9650;
+    spca50x->customid = SN9C105;
+    
+    spca50x->i2c_ctrl_reg = 0x81;
+    spca50x->i2c_base = 0x30;
+    spca50x->i2c_trigger_on_write = 0; // always 0
+    
+	return self;
+}
+
+@end
+
+
+// Variants?
+
+// - MI1300
+// - MI1310
+// - OV9650      // doc: 60/61
+// - SOI968
+
+// - ICM107      // doc: 20
+
+// - MO4000      // used: 0x21
+
+// - MI0360      // used: 0x5d
+// - HV7131R     // used: 0x11 // doc:22H
+// - OV7660      // used: 0x21 // doc:42H
+
+// - TAS5110     // used: 0x11
+// - TAS5130CXX  // used: 0x11
+// - PAS202      // used: 0x40 // doc:100,0000 (7 bit)
+// - OV7630      // used: 0x21 // doc:42H
+// - PAS106      // used: 0x40 // doc:100,0000 (7 bit)    (0x11 in this file - error)
+
+
 
 
 // Look at the datasheets for all the valid IDs
