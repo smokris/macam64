@@ -46,6 +46,7 @@
 		- led (if possible)
 		- see if it's possible to use uncompressed mode at low resolution/fps
 
+ http://www.rastageeks.org/ov51x-jpeg/index.php/Main_Page
 */
 
 // QTNewGWorldFromPtr()
