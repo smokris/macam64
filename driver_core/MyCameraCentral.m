@@ -70,6 +70,7 @@
 #import "M560xDriver.h"
 #import "VC032xDriver.h"
 #import "MR97311Driver.h"
+#import "IBMcamDriver.h"
 
 #include "unistd.h"
 
@@ -87,7 +88,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
 - (id) prefsForKey:(NSString*) key;
 - (void) setPrefs:(id)prefs forKey:(NSString*)key;
 - (void) registerCameraDriver:(Class)driver;
-- (CameraError) locationIdOfUSBDeviceRef:(io_service_t)usbDeviceRef to:(UInt32*)outVal;
+- (CameraError) locationIdOfUSBDeviceRef:(io_service_t)usbDeviceRef to:(UInt32*)outVal version:(UInt16*)bcdDevice;
 
 - (NSString *) cameraDisabledKeyFromVendorID:(UInt16)vid andProductID:(UInt16)pid;
 - (NSString *) cameraDisabledKeyFromDriver:(MyCameraDriver *)camera;
@@ -321,6 +322,12 @@ MyCameraCentral* sharedCameraCentral=NULL;
     
     [self registerCameraDriver:[M560xDriver class]];
     
+    [self registerCameraDriver:[IBMcamDriver class]];
+    [self registerCameraDriver:[IBMcamModel1Driver class]];
+    [self registerCameraDriver:[IBMcamModel2Driver class]];
+    [self registerCameraDriver:[IBMcamModel3Driver class]];
+    [self registerCameraDriver:[IBMcamModel4Driver class]];
+    
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
     [self registerCameraDriver:[KworldTV300UDriver class]];  // This is very incomplete at this time
@@ -464,9 +471,29 @@ MyCameraCentral* sharedCameraCentral=NULL;
     return -1;
 }
 
+- (short) indexOfDriverClass:(Class)driverClass 
+{
+    short i=0;
+    while (i<[cameras count]) 
+    {
+        if ([[cameras objectAtIndex:i] driverClass] == driverClass) 
+            return i;
+        else i++;
+    }
+    return -1;
+}
+
 - (unsigned long) idOfCameraWithIndex:(short)idx {
     if ((idx<0)||(idx>=[self numCameras])) return 0;
     return [[cameras objectAtIndex:idx] cid];
+}
+
+- (UInt16) versionOfCameraWithIndex:(short)idx 
+{
+    if ((idx < 0) || (idx >= [self numCameras])) 
+        return 0;
+    
+    return [[cameras objectAtIndex:idx] versionNumber];
 }
 
 - (unsigned long) idOfCameraWithLocationID:(UInt32)locID {
@@ -744,6 +771,7 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
     io_object_t		notification;
     while (usbDeviceRef = IOIteratorNext(iterator)) {
         UInt32 locID;
+        UInt16 versionNumber;
         
         //Setup our data object we use to track the device while it is plugged
         dev=[type copy];
@@ -769,7 +797,7 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
             continue;
         }
         //Try to find our USB location ID
-        if ([self locationIdOfUSBDeviceRef:usbDeviceRef to:&locID]!=CameraErrorOK) {
+        if ([self locationIdOfUSBDeviceRef:usbDeviceRef to:&locID version:&versionNumber]!=CameraErrorOK) {
 #ifdef VERBOSE
             NSLog(@"failed to get location id");
 #endif
@@ -779,6 +807,7 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
         //Remember the notification (we have to release it later)
         [dev setNotification:notification];
         [dev setLocationID:locID];
+        [dev setVersionNumber:versionNumber];
 
         //Put the new entry to the list of available cameras
         [cameras addObject:dev];
@@ -954,8 +983,10 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
     return [self cameraDisabled:[camera class] withVendorID:vid andProductID:pid];
 }
 
-- (CameraError) locationIdOfUSBDeviceRef:(io_service_t)usbDeviceRef to:(UInt32*)outVal {
+- (CameraError) locationIdOfUSBDeviceRef:(io_service_t)usbDeviceRef to:(UInt32*)outVal version:(UInt16*)bcdDevice
+{
     UInt32 locID=0;
+    UInt16 version = 0;
     kern_return_t kernelErr;
     SInt32 score;
     IOCFPlugInInterface **plugin=NULL;
@@ -984,23 +1015,39 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
     }
     if (!err) {
         kernelErr = (*dev)->GetLocationID(dev,&locID);
-        (*dev)->Release(dev);
-        if (kernelErr!=KERN_SUCCESS) {
+        if (kernelErr!=KERN_SUCCESS) 
+        {
 #ifdef VERBOSE
             NSLog(@"MyCameraCentral: IOCreatePlugInInterfaceForService; Could not get Location ID");
 #endif
             err=CameraErrorUSBProblem;
         }
+        kernelErr = (*dev)->GetDeviceReleaseNumber(dev, &version);
+        if (kernelErr!=KERN_SUCCESS) 
+        {
+#ifdef VERBOSE
+            NSLog(@"MyCameraCentral: IOCreatePlugInInterfaceForService; Could not get Release Number");
+#endif
+            err=CameraErrorUSBProblem;
+        }
+        (*dev)->Release(dev);
     }
-    if (outVal) {
-        if (!err) *outVal=locID;
-        else *outVal=0;
+    if (outVal) 
+    {
+        if (!err) 
+            *outVal=locID;
+        else 
+            *outVal=0;
+    }
+    if (bcdDevice) 
+    {
+        if (!err) 
+            *bcdDevice=version;
+        else 
+            *bcdDevice=0;
     }
     return err;
 }
 
-
-    
-    
 
 @end

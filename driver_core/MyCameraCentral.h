@@ -92,7 +92,9 @@
 
 - (short) numCameras;
 - (short) indexOfCamera:(MyCameraDriver*)driver;
+- (short) indexOfDriverClass:(Class)driverClass;
 - (unsigned long) idOfCameraWithIndex:(short)idx;
+- (UInt16) versionOfCameraWithIndex:(short)idx;
 - (unsigned long) idOfCameraWithLocationID:(UInt32)locID;
 - (CameraError) useCameraWithID:(unsigned long)cid to:(MyCameraDriver**)outCam acceptDummy:(BOOL)acceptDummy;
 - (MyCameraDriver*) useDummyForError:(CameraError)err;
