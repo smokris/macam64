@@ -166,8 +166,14 @@
 #define PRODUCT_HOME_CONNECT_LITE       0x00df      // SPCA501A
 
 #define VENDOR_VEO              0x0545
+#define PRODUCT_KSX_MODELS              0x8080
+#define PRODUCT_IBM_NETCAMERA           0x8002
+#define PRODUCT_STINGRAY_C              0x800c
+#define PRODUCT_STINGRAY_D              0x800d
+#define PRODUCT_ADVANCED_CONNECT        0x810a
 #define PRODUCT_STINGRAY_B              0x808b      // TV8532
 #define PRODUCT_STINGRAY_A              0x8333      // TV8532
+#define PRODUCT_EVISION123              0x888d
 
 #define VENDOR_SONY             0x054c
 #define PRODUCT_EYE_TOY                 0x0154
