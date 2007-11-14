@@ -44,6 +44,7 @@ MyCameraCentral keeps an object for each connected camera and sets the driver ob
     long 		pid;		//the usb product id
     long 		vid;		//the usb vendor id
     UInt32		lid;		//The usb location id (only for connected cameras)
+    UInt16      version;    // bcdDevice, the evice version number (only for connected cameras)
 }
 
 - (id) init;
@@ -75,5 +76,8 @@ MyCameraCentral keeps an object for each connected camera and sets the driver ob
 
 - (UInt32) locationID;
 - (void) setLocationID:(UInt32)locID;
+
+- (UInt16) versionNumber;
+- (void) setVersionNumber:(UInt16)vNum;
 
 @end

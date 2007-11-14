@@ -36,6 +36,7 @@ static unsigned long cidCount=1;
     pid=0;
     vid=0;
     lid=0;
+    version = 0;
     return self;
 }
 
@@ -50,6 +51,7 @@ static unsigned long cidCount=1;
     [c setProductID:[self productID]];
     [c setVendorID:[self vendorID]];
     [c setLocationID:[self locationID]];
+    [c setVersionNumber:[self versionNumber]];
     return c;
 }
 
@@ -129,6 +131,16 @@ static unsigned long cidCount=1;
 
 - (void) setLocationID:(UInt32)locID {
     lid=locID;
+}
+
+- (UInt16) versionNumber
+{
+    return version;
+}
+
+- (void) setVersionNumber:(UInt16)vNum
+{
+    version = vNum;
 }
 
 @end
