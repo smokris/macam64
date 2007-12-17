@@ -196,7 +196,7 @@ typedef struct OV511CompleteChunk {	//The description of a ready-to-decode chunk
 } OV511CompleteChunk;
 
 typedef struct OV511TransferContext {//Everything a usb completion callback need to know
-    IOUSBIsocFrame* frameList;	//The results of the usb frames I received
+    IOUSBLowLatencyIsocFrame* frameList;	//The results of the usb frames I received
     long bufferOffset;		//Where did my data go in the buffer?
 } OV511TransferContext;
 
@@ -227,6 +227,7 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
     IOUSBInterfaceInterface** intf;	//Just a copy from our interface interface so the callback can issue usb commands
     BOOL* shouldBeGrabbing;	//Reference to the object's shouldBeGrabbing property
     CameraError err;		//Collector f errors occurred during grab. [cleanupGrabContext] will leave this as it is
+	NSPort*		decoderPort;	
 } OV511GrabContext;
 
 @interface MyOV511Driver : MyCameraDriver {

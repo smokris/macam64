@@ -28,7 +28,7 @@
 #import "MiscTools.h"
 #include "unistd.h"
 
-#define OV511_DEBUG
+//#define OV511_DEBUG
 #define USE_COMPRESS
 //#define VERBOSE
 
@@ -36,6 +36,13 @@
 //int Decompress420(unsigned char *pIn, unsigned char *pOut,int w,int h,int inSize);
 int Decompress420(unsigned char *pIn, unsigned char *pOut, unsigned char *pTmp, int w, int h, int inSize);
 #endif
+
+#define MALLOC_KERNEL(in_interface, io_buffer, size, type) (*(IOUSBInterfaceInterface197 **) in_interface)->LowLatencyCreateBuffer(in_interface, (void **) &io_buffer, size, type)
+#define FREE_KERNEL(in_interface, io_buffer) (*(IOUSBInterfaceInterface197 **) in_interface)->LowLatencyDestroyBuffer(in_interface, io_buffer)
+
+// communication between grab thread and decoder
+#define kDataRecievedMessage			100
+#define kGrabbingThreadFinalizedMessage 101
 
 #define OV511_QUANTABLESIZE	64
 #define OV518_QUANTABLESIZE	32
@@ -133,6 +140,7 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 - (CameraError) startupWithUsbLocationId:(UInt32)usbLocationId {
     UInt8 buf[16], cid;
     long i;
+	
     CameraError err=[self usbConnectToCam:usbLocationId configIdx:0];
 //setup connection to camera
      if (err!=CameraErrorOK) return err;
@@ -497,12 +505,13 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         grabContext.chunkReadyLock=[[NSLock alloc] init];
         if ((grabContext.chunkReadyLock)==NULL) ok=NO;
         else {					//locked by standard, will be unlocked by isocComplete
-            [grabContext.chunkReadyLock tryLock];
+            //[grabContext.chunkReadyLock tryLock];
         }
     }
 //Setup ring buffer
     if (ok) {
-        MALLOC(grabContext.buffer,void*,grabContext.bufferLength,"setupGrabContext-buffer");
+		MALLOC_KERNEL(streamIntf, grabContext.buffer, grabContext.bufferLength, kUSBLowLatencyReadBuffer);
+        //MALLOC(grabContext.buffer,void*,grabContext.bufferLength,"setupGrabContext-buffer");
         if ((grabContext.buffer)==NULL) ok=NO;
     }
 //Setup ring buffer
@@ -526,11 +535,13 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
             grabContext.transferContexts[i].bufferOffset=0;
         }
         for (i=0;(i<grabContext.concurrentTransfers)&&ok;i++) {
-            MALLOC(grabContext.transferContexts[i].frameList,IOUSBIsocFrame*,sizeof(IOUSBIsocFrame)*grabContext.framesPerTransfer,"setupGrabContext-frameList");
+            //MALLOC(grabContext.transferContexts[i].frameList,IOUSBLowLatencyIsocFrame*,sizeof(IOUSBLowLatencyIsocFrame)*grabContext.framesPerTransfer,"setupGrabContext-frameList");
+			MALLOC_KERNEL(streamIntf, grabContext.transferContexts[i].frameList, sizeof(IOUSBLowLatencyIsocFrame)*grabContext.framesPerTransfer, kUSBLowLatencyFrameListBuffer);
+			
             if ((grabContext.transferContexts[i].frameList)==NULL) ok=NO;
             else {
                 for (j=0;j<grabContext.framesPerTransfer;j++) {
-                    grabContext.transferContexts[i].frameList[j].frReqCount=grabContext.bytesPerFrame;
+                    grabContext.transferContexts[i].frameList[j].frReqCount = grabContext.bytesPerFrame;
                     grabContext.transferContexts[i].frameList[j].frActCount=0;
                     grabContext.transferContexts[i].frameList[j].frStatus=0;
                 }
@@ -782,13 +793,15 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 - (BOOL) cleanupGrabContext {
     long l;
     if (grabContext.buffer) {				//dispose the buffer
-        FREE(grabContext.buffer,"cleanupGrabContext-buffer");
+        //FREE(grabContext.buffer,"cleanupGrabContext-buffer");
+		FREE_KERNEL(streamIntf, grabContext.buffer);
         grabContext.buffer=NULL;
     }
     if (grabContext.transferContexts) {			//if we have transfer contexts
         for (l=0;l<grabContext.concurrentTransfers;l++) {	//iterate through the contexts and throw them away
             if (grabContext.transferContexts[l].frameList) {
-                FREE(grabContext.transferContexts[l].frameList,"cleanupGrabContext-frameList");
+                //FREE(grabContext.transferContexts[l].frameList,"cleanupGrabContext-frameList");
+				FREE_KERNEL(streamIntf, grabContext.transferContexts[l].frameList);
                 grabContext.transferContexts[l].frameList=NULL;
             }
         }
@@ -813,14 +826,29 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 //StartNextIsochRead and isocComplete refer to each other, so here we need a declaration
 static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx);
 
+static void SendMessageToDecoderThread(NSPort* in_port, unsigned in_message)
+{
+	// Create the checkin message.
+	NSPortMessage* messageObj = [[NSPortMessage alloc] initWithSendPort:in_port
+										 receivePort:nil components:nil];
+	if (messageObj)
+	{
+		// Finish configuring the message and send it immediately.
+		[messageObj setMsgid:in_message];
+		[messageObj sendBeforeDate:[NSDate date]];
+	}
+}
+
 static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     int i,j;
     OV511GrabContext* grabContext=(OV511GrabContext*)refcon;
-    IOUSBIsocFrame* myFrameList=(IOUSBIsocFrame*)arg0;
+    IOUSBLowLatencyIsocFrame* myFrameList=(IOUSBLowLatencyIsocFrame*)arg0;
     short transferIdx=0;
     bool frameListFound=false;
     int currStart;
-
+	
+	//printf("isocComplete result = %d\n", (int) result);
+	
     if (result==kIOReturnUnderrun) result=0;
 
     if (result) {						//USB error handling
@@ -903,8 +931,12 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                          grabContext->currCompleteChunks++;
                 }
                 [grabContext->chunkListLock unlock];		//exit critical section
-                [grabContext->chunkReadyLock tryLock];		//try to wake up the decoder
-                [grabContext->chunkReadyLock unlock];
+
+                //[grabContext->chunkReadyLock tryLock];		//try to wake up the decoder
+                //[grabContext->chunkReadyLock unlock];
+				
+				SendMessageToDecoderThread(grabContext->decoderPort, (unsigned) kDataRecievedMessage);
+				
                 grabContext->currentChunkStart = -1;
                 currStart = -1;
             }
@@ -919,8 +951,10 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
     }
     if (!(*(grabContext->shouldBeGrabbing))) {	//on error: collect finished transfers and exit if all transfers have ended
         grabContext->finishedTransfers++;
-        if ((grabContext->finishedTransfers)>=(grabContext->concurrentTransfers)) {
-            CFRunLoopStop(CFRunLoopGetCurrent());
+        if ((grabContext->finishedTransfers)>=(grabContext->concurrentTransfers)) 
+		{
+			SendMessageToDecoderThread(grabContext->decoderPort, (unsigned) kGrabbingThreadFinalizedMessage);
+			CFRunLoopStop(CFRunLoopGetCurrent());
         }
     }
 }
@@ -931,6 +965,24 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
 
     grabContext->transferContexts[transferIdx].bufferOffset = grabContext->nextReadOffset;
     *(grabContext->buffer+grabContext->transferContexts[transferIdx].bufferOffset) = 0xff;
+	
+	/*
+	printf("buffer offset = %d\n", (int) grabContext->transferContexts[transferIdx].bufferOffset);
+	printf("first frame = %d\n", (int) grabContext->initiatedUntil);
+	printf("number of frames = %d\n", (int) grabContext->framesPerTransfer);
+	printf("bytes in ring = %d\n", (int) bytesInRing);
+	*/
+
+    err=(*(IOUSBInterfaceInterface197 **) grabContext->intf)->LowLatencyReadIsochPipeAsync(grabContext->intf,
+                                    1,
+                                    grabContext->buffer+grabContext->transferContexts[transferIdx].bufferOffset,
+                                    grabContext->initiatedUntil,
+                                    grabContext->framesPerTransfer,
+									0,	
+                                    grabContext->transferContexts[transferIdx].frameList,
+                                    (IOAsyncCallback1)(isocComplete),
+                                    grabContext);
+	/*
     err=(*(grabContext->intf))->ReadIsochPipeAsync(grabContext->intf,
                                     1,
                                     grabContext->buffer+grabContext->transferContexts[transferIdx].bufferOffset,
@@ -939,6 +991,10 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
                                     grabContext->transferContexts[transferIdx].frameList,
                                     (IOAsyncCallback1)(isocComplete),
                                     grabContext);
+	*/
+	
+	//printf("result of ReadIsochPipeAsync = %d\n", (int) err);								
+	
     switch (err) {
         case 0:
             grabContext->initiatedUntil+=grabContext->framesPerTransfer;	//update frames
@@ -971,13 +1027,16 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
     CFRunLoopSourceRef cfSource;
     bool ok=true;
 
+    // Setup the connection between this thread and the decode thread.
+    grabContext.decoderPort = (NSPort*)data;
+
     ChangeMyThreadPriority(10);	//We need to update the isoch read in time, so timing is important for us
 
-    if (![self usbSetAltInterfaceTo:usbAltInterface testPipe:1]) {
+	if (![self usbSetAltInterfaceTo:usbAltInterface testPipe:1]) {
         if (!grabContext.err) grabContext.err=CameraErrorNoBandwidth;	//probably no bandwidth
         ok=NO;
     }
-
+	
     if (!isUSBOK) { grabContext.err=CameraErrorNoCam; ok=NO; }
 
     err = (*streamIntf)->CreateInterfaceAsyncEventSource(streamIntf, &cfSource);	//Create an event source
@@ -986,6 +1045,12 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
     
     if (!isUSBOK) { grabContext.err=CameraErrorNoCam; ok=NO; }
     
+	printf("concurrentTransfers = %d\n", (int) grabContext.concurrentTransfers);
+	
+	AbsoluteTime at;
+	(*streamIntf)->GetBusFrameNumber(streamIntf, &(grabContext.initiatedUntil), &at);
+	grabContext.initiatedUntil += 50;
+	
     for (i=0;(i<grabContext.concurrentTransfers)&&ok;i++) {	//Initiate transfers
         ok=StartNextIsochRead(&grabContext,i);
     }
@@ -999,138 +1064,149 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
     }
 
     shouldBeGrabbing=NO;			//error in grabbingThread or abort? initiate shutdown of everything else
-    [grabContext.chunkReadyLock unlock];	//give the decodingThread a chance to abort
+    //[grabContext.chunkReadyLock unlock];	//give the decodingThread a chance to abort
     [pool release];
     grabbingThreadRunning=NO;
     [NSThread exit];
 }
 
 - (CameraError) decodingThread {
-    int lineExtra;
-    OV511CompleteChunk currChunk;
-    long i;
-    int cursize;
-    short width=[self width];	//Should remain constant during grab
-    short height=[self height];	//Should remain constant during grab
-    CameraError err=CameraErrorOK;
-    grabbingThreadRunning=NO;
+
+    CameraError err = CameraErrorOK;
+	
+		grabbingThreadRunning=NO;
 
     if (![self setupGrabContext]) {
-        err=CameraErrorNoMem;
+        err = CameraErrorNoMem;
         shouldBeGrabbing=NO;
     }
 
+	NSPort* myPort = [NSMachPort port];
+    if (myPort)
+    {
+        // This class handles incoming port messages.
+        [myPort setDelegate:self];
+ 
+        // Install the port as an input source on the current run loop.
+        [[NSRunLoop currentRunLoop] addPort:myPort forMode:NSDefaultRunLoopMode];
+	}
+	
     if (shouldBeGrabbing) {
         grabbingThreadRunning=YES;
-        [NSThread detachNewThreadSelector:@selector(grabbingThread:) toTarget:self withObject:NULL];    //start grabbingThread
+        [NSThread detachNewThreadSelector:@selector(grabbingThread:) toTarget:self withObject:myPort];    //start grabbingThread
     }
+	
+	if (shouldBeGrabbing) CFRunLoopRun();	
 
-    while (shouldBeGrabbing) {
-        [grabContext.chunkReadyLock lock];				//wait for ready-to-decode chunks
-        while ((shouldBeGrabbing)&&(grabContext.currCompleteChunks>0)) {	//decode all chunks unless we should stop grabbing
+    while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish			
+    //We need to sleep here because otherwise the compiler would optimize the loop away
+	
+	if (myPort)  [myPort release];
+	
+    if (!err) err = grabContext.err;
+    [self cleanupGrabContext];				//grabbingThread doesn't need the context any more since it's done
+    return err;
+}
+
+- (void)handlePortMessage:(NSPortMessage *)portMessage
+{
+    unsigned int message = [portMessage msgid];
+ 
+    if (message == kDataRecievedMessage)
+    {
+		int lineExtra;
+		OV511CompleteChunk currChunk;
+		long i;
+		int cursize;
+		short width=[self width];	//Should remain constant during grab
+		short height=[self height];	//Should remain constant during grab
+
+		//decode all chunks unless we should stop grabbing
+        while ( (shouldBeGrabbing) && (grabContext.currCompleteChunks > 0) ) 
+		{
             [grabContext.chunkListLock lock];			//lock for access to chunk list
             currChunk=grabContext.chunkList[0];			//take first (oldest) chunk
+
             for(i=1;i<grabContext.currCompleteChunks;i++) {		//all others go one down
                 grabContext.chunkList[i-1]=grabContext.chunkList[i];
             }
+
             grabContext.currCompleteChunks--;			//we have taken one from the list
             [grabContext.chunkListLock unlock];			//we're done accessing the chunk list.
-//            NSLog(@"decodingThread: %d", currChunk.isSeparate);
 
-//            if(currChunk.end < currChunk.start)
-//            NSLog(@"decodingThread: %d %d %d %d %d %d",
-//                currChunk.start, currChunk.end, cursize, currChunk.isSeparate, currChunk.start2, currChunk.end2); 
-if(currChunk.start >= 0) {
-            if (nextImageBufferSet) {				//do we have a target to decode into?
-                [imageBufferLock lock];				//lock image buffer access
-                if (nextImageBuffer!=NULL) {
-#if 0
-                    if (currChunk.end<currChunk.start) {		//does the chunk wrap?
-                        memcpy(grabContext.buffer+grabContext.framesInRing*grabContext.bytesPerFrame,
-                               grabContext.buffer,
-                               currChunk.end);		//Copy the second part at the end of the first part (into the Q-buffer appendix)
-                    }
-#endif
-#ifdef USE_COMPRESS
-                    if(compression) {
-                        grabContext.tmpLength = 0;
-                        // first block
-                        tmpcopy32(grabContext.buffer+currChunk.start, 9, grabContext.bytesPerFrame, grabContext.tmpBuffer, &grabContext.tmpLength);
-                        if(currChunk.isSeparate) {
-                        for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end; ++i)
-                            tmpcopy32(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
-                                grabContext.tmpBuffer, &grabContext.tmpLength);
-                        } else {
-                        for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end-grabContext.bytesPerFrame; ++i)
-                            tmpcopy32(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
-                                grabContext.tmpBuffer, &grabContext.tmpLength);
-#ifdef OV511_DEBUG
-NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i+9)+1)<<3,
-    (*(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i+10)+1)<<3,
-    *(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i+11));
-#endif
-// EOF packet
-//                        tmpcopy32(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
-//                            grabContext.tmpBuffer, &grabContext.tmpLength);
-                        }
-                        // second block
-                        if(currChunk.isSeparate) {
-                           for(i=0;currChunk.start2 + grabContext.bytesPerFrame*i < currChunk.end2-grabContext.bytesPerFrame; ++i)
-                                tmpcopy32(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
-                                    grabContext.tmpBuffer, &grabContext.tmpLength);
+			if(currChunk.start >= 0) 
+			{
+				if (nextImageBufferSet) //do we have a target to decode into?
+				{
+					[imageBufferLock lock];				//lock image buffer access
 
-#ifdef OV511_DEBUG
-NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i+9)+1)<<3,
-    (*(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i+10)+1)<<3,
-    *(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i+11));
-#endif
-// EOF packet
-//                            tmpcopy32(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
-//                                grabContext.tmpBuffer, &grabContext.tmpLength);
-                        }
-{
-//To avoid compiler warning when NSLog is commented out - mattik
-                        int size = Decompress420(grabContext.tmpBuffer, grabContext.chunkBuffer, NULL, width, height, grabContext.tmpLength);
-#pragma unused (size) 
-//NSLog(@"OV511:org size %d decomp size = %d", grabContext.tmpLength,size);
-}
-                    } else {
-#endif
-//                    chunkBuffer=grabContext.buffer+currChunk.start+chunkHeader;	//Our chunk starts here
-                        cursize = 0;
-                        blockCopy(grabContext.bytesPerFrame-9-1, &cursize, (char *) (grabContext.buffer+currChunk.start+9), (char *) (grabContext.chunkBuffer),
-                            width, height);
-                        for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end; ++i)
-                            blockCopy(grabContext.bytesPerFrame-1, &cursize, (char *) (grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i),
-                                (char *) grabContext.chunkBuffer, width, height);
-                        if(currChunk.isSeparate)
-                            for(i=0;currChunk.start2 + grabContext.bytesPerFrame*i < currChunk.end2; ++i)
-                                blockCopy(grabContext.bytesPerFrame-1, &cursize, (char *) (grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i),
-                                    (char *) grabContext.chunkBuffer, width, height);
-//                    lineExtra=nextImageBufferRowBytes-width*nextImageBufferBPP;	//bytes to skip after each line in target buffer
-                    }
-                    lineExtra = 0;
-                    yuv2rgb (width,height,YUVOV420Style,grabContext.chunkBuffer,nextImageBuffer,
-                             nextImageBufferBPP,0,lineExtra,hFlip!=camHFlip);	//decode
+					if (nextImageBuffer!=NULL) 
+					{
 #ifdef USE_COMPRESS
-                }
+						if(compression) 
+						{
+							grabContext.tmpLength = 0;
+							// first block
+							tmpcopy32(grabContext.buffer+currChunk.start, 9, grabContext.bytesPerFrame, grabContext.tmpBuffer, &grabContext.tmpLength);
+							if(currChunk.isSeparate) 
+							{
+								for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end; ++i)
+									tmpcopy32(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
+										grabContext.tmpBuffer, &grabContext.tmpLength);
+							} else {
+								for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end-grabContext.bytesPerFrame; ++i)
+									tmpcopy32(grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
+										grabContext.tmpBuffer, &grabContext.tmpLength);
+							}
+
+							// second block
+							if(currChunk.isSeparate) 
+							{
+							   for(i=0;currChunk.start2 + grabContext.bytesPerFrame*i < currChunk.end2-grabContext.bytesPerFrame; ++i)
+									tmpcopy32(grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i, 0, grabContext.bytesPerFrame,
+										grabContext.tmpBuffer, &grabContext.tmpLength);
+							}
+
+							Decompress420(grabContext.tmpBuffer, grabContext.chunkBuffer, NULL, width, height, grabContext.tmpLength);
+
+						} else // without compression
+						{
 #endif
-                lastImageBuffer=nextImageBuffer;			//Copy nextBuffer info into lastBuffer
-                lastImageBufferBPP=nextImageBufferBPP;
-                lastImageBufferRowBytes=nextImageBufferRowBytes;
-                nextImageBufferSet=NO;				//nextBuffer has been eaten up
-                [imageBufferLock unlock];				//release lock
-                [self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer
-            }
-} else {
-    NSLog(@"OV511:error chunk s = %d e =%d s2 = %d e2 = %d", currChunk.start,currChunk.end,currChunk.start2,currChunk.end2);
-}
+							cursize = 0;
+							blockCopy(grabContext.bytesPerFrame-9-1, &cursize, (char *) (grabContext.buffer+currChunk.start+9), (char *) (grabContext.chunkBuffer),
+								width, height);
+							for(i=1;currChunk.start + grabContext.bytesPerFrame*i < currChunk.end; ++i)
+								blockCopy(grabContext.bytesPerFrame-1, &cursize, (char *) (grabContext.buffer+currChunk.start+grabContext.bytesPerFrame*i),
+									(char *) grabContext.chunkBuffer, width, height);
+							if(currChunk.isSeparate)
+								for(i=0;currChunk.start2 + grabContext.bytesPerFrame*i < currChunk.end2; ++i)
+									blockCopy(grabContext.bytesPerFrame-1, &cursize, (char *) (grabContext.buffer+currChunk.start2+grabContext.bytesPerFrame*i),
+										(char *) grabContext.chunkBuffer, width, height);
+						}
+						
+						lineExtra = 0;
+						yuv2rgb (width,height,YUVOV420Style,grabContext.chunkBuffer,nextImageBuffer,
+								 nextImageBufferBPP,0,lineExtra,hFlip!=camHFlip);	//decode
+#ifdef USE_COMPRESS
+					}
+#endif
+					lastImageBuffer=nextImageBuffer;			//Copy nextBuffer info into lastBuffer
+					lastImageBufferBPP=nextImageBufferBPP;
+					lastImageBufferRowBytes=nextImageBufferRowBytes;
+					nextImageBufferSet=NO;				//nextBuffer has been eaten up
+					[imageBufferLock unlock];				//release lock
+					[self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer
+				}
+		
+			} else {
+				NSLog(@"OV511:error chunk s = %d e =%d s2 = %d e2 = %d", currChunk.start,currChunk.end,currChunk.start2,currChunk.end2);
+			}
         }
 
         //Check if the snapshot button state has changed.
         {
-        UInt8 buf[16];
-        BOOL buttonIsPressed;
+			UInt8 buf[16];
+			BOOL buttonIsPressed;
             [self usbReadCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SNAP buf:buf len:1];
             buttonIsPressed = (buf[0] & 0x08);
             if (buttonIsPressed) {
@@ -1143,14 +1219,13 @@ NSLog(@"OV511:%d %d %x", (*(grabContext.buffer+currChunk.start2+grabContext.byte
                 [self usbWriteCmdWithBRequest:2 wValue:0 wIndex:OV511_REG_SNAP buf:buf len:1];
             }
         }
-    }
 
-    while (grabbingThreadRunning) { usleep(10000); }	//Wait for grabbingThread finish			
-    //We need to sleep here because otherwise the compiler would optimize the loop away
-    if (!err) err=grabContext.err;
-    [self cleanupGrabContext];				//grabbingThread doesn't need the context any more since it's done
-    return err;
-}
+    } else if (message == kGrabbingThreadFinalizedMessage)
+	{
+		CFRunLoopStop(CFRunLoopGetCurrent());	
+	}		
+ }
+
 
 - (void) mergeCameraEventHappened:(CameraEvent)evt {
     if (doNotificationsOnMainThread) {
