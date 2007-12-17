@@ -321,13 +321,13 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[MR97310Driver class]];
     
     [self registerCameraDriver:[M560xDriver class]];
-    
+   /* 
     [self registerCameraDriver:[IBMcamDriver class]];
     [self registerCameraDriver:[IBMcamModel1Driver class]];
     [self registerCameraDriver:[IBMcamModel2Driver class]];
     [self registerCameraDriver:[IBMcamModel3Driver class]];
     [self registerCameraDriver:[IBMcamModel4Driver class]];
-    
+   */ 
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
     [self registerCameraDriver:[KworldTV300UDriver class]];  // This is very incomplete at this time
