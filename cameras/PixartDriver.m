@@ -226,11 +226,14 @@ IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                 *tailLength = position;
             }
             
-            frameInfo->averageLuminance = buffer[position + 9];
-            frameInfo->averageLuminanceSet = 1;
+            if (frameInfo != NULL) 
+            {
+                frameInfo->averageLuminance = buffer[position + 9];
+                frameInfo->averageLuminanceSet = 1;
 #if REALLY_VERBOSE
-            printf("The average luminance is %d\n", frameInfo->averageLuminance);
+                printf("The average luminance is %d\n", frameInfo->averageLuminance);
 #endif
+            }
             
             *dataStart = position;
             *dataLength = frameLength - position;

@@ -86,6 +86,9 @@ static sensor_info sensor_info_data[] = {
 	{SENSOR_HV7131R, 0x80 | 0x11, 0x00, 0x0209, 0x24, 0x25, 0x01},
 	{SENSOR_OV7660, 0x80 | 0x21 , 0x0a, 0x7660, 0x26, 0x26, 0x05},
 	{SENSOR_PO3130NC,0x80 | 0x76, 0x00, 0x3130, 0x24, 0x25, 0x01},
+	{SENSOR_MI1320, 0x80 | 0xc8, 0x00, 0x148c, 0x64, 0x65, 0x01},
+	{SENSOR_OV7670, 0x80 | 0x21, 0x0a, 0x7673, 0x66, 0x67, 0x05},
+	{SENSOR_MI1310_SOC,0x80 | 0x5d, 0x00,0x143a, 0x24, 0x25, 0x01},    
 };
 static void vc032x_read_sensor_register( struct usb_device *dev,
 	__u16 address, __u16 *value)
@@ -117,7 +120,7 @@ static void vc032x_read_sensor_register( struct usb_device *dev,
 	spca5xxRegRead ( dev, 0xa1, 0x01, 0xb33e, &hdata, 1 );
 	spca5xxRegRead ( dev, 0xa1, 0x01, 0xb33d, &mdata, 1 );
 	spca5xxRegRead ( dev, 0xa1, 0x01, 0xb33c, &ldata, 1 );
-	//PDEBUG(0, "Read Sensor h (0x%02X) m (0x%02X) l (0x%02X) ", hdata,mdata,ldata);
+	PDEBUG(0, "Read Sensor h (0x%02X) m (0x%02X) l (0x%02X) ", hdata,mdata,ldata);
 	tmpvalue = 0;
 	spca5xxRegRead( dev, 0xa1, 0x01, 0xb334, &tmpvalue, 1 );
 	if(tmpvalue == 0x02)
@@ -132,7 +135,7 @@ static int vc032x_probe_sensor(struct usb_spca50x *spca50x)
 	__u16	value;
 	sensor_info *ptsensor_info;
 	int sensor_id = -1;
-	int VCSENSOR_TOT= 3;
+	int VCSENSOR_TOT= 6;
 	spca5xxRegRead ( spca50x->dev, 0xa1, 0x01, 0xbfcf, &data, 1 );
 	PDEBUG(0,"check sensor header %d",data);
 	for(i= 0; i < VCSENSOR_TOT; i++){
@@ -154,20 +157,7 @@ static int vc032x_probe_sensor(struct usb_spca50x *spca50x)
 	}
 return sensor_id;
 }
-/*
-static __u8 vc0321_i2cWrite(struct usb_device *dev, __u8 reg, __u8 val)
-{
-    __u8 retbyte = 0;
-    
-    spca5xxRegRead (dev, 0xa1, 0x01, 0xb33f, &retbyte, 1);	    udelay(10);
-    spca5xxRegWrite(dev, 0xa0, reg , 0xb33a, NULL    , 0);	    udelay(10);
-    spca5xxRegRead (dev, 0xa1, 0x01, 0xb334, &retbyte, 1);	    udelay(10);
-    spca5xxRegWrite(dev, 0xa0, val , 0xb336, NULL    , 0);	    udelay(10);
-    spca5xxRegWrite(dev, 0xa0, 0x01, 0xb339, NULL    , 0);	    udelay(10);
-    spca5xxRegRead (dev, 0xa1, 0x01, 0xb33b, &retbyte, 1);	    udelay(10);
-    return (retbyte==0);
-}
-*/
+
 static __u8 vc0321_i2cWrite(struct usb_device *dev, __u8 reg, __u8 *val, __u8 size)
 {
     __u8 retbyte = 0;
@@ -226,6 +216,9 @@ static __u16 vc0321WriteVector(struct usb_spca50x *spca50x, __u8 data[][4])
 	else if(data[i][3] == 0xaa) {  //i2c op
 		vc0321_i2cWrite(dev, data[i][1], &data[i][2],1);
 	}
+	else if(data[i][3] == 0xbb) {  //i2c op
+		vc0321_i2cWrite(dev, data[i][0], &data[i][1],2);
+	}
 	else if(data[i][3] == 0xdd) {
 	    mdelay(data[i][2]+10);
 	}
@@ -276,7 +269,26 @@ static int vc0321_init(struct usb_spca50x *spca50x)
 {
     return 0;
 }
-
+static void set_vc0323VGA(struct usb_spca50x *spca50x)
+{
+    memset(spca50x->mode_cam, 0x00, TOTMODE * sizeof(struct mwebcam));
+    spca50x->mode_cam[VGA].width = 640;
+    spca50x->mode_cam[VGA].height = 480;
+    spca50x->mode_cam[VGA].t_palette =
+	P_JPEG | P_RAW | P_YUV420 | P_RGB32 | P_RGB24 | P_RGB16;
+    spca50x->mode_cam[VGA].pipe = 3072;
+    spca50x->mode_cam[VGA].method = 0;
+    spca50x->mode_cam[VGA].mode = 0;  
+    
+    spca50x->mode_cam[CIF].width = 320;
+    spca50x->mode_cam[CIF].height = 240;
+    spca50x->mode_cam[CIF].t_palette =
+	P_JPEG | P_RAW | P_YUV420 | P_RGB32 | P_RGB24 | P_RGB16;
+    spca50x->mode_cam[CIF].pipe = 3072;
+    spca50x->mode_cam[CIF].method = 0;
+    spca50x->mode_cam[CIF].mode = 1;
+        
+}
 static void set_vc0321VGA(struct usb_spca50x *spca50x)
 {
     memset(spca50x->mode_cam, 0x00, TOTMODE * sizeof(struct mwebcam));
@@ -342,7 +354,7 @@ static int vc0321_config(struct usb_spca50x *spca50x)
 {
  __u8 tmp2[3];
     int sensor = 0;
-    spca50x->qindex = 1;
+    spca50x->qindex = 7;
     vc0321_reset(spca50x);
     sensor = vc032x_probe_sensor(spca50x);
     switch (sensor) {
@@ -360,17 +372,40 @@ static int vc0321_config(struct usb_spca50x *spca50x)
 		spca50x->sensor = SENSOR_PO3130NC;
 		set_vc0321VGA(spca50x);
 	break;
+	case SENSOR_MI1320:
+		PDEBUG(0, "Find Sensor MI1320");
+		spca50x->sensor = SENSOR_MI1320;
+		set_vc0321VGA(spca50x);
+	break;
 	case SENSOR_HV7131R:
 		PDEBUG(0, "Find Sensor HV7131R");
 		spca50x->sensor = SENSOR_HV7131R;
 		set_vc0321VGA(spca50x);
 	break;
+	case SENSOR_OV7670:
+		PDEBUG(0, "Find Sensor OV7670");
+		spca50x->sensor = SENSOR_OV7670;
+		if(spca50x->bridge == BRIDGE_VC0323)
+			set_vc0323VGA(spca50x);
+		else 
+			set_vc0321VGA(spca50x);
+	break;
+	case SENSOR_MI1310_SOC:
+		PDEBUG(0, "Find Sensor MI1310_SOC");
+		spca50x->sensor = SENSOR_MI1310_SOC;
+		if(spca50x->bridge == BRIDGE_VC0323)
+			set_vc0323VGA(spca50x);
+		else 
+			set_vc0321VGA(spca50x);
+	break;
     };
+   if (spca50x->bridge == BRIDGE_VC0321){
 spca5xxRegRead (spca50x->dev, 0x8a, 0x01, 0     , tmp2, 3); udelay(10);
 spca5xxRegWrite(spca50x->dev, 0x87, 0x00, 0x0f0f, NULL, 0); udelay(10);
 
 spca5xxRegRead (spca50x->dev, 0x8b, 0x01, 0     , tmp2, 3); udelay(10);
 spca5xxRegWrite(spca50x->dev, 0x88, 0x00, 0x0202, NULL, 0); udelay(10);
+}
     return 0;
 }
 static void vc0321_setquality(struct usb_spca50x *spca50x)
@@ -397,10 +432,12 @@ static void vc0321_start(struct usb_spca50x *spca50x)
     __u8 *GammaT = NULL;
     __u8 *MatrixT = NULL;
     /* Assume start use the good resolution from spca50x->mode */
+    if (spca50x->bridge == BRIDGE_VC0321){ 
     spca5xxRegWrite(spca50x->dev, 0xa0, 0xff, 0xbfec, NULL, 0);
     spca5xxRegWrite(spca50x->dev, 0xa0, 0xff, 0xbfed, NULL, 0);
     spca5xxRegWrite(spca50x->dev, 0xa0, 0xff, 0xbfee, NULL, 0);
     spca5xxRegWrite(spca50x->dev, 0xa0, 0xff, 0xbfef, NULL, 0);
+    }
     switch (spca50x->sensor) {
     	case SENSOR_OV7660:
     		GammaT = ov7660_gamma;
@@ -438,6 +475,40 @@ static void vc0321_start(struct usb_spca50x *spca50x)
 	   		 err = vc0321WriteVector(spca50x, hv7131r_initVGA_data);
 		}
 		 
+	break;
+	case SENSOR_MI1320:
+		GammaT = mi1320_gamma;
+    		MatrixT = mi1320_matrix;
+		
+		if (spca50x->mode) {
+	    		/* 320x240 */
+			 err = vc0321WriteVector(spca50x, mi1320_initQVGA_data);
+		} else {
+	    		/* 640x480 */
+	   		 err = vc0321WriteVector(spca50x, mi1320_initVGA_data);
+		}
+	
+	break;
+	case SENSOR_OV7670:
+    		//GammaT = ov7660_gamma;
+    		//MatrixT = ov7660_matrix;
+		if (spca50x->mode) {
+	    		/* 320x240 */
+			 err = vc0321WriteVector(spca50x, ov7670_initQVGA_JPG);
+		} else {
+	    		/* 640x480 */
+	   		 err = vc0321WriteVector(spca50x, ov7670_initVGA_JPG);
+		}
+			
+	break;
+	case SENSOR_MI1310_SOC:
+		if (spca50x->mode) {
+	    		/* 320x240 */
+			 err = vc0321WriteVector(spca50x, mi1310_socinitQVGA_JPG);
+		} else {
+	    		/* 640x480 */
+	   		 err = vc0321WriteVector(spca50x, mi1310_socinitVGA_JPG);
+		}
 	break;
 	default:
 		PDEBUG(0, "Damned !! no sensor found Bye");
@@ -547,8 +618,27 @@ static void vc0321_setNoFliker(struct usb_spca50x *spca50x) {
      }
  
  }
- 
-static int vc0321_sofdetect(struct usb_spca50x *spca50x,struct spca50x_frame *frame, unsigned char *cdata,int *iPix, int seqnum, int *datalength)
+ static int vc0321_sofdetect(struct usb_spca50x *spca50x,struct spca50x_frame *frame, unsigned char *cdata,int *iPix, int seqnum, int *datalength)
+{
+		
+		if (cdata[0] == 0xFF && cdata[1] == 0xD8) {
+		PDEBUG(5,
+			   "vc032x header packet found datalength %d !!",  
+			   *datalength );
+			if(spca50x->bridge == BRIDGE_VC0321)
+			 	*iPix = 46;
+			 else
+			 	*iPix = 0;
+		    *datalength -= *iPix;
+		    return 0;
+		   
+		} 
+		*iPix = 0;
+		PDEBUG(5, "vc0321 process packet %d datalength %d ",seqnum+1,*datalength);
+		return (seqnum +1);
+}
+#if 0 
+ static int vc0321_sofdetect(struct usb_spca50x *spca50x,struct spca50x_frame *frame, unsigned char *cdata,int *iPix, int seqnum, int *datalength)
 {
 		
 		if (cdata[0] == 0xFF && cdata[1] == 0xD8) {
@@ -565,4 +655,23 @@ static int vc0321_sofdetect(struct usb_spca50x *spca50x,struct spca50x_frame *fr
 		PDEBUG(5, "vc0321 process packet %d datalength %d ",seqnum+1,*datalength);
 		return (seqnum +1);
 }
+static int vc0323_sofdetect(struct usb_spca50x *spca50x,struct spca50x_frame *frame, unsigned char *cdata,int *iPix, int seqnum, int *datalength)
+{
+		
+		if (cdata[0] == 0xFF && cdata[1] == 0xD8) {
+		PDEBUG(5,
+			   "vc0323 header packet found datalength %d !!",
+			   *datalength );
+		if(spca50x->bridge == BRIDGE_VC0321){
+			
+			*iPix = 46 ;   
+		    *datalength -= *iPix;
+		    }
+		    return 0;  
+		} 
+		*iPix = 0;
+		PDEBUG(5, "vc0321 process packet %d datalength %d ",seqnum+1,*datalength);
+		return (seqnum +1);
+}
+#endif
 #endif				// VC032XUSB_H

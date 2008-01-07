@@ -134,7 +134,7 @@ static int pac207_init(struct usb_spca50x *spca50x)
     id[1] = id[1] & 0x0f;
     PDEBUG(2, " Pixart Sensor ID 0x%02X Chips ID 0x%02X !!\n", id[0],
 	   id[1]);
-    if (id[0] != 0x27 || id[1] != 0x00)
+    if (id[0] != 0x27)
 	return -ENODEV;
 
     return 0;
@@ -187,7 +187,7 @@ static int pac207_config(struct usb_spca50x *spca50x)
     PDEBUG(2, "Find Sensor PAC207");
     spca50x->sensor = SENSOR_PAC207;
     set_pac207SIF(spca50x);
-    pac207_reg_write(spca50x->dev, 0x41, 0x00);	// 00 Bit_0=Image Format, Bit_1=LED, Bit_2=Compression test mode enable
+    pac207_reg_write(spca50x->dev, 0x41, 0x00);	//00 Bit_0=Image Format, Bit_1=LED, Bit_2=Compression test mode enable
     pac207_reg_write(spca50x->dev, 0x0f, 0x00);	//Power Control
     pac207_reg_write(spca50x->dev, 0x11, 0x30);	//Analog Bias
 

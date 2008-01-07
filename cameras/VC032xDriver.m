@@ -31,11 +31,11 @@
 #import "VC032xDriver.h"
 
 #include "MiscTools.h"
-#include "gspcadecoder.h"
+//#include "gspcadecoder.h"
 #include "USB_VendorProductIDs.h"
 
 
-@implementation VC032xDriver
+@implementation VC0321Driver
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -70,11 +70,6 @@
             [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
             @"Sony Embedded Notebook Webcam (C002)", @"name", NULL], 
         
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_LENOVO_USB_WEBCAM], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_LENOVO], @"idVendor",
-            @"Lenovo USB Webcam (40Y8519)", @"name", NULL], 
-        
         NULL];
 }
 
@@ -93,59 +88,25 @@
 	if (self == NULL) 
         return NULL;
     
-    LUT = [[LookUpTable alloc] init];
-	if (LUT == NULL) 
-        return NULL;
-    
+//  [LUT setDefaultOrientation:Rotate180];  // if necessary
+
     // Don't know if these work yet
+    
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
-    compressionType = proprietaryCompression;
-    
-    forceRGB = 1;
-    
-    // Set to reflect actual values
-//    spca50x->desc = Vimicro0321;
-    spca50x->bridge = BRIDGE_VC032X;
-    spca50x->sensor = SENSOR_OV7660;
-    spca50x->cameratype = YUY2;
-    
-//    spca50x->header_len = 4;
-//    spca50x->i2c_ctrl_reg = 0;
-//    spca50x->i2c_base = 0;
-//    spca50x->i2c_trigger_on_write = 0;
-    
-    // This is important
     cameraOperation = &fvc0321;
     
     decodingSkipBytes = 46;
     
+//  spca50x->desc = Vimicro0321;
+    spca50x->cameratype = YUY2;
+    spca50x->bridge = BRIDGE_VC0321;
+    spca50x->sensor = SENSOR_OV7660;
+    
+    compressionType = gspcaCompression;
+    
 	return self;
-}
-
-//
-// Provide feedback about which resolutions and rates are supported
-//
-- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate 
-{
-    switch (res) 
-    {
-        case ResolutionCIF:
-            if (rate > 30)  // what is the spec?
-                return NO;
-            return YES;
-            break;
-            
-        case ResolutionQCIF:
-            if (rate > 30)  // what is the spec?
-                return NO;
-            return YES;
-            break;
-            
-        default: 
-            return NO;
-    }
 }
 
 //
@@ -205,55 +166,56 @@ IsocFrameResult  vc032xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     return 2;
 }
 
-//
-// other stuff, including decompression
-//
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
+@end
+
+
+
+@implementation VC0323Driver : VC0321Driver 
+
++ (NSArray *) cameraUsbDescriptions 
 {
-    int i, error;
-	short rawWidth  = [self width];
-	short rawHeight = [self height];
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_VIMICRO_GENERIC_323], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
+            @"Vimicro Generic VC0321", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_LENOVO_USB_WEBCAM], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LENOVO], @"idVendor",
+            @"Lenovo USB Webcam (40Y8519)", @"name", NULL], 
+        
+        NULL];
+}
+
+
+#undef CLAMP
+
+#include "vc032x.h"
+
+
+//
+// Initialize the driver
+//
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
     
-#ifdef VERBOSE
-    printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
-#endif
+    cameraOperation = &fvc0321;
     
-	// Decode the bytes
+    decodingSkipBytes = 0;
     
-    spca50x->frame->width = rawWidth;
-    spca50x->frame->height = rawHeight;
-    spca50x->frame->hdrwidth = rawWidth;
-    spca50x->frame->hdrheight = rawHeight;
+//  spca50x->desc = Vimicro0323;
+    spca50x->cameratype = JPGV;
+    spca50x->bridge = BRIDGE_VC0323;
+    spca50x->sensor = SENSOR_OV7670;  // Sensor detection overrides this
     
-    spca50x->frame->tmpbuffer = buffer->buffer + decodingSkipBytes;
-    spca50x->frame->data = nextImageBuffer;
+    compressionType = gspcaCompression;
     
-    spca50x->frame->decoder = &spca50x->maindecode;
-    
-    for (i = 0; i < 256; i++) 
-    {
-        spca50x->frame->decoder->Red[i] = i;
-        spca50x->frame->decoder->Green[i] = i;
-        spca50x->frame->decoder->Blue[i] = i;
-    }
-    
-    spca50x->frame->cameratype = spca50x->cameratype;
-    
-    spca50x->frame->format = VIDEO_PALETTE_RGB24;
-    
-    spca50x->frame->cropx1 = 0;
-    spca50x->frame->cropx2 = 0;
-    spca50x->frame->cropy1 = 0;
-    spca50x->frame->cropy2 = 0;
-    
-    error = yvyu_translate(spca50x->frame, forceRGB);
-    
-    if (error != 0) 
-        return NO;
-    
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP orientation:orientation];
-    
-    return YES;
+	return self;
 }
 
 @end

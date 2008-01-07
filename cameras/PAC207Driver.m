@@ -252,6 +252,8 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
     
     compressionType = gspcaCompression;
     
+    autobrightIdle = YES;
+    
 	return self;
 }
 

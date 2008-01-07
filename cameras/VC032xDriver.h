@@ -28,18 +28,27 @@
 //
 // YUY2
 // epadr = 2
+//
 
-@interface VC032xDriver : SPCA5XXDriver 
+@interface VC0321Driver : SPCA5XXDriver 
 {
-    int forceRGB;
-    BOOL invert;
 }
 
 + (NSArray *) cameraUsbDescriptions;
 
-- (id) initWithCentral: (id) c;
-- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
+- (id) initWithCentral:(id)c;
+- (UInt8) getGrabbingPipe;
 - (void) setIsocFrameFunctions;
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
+
+@end
+
+
+@interface VC0323Driver : VC0321Driver 
+{
+}
+
++ (NSArray *) cameraUsbDescriptions;
+
+- (id) initWithCentral:(id)c;
 
 @end

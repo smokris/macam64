@@ -304,7 +304,8 @@
 #define PRODUCT_GENERIC_ZC0302          0x0302      // ZC0302
 #define PRODUCT_GENERIC_ZC0303B         0x303b      // ZC0301P
 #define PRODUCT_GENERIC_ZC0305B         0x305b      // VC0301P
-#define PRODUCT_VIMICRO_GENERIC_321     0x0321      // VC032x ?
+#define PRODUCT_VIMICRO_GENERIC_321     0x0321      // VC0321
+#define PRODUCT_VIMICRO_GENERIC_323     0x0323      // VC0323
 #define PRODUCT_SONY_C001               0xc001      // VC032x ?
 #define PRODUCT_SONY_C002               0xc002      // VC032x ?
 
@@ -330,7 +331,7 @@
 #define PRODUCT_300KCMOS                0x501c      // SPCA501A? [not yet]
 
 #define VENDOR_LENOVO           0x17ef
-#define PRODUCT_LENOVO_USB_WEBCAM       0x4802      // VC032x ?
+#define PRODUCT_LENOVO_USB_WEBCAM       0x4802      // VC0323
 
 #define VENDOR_PICO_INSTRUMENTS 0x18cd
 #define PRODUCT_PICO_IMAGE_WEBCAM       0xcafe      // PicoDriver - UVC Bulk
