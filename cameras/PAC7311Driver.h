@@ -32,7 +32,7 @@
 
 + (NSArray *) cameraUsbDescriptions;
 
-- (id) initWithCentral: (id) c;
+- (id) initWithCentral:(id)c;
 - (UInt8) getGrabbingPipe;
 - (BOOL) setGrabInterfacePipe;
 - (void) setIsocFrameFunctions;

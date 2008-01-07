@@ -88,7 +88,7 @@
 	if (self == NULL) 
         return NULL;
     
-    orientation = Rotate180;
+    [LUT setDefaultOrientation:Rotate180];
     
     hardwareBrightness = YES;
     hardwareContrast = YES;
