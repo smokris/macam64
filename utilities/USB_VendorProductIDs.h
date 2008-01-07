@@ -14,9 +14,12 @@
 
 #define VENDOR_CREATIVE_LABS    0x041e
 #define	PRODUCT_PC_CAM_300              0x400a		// SPCA500A
+#define	PRODUCT_PC_CAM_600              0x400b		// SPCA504C
 #define PRODUCT_WEBCAM_5                0x400c
 #define PRODUCT_WEBCAM_5_NEW            0x400d
 #define PRODUCT_WEBCAM_PRO_EX           0x4011
+#define PRODUCT_PC_CAM_350              0x4012      // SPCA504C
+#define PRODUCT_PC_CAM_750              0x4013      // SPCA504B
 #define PRODUCT_WEBCAM_MOBILE           0x4017      // ZC0301P
 #define PRODUCT_VISTA_A                 0x4018      // SPCA508
 #define PRODUCT_VISTA_B                 0x401a      // SPCA561A
@@ -35,6 +38,7 @@
 
 #define VENDOR_GENIUS           0x0458
 #define PRODUCT_VIDEOCAM_EXPRESS_V2     0x7004      // SPCA561A
+#define PRODUCT_DSC_13M_SMART           0x7006      // SPCA504B-P3
 #define PRODUCT_VIDEOCAM_V2             0x7007      // ZC0301P
 #define PRODUCT_VIDEOCAM_V3             0x700c      // ZC0301P
 #define PRODUCT_VIDEOCAM_WEB            0x700f      // ZC0301P
@@ -135,6 +139,7 @@
 #define PRODUCT_TOUCAM_PRO              0x0311
 #define PRODUCT_TOUCAM_PRO_3D           0x0312
 #define PRODUCT_TOUCAM_XS               0x0313      // Philips PCVC720K/40 (ToUCam XS)
+#define PRODUCT_DMVC_1300K              0x0322      // SPCA504B
 #define PRODUCT_SPC_200NC               0x0325      // VC0305
 #define PRODUCT_SPC_300NC               0x0326      // VC0305
 #define PRODUCT_SPC_900NC               0x0329      // Kiara
@@ -145,18 +150,26 @@
 #define PRODUCT_QUICKCAM_VC             0x0001      // uses USS720 USB <-> parallel converter
 #define PRODUCT_QUICKCLIP               0x0002
 
+#define VENDOR_BENQ             0x04a5
+#define PRODUCT_DC_1300                 0x3003      // SPCA504B
+#define PRODUCT_DC_1500                 0x3008      // 
+
 #define VENDOR_SOTEC            0x04cc
 #define PRODUCT_AFINA_EYE               0x8116
+
+#define VENDOR_JVC              0x04f1
+#define PRODUCT_GC_A50                  0x1001      // SPCA504B
 
 #define VENDOR_SUNPLUS			0x04fc
 #define VENDOR_FINET_TECHNOLOGY 0x04fc
 #define VENDOR_EZONICS          0x04fc
 #define VENDOR_APEX_DIGITAL     0x04fc
 #define VENDOR_GIGATECH_COMP    0x04fc
+#define PRODUCT_GENERIC_SPCA504B        0x500c      // SPCA504B
 #define PRODUCT_GENERIC_SPCA561_CAM     0x0561      // SPCA561
 #define PRODUCT_EZ_CAM_III              0x0561      // SPCA561
 #define PRODUCT_MINI_PENCAM13_A         0x504a      // SPCA504A [not yet]
-#define PRODUCT_MINI_PENCAM13_B         0x504b      // SPCA504B [not yet]
+#define PRODUCT_MINI_PENCAM13_B         0x504b      // SPCA504B
 #define PRODUCT_DIGITREX_2110           0x5330      // SPCA533A [not yet]
 #define PRODUCT_TDC_202A                0x5330      // SPCA533A [not yet]
 #define PRODUCT_GENERIC_SPCA536A_CAM    0x5360      // SPCA536A [not yet]
@@ -175,6 +188,11 @@
 #define PRODUCT_STINGRAY_A              0x8333      // TV8532
 #define PRODUCT_EVISION123              0x888d
 
+#define VENDOR_POLAROID         0x0546
+#define PRODUCT_PDC_2030                0x3273      // SPCA504B
+#define PRODUCT_PDC_3070                0x3155
+#define PRODUCT_ION_80                  0x3191      // SPCA504B
+
 #define VENDOR_SONY             0x054c
 #define PRODUCT_EYE_TOY                 0x0154
 #define PRODUCT_EYE_TOY_AKA1            0x0155
@@ -190,6 +208,7 @@
 
 #define VENDOR_MUSTEK			0x055f
 #define PRODUCT_GSMART_MINI2            0xc420
+#define PRODUCT_GSMART_MINI3            0xc520
 #define PRODUCT_WCAM_300A_A             0xd003      // ZC0301P
 #define PRODUCT_WCAM_300A_B             0xd004      // ZC0301P
 #define PRODUCT_WCAM_300A_C             0xc005      // ZC0302
@@ -209,6 +228,9 @@
 #define PRODUCT_OV519_AKA1              0x8519
 #define PRODUCT_OV519_AKA2              0x4519
 #define PRODUCT_OV530                   0x0530
+
+#define VENDOR_DIGITAL_DREAM    0x05da
+#define PRODUCT_ENIGMA_1_3              0x1018      // SPCA504B
 
 #define VENDOR_MAXELL           0x060b
 #define PRODUCT_COMPACT_PC_PM3          0xa001      // SPCA561A [not yet]
@@ -250,11 +272,12 @@
 #define PRODUCT_POCKET_DV3100           0x0106      // SPCA533A [not yet]
 #define PRODUCT_TRUST_SPYCAM_100        0x0110      // Mars MR97310A-0B
 #define PRODUCT_PENCAM_VGA_PLUS         0x0111      // Mars MR97310A-0B
-#define PRODUCT_MINI_PENCAM_2M          0x2008      // SPCA504B [not yet]
-#define PRODUCT_POCKETCAM_3M            0x2010      // SPCA504B [not yet]
+#define PRODUCT_PHILIPS_K_007           0x504a      // SPCA504B (!)
+#define PRODUCT_MINI_PENCAM_2M          0x2008      // SPCA504B
+#define PRODUCT_POCKETCAM_3M            0x2010      // SPCA504B
 #define PRODUCT_SLIM_3200               0x2012      // SPCA533A [not yet]
-#define PRODUCT_POCKETCAM_2M            0x2016      // SPCA504B [not yet]
-#define PRODUCT_PENCAM_SD_2M            0x2018      // SPCA504B [not yet]
+#define PRODUCT_POCKETCAM_2M            0x2016      // SPCA504B
+#define PRODUCT_PENCAM_SD_2M            0x2018      // SPCA504B
 #define PRODUCT_SLIM_3000F              0x2020      // SPCA533  [not yet]
 
 #define VENDOR_GENERIC_TV8532   0x0923

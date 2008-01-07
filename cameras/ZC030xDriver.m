@@ -216,20 +216,19 @@
 
 #undef CLAMP
 
+static int force_gamma_id = -1;
+static int force_sensor_id = -1;
+
 #include "zc3xx.h"
 
 
 //
 // Initialize the driver
 //
-- (id) initWithCentral: (id) c 
+- (id) initWithCentral:(id)c 
 {
 	self = [super initWithCentral:c];
 	if (self == NULL) 
-        return NULL;
-    
-    LUT = [[LookUpTable alloc] init];
-	if (LUT == NULL) 
         return NULL;
     
     hardwareBrightness = YES;
@@ -238,24 +237,16 @@
     cameraOperation = &fzc3xx;
     
     [self setCompression:1];
-    forceRGB = 1;
     
-    spca50x->bridge = BRIDGE_ZC3XX;
     spca50x->cameratype = JPGH;
-    spca50x->sensor = SENSOR_TAS5130CXX;  // Assume this sensor, will get overwritten
+    spca50x->bridge = BRIDGE_ZC3XX;
+    spca50x->sensor = SENSOR_TAS5130CXX;  // Assume this sensor for now, will get overwritten
     
-    compressionType = jpegCompression;
-    jpegVersion = 0;
+    compressionType = gspcaCompression;
+    
+//  jpegVersion = 0;  // Possibly useful if we try using the jpeg-decompression
 
 	return self;
-}
-
-
-- (void) startupCamera
-{
-    [super startupCamera];  // Calls config() and init()
-    
-    init_jpeg_decoder(spca50x);  // May be irrelevant
 }
 
 
@@ -331,7 +322,7 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
-
+/*
 - (BOOL) setupJpegCompression
 {
     if (jpegVersion == 0) 
@@ -343,8 +334,8 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     else 
         return [super setupJpegCompression];
 }
-
-
+*/
+/*
 //
 // other stuff, including decompression
 //
@@ -353,6 +344,7 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     int i, error;
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
+    int forceRGB = 1;
     
 #if VERBOSE
     printf("Need to decode a JPEG buffer with %ld bytes.\n", buffer->numBytes);
@@ -401,11 +393,11 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     if (error != 0) 
         return NO;
     
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP orientation:orientation];
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
     
     return YES;
 }
-
+*/
 @end
 
 
@@ -424,15 +416,13 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 
-- (id) initWithCentral: (id) c 
+- (BOOL) setupDecoding 
 {
-	self = [super initWithCentral:c];
-	if (self == NULL) 
-        return NULL;
+    BOOL ok = [super setupDecoding];
     
-    forceRGB = 0;
+    spca50x->frame->pictsetting.force_rgb = 0;
     
-	return self;
+    return ok;
 }
 
 @end
@@ -468,13 +458,13 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 
-- (id) initWithCentral: (id) c 
+- (id) initWithCentral:(id)c 
 {
 	self = [super initWithCentral:c];
 	if (self == NULL) 
         return NULL;
     
-    orientation = InvertVertical;
+    [LUT setDefaultOrientation:Rotate180];
     
 	return self;
 }
@@ -546,6 +536,59 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         return NULL;
     
     spca50x->sensor = SENSOR_TAS5130C_VF0250;
+    
+	return self;
+}
+
+@end
+
+
+
+@implementation ZC030xDriverOV7620 : ZC030xDriver
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x307b], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
+            @"ZSMC ZS211 USB PC Camera (ZS0211)", @"name", NULL], // appears to use an OV7648 sensor
+        
+        NULL];
+}
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->sensor = SENSOR_OV7620;
+    
+	return self;
+}
+
+@end
+
+
+@implementation ZC030xDriverMC501CB : ZC030xDriver
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        
+        NULL];
+}
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->sensor = SENSOR_MC501CB;
     
 	return self;
 }

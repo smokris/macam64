@@ -28,16 +28,14 @@
 
 @interface ZC030xDriver : SPCA5XXDriver 
 {
-    int forceRGB;
-    BOOL invert;
 }
 
 + (NSArray *) cameraUsbDescriptions;
 
-- (id) initWithCentral: (id) c;
+- (id) initWithCentral:(id)c;
 - (void) setIsocFrameFunctions;
-- (BOOL) setupJpegCompression;
-- (BOOL) decodeBufferJPEG: (GenericChunkBuffer *) buffer;
+//- (BOOL) setupJpegCompression;
+//- (BOOL) decodeBufferJPEG: (GenericChunkBuffer *) buffer;
 
 @end
 
@@ -45,7 +43,7 @@
 @interface ZC030xDriverBGR : ZC030xDriver
 
 + (NSArray *) cameraUsbDescriptions;
-- (id) initWithCentral: (id) c;
+- (BOOL) setupDecoding;
 
 @end
 
@@ -53,7 +51,7 @@
 @interface ZC030xDriverInverted : ZC030xDriver
 
 + (NSArray *) cameraUsbDescriptions;
-- (id) initWithCentral: (id) c;
+- (id) initWithCentral:(id)c;
 
 @end
 
@@ -61,7 +59,7 @@
 @interface ZC030xDriverMic : ZC030xDriver
 
 + (NSArray *) cameraUsbDescriptions;
-- (id) initWithCentral: (id) c;
+- (id) initWithCentral:(id)c;
 
 @end
 
@@ -69,6 +67,22 @@
 @interface ZC030xDriverVF0250 : ZC030xDriver
 
 + (NSArray *) cameraUsbDescriptions;
-- (id) initWithCentral: (id) c;
+- (id) initWithCentral:(id)c;
+
+@end
+
+
+@interface ZC030xDriverOV7620 : ZC030xDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral:(id)c;
+
+@end
+
+
+@interface ZC030xDriverMC501CB : ZC030xDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral:(id)c;
 
 @end
