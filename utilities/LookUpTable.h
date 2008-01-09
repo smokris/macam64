@@ -54,29 +54,40 @@
     float redGain;
     float greenGain;
     float blueGain;
+    
+    OrientationMode defaultMode;
+    OrientationMode modeSetting;
 }
 
 // Start/stop
 - (id) init;
 
 // LUT functions
-- (UInt8) red: (UInt8) r  green: (int) g;
-- (UInt8) green: (UInt8) g;
-- (UInt8) blue: (UInt8) b  green: (int) g;
-- (void) processTriplet: (UInt8 *) tripletIn toHere: (UInt8 *) tripletOut;
-- (void) processImage: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp orientation: (OrientationMode) orientation;
-- (void) processImageRep: (NSBitmapImageRep *) imageRep buffer: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp;
+- (UInt8) red:(UInt8)r  green:(int)g;
+- (UInt8) green:(UInt8)g;
+- (UInt8) blue:(UInt8)b green:(int)g;
+- (void) processTriplet:(UInt8 *)tripletIn toHere:(UInt8 *)tripletOut;
+- (void) processTriplet:(UInt8 *)tripletIn toHere:(UInt8 *)tripletOut bidirectional:(BOOL)swap;
+
+// Whole image functions
+- (void) processImageFrom:(UInt8 *)srcBuffer into:(UInt8 *)dstBuffer numRows:(long)numRows fromRowBytes:(long)srcRowBytes intoRowBytes:(long)dstRowBytes fromBPP:(short)srcBPP alphaFirst:(BOOL)alphaFirst;
+- (void) processImage:(UInt8 *)buffer numRows:(long)numRows rowBytes:(long)rowBytes bpp:(short)bpp;
+- (void) processImageRep:(NSBitmapImageRep *)imageRep buffer:(UInt8 *)buffer numRows:(long)numRows rowBytes:(long)rowBytes bpp:(short)bpp;
 
 // Get/set properties
 - (float) brightness;	//[-1.0 ... 1.0], 0.0 = no change, more = brighter
-- (void) setBrightness:(float) newBrightness;
+- (void) setBrightness:(float)newBrightness;
 - (float) contrast;	//[0.0 ... 2.0], 1.0 = no change, more = more contrast
-- (void) setContrast:(float) newContrast;
+- (void) setContrast:(float)newContrast;
 - (float) gamma;	//[0.0 ... 2.0], 1.0 = no change, more = darker grey
-- (void) setGamma:(float) newGamma;
+- (void) setGamma:(float)newGamma;
 - (float) saturation;	//[0.0 ... 2.0], 1.0 = no change, less = less saturation
-- (void) setSaturation:(float) newSaturation;
+- (void) setSaturation:(float)newSaturation;
 - (void) setGainsRed:(float)r green:(float)g blue:(float)b;
+- (void) setDefaultOrientation:(OrientationMode)mode;
+- (void) setOrientationSetting:(OrientationMode)mode;
+
+- (OrientationMode) combineOrientationMode:(OrientationMode)mode1 with:(OrientationMode)mode2;
 
 - (void) recalcTransferLookup;
 

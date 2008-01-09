@@ -40,6 +40,9 @@
     blueGain=1.0f;
     [self recalcTransferLookup];
     
+    defaultMode = NormalOrientation;
+    modeSetting = NormalOrientation;
+    
     return self;
 }
 
@@ -83,6 +86,74 @@
 }
 
 
+- (void) setDefaultOrientation:(OrientationMode)mode
+{
+    defaultMode = mode;
+}
+
+- (void) setOrientationSetting:(OrientationMode)mode
+{
+    modeSetting = mode;
+}
+
+
+- (OrientationMode) combineOrientationMode:(OrientationMode)mode1 with:(OrientationMode)mode2
+{
+    OrientationMode result = NormalOrientation;
+    
+    if (mode1 == mode2) 
+        return NormalOrientation;
+    
+    if (mode1 == NormalOrientation) 
+        return mode2;
+    
+    if (mode2 == NormalOrientation) 
+        return mode1;
+    
+    if (mode1 == FlipHorizontal) 
+    {
+        if (mode2 == InvertVertical) 
+            return Rotate180;
+        
+        if (mode2 == Rotate180) 
+            return InvertVertical;
+        
+        // error, should not get here
+        
+        return result;
+    }
+    else if (mode1 == InvertVertical) 
+    {
+        if (mode2 == FlipHorizontal) 
+            return Rotate180;
+        
+        if (mode2 == Rotate180) 
+            return FlipHorizontal;
+        
+        // error, should not get here
+        
+        return result;
+    }
+    else if (mode1 == Rotate180) 
+    {
+        if (mode2 == FlipHorizontal) 
+            return InvertVertical;
+        
+        if (mode2 == InvertVertical) 
+            return FlipHorizontal;
+        
+        // error, should not get here
+        
+        return result;
+    }
+    
+    // error, should not get here
+    
+    return result;
+}
+
+
+
 - (UInt8) red: (UInt8) r  green: (int) g
 {
     int rr = (((r - g) * saturation) / 65536) + g;
@@ -103,136 +174,159 @@
 }
 
 
-- (void) processTriplet: (UInt8 *) tripletIn toHere: (UInt8 *) tripletOut
+- (void) processTriplet:(UInt8 *)tripletIn toHere:(UInt8 *)tripletOut
 {
-    int g =    tripletIn[1];
-    int r = (((tripletIn[0] - g) * saturation) / 65536) + g;
-    int b = (((tripletIn[2] - g) * saturation) / 65536) + g;
-    
-    tripletOut[0] = redTransferLookup[CLAMP(r,0,255)];
-    tripletOut[1] = greenTransferLookup[CLAMP(g,0,255)];
-    tripletOut[2] = blueTransferLookup[CLAMP(b,0,255)];
-}
-
-
-- (void) processImage: (UInt8 *) buffer numRows: (long) numRows rowBytes: (long) rowBytes bpp: (short) bpp orientation: (OrientationMode) orientation
-{
-    UInt8 * ptr;
-    long  w, h;
-    short obpp = bpp;
-    
-    if (orientation == Rotate180 || orientation == FlipHorizontal) 
-        obpp = - bpp;
-    
-    if (orientation == InvertVertical || orientation == Rotate180) 
+    if (needsTransferLookup) 
     {
-        UInt8 swap[3];
-        UInt8 * opposite;
+        int g =    tripletIn[1];
+        int r = (((tripletIn[0] - g) * saturation) / 65536) + g;
+        int b = (((tripletIn[2] - g) * saturation) / 65536) + g;
         
-        for (h = 0; h < numRows / 2; h++) 
-        {
-            ptr = buffer + h * rowBytes;
-            opposite = buffer + (numRows - h - 1) * rowBytes;
-            
-            if (orientation == Rotate180) 
-                opposite += rowBytes - bpp;
-            
-            if (bpp == 4) 
-            {
-                ptr++;
-                opposite++;
-            }
-            
-            for (w = 0; w < rowBytes; w += bpp, ptr += bpp, opposite += obpp) 
-            {
-                swap[0] = ptr[0];
-                swap[1] = ptr[1];
-                swap[2] = ptr[2];
-                
-                if (needsTransferLookup) 
-                {
-                    [self processTriplet:opposite toHere:ptr];
-                    [self processTriplet:swap toHere:opposite];
-                }
-                else 
-                {
-                    ptr[0] = opposite[0];
-                    ptr[1] = opposite[1];
-                    ptr[2] = opposite[2];
-                    
-                    opposite[0] = swap[0];
-                    opposite[1] = swap[1];
-                    opposite[2] = swap[2];
-                }
-            }
-        }
+        tripletOut[0] = redTransferLookup[CLAMP(r,0,255)];
+        tripletOut[1] = greenTransferLookup[CLAMP(g,0,255)];
+        tripletOut[2] = blueTransferLookup[CLAMP(b,0,255)];
     }
-    else if (orientation == FlipHorizontal) 
+    else 
     {
-        UInt8 swap[3];
-        UInt8 * opposite;
-        
-        for (h = 0; h < numRows; h++) 
-        {
-            ptr = buffer + h * rowBytes;
-            opposite = buffer + h * rowBytes;
-            opposite += rowBytes - bpp;
-            
-            if (bpp == 4) 
-            {
-                ptr++;
-                opposite++;
-            }
-            
-            for (w = 0; w < rowBytes; w += bpp, ptr += bpp, opposite += bpp) 
-            {
-                swap[0] = ptr[0];
-                swap[1] = ptr[1];
-                swap[2] = ptr[2];
-                
-                if (needsTransferLookup) 
-                {
-                    [self processTriplet:opposite toHere:ptr];
-                    [self processTriplet:swap toHere:opposite];
-                }
-                else 
-                {
-                    ptr[0] = opposite[0];
-                    ptr[1] = opposite[1];
-                    ptr[2] = opposite[2];
-                    
-                    opposite[0] = swap[0];
-                    opposite[1] = swap[1];
-                    opposite[2] = swap[2];
-                }
-            }
-        }
-    }
-    else if (needsTransferLookup) // orientation must be normal
-    {
-        for (h = 0; h < numRows; h++) 
-        {
-            ptr = buffer + h * rowBytes;
-            
-            if (bpp == 4) 
-                ptr++;
-            
-            for (w = 0; w < rowBytes; w += bpp, ptr += bpp) 
-                [self processTriplet:ptr toHere:ptr];
-        }
+        tripletOut[0] = tripletIn[0];
+        tripletOut[1] = tripletIn[1];
+        tripletOut[2] = tripletIn[2];
     }
 }
 
-
-- (void) processImageRep: (NSBitmapImageRep *) imageRep buffer: (UInt8 *) dstBuffer numRows: (long) numRows rowBytes: (long) dstRowBytes bpp: (short) dstBpp
+- (void) processTriplet:(UInt8 *)tripletIn toHere:(UInt8 *)tripletOut bidirectional:(BOOL)swap
 {
+    if (swap) 
+    {
+        UInt8 swap[3];
+        
+        swap[0] = tripletOut[0];
+        swap[1] = tripletOut[1];
+        swap[2] = tripletOut[2];
+            
+        [self processTriplet:tripletIn toHere:tripletOut];
+        [self processTriplet:swap toHere:tripletIn];
+    }
+    else 
+        [self processTriplet:tripletIn toHere:tripletOut];
+}
+
+
+//
+// processImage - applies a bunch of processing to the image "in place"
+// 
+// including:
+// - orientation, taking into account default mode as well as current setting
+// - gamma
+// - brightness
+// - contrast
+// - saturation
+// - gain (separate for red, green. blue)
+//
+// In general, the processing is efficient, operations are combined, done ony if necessary etc.
+// Assuming the destination is a RGB buffer (no alpha, RGB order)
+//
+- (void) processImageFrom:(UInt8 *)srcBuffer into:(UInt8 *)dstBuffer numRows:(long)numRows fromRowBytes:(long)srcRowBytes intoRowBytes:(long)dstRowBytes fromBPP:(short)srcBPP alphaFirst:(BOOL)alphaFirst
+{
+    UInt8 * srcPtr;
+    UInt8 * dstPtr;
     long  w, h;
-    UInt8 * src, * dst;
+    BOOL swap = NO;
+    short dstBPP = 3;
+    short useBPP = dstBPP;
+    long endRows = numRows;
+    long endRowBytes = srcRowBytes;
+    
+    OrientationMode orientation = [self combineOrientationMode:defaultMode with:modeSetting];
+    
+    if (srcBuffer == dstBuffer) 
+    {
+        swap = YES;
+        
+        if (orientation == FlipHorizontal)
+            endRowBytes = endRowBytes / 2;
+        
+        if (orientation == InvertVertical) 
+            endRows = endRows / 2;
+        
+        if (orientation == Rotate180) 
+            endRows = endRows / 2;  // cut either rows or columns in half, but not both
+    }
+    
+    if (orientation != NormalOrientation) 
+    {
+        for (h = 0; h < endRows; h++) 
+        {
+            srcPtr = srcBuffer + h * srcRowBytes;
+            dstPtr = dstBuffer + h * dstRowBytes;
+            
+            if (orientation == InvertVertical || orientation == Rotate180) 
+                dstPtr = dstBuffer + (numRows - h - 1) * dstRowBytes;
+            
+            if (orientation == FlipHorizontal || orientation == Rotate180) 
+            {
+                dstPtr += dstRowBytes - dstBPP;
+                useBPP = - dstBPP;
+            }
+            
+            if (srcBPP == 4 && alphaFirst) 
+                srcPtr++;
+            
+            for (w = 0; w < endRowBytes; w += srcBPP, srcPtr += srcBPP, dstPtr += useBPP) 
+                [self processTriplet:srcPtr toHere:dstPtr bidirectional:swap];
+        }
+    }
+    else if (srcBuffer != dstBuffer || needsTransferLookup) 
+    {
+        for (h = 0; h < endRows; h++) 
+        {
+            srcPtr = srcBuffer + h * srcRowBytes;
+            dstPtr = dstBuffer + h * dstRowBytes;
+            
+            if (srcBPP == 4 && alphaFirst) 
+                srcPtr++;
+            
+            for (w = 0; w < endRowBytes; w += srcBPP, srcPtr += srcBPP, dstPtr += useBPP) 
+                [self processTriplet:srcPtr toHere:dstPtr];
+        }
+    }
+    // else orintation is normal AND no lookuptransfer AND buffers are the same
+}
+
+//
+// old version of call, always into itself
+//
+- (void) processImage:(UInt8 *)buffer numRows:(long)numRows rowBytes:(long)rowBytes bpp:(short)bpp
+{
+    [self processImageFrom:buffer into:buffer numRows:numRows fromRowBytes:rowBytes intoRowBytes:rowBytes fromBPP:bpp alphaFirst:NO];
+}
+
+//
+// process a BitMap
+//
+- (void) processImageRep:(NSBitmapImageRep *)imageRep buffer:(UInt8 *)dstBuffer numRows:(long)numRows rowBytes:(long)dstRowBytes bpp:(short)dstBpp
+{
     UInt8 * srcBuffer = [imageRep bitmapData];
     int srcBpp = [imageRep samplesPerPixel];
     int srcRowBytes = [imageRep bytesPerRow];
-    int numColumns = dstRowBytes / dstBpp;
+    BOOL alphaFirst = NO;
     
+    if (dstBpp != 3) 
+    {
+        NSLog(@"Whoa! Trying to copy to a buffer that is *not* 3 samples per pixel. Can't do that!\n");
+    }
+    
+#if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
+    if ([imageRep respondsToSelector:@selector(bitmapFormat)]) 
+    {
+        NSBitmapFormat format = [imageRep bitmapFormat];
+        alphaFirst = (format & NSAlphaFirstBitmapFormat) ? YES : NO;
+    }
+#endif
+    
+    [self processImageFrom:srcBuffer into:dstBuffer numRows:numRows fromRowBytes:srcRowBytes intoRowBytes:dstRowBytes fromBPP:srcBpp alphaFirst:alphaFirst];
+    
+/*    
     for (h = 0; h < numRows; h++) 
     {
         src = srcBuffer + h * srcRowBytes;
@@ -240,14 +334,7 @@
         
         for (w = 0; w < numColumns; w++) 
         {
-            if (needsTransferLookup) 
-                [self processTriplet:src toHere:dst];
-            else
-            {
-                dst[0] = src[0];
-                dst[1] = src[1];
-                dst[2] = src[2];
-            }
+            [self processTriplet:src toHere:dst];
             
             if (dstBpp == 4 && srcBpp == 4) 
                 dst[3] = src[3];
@@ -256,6 +343,7 @@
             dst += dstBpp;
         }
     }
+*/
 }
 
 
@@ -279,6 +367,8 @@
         greenTransferLookup[i]=CLAMP(g,0.0f,255.0f);	//Clamp and set
         blueTransferLookup[i]=CLAMP(b,0.0f,255.0f);;	//Clamp and set
     }
+    
+    // set this to avoid using these lookup tables if not necessary!
     
     needsTransferLookup=(gamma!=1.0f)||(brightness!=0.0f)||(contrast!=1.0f)
         ||(saturation!=65536)||(redGain!=1.0f)||(greenGain!=1.0f)||(blueGain!=1.0f);
