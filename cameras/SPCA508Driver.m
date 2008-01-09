@@ -42,10 +42,6 @@
 #import "SPCA508Driver.h"
 
 #include "USB_VendorProductIDs.h"
-#include "gspcadecoder.h"
-
-
-int yuv_decode(struct spca50x_frame * myframe, int force_rgb);
 
 
 // These defines are needed by the spca5xx code
@@ -91,14 +87,12 @@ enum
 	if (self == NULL) 
         return NULL;
     
-    LUT = [[LookUpTable alloc] init];
-	if (LUT == NULL) 
-        return NULL;
-    
     spca50x->desc = ViewQuestVQ110;
     spca50x->bridge = BRIDGE_SPCA508;
     spca50x->sensor = SENSOR_INTERNAL;
-//    spca50x->header_len = SPCA508_OFFSET_DATA;
+    
+    compressionType = gspcaCompression;
+    
     spca50x->i2c_ctrl_reg = 0;
     spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
     spca50x->i2c_trigger_on_write = 1;
@@ -168,56 +162,6 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     grabContext.isocFrameScanner = spca508IsocFrameScanner;
     grabContext.isocDataCopier = genericIsocDataCopier;
-}
-
-
-//
-// other stuff, including decompression
-//
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
-{
-    int i;
-	short rawWidth  = [self width];
-	short rawHeight = [self height];
-    
-#if REALLY_VERBOSE
-    printf("decoding buffer with %ld bytes\n", buffer->numBytes);
-#endif
-    
-    spca50x->frame->hdrwidth = rawWidth;
-    spca50x->frame->hdrheight = rawHeight;
-    spca50x->frame->width = rawWidth;
-    spca50x->frame->height = rawHeight;
-    
-    spca50x->frame->data = nextImageBuffer;
-    spca50x->frame->tmpbuffer = buffer->buffer;
-    spca50x->frame->scanlength = buffer->numBytes;
-    
-    spca50x->frame->decoder = &spca50x->maindecode;  // has the code table
-    
-    for (i = 0; i < 256; i++) 
-    {
-        spca50x->frame->decoder->Red[i] = i;
-        spca50x->frame->decoder->Green[i] = i;
-        spca50x->frame->decoder->Blue[i] = i;
-    }
-    
-    spca50x->frame->cameratype = spca50x->cameratype;
-    
-    spca50x->frame->format = VIDEO_PALETTE_RGB24;
-    
-    spca50x->frame->cropx1 = 0;
-    spca50x->frame->cropx2 = 0;
-    spca50x->frame->cropy1 = 0;
-    spca50x->frame->cropy2 = 0;
-    
-    // do the decoding
-    
-    yuv_decode(spca50x->frame, 1);
-    
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
-    
-    return YES;
 }
 
 @end

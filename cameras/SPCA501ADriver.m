@@ -25,12 +25,7 @@
 
 #import "SPCA501ADriver.h"
 
-#include "MiscTools.h"
-#include "gspcadecoder.h"
 #include "USB_VendorProductIDs.h"
-
-
-int yuv_decode(struct spca50x_frame * myframe, int force_rgb);
 
 
 enum
@@ -80,10 +75,6 @@ enum
 	if (self == NULL) 
         return NULL;
     
-    LUT = [[LookUpTable alloc] init];
-	if (LUT == NULL) 
-        return NULL;
-    
     // Set as appropriate
     hardwareBrightness = YES;
     hardwareContrast = YES;
@@ -92,11 +83,13 @@ enum
     cameraOperation = &fspca501;
     
     // Set to reflect actual values
-    spca50x->bridge = BRIDGE_SPCA501;
     spca50x->cameratype = YUYV;
-    
-    spca50x->desc = IntelCreateAndShare;
+    spca50x->bridge = BRIDGE_SPCA501;
     spca50x->sensor = SENSOR_INTERNAL;
+    
+    compressionType = gspcaCompression;
+
+    spca50x->desc = IntelCreateAndShare;
     
     spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
     spca50x->i2c_base = 0;
@@ -157,57 +150,6 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 {
     grabContext.isocFrameScanner = spca501AIsocFrameScanner;
     grabContext.isocDataCopier = genericIsocDataCopier;
-}
-
-//
-// other stuff, including decompression
-//
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
-{
-#ifdef REALLY_VERBOSE
-    printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
-#endif
-    
-    int i;
-	short rawWidth  = [self width];
-	short rawHeight = [self height];
-    
-    //  printf("decoding buffer with %ld bytes\n", buffer->numBytes);
-    
-    spca50x->frame->hdrwidth = rawWidth;
-    spca50x->frame->hdrheight = rawHeight;
-    spca50x->frame->width = rawWidth;
-    spca50x->frame->height = rawHeight;
-    
-    spca50x->frame->data = nextImageBuffer;
-    spca50x->frame->tmpbuffer = buffer->buffer;
-    spca50x->frame->scanlength = buffer->numBytes;
-    
-    spca50x->frame->decoder = &spca50x->maindecode;  // has the code table
-    
-    for (i = 0; i < 256; i++) 
-    {
-        spca50x->frame->decoder->Red[i] = i;
-        spca50x->frame->decoder->Green[i] = i;
-        spca50x->frame->decoder->Blue[i] = i;
-    }
-    
-    spca50x->frame->cameratype = spca50x->cameratype;
-    
-    spca50x->frame->format = VIDEO_PALETTE_RGB24;
-    
-    spca50x->frame->cropx1 = 0;
-    spca50x->frame->cropx2 = 0;
-    spca50x->frame->cropy1 = 0;
-    spca50x->frame->cropy2 = 0;
-    
-    // do the decoding
-    
-    yuv_decode(spca50x->frame, 1);
-    
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
-    
-    return YES;
 }
 
 @end

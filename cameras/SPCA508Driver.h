@@ -33,7 +33,6 @@
 + (NSArray *) cameraUsbDescriptions;
 - (id) initWithCentral: (id) c;
 - (void) setIsocFrameFunctions;
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
 
