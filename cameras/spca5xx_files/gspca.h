@@ -146,8 +146,9 @@ if (debug >= level) info("[%s:%d] " fmt, __PRETTY_FUNCTION__, __LINE__ , ## args
 #define BRIDGE_SN9CXXX 16
 #define BRIDGE_MR97311 17
 #define BRIDGE_PAC207 18
-#define BRIDGE_VC032X 19
+#define BRIDGE_VC0321 19
 #define BRIDGE_PAC7311 20
+#define BRIDGE_VC0323 21
 
 #define SENSOR_SAA7113 0
 #define SENSOR_INTERNAL 1
@@ -176,6 +177,11 @@ if (debug >= level) info("[%s:%d] " fmt, __PRETTY_FUNCTION__, __LINE__ , ## args
 #define SENSOR_OV7660 24
 #define SENSOR_PO3130NC 25
 #define SENSOR_PAC7311 26
+#define SENSOR_OV7620 27
+#define SENSOR_MI1320 28
+#define SENSOR_OV7670 29
+#define SENSOR_MI1310_SOC 30
+#define SENSOR_MC501CB 31
 
 /* Alternate interface transfer sizes */
 #define SPCA50X_ALT_SIZE_0       0
@@ -225,6 +231,7 @@ enum {
 	PGBRG,			// Pixart RGGB bayer
 	YUY2, // YUYV packed
     PJPG, // Pixart jpeg used with PAC7311
+	JPGV, 			// Vimicro VC0323
 };
 enum { QCIF = 1,
 	QSIF,
