@@ -356,17 +356,16 @@ static void sensor_Reset(struct usb_spca50x *spca50x)
 static __u16 Pb100_1map8300[][2] = {
 /* reg, value */
     {0x8320, 0x3304},
-    {0x8303, 0x0125},
+
+    {0x8303, 0x0125},	// image area
     {0x8304, 0x0169},
     {0x8328, 0x000b},
-    {0x833c, 0x0007},
-    {0x832f, 0x0f00},		//419
+    {0x833c, 0x0001},
+
+    {0x832f, 0x0419},
     {0x8307, 0x00aa},
-    {0x8339, 0x0000},
-    {0x8335, 0x0018},
-    {0x8309, 0x2048},
-    {0x8301, 0x000d},		//3
-    {0x8302, 0x0018},		//e
+    {0x8301, 0x0003},
+    {0x8302, 0x000e},
     {0, 0}
 };
 static __u16 Pb100_2map8300[][2] = {
@@ -377,29 +376,32 @@ static __u16 Pb100_2map8300[][2] = {
 };
 
 static __u16 spca561_161rev12A_data1[][3] = {
-    {0x00, 0x21, 0x8118},	//0x29 enable sensor
+    {0x00, 0x21, 0x8118},
     {0x00, 0x01, 0x8114},
     {0x00, 0x00, 0x8112},
     {0x00, 0x92, 0x8804},
-    {0x00, 0x04, 0x8802},
+    {0x00, 0x04, 0x8802},	// windows uses 08
 };
 static __u16 spca561_161rev12A_data2[][3] = {
     {0x00, 0x21, 0x8118},
-    //{ 0x00, 0x04, 0x8501 },
-    //
+    {0x00, 0x10, 0x8500},
+    {0x00, 0x07, 0x8601},
+    {0x00, 0x07, 0x8602},
+    {0x00, 0x04, 0x8501},
+    {0x00, 0x21, 0x8118},
+
+    {0x00, 0x07, 0x8201},	// windows uses 02
+    {0x00, 0x08, 0x8200},
+    {0x00, 0x01, 0x8200},
+
     {0x00, 0x00, 0x8114},
-    {0x00, 0x01, 0x8114},	//
+    {0x00, 0x01, 0x8114},	// windows uses 00
+
     {0x00, 0x90, 0x8604},
     {0x00, 0x00, 0x8605},
-    {0x00, 0xb0, 0x8603},	//b0 00
-    {0x00, 0x02, 0x8201},
-    {0x00, 0x08, 0x8200},
-    {0x00, 0x01, 0x8200},
-    {0x00, 0x07, 0x8201},
-    {0x00, 0x08, 0x8200},
-    {0x00, 0x01, 0x8200},
-    {0x00, 0x08, 0x8620},
-    {0x00, 0x0C, 0x8620},
+    {0x00, 0xb0, 0x8603},
+
+    // sensor gains
     {0x00, 0x00, 0x8610},	// *rouge
     {0x00, 0x00, 0x8611},	//3f   *vert 
     {0x00, 0x00, 0x8612},	// vert *bleu
@@ -409,15 +411,7 @@ static __u16 spca561_161rev12A_data2[][3] = {
     {0x00, 0x35, 0x8616},	//7a   *bleu
     {0x00, 0x35, 0x8617},	//40 *vert
 
-    {0x00, 0xf0, 0x8505},
-    {0x00, 0x32, 0x850a},
-    {0x00, 0x10, 0x8500},	//11 
-    {0x00, 0x07, 0x8601},	//7 18
-    {0x00, 0x07, 0x8602},	//7 00
     {0x00, 0x0c, 0x8620},	//0c
-
-    {0x00, 0x7a, 0x8616},	//7a no comments
-    {0x00, 0x40, 0x8617},	//40
     {0x00, 0xc8, 0x8631},	//c8
     {0x00, 0xc8, 0x8634},	//c8
     {0x00, 0x23, 0x8635},	//23
@@ -428,7 +422,8 @@ static __u16 spca561_161rev12A_data2[][3] = {
     {0x00, 0x21, 0x863a},	//21
     {0x00, 0xe3, 0x863b},	//e3
     {0x00, 0xdf, 0x863c},	//df
-
+    {0x00, 0xf0, 0x8505},
+    {0x00, 0x32, 0x850a},
 
     {0, 0, 0}
 };
@@ -449,37 +444,12 @@ static void sensor_mapwrite(struct usb_spca50x *spca50x,
 }
 static int init_161rev12A(struct usb_spca50x *spca50x)
 {
-    int err;
-    __u8 Reg8391[] = { 0x23, 0x31, 0x10, 0x00, 0x3a, 0x00, 0x00, 0x00 };	//14
-    __u8 Reg8307[] = { 0xaa, 0x00 };
-    err = spca50x_reg_write(spca50x->dev, 0, 0x8620, 0x00);	//
     sensor_Reset(spca50x);
     spca50x_write_vector(spca50x, spca561_161rev12A_data1);
     sensor_mapwrite(spca50x, Pb100_1map8300);
     spca50x_write_vector(spca50x, spca561_161rev12A_data2);
     sensor_mapwrite(spca50x, Pb100_2map8300);
-    err = spca50x_reg_write(spca50x->dev, 0, 0x8700, 0x85);	// 0x27 clock
-    spca5xxRegWrite(spca50x->dev, 0, 0, 0x8391, Reg8391, 8);
-    spca5xxRegWrite(spca50x->dev, 0, 0, 0x8390, Reg8391, 8);
-    err = spca50x_reg_write(spca50x->dev, 0, 0x8112, 0x10 | 0x20);
-    err = spca50x_reg_write(spca50x->dev, 0, 0x850b, 0x03);
-    err = spca50x_reg_write(spca50x->dev, 0, 0x8112, 0x00);
-
-//set_alternate setting 0
-    err = spca50x_reg_write(spca50x->dev, 0, 0x8118, 0x29);
-    err = spca50x_reg_write(spca50x->dev, 0, 0x8114, 0x00);
-//set_alternate setting 7
-
-    spca50x_write_vector(spca50x, spca561_161rev12A_data2);
-    spca5xxRegWrite(spca50x->dev, 0, 0, 0x8307, Reg8307, 2);
-    err = spca50x_reg_write(spca50x->dev, 0, 0x8700, 0x85);	// 0x27 clock
-    spca5xxRegWrite(spca50x->dev, 0, 0, 0x8391, Reg8391, 8);
-    spca5xxRegWrite(spca50x->dev, 0, 0, 0x8390, Reg8391, 8);
-    err = spca50x_reg_write(spca50x->dev, 0, 0x8112, 0x10 | 0x20);
-    err = spca50x_reg_write(spca50x->dev, 0, 0x850b, 0x03);
-    err = spca50x_reg_write(spca50x->dev, 0, 0x8112, 0x20);	//
     return 0;
-
 }
 
 /************************* End spca561rev12A stuff **********************/
@@ -535,7 +505,6 @@ static void spca561_start(struct usb_spca50x *spca50x)
     int err;
     int Clck = 0;
     __u8 Reg8307[] = { 0xaa, 0x00 };
-    __u8 Reg8391[] = { 0x90, 0x31, 0x0b, 0x00, 0x25, 0x00, 0x00, 0x00 };	//90 31 0c 
     switch (spca50x->chip_revision) {
     case Rev072A:
 	switch (spca50x->mode) {
@@ -562,7 +531,6 @@ static void spca561_start(struct usb_spca50x *spca50x)
 
 	switch (spca50x->mode) {
 	case 0:
-	    //Clck =(spca50x->customid == 0x403b) ? 0x8a : 0x8f;
 	    Clck = 0x8a;
 	    break;
 	case 1:
@@ -570,23 +538,16 @@ static void spca561_start(struct usb_spca50x *spca50x)
 	    break;
 	case 2:
 	    Clck = 0x85;
-	    Reg8391[1] = 0x22;	// increase pixel clock increase time exposure
-	    break;
-	case 3:
-	    Clck = 0x83;
-	    Reg8391[1] = 0x22;
 	    break;
 	default:
-	    Clck = 0x25;
+	    Clck = 0x83;
 	    break;
 	}
-	if (spca50x->compress && spca50x->mode <= 1) {
-	    // this is correct for 320x240; it also works at 352x288
-	    // hell, I don't even know what this value means :)
-	    Clck = 0x83;
+	if (spca50x->mode <= 1) {
+            // Use compression on 320x240 and above
 	    err =
 		spca50x_reg_write(spca50x->dev, 0, 0x8500,
-				  0x10 + spca50x->mode);
+				  0x10 | spca50x->mode);
 	} else {
 	    // I couldn't get the compression to work below 320x240
 	    // Fortunately at these resolutions the bandwidth is sufficient
@@ -596,14 +557,15 @@ static void spca561_start(struct usb_spca50x *spca50x)
 
 	}			// -- qq@kuku.eu.org
 	spca5xxRegWrite(spca50x->dev, 0, 0, 0x8307, Reg8307, 2);
+
 	err = spca50x_reg_write(spca50x->dev, 0, 0x8700, Clck);	// 0x8f 0x85 0x27 clock
 
-	spca5xxRegWrite(spca50x->dev, 0, 0, 0x8391, Reg8391, 8);
-	spca5xxRegWrite(spca50x->dev, 0, 0, 0x8390, Reg8391, 8);
-	spca50x->exposure = ((Reg8391[1]) << 8) | Reg8391[0];	//set exposure with clock 
-	err = spca50x_reg_write(spca50x->dev, 0, 0x8112, 0x10 | 0x20);
+	err = spca50x_reg_write(spca50x->dev, 0, 0x8112, 0x1e | 0x20);
 
 	err = spca50x_reg_write(spca50x->dev, 0, 0x850b, 0x03);
+
+	spca50x->brightness = 0x4000;
+	spca50x->contrast = 0x2000;
 
 	spca561_setcontrast(spca50x);
 
@@ -623,19 +585,16 @@ static void spca561_stopN(struct usb_spca50x *spca50x)
 static void spca561_setbrightness(struct usb_spca50x *spca50x)
 {
     __u8 value = 0;
-    value = spca50x->brightness >> 9;
     switch (spca50x->chip_revision) {
     case Rev072A:
+	value = spca50x->brightness >> 9;
 	spca5xxRegWrite(spca50x->dev, 0, value, 0x8611, NULL, 0);
 	spca5xxRegWrite(spca50x->dev, 0, value, 0x8612, NULL, 0);
 	spca5xxRegWrite(spca50x->dev, 0, value, 0x8613, NULL, 0);
 	spca5xxRegWrite(spca50x->dev, 0, value, 0x8614, NULL, 0);
 	break;
     case Rev012A:
-	spca5xxRegWrite(spca50x->dev, 0, value, 0x8615, NULL, 0);
-	spca5xxRegWrite(spca50x->dev, 0, value, 0x8614, NULL, 0);
-	spca5xxRegWrite(spca50x->dev, 0, value, 0x8616, NULL, 0);
-	spca5xxRegWrite(spca50x->dev, 0, value, 0x8617, NULL, 0);
+	spca561_setcontrast(spca50x);
 	break;
     }
 }
@@ -657,8 +616,7 @@ static __u16 spca561_getbrightness(struct usb_spca50x *spca50x)
 	spca50x->brightness = tot << 7;
 	break;
     case Rev012A:
-	spca5xxRegRead(spca50x->dev, 0, 0, 0x8615, &value, 1);
-	spca50x->brightness = value << 9;
+	// no way to read sensor settings
 	break;
     }
 
@@ -666,11 +624,9 @@ static __u16 spca561_getbrightness(struct usb_spca50x *spca50x)
 }
 static void spca561_setcontrast(struct usb_spca50x *spca50x)
 {
-
-    __u8 lowb = 0;
+    __u8 lowb;
     int expotimes = 0;
-    int pixelclk = 0;
-    __u8 Reg8391[] = { 0x90, 0x31, 0x0b, 0x00, 0x25, 0x00, 0x00, 0x00 };
+    __u8 Reg8391[] = { 0x00, 0x00, 0x00, 0x00, 0x0c, 0x00, 0x00, 0x00 };
     switch (spca50x->chip_revision) {
     case Rev072A:
 	lowb = (spca50x->contrast >> 8) & 0xFF;
@@ -680,17 +636,12 @@ static void spca561_setcontrast(struct usb_spca50x *spca50x)
 	spca5xxRegWrite(spca50x->dev, 0, lowb, 0x8654, NULL, 0);
 	break;
     case Rev012A:
-	lowb = (spca50x->contrast >> 10) & 0x7F;
-	if (lowb < 4)
-	    lowb = 3;
-	pixelclk = spca50x->exposure & 0xf800;
-	spca50x->exposure = ((spca50x->contrast >> 5) & 0x07ff) | pixelclk;
-	expotimes = spca50x->exposure & 0x07ff;
-	Reg8391[0] = expotimes & 0xff;
-	Reg8391[1] = ((pixelclk >> 8) & 0xf8) | ((expotimes >> 8) & 0x07);
-	Reg8391[2] = lowb;
-	PDEBUG(4, "Set Exposure 0x%02x 0x%02x gain 0x%02x", Reg8391[0],
-	       Reg8391[1], Reg8391[2]);
+	// Write camera sensor settings
+	expotimes = (spca50x->contrast >> 5) & 0x07ff;
+	Reg8391[0] = expotimes & 0xff;			// exposure
+	Reg8391[1] = 0x18 | (expotimes >> 8);
+	Reg8391[2] = spca50x->brightness >> 9;		// gain
+	spca5xxRegWrite(spca50x->dev, 0, 0, 0x8391, Reg8391, 8);
 	spca5xxRegWrite(spca50x->dev, 0, 0, 0x8390, Reg8391, 8);
 	break;
     }
@@ -700,8 +651,6 @@ static __u16 spca561_getcontrast(struct usb_spca50x *spca50x)
 {
     __u8 value = 0;
     __u16 tot = 0;
-    __u8 contrast = 0x0b;
-    __u8 RegSens[] = { 0, 0 };
     switch (spca50x->chip_revision) {
     case Rev072A:
 
@@ -717,13 +666,7 @@ static __u16 spca561_getcontrast(struct usb_spca50x *spca50x)
 	spca50x->contrast = tot << 6;
 	break;
     case Rev012A:
-
-	spca5xxRegWrite(spca50x->dev, 0, 0, 0x8335, &contrast, 1);
-	/* always 0x8335 return 0 */
-	spca5xxRegRead(spca50x->dev, 0, 0, 0x8335, RegSens, 2);
-	spca50x->contrast = (contrast & 0x7f) << 10;
-	PDEBUG(2, "Get constrast 0x8335 0x%04x",
-	       RegSens[1] << 8 | RegSens[0]);
+	// no way to read sensor settings
 	break;
     }
     PDEBUG(4,"get contrast %d\n",spca50x->contrast);
@@ -751,7 +694,7 @@ static int spca561_config(struct usb_spca50x *spca50x)
 	}
     switch (spca50x->customid) {
     case 0x0000: // try this
-    spca50x->customid = 0x0561; // fall through
+        spca50x->customid = 0x0561; // fall through
     case 0x7004:
     case 0xa001:
     case 0x0815:
@@ -759,8 +702,8 @@ static int spca561_config(struct usb_spca50x *spca50x)
     case 0xcdee:
     case 0x7e50:
     case 0x401a:
-    spca50x->chip_revision = Rev072A;
-    break;
+	spca50x->chip_revision = Rev072A;
+	break;
     case 0x0928:
     case 0x0929:
     case 0x092a:
