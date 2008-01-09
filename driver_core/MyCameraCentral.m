@@ -331,13 +331,12 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[MR97310Driver class]];
     
     [self registerCameraDriver:[M560xDriver class]];
-   /* 
+    
     [self registerCameraDriver:[IBMcamDriver class]];
     [self registerCameraDriver:[IBMcamModel1Driver class]];
     [self registerCameraDriver:[IBMcamModel2Driver class]];
     [self registerCameraDriver:[IBMcamModel3Driver class]];
     [self registerCameraDriver:[IBMcamModel4Driver class]];
-   */ 
     
     [self registerCameraDriver:[SPCA500Driver class]];
     [self registerCameraDriver:[SPCA500ADriver class]];
