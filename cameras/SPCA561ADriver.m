@@ -103,7 +103,7 @@
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_IC_150], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_MICRO_INNOVATION], @"idVendor",
-            @"Micro Innovation IC 150", @"name", NULL], 
+            @"Micro Innovation IC 100 or 150", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PETCAM], @"idProduct",
