@@ -98,7 +98,7 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
 
 // Other versions can be added here in case of commonalities
 
-IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, UInt32 * dataStart, UInt32 * dataLength, UInt32 * tailStart, UInt32 * tailLength, GenericFrameInfo * frameInfo);
+IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, UInt32 * dataStart, UInt32 * dataLength, UInt32 * tailStart, UInt32 * tailLength, GenericFrameInfo * frameInfo);
 
 // ...
 

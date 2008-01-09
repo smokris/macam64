@@ -180,77 +180,11 @@ static inline unsigned short getShort(unsigned char *pt)
 }
 
 //
-// Scan the frame and return the results
-//
-IsocFrameResult  pixartIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
-                                        UInt32 * dataStart, UInt32 * dataLength, 
-                                        UInt32 * tailStart, UInt32 * tailLength, 
-                                        GenericFrameInfo * frameInfo)
-{
-    int position, frameLength = frame->frActCount;
-    
-    *dataStart = 0;
-    *dataLength = frameLength;
-    
-    *tailStart = frameLength;
-    *tailLength = 0;
-    
-    if (frameLength < 6) 
-    {
-        *dataLength = 0;
-        
-#if REALLY_VERBOSE
-//        printf("Invalid chunk!\n");
-#endif
-        return invalidFrame;
-    }
-    
-#if REALLY_VERBOSE
-//    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
-#endif
-    
-    for (position = 0; position < frameLength - 6; position++) 
-    {
-        if ((buffer[position+0] == 0xFF) && 
-            (buffer[position+1] == 0xFF) && 
-            (buffer[position+2] == 0x00) && 
-            (buffer[position+3] == 0xFF) && 
-            (buffer[position+4] == 0x96))
-        {
-#if REALLY_VERBOSE
-            printf("New chunk!\n");
-#endif
-            if (position > 0) 
-            {
-                *tailStart = 0;
-                *tailLength = position;
-            }
-            
-            if (frameInfo != NULL) 
-            {
-                frameInfo->averageLuminance = buffer[position + 9];
-                frameInfo->averageLuminanceSet = 1;
-#if REALLY_VERBOSE
-                printf("The average luminance is %d\n", frameInfo->averageLuminance);
-#endif
-            }
-            
-            *dataStart = position;
-            *dataLength = frameLength - position;
-            
-            return newChunkFrame;
-        }
-    }
-            
-    return validFrame;
-}
-
-//
 // These are the C functions to be used for scanning the frames
 //
 - (void) setIsocFrameFunctions
 {
-    grabContext.isocFrameScanner = pixartIsocFrameScanner;
+    grabContext.isocFrameScanner = pac207IsocFrameScanner;
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
