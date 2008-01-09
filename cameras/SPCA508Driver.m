@@ -212,7 +212,7 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     yuv_decode(spca50x->frame, 1);
     
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP orientation:NormalOrientation];
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
     
     return YES;
 }
@@ -234,7 +234,7 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x0815], @"idProduct", // IC200
             [NSNumber numberWithUnsignedShort:0x0461], @"idVendor", // MicroInnovation
-            @"Micro Innovation IC 200", @"name", NULL], 
+            @"Micro Innovation IC 200", @"name", NULL],             // This one works well apparently, same IDs as 100/150 (those are 561s!)
         
         NULL];
 }
