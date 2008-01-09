@@ -319,12 +319,12 @@ const unsigned char GsmartQTable[][64] = {
 int spca50x_outpicture(struct spca50x_frame *myframe);
 
 static int jpeg_decode411(struct spca50x_frame *myframe, int force_rgb);
-//static int jpeg_decode422(struct spca50x_frame *myframe, int force_rgb);
-//static int yuv_decode(struct spca50x_frame *myframe, int force_rgb);
+static int jpeg_decode422(struct spca50x_frame *myframe, int force_rgb);
+       int yuv_decode(struct spca50x_frame *myframe, int force_rgb);
 static int bayer_decode(struct spca50x_frame *myframe, int force_rgb);
 static int make_jpeg(struct spca50x_frame *myframe);
 static int make_jpeg_conexant(struct spca50x_frame *myframe);
-//static int yvyu_translate(struct spca50x_frame *myframe, int force_rgb);
+static int yvyu_translate(struct spca50x_frame *myframe, int force_rgb);
 
 
 #define CLIP(color) (unsigned char)(((color)>0xFF)?0xff:(((color)<0)?0:(color)))
@@ -619,7 +619,7 @@ or 0x1e 0xe1 for compressed line*/
 	    break;
 
 	default:
-
+        printf("the word is: %04X  ", word); // TEMPORARY
 	    return -1;
 	}
 	outp += width;
