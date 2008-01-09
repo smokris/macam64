@@ -1,16 +1,16 @@
 /*
-* SPCA5xx based usb camera driver (currently supports
+* Gspca based usb camera driver (currently supports
 * yuv native stream spca501a, spca501c, spca505, spca508, spca506
 * jpeg native stream spca500, spca551, spca504a, spca504b, spca533a, spca536a, zc0301, zc0302, cx11646, sn9c102p
 * bayer native stream spca561a, sn9c101, sn9c102, tv8532 ).
-* Z-star Vimicro chips zc0301 zc0301P zc0302
+* Z-star Vimicro chips zc0301 zc0301P zc0302 vc321 vc323
 * Sunplus spca501a, spca501c, spca505, spca508, spca506, spca500, spca551, spca504a, spca504b, spca533a, spca536a
 * Sonix sn9c101, sn9c102, sn9c102p sn9c105 sn9c120
 * Conexant cx11646
 * Transvision tv_8532 
 * Etoms Et61x151 Et61x251
-* Pixart Pac207-BCA-32
-* SPCA5xx version by Michel Xhaard <mxhaard@users.sourceforge.net>
+* Pixart Pac207-BCA-32 Pac7311
+* Gspca/SPCA5xx version by Michel Xhaard <mxhaard@users.sourceforge.net>
 * Based on :
 * SPCA50x version by Joel Crisp <cydergoth@users.sourceforge.net>
 * OmniVision OV511 Camera-to-USB Bridge Driver
@@ -102,6 +102,9 @@ static int RegAddress = 0;
 static int RegValue = 0;
 static int RegStrobe = 0;
 #endif
+/* force sensor id*/
+static int force_sensor_id=-1;
+static int force_gamma_id=-1;
 module_param(autoexpo, int, 0644);
 module_param(debug, int, 0644);
 module_param(force_rgb, int, 0644);
@@ -122,6 +125,9 @@ module_param(RegAddress, int, 0644);
 module_param(RegValue, int, 0644);
 module_param(RegStrobe, int, 0644);
 #endif
+module_param(force_sensor_id, int, 0644);
+module_param(force_gamma_id, int, 0644);
+
 MODULE_PARM_DESC(autoexpo,
 		 "Enable/Disable auto exposure (default=1: enabled) (PC-CAM 600/Zc03xx/spca561a/Etoms Only !!!)");
 MODULE_PARM_DESC(debug,
@@ -138,30 +144,31 @@ MODULE_PARM_DESC(GGreen, "Gain Green setting range 0 to 512 /256 ");
 MODULE_PARM_DESC(compress, "Turn on/off compression (not functional yet)");
 #endif				/* SPCA50X_ENABLE_COMPRESSION */
 MODULE_PARM_DESC(usbgrabber, "Is a usb grabber 0x0733:0x0430 ? (default 1) ");
-MODULE_PARM_DESC(lightfreq,  "Light frequency banding filter. Set to 50 or 60 Hz, or zero to NoFliker (default=50)");
+MODULE_PARM_DESC(lightfreq,
+		 "Light frequency banding filter. Set to 50 or 60 Hz, or 0 for NoFlicker (default=50) Zc03xx only");
 #ifdef GSPCA_ENABLE_REGISTERPLAY
 MODULE_PARM_DESC(RegAddress, "Register Address of PAC207");
 MODULE_PARM_DESC(RegValue, "Register Value for PAC207");
 MODULE_PARM_DESC(RegStrobe,
 		 "Strobe to read or write a register 1=write, 2=read");
 #endif				/* SPCA5XX_ENABLE_REGISTERPLAY */
+MODULE_PARM_DESC(force_gamma_id, "Forced assigning ID of contrast settings (0=default,1,2,3) Zc03xx only");
+MODULE_PARM_DESC(force_sensor_id, "Forced assigning ID sensor (Zc03xx only). Dangerous, only for experts !!!");
+
 /****************/
 MODULE_AUTHOR
     ("Michel Xhaard <mxhaard@users.sourceforge.net> based on spca50x driver by Joel Crisp <cydergoth@users.sourceforge.net>,ov511 driver by Mark McClelland <mwm@i.am>");
 MODULE_DESCRIPTION("GSPCA/SPCA5XX USB Camera Driver");
 MODULE_LICENSE("GPL");
-
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,6,19)
 static void
-spca50x_isoc_irq(struct urb *urb, struct pt_regs *regs);
+ spca50x_isoc_irq(struct urb *urb, struct pt_regs *regs);
 #else
 static void
-spca50x_isoc_irq(struct urb *urb);
+ spca50x_isoc_irq(struct urb *urb);
 #endif
-
 static int spca50x_move_data(struct usb_spca50x *spca50x, struct urb *urb);
 static int spca5xx_set_light_freq(struct usb_spca50x *spca50x, int freq);
-
 static struct usb_driver spca5xx_driver;
 /**********************************************************************
 * List of known SPCA50X-based cameras
@@ -181,7 +188,7 @@ static struct palette_list Plist[] = {
 	{SN9C, "SN9C"},
 	{GBGR, "GBGR"},
 	{S561, "S561"},
-	{PGBRG, "GBRG"},
+	{PGBRG,"GBRG"},
 	{YUY2, "YUYV"},
 	{PJPG, "JPEG"},
 	{-1, NULL}
@@ -206,15 +213,18 @@ static struct bridge_list Blist[] = {
 	{BRIDGE_SN9CXXX, "SN9CXXX"},
 	{BRIDGE_MR97311, "MR97311"},
 	{BRIDGE_PAC207, "PAC207BCA"},
-	{BRIDGE_VC032X, "VC0321"},
- 	{BRIDGE_PAC7311, "PAC7311"},
+	{BRIDGE_VC0321, "VC0321"},
+	{BRIDGE_PAC7311, "PAC7311"},
+	{BRIDGE_VC0323, "VC0323"},
+	
 	{-1, NULL}
 };
+
 /* Light frequency banding filter 50HZ/60HZ/NoFliker */
-enum { 
-       freq_50HZ=0,
-       freq_60HZ,
-       NoFliker
+enum {
+	freq_50HZ = 0,
+	freq_60HZ,
+	NoFliker
 };
 enum {
 	UnknownCamera = 0,	// 0
@@ -399,10 +409,19 @@ enum {
 	Sonyc001,
 	PhilipsSPC315NC,
 	Sonix0x6138,
-	GeniusEye311Q,	
-    	PAC7311,	
-    	PAC7312,
-	PhilipsDMVC1300K,	
+	GeniusEye311Q,
+	PAC7311,
+	PAC7312,
+	PhilipsDMVC1300K,
+	DXG305v,
+	LdlcVC302,
+	A4TechPK130MG,
+	TalkCamVX6,
+	PhilipsSPC710NC,
+	Vimicro0323,
+	Lenovo,
+	LogitechQC4Notebooks,
+	PhilipsSPC220NC,
 	LastCamera
 };
 static struct cam_list clist[] = {
@@ -579,19 +598,28 @@ static struct cam_list clist[] = {
 	{TyphoonEasyCam1_3, "Typhoon Easy Cam 1.3 MPix"},
 	{Sonix0x613b, "Surfer model sn-206"},
 	{Sonix0x60fb, "Surfer model noname"},
-	{Sonyc002,"Vc0321"},
-	{Vimicro0321,"Vc0321"},
-	{Orbicam,"Logitech Orbicam"},
-	{MSVX1000,"MicroSoft VX1000"},
-	{MSVX3000,"MicroSoft VX3000"},
+	{Sonyc002, "Vc0321"},
+	{Vimicro0321, "Vc0321"},
+	{Orbicam, "Logitech Orbicam"},
+	{MSVX1000, "MicroSoft VX1000"},
+	{MSVX3000, "MicroSoft VX3000"},
 	{Trust610LCDPowerCamZoom, "Trust 610 LCD PowerC@m Zoom"},
-	{Sonyc001,"Sony Visual Communication VGP-VCC1"},
+	{Sonyc001, "Sony Visual Communication VGP-VCC1"},
 	{PhilipsSPC315NC, "Philips SPC315NC "},
-	{Sonix0x6138,"sn9c120+Mo4000"},
-	{GeniusEye311Q,"Genius Eye 311Q"},
-    	{PAC7311,"Pixart PAC7311"},
-    	{PAC7312,"Pixart PAC7312"},
-	{PhilipsDMVC1300K,"Philips DMVC 1300K"},
+	{Sonix0x6138, "sn9c120+Mo4000"},
+	{GeniusEye311Q, "Genius Eye 311Q"},
+	{PAC7311, "Pixart PAC7311"},
+	{PAC7312, "Pixart PAC7312"},
+	{PhilipsDMVC1300K, "Philips DMVC 1300K"},
+	{DXG305v, "Sunplus FashionCam"},
+	{LdlcVC302, "LDLC OV7620+VC302"},
+	{A4TechPK130MG, "A4Tech PK-130MG"},
+	{TalkCamVX6, "SN9C105+MO4000"},
+	{PhilipsSPC710NC, "Philips SPC 710NC"},
+	{Vimicro0323,"VC0323"},
+	{Lenovo,"lenovo MI1310_SOC"},
+	{LogitechQC4Notebooks,"Logitech QuickCam for Notebooks"},
+	{PhilipsSPC220NC,"Philips SPC220NC PAC207"},
 	{-1, NULL}
 };
 static __devinitdata struct usb_device_id device_table[] = {
@@ -765,36 +793,47 @@ static __devinitdata struct usb_device_id device_table[] = {
 	{USB_DEVICE(0x046d, 0x092d)},	/* Logitech QC  Elch2 */
 	{USB_DEVICE(0x046d, 0x092e)},	/* Logitech QC  Elch2 */
 	{USB_DEVICE(0x046d, 0x092f)},	/* Logitech QC  Elch2 */
-	{USB_DEVICE(0x041e, 0x4051)},	/* Creative Live!Cam Notebook Pro (VF0250)*/
+	{USB_DEVICE(0x041e, 0x4051)},	/* Creative Live!Cam Notebook Pro (VF0250) */
 	{USB_DEVICE(0x041E, 0x4029)},	/* Creative WebCam Vista Pro */
 	{USB_DEVICE(0x041E, 0x041E)},	/* Creative WebCam Live! */
-	{USB_DEVICE(0x041e, 0x4053)},	/* Creative Live!Cam Video IM*/
+	{USB_DEVICE(0x041e, 0x4053)},	/* Creative Live!Cam Video IM */
 	{USB_DEVICE(0x046d, 0x08d7)},	/* Logitech QCam STX */
 	{USB_DEVICE(0x046d, 0x08d8)},	/* Logitech Notebook Deluxe */
 	{USB_DEVICE(0x08ca, 0x2040)},	/* Aiptek PocketDV4100M */
 	{USB_DEVICE(0x0c45, 0x612c)},	/* Typhoon Rasy Cam 1.3MPix */
 	{USB_DEVICE(0x0c45, 0x613b)},	/* Surfer SN-206 */
 	{USB_DEVICE(0x0c45, 0x60fb)},	/* Surfer NoName */
-	{USB_DEVICE(0x0ac8, 0xc002)},	/* Sony embedded vimicro*/
+	{USB_DEVICE(0x0ac8, 0xc002)},	/* Sony embedded vimicro */
 	{USB_DEVICE(0x0ac8, 0x0321)},	/* Vimicro generic vc0321 */
 	{USB_DEVICE(0x046d, 0x0892)},	/* Logitech Orbicam */
 	{USB_DEVICE(0x046d, 0x0896)},	/* Logitech Orbicam */
 	{USB_DEVICE(0x045e, 0x00f7)},	/* MicroSoft VX1000 */
 	{USB_DEVICE(0x045e, 0x00f5)},	/* MicroSoft VX3000 */
-	{USB_DEVICE(0x0471, 0x032d)},	/* Philips spc210nc*/
+	{USB_DEVICE(0x0471, 0x032d)},	/* Philips spc210nc */
 	{USB_DEVICE(0x06d6, 0x0031)},	/* Trust 610 LCD PowerC@m Zoom (webcam mode) */
-	{USB_DEVICE(0x0ac8, 0xc001)},	/* Sony embedded vimicro*/
-	{USB_DEVICE(0x0471, 0x032e)},	/* Philips spc315nc*/
+	{USB_DEVICE(0x0ac8, 0xc001)},	/* Sony embedded vimicro */
+	{USB_DEVICE(0x0471, 0x032e)},	/* Philips spc315nc */
 	{USB_DEVICE(0x0c45, 0x6138)},	/* Sn9c120 Mo4000 */
 	{USB_DEVICE(0x041E, 0x401a)},	/* Creative Webcam Vista (PD1100) */
 	{USB_DEVICE(0x0458, 0x7025)},	/* Genius Eye 311Q sn9c120+Mi360 */
-  	{USB_DEVICE(0x093a, 0x2600)},	/* PAC7311 Typhoon */
-  	{USB_DEVICE(0x093a, 0x2601)},	/* PAC7311 Phillips SPC610NC */
-  	{USB_DEVICE(0x093a, 0x2603)},	/* PAC7312  */
-  	{USB_DEVICE(0x093a, 0x2608)},	/* PAC7311 Trust WB-3300p */
-  	{USB_DEVICE(0x093a, 0x260e)},	/* PAC7311 Gigaware VGA PC Camera, Trust WB-3350p, SIGMA cam 2350 */
-  	{USB_DEVICE(0x093a, 0x260f)},   /* PAC7311 SnakeCam */
+	{USB_DEVICE(0x093a, 0x2600)},	/* PAC7311 Typhoon */
+	{USB_DEVICE(0x093a, 0x2601)},	/* PAC7311 Phillips SPC610NC */
+	{USB_DEVICE(0x093a, 0x2603)},	/* PAC7312  */
+	{USB_DEVICE(0x093a, 0x2608)},	/* PAC7311 Trust WB-3300p */
+	{USB_DEVICE(0x093a, 0x260e)},	/* PAC7311 Gigaware VGA PC Camera, Trust WB-3350p, SIGMA cam 2350 */
+	{USB_DEVICE(0x093a, 0x260f)},	/* PAC7311 SnakeCam */
 	{USB_DEVICE(0x0471, 0x0322)},	/* Philips DMVC1300K */
+	{USB_DEVICE(0x0d64, 0x0303)},	/* Sunplus FashionCam DXG */
+	{USB_DEVICE(0x0ac8, 0x307b)},	/* Ldlc VC302+Ov7620 */
+	{USB_DEVICE(0x0ac8, 0x0328)},	/* A4Tech PK-130MG */
+	{USB_DEVICE(0x0c45, 0x60ec)},	/* SN9C105+MO4000 */
+	{USB_DEVICE(0x0471, 0x0330)},	/* Philips SPC 710NC */
+	{USB_DEVICE(0x0ac8, 0x0323)},	/* Vimicro Vc0323 */
+	{USB_DEVICE(0x17ef, 0x4802)},	/* Lenovo Vc0323+MI1310_SOC */
+	{USB_DEVICE(0x046d, 0x08dd)},	/* Logitech QuickCam for Notebooks */
+	{USB_DEVICE(0x046d, 0x08af)},	/* Logitech QuickCam Cool */
+	{USB_DEVICE(0x093a, 0x2472)},	/* PAC207 Genius VideoCam ge110 */
+	{USB_DEVICE(0x093a, 0x2463)},	/* Philips spc200nc pac207 */
 	{USB_DEVICE(0x0000, 0x0000)},	/* MystFromOri Unknow Camera */
 	{}			/* Terminating entry */
 };
@@ -868,6 +907,7 @@ rvfree(void *mem, unsigned long size)
 	}
 	vfree(mem);
 }
+
 /* ------------------------------------------------------------------------ */
 /**
 * Endpoint management we assume one isoc endpoint per device
@@ -886,21 +926,23 @@ gspca_set_isoc_ep(struct usb_spca50x *spca50x, int nbalt)
 	struct usb_host_interface *altsetting = NULL;
 	int error = 0;
 	PDEBUG(3, "enter get iso ep ");
-	intf = usb_ifnum_to_if(dev, spca50x->iface);	
+	intf = usb_ifnum_to_if(dev, spca50x->iface);
 /* bandwith budget can be set here */
 	for (i = nbalt; i; i--) {
 		altsetting = &intf->altsetting[i];
 		for (j = 0; j < altsetting->desc.bNumEndpoints; ++j) {
 			ep = &altsetting->endpoint[j];
-			PDEBUG(3, "test ISO EndPoint  %d",ep->desc.bEndpointAddress);
+			PDEBUG(3, "test ISO EndPoint  %d",
+			       ep->desc.bEndpointAddress);
 			if ((ep->desc.bEndpointAddress ==
 			     (spca50x->epadr | USB_DIR_IN))
 			    &&
 			    ((ep->desc.
 			      bmAttributes & USB_ENDPOINT_XFERTYPE_MASK) ==
 			     USB_ENDPOINT_XFER_ISOC)) {
-				PDEBUG(0, "ISO EndPoint found 0x%02X AlternateSet %d",
-				       ep->desc.bEndpointAddress,i);
+				PDEBUG(0,
+				       "ISO EndPoint found 0x%02X AlternateSet %d",
+				       ep->desc.bEndpointAddress, i);
 				if ((error =
 				     usb_set_interface(dev, spca50x->iface,
 						       i)) < 0) {
@@ -916,7 +958,6 @@ gspca_set_isoc_ep(struct usb_spca50x *spca50x, int nbalt)
 	PDEBUG(0, "FATAL ISO EndPoint not found ");
 	return NULL;
 }
-
 static int
 gspca_set_alt0(struct usb_spca50x *spca50x)
 {
@@ -925,7 +966,7 @@ gspca_set_alt0(struct usb_spca50x *spca50x)
 		PDEBUG(0, "Set interface err %d", error);
 	}
 	spca50x->alt = 0;
-	return  error;
+	return error;
 }
 static int
 gspca_kill_transfert(struct usb_spca50x *spca50x)
@@ -933,32 +974,26 @@ gspca_kill_transfert(struct usb_spca50x *spca50x)
 	struct urb *urb;
 	unsigned int i;
 	spca50x->streaming = 0;
-	for (i = 0; i <  SPCA50X_NUMSBUF; ++i) {
+	for (i = 0; i < SPCA50X_NUMSBUF; ++i) {
 		if ((urb = spca50x->sbuf[i].urb) == NULL)
 			continue;
-
 		usb_kill_urb(urb);
-		/* urb->transfer_buffer_length is not touched by USB core, so
-		 * we can use it here as the buffer length.
-		 */
+/* urb->transfer_buffer_length is not touched by USB core, so
+* we can use it here as the buffer length.
+*/
 		if (spca50x->sbuf[i].data) {
-			// kfree(gspca_dev->sbuf[i].data);
-		
+// kfree(gspca_dev->sbuf[i].data);
 			usb_buffer_free(spca50x->dev,
-				urb->transfer_buffer_length,
-				spca50x->sbuf[i].data, urb->transfer_dma);
-		
+					urb->transfer_buffer_length,
+					spca50x->sbuf[i].data,
+					urb->transfer_dma);
 			spca50x->sbuf[i].data = NULL;
 		}
-
 		usb_free_urb(urb);
 		spca50x->sbuf[i].urb = NULL;
 	}
 	return 0;
 }
- 
-
-
 static int
 gspca_init_transfert(struct usb_spca50x *spca50x)
 {
@@ -966,23 +1001,22 @@ gspca_init_transfert(struct usb_spca50x *spca50x)
 	struct usb_interface *intf;
 	struct urb *urb;
 	__u16 psize;
-	int n,fx;
+	int n, fx;
 	struct usb_device *dev = spca50x->dev;
-//	struct usb_host_interface *altsetting = NULL;
+// struct usb_host_interface *altsetting = NULL;
 	int error = -ENOSPC;
 	int nbalt = 0;
-	
 	if (spca50x->streaming)
 		return -EBUSY;
 	intf = usb_ifnum_to_if(dev, spca50x->iface);
 	nbalt = intf->num_altsetting - 1;
-	/* Damned Sunplus fault */
-	if(spca50x->bridge == BRIDGE_SPCA561) 
-		nbalt =7;
-	PDEBUG(3, "get iso nbalt %d",nbalt);
-	spca50x->curframe = 0;	
-while (nbalt && (error == -ENOSPC)) {
-		if ((ep = gspca_set_isoc_ep(spca50x,nbalt--)) == NULL)
+/* Damned Sunplus fault */
+	if (spca50x->bridge == BRIDGE_SPCA561)
+		nbalt = 7;
+	PDEBUG(3, "get iso nbalt %d", nbalt);
+	spca50x->curframe = 0;
+	while (nbalt && (error == -ENOSPC)) {
+		if ((ep = gspca_set_isoc_ep(spca50x, nbalt--)) == NULL)
 			return -EIO;
 		psize = le16_to_cpu(ep->desc.wMaxPacketSize);
 		psize = (psize & 0x07ff) * (1 + ((psize >> 11) & 3));
@@ -993,14 +1027,14 @@ while (nbalt && (error == -ENOSPC)) {
 				err("init isoc: usb_alloc_urb ret. NULL");
 				return -ENOMEM;
 			}
-			
 			spca50x->sbuf[n].data = usb_buffer_alloc(spca50x->dev,
-					psize * FRAMES_PER_DESC,
-					GFP_KERNEL, &urb->transfer_dma);
-			
-			//gspca_dev->sbuf[n].data = kmalloc((psize+1)* FRAMES_PER_DESC,GFP_KERNEL);
-			
-			if(spca50x->sbuf[n].data == NULL){
+								 psize *
+								 FRAMES_PER_DESC,
+								 GFP_KERNEL,
+								 &urb->
+								 transfer_dma);
+//gspca_dev->sbuf[n].data = kmalloc((psize+1)* FRAMES_PER_DESC,GFP_KERNEL);
+			if (spca50x->sbuf[n].data == NULL) {
 				usb_free_urb(urb);
 				gspca_kill_transfert(spca50x);
 				return -ENOMEM;
@@ -1011,7 +1045,8 @@ while (nbalt && (error == -ENOSPC)) {
 			urb->pipe =
 			    usb_rcvisocpipe(spca50x->dev,
 					    ep->desc.bEndpointAddress);
-			urb->transfer_flags = URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
+			urb->transfer_flags =
+			    URB_ISO_ASAP | URB_NO_TRANSFER_DMA_MAP;
 			urb->interval = ep->desc.bInterval;
 			urb->transfer_buffer = spca50x->sbuf[n].data;
 			urb->complete = spca50x_isoc_irq;
@@ -1022,27 +1057,27 @@ while (nbalt && (error == -ENOSPC)) {
 				urb->iso_frame_desc[fx].length = psize;
 			}
 		}
-		
-	
-	/* mark all frame unused */
-	for (n = 0; n <  SPCA50X_NUMFRAMES; n++) {
-		spca50x->frame[n].grabstate = FRAME_UNUSED;
-		spca50x->frame[n].scanstate = STATE_SCANNING;
-	}
-	/* start the cam and initialize the tasklet lock */
-	spca50x->funct.start(spca50x);
-	spca50x->streaming = 1;
-	atomic_set(&spca50x->in_use,0);
-	PDEBUG(3, "Submit URB Now");
-	/* Submit the URBs. */
-	for (n = 0; n < SPCA50X_NUMSBUF; ++n) {
-		if ((error = usb_submit_urb(spca50x->sbuf[n].urb, GFP_KERNEL)) < 0) {
-			err("init isoc: usb_submit_urb(%d) ret %d", n, error);
-			gspca_kill_transfert(spca50x);
-			break;	
+/* mark all frame unused */
+		for (n = 0; n < SPCA50X_NUMFRAMES; n++) {
+			spca50x->frame[n].grabstate = FRAME_UNUSED;
+			spca50x->frame[n].scanstate = STATE_SCANNING;
 		}
-	
-	}
+/* start the cam and initialize the tasklet lock */
+		spca50x->funct.start(spca50x);
+		spca50x->streaming = 1;
+		atomic_set(&spca50x->in_use, 0);
+		PDEBUG(3, "Submit URB Now");
+/* Submit the URBs. */
+		for (n = 0; n < SPCA50X_NUMSBUF; ++n) {
+			if ((error =
+			     usb_submit_urb(spca50x->sbuf[n].urb,
+					    GFP_KERNEL)) < 0) {
+				err("init isoc: usb_submit_urb(%d) ret %d", n,
+				    error);
+				gspca_kill_transfert(spca50x);
+				break;
+			}
+		}
 	}
 	return error;
 }
@@ -1075,8 +1110,9 @@ spca5xx_get_depth(struct usb_spca50x *spca50x, int palette)
 		    spca50x->cameratype == JPGH ||
 		    spca50x->cameratype == JPGC ||
 		    spca50x->cameratype == JPGS ||
-  		    spca50x->cameratype == JPGM ||
-  		    spca50x->cameratype == PJPG) {
+		    spca50x->cameratype == JPGM ||
+		    spca50x->cameratype == PJPG ||
+		    spca50x->cameratype == JPGV ) {
 			return 8;
 		} else
 			return 0;
@@ -1138,14 +1174,12 @@ spca50x_isoc_irq(struct urb *urb)
 		wake_up_interruptible(&spca50x->wq);
 	}
 /* Move to the next sbuf */
-
 	urb->dev = spca50x->dev;
 	urb->status = 0;
 	if ((i = usb_submit_urb(urb, GFP_ATOMIC)) != 0)
 		err("usb_submit_urb() ret %d", i);
 	return;
 }
-
 static void
 spca50x_stop_isoc(struct usb_spca50x *spca50x)
 {
@@ -1336,7 +1370,7 @@ spca5xx_setMode(struct usb_spca50x *spca50x, int width, int height, int format)
 			if (spca50x->cameratype == JPEG
 			    || spca50x->cameratype == JPGH
 			    || spca50x->cameratype == JPGS
-				|| spca50x->cameratype == PJPG)
+			    || spca50x->cameratype == PJPG)
 				crop = crop >> 4;
 			cropx1 = crop >> 1;
 			cropx2 = cropx1 + (crop % 2);
@@ -1425,6 +1459,7 @@ Clicksmart310 ? */
       out:
 	return r;
 }
+
 #if 0
 /**********************************************************************
 *
@@ -1463,8 +1498,7 @@ spca50x_next_frame(struct usb_spca50x
 		spca50x->curframe = (spca50x->curframe + 1) % SPCA50X_NUMFRAMES;
 		frame = &spca50x->frame[spca50x->curframe];
 	}
-
-dropframe:
+      dropframe:
 	frame->grabstate = FRAME_GRABBING;
 	if (spca50x->pictsetting.change) {
 		memcpy(&frame->pictsetting, &spca50x->pictsetting,
@@ -1480,7 +1514,7 @@ dropframe:
 	frame->last_packet = -1;
 	frame->totlength = 0;
 	spca50x->packet = 0;
-out:
+      out:
 	return frame;
 }
 #endif
@@ -1496,8 +1530,8 @@ spca50x_next_frame(struct usb_spca50x
 	struct spca50x_frame *frame = NULL;
 	PDEBUG(2, "Frame %d State %d", spca50x->curframe,
 	       spca50x->frame[spca50x->curframe].grabstate);
-	if (spca50x->frame[spca50x->curframe].grabstate != FRAME_ERROR) 
-		spca50x->curframe = (spca50x->curframe + 1) % SPCA50X_NUMFRAMES;	
+	if (spca50x->frame[spca50x->curframe].grabstate != FRAME_ERROR)
+		spca50x->curframe = (spca50x->curframe + 1) % SPCA50X_NUMFRAMES;
 	frame = &spca50x->frame[spca50x->curframe];
 	if (spca50x->pictsetting.change) {
 		memcpy(&frame->pictsetting, &spca50x->pictsetting,
@@ -1516,6 +1550,7 @@ spca50x_next_frame(struct usb_spca50x
 	spca50x->packet = 0;
 	return frame;
 }
+
 /* Tasklet function to decode */
 void
 outpict_do_tasklet(unsigned long ptr)
@@ -1537,7 +1572,7 @@ outpict_do_tasklet(unsigned long ptr)
 	}
 	if (waitqueue_active(&taskletframe->wq))
 		wake_up_interruptible(&taskletframe->wq);
-	atomic_set(&taskletframe->spca50x_dev->in_use,0);
+	atomic_set(&taskletframe->spca50x_dev->in_use, 0);
 }
 
 /*********************************************************************
@@ -1628,13 +1663,21 @@ spca50x_move_data(struct usb_spca50x *spca50x, struct urb *urb)
 						spca50x->last_times =
 						    ms_times_now;
 /* Decode the frame one at a times or drop*/
-						if(!atomic_read(&spca50x->in_use)){
-						atomic_set(&spca50x->in_use,1);
-						spca50x->spca5xx_tasklet.data = (unsigned long) frame;
-						tasklet_schedule(&spca50x->
-								 spca5xx_tasklet);
+						if (!atomic_read
+						    (&spca50x->in_use)) {
+							atomic_set(&spca50x->
+								   in_use, 1);
+							spca50x->
+							    spca5xx_tasklet.
+							    data =
+							    (unsigned long)
+							    frame;
+							tasklet_schedule
+							    (&spca50x->
+							     spca5xx_tasklet);
 						} else
-							frame->grabstate = FRAME_ERROR;
+							frame->grabstate =
+							    FRAME_ERROR;
 					} else
 						frame->grabstate = FRAME_ERROR;
 				} else {
@@ -1691,7 +1734,7 @@ spca50x_alloc(struct usb_spca50x *spca50x)
 	for (i = 0; i < SPCA50X_NUMFRAMES; i++) {
 		spca50x->frame[i].tmpbuffer = spca50x->tmpBuffer;
 		spca50x->frame[i].decoder = &spca50x->maindecode;	//connect each frame to the main data decoding 
-spca50x->frame[i].spca50x_dev = spca50x;	//refind the whole structure 
+		spca50x->frame[i].spca50x_dev = spca50x;	//refind the whole structure 
 		spca50x->frame[i].grabstate = FRAME_UNUSED;
 		spca50x->frame[i].scanstate = STATE_SCANNING;
 		spca50x->frame[i].data = spca50x->fbuf + i * MAX_DATA_SIZE;
@@ -1700,7 +1743,6 @@ spca50x->frame[i].spca50x_dev = spca50x;	//refind the whole structure
 		       sizeof (struct pictparam));
 		PDEBUG(4, "frame[%d] @ %p", i, spca50x->frame[i].data);
 	}
-
 	spca50x->buf_state = BUF_ALLOCATED;
       out:
 	up(&spca50x->buf_lock);
@@ -1736,7 +1778,6 @@ spca5xx_dealloc(struct usb_spca50x *spca50x)
 		rvfree(spca50x->tmpBuffer, MAX_FRAME_SIZE);
 		spca50x->tmpBuffer = NULL;
 	}
-
 	PDEBUG(2, "buffer memory deallocated");
 	spca50x->buf_state = BUF_NOT_ALLOCATED;
 	up(&spca50x->buf_lock);
@@ -1760,8 +1801,7 @@ spca50x_init_source(struct usb_spca50x *spca50x)
 	     spca5xx_setMode(spca50x, spca50x->width, spca50x->height,
 			     VIDEO_PALETTE_RGB24)) < 0)
 		return -EINVAL;
-	spca5xx_set_light_freq(spca50x, lightfreq); 
-
+	spca5xx_set_light_freq(spca50x, lightfreq);
 	return 0;
 }
 
@@ -1809,8 +1849,9 @@ spca5xx_isjpeg(struct usb_spca50x *spca50x)
 	    || spca50x->cameratype == JPGC
 	    || spca50x->cameratype == JPGS
 	    || spca50x->cameratype == JPEG
-		|| spca50x->cameratype == JPGM
-		|| spca50x->cameratype == PJPG)
+	    || spca50x->cameratype == JPGM 
+	    || spca50x->cameratype == PJPG
+	    || spca50x->cameratype == JPGV)
 		return 1;
 	return 0;
 }
@@ -1852,18 +1893,18 @@ spca5xx_chgDtimes(struct usb_spca50x *spca50x, __u16 dtimes)
 	spca50x->dtimes = (unsigned int) dtimes;
 	spin_unlock_irqrestore(&spca50x->v4l_lock, flags);
 }
+
 /* Matches the sensor's internal frame rate to the lighting frequency.
- * Valid frequencies are:
- *	50 - 50Hz, for European and Asian lighting (default)
- *	60 - 60Hz, for American lighting
- *       0 - No Fliker (for outdoore usage)
- * Returns: 0 for success
- */
+* Valid frequencies are:
+* 50 - 50Hz, for European and Asian lighting (default)
+* 60 - 60Hz, for American lighting
+*       0 - No Fliker (for outdoore usage)
+* Returns: 0 for success
+*/
 static int
 spca5xx_set_light_freq(struct usb_spca50x *spca50x, int freq)
 {
 	int freq_set;
-
 	if (freq == 50)
 		freq_set = freq_50HZ;
 	else if (freq == 60)
@@ -1871,10 +1912,9 @@ spca5xx_set_light_freq(struct usb_spca50x *spca50x, int freq)
 	else if (freq == 0)
 		freq_set = NoFliker;
 	else {
-		PDEBUG(0,"Invalid light freq (%d Hz)", freq);
+		PDEBUG(0, "Invalid light freq (%d Hz)", freq);
 		return -EINVAL;
 	}
-
 	switch (spca50x->sensor) {
 	case SENSOR_TAS5130C_VF0250:
 	case SENSOR_TAS5130CXX:
@@ -1884,38 +1924,40 @@ spca5xx_set_light_freq(struct usb_spca50x *spca50x, int freq)
 	case SENSOR_HDCS2020b:
 	case SENSOR_CS2102:
 	case SENSOR_OV7660:
-	    break;
+	case SENSOR_OV7620:
+	case SENSOR_MC501CB:
+		break;
 	default:
-		PDEBUG(0,"Sensor currently not support light frequency banding filters.");
+		PDEBUG(0,
+		       "Sensor currently not support light frequency banding filters.");
 		return -EINVAL;
 	}
-	
 	if (freq_set == freq_50HZ) {
-          PDEBUG(1, "Light frequency banding filter set to 50HZ mode");
-	 if (spca50x->mode && spca50x->funct.set_50HZ) {
-            spca50x->funct.set_50HZ(spca50x);
-	 }  else if (spca50x->funct.set_50HZScale) {
-            spca50x->funct.set_50HZScale(spca50x); 
-	 }   
-    	} else if (freq_set == freq_60HZ) {
-          PDEBUG(1, "Light frequency banding filter set to 60HZ mode");
-         if (spca50x->mode && spca50x->funct.set_60HZ) {
-            spca50x->funct.set_60HZ(spca50x);
-	 } else if (spca50x->funct.set_60HZScale) {
-	    spca50x->funct.set_60HZScale(spca50x);
-	 }    
-    	} else if (freq_set == NoFliker) {
-          PDEBUG(1, "Light frequency banding filter set to NoFliker mode");
-         if (spca50x->mode && spca50x->funct.set_NoFliker) {
-            spca50x->funct.set_NoFliker(spca50x);
-	} else if (spca50x->funct.set_NoFlikerScale) {
-            spca50x->funct.set_NoFlikerScale(spca50x);
-	 }    
-    	}
+		PDEBUG(1, "Light frequency banding filter set to 50HZ mode");
+		if (spca50x->mode && spca50x->funct.set_50HZ) {
+			spca50x->funct.set_50HZ(spca50x);
+		} else if (spca50x->funct.set_50HZScale) {
+			spca50x->funct.set_50HZScale(spca50x);
+		}
+	} else if (freq_set == freq_60HZ) {
+		PDEBUG(1, "Light frequency banding filter set to 60HZ mode");
+		if (spca50x->mode && spca50x->funct.set_60HZ) {
+			spca50x->funct.set_60HZ(spca50x);
+		} else if (spca50x->funct.set_60HZScale) {
+			spca50x->funct.set_60HZScale(spca50x);
+		}
+	} else if (freq_set == NoFliker) {
+		PDEBUG(1,
+		       "Light frequency banding filter set to NoFliker mode");
+		if (spca50x->mode && spca50x->funct.set_NoFliker) {
+			spca50x->funct.set_NoFliker(spca50x);
+		} else if (spca50x->funct.set_NoFlikerScale) {
+			spca50x->funct.set_NoFlikerScale(spca50x);
+		}
+	}
 	spca50x->light_freq = freq;
 	return 0;
 }
-
 static int
 spca5xx_open(struct inode *inode, struct file *file)
 {
@@ -2079,6 +2121,7 @@ spca5xx_do_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
 			default:
 				snprintf(v->name, 32, "%s",
 					 Blist[spca50x->bridge].name);
+					 PDEBUG(0, "Bridge %s ",v->name);
 				break;
 			}
 			v->flags = 0;
@@ -2272,8 +2315,9 @@ spca5xx_do_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
 				if (RegStrobe == 1) {
 					if (spca50x->bridge == BRIDGE_PAC207) {
 						pac207_RegWrite(spca50x);
-  					} else if (spca50x->bridge == BRIDGE_PAC7311) {
-  						pac7311_RegWrite(spca50x);
+					} else if (spca50x->bridge ==
+						   BRIDGE_PAC7311) {
+						pac7311_RegWrite(spca50x);
 					} else {
 						Rval = RegValue & 0xFF;
 						spca5xxRegWrite(spca50x->dev,
@@ -2286,8 +2330,9 @@ spca5xx_do_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
 				} else {
 					if (spca50x->bridge == BRIDGE_PAC207) {
 						pac207_RegRead(spca50x);
-  					} else if (spca50x->bridge == BRIDGE_PAC7311) {
-  						pac7311_RegRead(spca50x);
+					} else if (spca50x->bridge ==
+						   BRIDGE_PAC7311) {
+						pac7311_RegRead(spca50x);
 					} else {
 						spca5xxRegRead(spca50x->dev, 0xa1, 0x01, (__u16) (RegAddress & 0xFFFF), &Rval, 1);	// read Lowbyte
 						RegValue = Rval;
@@ -2326,7 +2371,7 @@ spca5xx_do_ioctl(struct inode *inode, struct file *file, unsigned int cmd,
 							      FRAME_DONE));
 				if (ret)
 					return -EINTR;
-				// ?????
+// ?????
 				PDEBUG(4,
 				       "Synch Ready on frame %d, grabstate = %d",
 				       frame, spca50x->frame[frame].grabstate);
@@ -2564,7 +2609,9 @@ static struct video_device spca50x_template = {
 	.owner = THIS_MODULE,
 	.name = "GSPCA USB Camera",
 	.type = VID_TYPE_CAPTURE,
+#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,23)	
 	.hardware = VID_HARDWARE_GSPCA,
+#endif
 	.fops = &spca5xx_fops,
 	.release = video_device_release,
 	.minor = -1,
@@ -2610,6 +2657,7 @@ spca50x_configure(struct usb_spca50x *spca50x)
 /****************************************************************************
 *  sysfs
 ***************************************************************************/
+#if LINUX_VERSION_CODE <= KERNEL_VERSION(2,6,23)
 static inline struct usb_spca50x *
 cd_to_spca50x(struct class_device *cd)
 {
@@ -2650,22 +2698,23 @@ static CLASS_DEVICE_ATTR(pictsetting, S_IRUGO, show_pictsetting, NULL);
 static int
 spca50x_create_sysfs(struct video_device *vdev)
 {
-	int rc = 0 ;
-#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)	
+	int rc = 0;
+#if LINUX_VERSION_CODE > KERNEL_VERSION(2,6,17)
 	rc = video_device_create_file(vdev, &class_device_attr_stream_id);
-	if (rc) goto err_stream_id;
+	if (rc)
+		goto err_stream_id;
 	rc = video_device_create_file(vdev, &class_device_attr_model);
-	if (rc) goto err_model;
+	if (rc)
+		goto err_model;
 	rc = video_device_create_file(vdev, &class_device_attr_pictsetting);
-	if (rc) goto err_pictsetting;
-
+	if (rc)
+		goto err_pictsetting;
 	return 0;
-
-err_pictsetting:
+      err_pictsetting:
 	video_device_remove_file(vdev, &class_device_attr_pictsetting);
-err_model:
+      err_model:
 	video_device_remove_file(vdev, &class_device_attr_model);
-err_stream_id:
+      err_stream_id:
 	video_device_remove_file(vdev, &class_device_attr_stream_id);
 #else
 	video_device_create_file(vdev, &class_device_attr_stream_id);
@@ -2674,6 +2723,68 @@ err_stream_id:
 #endif
 	return rc;
 }
+#else /* we are upto kernel 2.6.23 */
+static inline struct usb_spca50x *
+cd_to_spca50x(struct device *cd)
+{
+	struct video_device *vdev = to_video_device(cd);
+	return video_get_drvdata(vdev);
+}
+
+static ssize_t
+show_stream_id(struct device *cd, struct device_attribute *attr, char *buf)
+{
+	struct usb_spca50x *spca50x = cd_to_spca50x(cd);
+	return snprintf(buf, 5, "%s\n", Plist[spca50x->cameratype].name);
+}
+
+static DEVICE_ATTR(stream_id, S_IRUGO, show_stream_id, NULL);
+
+static ssize_t
+show_model(struct device *cd, struct device_attribute *attr, char *buf)
+{
+	struct usb_spca50x *spca50x = cd_to_spca50x(cd);
+	return snprintf(buf, 32, "%s\n", (spca50x->desc) ?
+			clist[spca50x->desc].description : " Unknow ");
+}
+
+static DEVICE_ATTR(model, S_IRUGO, show_model, NULL);
+static ssize_t
+show_pictsetting(struct device *cd, struct device_attribute *attr, char *buf)
+{
+	struct usb_spca50x *spca50x = cd_to_spca50x(cd);
+	struct pictparam *gcorrect = &spca50x->pictsetting;
+	return snprintf(buf, 128,
+			"force_rgb=%d, gamma=%d, OffRed=%d, OffBlue=%d, OffGreen=%d, GRed=%d, GBlue=%d, GGreen= %d \n",
+			gcorrect->force_rgb, gcorrect->gamma, gcorrect->OffRed,
+			gcorrect->OffBlue, gcorrect->OffGreen, gcorrect->GRed,
+			gcorrect->GBlue, gcorrect->GGreen);
+}
+
+static DEVICE_ATTR(pictsetting, S_IRUGO, show_pictsetting, NULL);
+static int
+spca50x_create_sysfs(struct video_device *vdev)
+{
+	int rc = 0;
+	rc = video_device_create_file(vdev, &dev_attr_stream_id);
+	if (rc)
+		goto err_stream_id;
+	rc = video_device_create_file(vdev, &dev_attr_model);
+	if (rc)
+		goto err_model;
+	rc = video_device_create_file(vdev, &dev_attr_pictsetting);
+	if (rc)
+		goto err_pictsetting;
+	return 0;
+      err_pictsetting:
+	video_device_remove_file(vdev, &dev_attr_pictsetting);
+      err_model:
+	video_device_remove_file(vdev, &dev_attr_model);
+      err_stream_id:
+	video_device_remove_file(vdev, &dev_attr_stream_id);
+	return rc;
+}
+#endif 
 
 /****************************************************************************
 *
@@ -2684,7 +2795,7 @@ static int
 gspca_attach_bridge(struct usb_spca50x *spca50x)
 {
 /* set the default epadr */
-	spca50x->epadr =1;
+	spca50x->epadr = 1;
 	switch (spca50x->bridge) {
 	case BRIDGE_SPCA500:
 		spca50x->cameratype = JPEG;
@@ -2749,11 +2860,12 @@ gspca_attach_bridge(struct usb_spca50x *spca50x)
 		info("USB GSPCA camera found.(ZC3XX) ");
 		memcpy(&spca50x->funct, &fzc3xx, sizeof (struct cam_operation));
 		break;
-	case BRIDGE_VC032X:
-	spca50x->epadr = 2;
+	case BRIDGE_VC0321:
+		spca50x->epadr = 2;
 		spca50x->cameratype = YUY2;
 		info("USB GSPCA camera found.(VC0321) ");
-		memcpy(&spca50x->funct, &fvc0321, sizeof (struct cam_operation));
+		memcpy(&spca50x->funct, &fvc0321,
+		       sizeof (struct cam_operation));
 		break;
 	case BRIDGE_SONIX:
 		spca50x->cameratype = SN9C;
@@ -2767,14 +2879,14 @@ gspca_attach_bridge(struct usb_spca50x *spca50x)
 		       sizeof (struct cam_operation));
 		break;
 	case BRIDGE_PAC207:
-	spca50x->epadr = 5;
+		spca50x->epadr = 5;
 		spca50x->cameratype = PGBRG;
 		info("USB GSPCA camera found. (PAC207)");
 		memcpy(&spca50x->funct, &fpac207,
 		       sizeof (struct cam_operation));
 		break;
 	case BRIDGE_PAC7311:
-	    spca50x->epadr = 5;
+		spca50x->epadr = 5;
 		spca50x->cameratype = PJPG;
 		info("USB SPCA5XX camera found. (PAC7311)");
 		memcpy(&spca50x->funct, &fpac7311,
@@ -2803,12 +2915,18 @@ gspca_attach_bridge(struct usb_spca50x *spca50x)
 		memcpy(&spca50x->funct, &fmr97311,
 		       sizeof (struct cam_operation));
 		break;
+	case BRIDGE_VC0323:
+		spca50x->epadr = 2;
+		spca50x->cameratype = JPGV;
+		info("USB GSPCA camera found.(VC0323) ");
+		memcpy(&spca50x->funct, &fvc0321,
+		       sizeof (struct cam_operation));
+		break;
 	default:
 		return -ENODEV;
 	}
 	return 0;
-} 
-
+}
 static int
 spcaDetectCamera(struct usb_spca50x *spca50x)
 {
@@ -2860,12 +2978,12 @@ spcaDetectCamera(struct usb_spca50x *spca50x)
 			break;
 		case 0x401:
 			spca50x->desc = IntelCreateAndShare;
-			spca50x->bridge = BRIDGE_SPCA501;	
+			spca50x->bridge = BRIDGE_SPCA501;
 			spca50x->sensor = SENSOR_INTERNAL;;
 			break;
 		case 0x402:
 			spca50x->desc = ViewQuestM318B;
-			spca50x->bridge = BRIDGE_SPCA501;	
+			spca50x->bridge = BRIDGE_SPCA501;
 			spca50x->sensor = SENSOR_INTERNAL;;
 			break;
 		case 0x110:
@@ -2945,6 +3063,7 @@ spcaDetectCamera(struct usb_spca50x *spca50x)
 	case 0x08ca:		/* Aiptek */
 	case 0x055f:		/* Mustek cameras */
 	case 0x04fc:		/* SunPlus */
+	case 0x0d64:		/* SunPlus */
 	case 0x052b:		/* ?? Megapix */
 	case 0x04f1:		/* JVC */
 		switch (product) {
@@ -3073,6 +3192,11 @@ and should be a spca504b then overwrite that setting */
 			spca50x->bridge = BRIDGE_SPCA533;
 			spca50x->sensor = SENSOR_INTERNAL;
 			break;
+		case 0x0303:
+			spca50x->desc = DXG305v;
+			spca50x->bridge = BRIDGE_SPCA536;
+			spca50x->sensor = SENSOR_INTERNAL;
+			break;
 		case 0x5360:
 			spca50x->desc = SunplusGeneric536;
 			spca50x->bridge = BRIDGE_SPCA536;
@@ -3188,7 +3312,7 @@ and should be a spca504b then overwrite that setting */
 		};
 		break;
 	case 0x045e:
-		switch(product){
+		switch (product) {
 		case 0x00f7:
 			spca50x->desc = MSVX1000;
 			spca50x->bridge = BRIDGE_SN9CXXX;
@@ -3196,7 +3320,7 @@ and should be a spca504b then overwrite that setting */
 			spca50x->customid = SN9C105;
 			spca50x->i2c_ctrl_reg = 0x81;
 			spca50x->i2c_base = 0x21;
-		break;
+			break;
 		case 0x00f5:
 			spca50x->desc = MSVX3000;
 			spca50x->bridge = BRIDGE_SN9CXXX;
@@ -3204,7 +3328,7 @@ and should be a spca504b then overwrite that setting */
 			spca50x->customid = SN9C105;
 			spca50x->i2c_ctrl_reg = 0x81;
 			spca50x->i2c_base = 0x21;
-		break;
+			break;
 		default:
 			goto error;
 		};
@@ -3269,6 +3393,7 @@ and should be a spca504b then overwrite that setting */
 			spca50x->sensor = SENSOR_HDCS2020;
 			break;
 		case 0x08ac:
+		case 0x08af:
 			spca50x->desc = LogitechQCCool;
 			spca50x->bridge = BRIDGE_ZC3XX;
 			spca50x->sensor = SENSOR_HV7131B;
@@ -3298,6 +3423,11 @@ and should be a spca504b then overwrite that setting */
 			spca50x->desc = QCmessenger;
 			spca50x->bridge = BRIDGE_ZC3XX;
 			spca50x->sensor = SENSOR_TAS5130CXX;
+			break;
+		case 0x08dd:
+			spca50x->desc = LogitechQC4Notebooks;
+			spca50x->bridge = BRIDGE_ZC3XX;
+			spca50x->sensor = SENSOR_MC501CB;
 			break;
 		case 0x0900:
 			spca50x->desc = LogitechClickSmart310;
@@ -3397,14 +3527,14 @@ and should be a spca504b then overwrite that setting */
 			spca50x->sensor = SENSOR_ICM105A;
 			break;
 		case 0x4051:	// zc301 chips 
-			spca50x->desc = CreativeLiveCamVideoIM;
-			spca50x->bridge = BRIDGE_ZC3XX;
-			spca50x->sensor = SENSOR_TAS5130C_VF0250; // VF0250
-			break;
-		case 0x4053:	// zc301 chips 
 			spca50x->desc = CreativeLiveCamNotebookPro;
 			spca50x->bridge = BRIDGE_ZC3XX;
-			spca50x->sensor = SENSOR_TAS5130C_VF0250; // VF0250
+			spca50x->sensor = SENSOR_TAS5130C_VF0250;	// VF0250
+			break;
+		case 0x4053:	// zc301 chips 
+			spca50x->desc = CreativeLiveCamVideoIM;
+			spca50x->bridge = BRIDGE_ZC3XX;
+			spca50x->sensor = SENSOR_TAS5130C_VF0250;	// VF0250
 			break;
 		case 0x0920:
 			spca50x->desc = QCExpress;
@@ -3447,10 +3577,9 @@ and should be a spca504b then overwrite that setting */
 		case 0x0892:
 		case 0x0896:
 			spca50x->desc = Orbicam;
-			spca50x->bridge = BRIDGE_VC032X;
-			spca50x->sensor = SENSOR_OV7660;	
-			
-		break;
+			spca50x->bridge = BRIDGE_VC0321;
+			spca50x->sensor = SENSOR_OV7660;
+			break;
 		default:
 			goto error;
 		};
@@ -3460,37 +3589,63 @@ and should be a spca504b then overwrite that setting */
 		case 0x301b:	/* Wasam 350r */
 			spca50x->desc = Vimicro;
 			spca50x->bridge = BRIDGE_ZC3XX;
-			spca50x->sensor = SENSOR_PB0330;	
+			spca50x->sensor = SENSOR_PB0330;
 			break;
 		case 0x303b:	/* Wasam 350r */
 			spca50x->desc = Vimicro303b;
 			spca50x->bridge = BRIDGE_ZC3XX;
-			spca50x->sensor = SENSOR_PB0330;	
+			spca50x->sensor = SENSOR_PB0330;
 			break;
 		case 0x305b:	/* Generic */
 			spca50x->desc = Zc0305b;
 			spca50x->bridge = BRIDGE_ZC3XX;
 			spca50x->sensor = SENSOR_TAS5130C_VF0250;	//overwrite by the sensor detect routine
 			break;
+		case 0x307b:	/* Generic */
+			spca50x->desc = LdlcVC302;
+			spca50x->bridge = BRIDGE_ZC3XX;
+			spca50x->sensor = SENSOR_OV7620;	//overwrite by the sensor detect routine
+			break;
 		case 0x0302:	/* Generic */
 			spca50x->desc = Zc302;
 			spca50x->bridge = BRIDGE_ZC3XX;
-			spca50x->sensor = SENSOR_ICM105A;	
+			spca50x->sensor = SENSOR_ICM105A;
 			break;
 		case 0x0321:
 			spca50x->desc = Vimicro0321;
-			spca50x->bridge = BRIDGE_VC032X;
-			spca50x->sensor = SENSOR_OV7660;	
+			spca50x->bridge = BRIDGE_VC0321;
+			spca50x->sensor = SENSOR_OV7660;
+			break;
+		case 0x0323:
+			spca50x->desc = Vimicro0323;
+			spca50x->bridge = BRIDGE_VC0323;
+			spca50x->sensor = SENSOR_OV7670;
+			break;	
+		case 0x0328:
+			spca50x->desc = A4TechPK130MG;
+			spca50x->bridge = BRIDGE_VC0321;
+			spca50x->sensor = SENSOR_MI1320;
 			break;
 		case 0xc001:
 			spca50x->desc = Sonyc001;
-			spca50x->bridge = BRIDGE_VC032X;
+			spca50x->bridge = BRIDGE_VC0321;
 			spca50x->sensor = SENSOR_OV7660;
 			break;
 		case 0xc002:
 			spca50x->desc = Sonyc002;
-			spca50x->bridge = BRIDGE_VC032X;
-			spca50x->sensor = SENSOR_OV7660;	
+			spca50x->bridge = BRIDGE_VC0321;
+			spca50x->sensor = SENSOR_OV7660;
+			break;
+		default:
+			goto error;
+		};
+		break;
+	case 0x17ef:		/* Lenovo */
+		switch (product) {
+		case 0x4802:	/* Lenovo MI1310_SOC */
+			spca50x->desc = Lenovo;
+			spca50x->bridge = BRIDGE_VC0323;
+			spca50x->sensor = SENSOR_MI1310_SOC;
 			break;
 		default:
 			goto error;
@@ -3633,7 +3788,7 @@ and should be a spca504b then overwrite that setting */
 			spca50x->customid = SN9C120;
 			spca50x->i2c_ctrl_reg = 0x81;
 			spca50x->i2c_base = 0x5d;
-		break;
+			break;
 		default:
 			goto error;
 		};
@@ -3802,6 +3957,14 @@ and should be a spca504b then overwrite that setting */
 			spca50x->i2c_ctrl_reg = 0x81;
 			spca50x->i2c_base = 0x11;
 			break;
+		case 0x60ec:
+			spca50x->desc = TalkCamVX6;
+			spca50x->bridge = BRIDGE_SN9CXXX;
+			spca50x->sensor = SENSOR_MO4000;
+			spca50x->customid = SN9C105;
+			spca50x->i2c_ctrl_reg = 0x81;
+			spca50x->i2c_base = 0x21;
+			break;
 		case 0x6138:
 			spca50x->desc = Sonix0x6138;
 			spca50x->bridge = BRIDGE_SN9CXXX;
@@ -3947,6 +4110,11 @@ and should be a spca504b then overwrite that setting */
 			spca50x->bridge = BRIDGE_PAC207;
 			spca50x->sensor = SENSOR_PAC207;
 			break;
+		case 0x2463:
+			spca50x->desc = PhilipsSPC220NC;
+			spca50x->bridge = BRIDGE_PAC207;
+			spca50x->sensor = SENSOR_PAC207;
+			break;
 		case 0x2468:
 			spca50x->desc = PAC207;
 			spca50x->bridge = BRIDGE_PAC207;
@@ -3957,25 +4125,26 @@ and should be a spca504b then overwrite that setting */
 			spca50x->bridge = BRIDGE_PAC207;
 			spca50x->sensor = SENSOR_PAC207;
 			break;
+		case 0x2472:
 		case 0x2471:
 			spca50x->desc = GeniusGe111;
 			spca50x->bridge = BRIDGE_PAC207;
 			spca50x->sensor = SENSOR_PAC207;
 			break;
-  		case 0x2600:
-  		case 0x2601:
-  		case 0x2608:
-  		case 0x260e:
-  		case 0x260f:
-  			spca50x->desc = PAC7311;
-  			spca50x->bridge = BRIDGE_PAC7311;
-  			spca50x->sensor = SENSOR_PAC7311;
-  			break;
-  		case 0x2603:
-  			spca50x->desc = PAC7312;
-  			spca50x->bridge = BRIDGE_PAC7311;
-  			spca50x->sensor = SENSOR_PAC7311;
-  			break;
+		case 0x2600:
+		case 0x2601:
+		case 0x2608:
+		case 0x260e:
+		case 0x260f:
+			spca50x->desc = PAC7311;
+			spca50x->bridge = BRIDGE_PAC7311;
+			spca50x->sensor = SENSOR_PAC7311;
+			break;
+		case 0x2603:
+			spca50x->desc = PAC7312;
+			spca50x->bridge = BRIDGE_PAC7311;
+			spca50x->sensor = SENSOR_PAC7311;
+			break;
 		default:
 			goto error;
 		};
@@ -4007,7 +4176,7 @@ and should be a spca504b then overwrite that setting */
 	case 0x0471:		/* Philips Product */
 		switch (product) {
 		case 0x0322:
-			spca50x->desc =PhilipsDMVC1300K;
+			spca50x->desc = PhilipsDMVC1300K;
 			spca50x->bridge = BRIDGE_SPCA504B;
 			spca50x->sensor = SENSOR_INTERNAL;
 			break;
@@ -4025,7 +4194,7 @@ and should be a spca504b then overwrite that setting */
 			spca50x->desc = PhilipsSPC315NC;
 			spca50x->bridge = BRIDGE_ZC3XX;
 			spca50x->sensor = SENSOR_PAS106;	//overwrite by the sensor detect routine
-			break;	
+			break;
 		case 0x0326:	/* Low cost Philips Webcam */
 			spca50x->desc = PhilipsSPC300NC;
 			spca50x->bridge = BRIDGE_ZC3XX;
@@ -4047,11 +4216,19 @@ and should be a spca504b then overwrite that setting */
 			spca50x->i2c_ctrl_reg = 0x81;
 			spca50x->i2c_base = 0x5d;
 			break;
+		case 0x0330:
+			spca50x->desc = PhilipsSPC710NC;
+			spca50x->bridge = BRIDGE_SN9CXXX;
+			spca50x->sensor = SENSOR_MI0360;
+			spca50x->customid = SN9C105;
+			spca50x->i2c_ctrl_reg = 0x81;
+			spca50x->i2c_base = 0x5d;
+			break;
 		default:
 			goto error;
 		};
 		break;
-	case 0x06d6:	/* Trust */
+	case 0x06d6:		/* Trust */
 		switch (product) {
 		case 0x0031:
 			spca50x->desc = Trust610LCDPowerCamZoom;
@@ -4140,7 +4317,7 @@ spca5xx_probe(struct usb_interface *intf, const struct usb_device_id *id)
 	if (spca50x_create_sysfs(spca50x->vdev))
 		goto error;
 	tasklet_init(&spca50x->spca5xx_tasklet,
-		outpict_do_tasklet,(unsigned long) 0);
+		     outpict_do_tasklet, (unsigned long) 0);
 	return 0;
       error:
 	if (spca50x->vdev) {
