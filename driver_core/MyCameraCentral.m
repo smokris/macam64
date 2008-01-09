@@ -71,6 +71,13 @@
 #import "VC032xDriver.h"
 #import "MR97311Driver.h"
 #import "IBMcamDriver.h"
+#import "SPCA500Driver.h"
+#import "SPCA504Driver.h"
+#import "SPCA505Driver.h"
+#import "SPCA506Driver.h"
+#import "SPCA533Driver.h"
+#import "SPCA536Driver.h"
+#import "SPCA551Driver.h"
 
 #include "unistd.h"
 
@@ -277,8 +284,11 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[ZC030xDriverInverted class]];
     [self registerCameraDriver:[ZC030xDriverMic class]];
     [self registerCameraDriver:[ZC030xDriverVF0250 class]];
+    [self registerCameraDriver:[ZC030xDriverOV7620 class]];
+    [self registerCameraDriver:[ZC030xDriverMC501CB class]];
     
-    [self registerCameraDriver:[VC032xDriver class]];
+    [self registerCameraDriver:[VC0321Driver class]];
+    [self registerCameraDriver:[VC0323Driver class]];
     
     [self registerCameraDriver:[SPCA501ADriver class]];   // Based on SPCA5XX - testing
     [self registerCameraDriver:[SPCA501ADriverVariant1 class]];
@@ -328,6 +338,30 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[IBMcamModel3Driver class]];
     [self registerCameraDriver:[IBMcamModel4Driver class]];
    */ 
+    
+    [self registerCameraDriver:[SPCA500Driver class]];
+    [self registerCameraDriver:[SPCA500ADriver class]];
+    [self registerCameraDriver:[SPCA500CDriver class]];
+    
+    [self registerCameraDriver:[SPCA504ADriver class]];
+    [self registerCameraDriver:[SPCA504BDriver class]];
+    [self registerCameraDriver:[SPCA504B_P3Driver class]];
+    [self registerCameraDriver:[SPCA504CDriver class]];
+    
+    [self registerCameraDriver:[SPCA505Driver class]];
+    [self registerCameraDriver:[SPCA505BDriver class]];
+    
+    [self registerCameraDriver:[SPCA506Driver class]];
+    [self registerCameraDriver:[SPCA506ADriver class]];
+    
+    [self registerCameraDriver:[SPCA533Driver class]];
+    [self registerCameraDriver:[SPCA533ADriver class]];
+    
+    [self registerCameraDriver:[SPCA536Driver class]];
+    [self registerCameraDriver:[SPCA536ADriver class]];
+    
+    [self registerCameraDriver:[SPCA551ADriver class]];
+    
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
     [self registerCameraDriver:[KworldTV300UDriver class]];  // This is very incomplete at this time
