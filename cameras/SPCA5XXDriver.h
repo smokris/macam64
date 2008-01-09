@@ -57,7 +57,7 @@ void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index,
     struct usb_spca50x * spca50x;
     struct cam_operation * cameraOperation;
     
-    OrientationMode orientation;
+    BOOL autobrightIdle;
 }
 
 - (id) initWithCentral:(id) c;
@@ -95,6 +95,8 @@ void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index,
 - (CameraError) spca5xx_setAutobright;
 - (CameraError) spca5xx_getcontrast; // return contrast in spca50x
 - (CameraError) spca5xx_setcontrast;
+- (CameraError) spca5xx_getcolors;
+- (CameraError) spca5xx_setcolors;
 
 // Implement the following from GenericDriver
 
@@ -109,125 +111,3 @@ struct usb_device
 {
     SPCA5XXDriver * driver;
 };
-
-
-// These can all be moved to different files eventually
-
-@interface SPCA500Driver : SPCA5XXDriver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA500ADriver : SPCA500Driver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA500CDriver : SPCA500ADriver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA504ADriver : SPCA5XXDriver
-{
-    
-}
-
-@end
-
-
-@interface SPCA504BDriver : SPCA504ADriver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA504B_P3Driver : SPCA504BDriver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA505Driver : SPCA5XXDriver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA505BDriver : SPCA505Driver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA506Driver : SPCA505Driver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA506ADriver : SPCA506Driver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA533Driver : SPCA504ADriver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA533ADriver : SPCA533Driver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA536Driver : SPCA504ADriver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA536ADriver : SPCA536Driver 
-{
-    
-}
-
-@end
-
-
-@interface SPCA551ADriver : SPCA5XXDriver 
-{
-    
-}
-
-@end

@@ -160,7 +160,7 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
 	if (LUT == NULL) 
         return NULL;
     
-    orientation = NormalOrientation;
+    [LUT setDefaultOrientation:NormalOrientation];
     
     spca50x = (struct usb_spca50x *) malloc(sizeof(struct usb_spca50x));
     spca50x->dev = (struct usb_device *) malloc(sizeof(struct usb_device));
@@ -176,6 +176,8 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3])
     
     compressionType = gspcaCompression;
     spca50x->cameratype = -1; // Not yet defined
+    
+    autobrightIdle = NO;
     
     return self;
 }
@@ -324,6 +326,14 @@ short SPCA5xxResolution(CameraResolution res)
 }
 
 
+- (void) setSaturation:(float) v
+{
+    spca50x->colour = v * 65535;
+    [self spca5xx_setcolors];
+    [super setSaturation:v];
+}
+
+
 // Gain and shutter combined
 - (BOOL) canSetAutoGain 
 {
@@ -403,7 +413,7 @@ short SPCA5xxResolution(CameraResolution res)
         spca50x->frame->pictsetting.change = 0x10; // possibly 0x01
         
         spca50x->frame->pictsetting.gamma = 3;
-        spca50x->frame->pictsetting.force_rgb = 1;
+        spca50x->frame->pictsetting.force_rgb = 1; // we want rgb, not bgr
         
         spca50x->frame->pictsetting.GRed = 256;
         spca50x->frame->pictsetting.OffRed = 0;
@@ -455,7 +465,7 @@ short SPCA5xxResolution(CameraResolution res)
         printf("There was an error in the decoding (%d).\n", error);
     }
     
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP orientation:orientation];
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
 }
 
 
@@ -465,6 +475,9 @@ short SPCA5xxResolution(CameraResolution res)
     {
         spca50x->avg_lum = grabContext.frameInfo.averageLuminance;
         grabContext.frameInfo.averageLuminanceSet = 0;
+        
+        if (autobrightIdle && [self isAutoGain]) 
+            [self spca5xx_setAutobright];  // needed by PAC207, any others?
     }
     
     [super decodeBuffer:buffer];
@@ -585,7 +598,7 @@ short SPCA5xxResolution(CameraResolution res)
         spca50x->autoexpo = ([self isAutoGain]) ? 1 : 0;
         (*cameraOperation->set_autobright)(spca50x); // may need to be called regularly!
         
-#if VERBOSE
+#if REALLY_VERBOSE
         printf("called the spca50x->set-autobright with spca50x->autoexpo = %d\n", spca50x->autoexpo);
 #endif 
         
@@ -616,6 +629,33 @@ short SPCA5xxResolution(CameraResolution res)
     if (cameraOperation != NULL) 
     {
         (*cameraOperation->set_contrast)(spca50x);
+        
+        return CameraErrorOK;
+    }
+    else 
+        return CameraErrorUnimplemented;
+}
+
+
+- (CameraError) spca5xx_getcolors
+{
+    if (cameraOperation != NULL) 
+    {
+        //      __u16 colour = 
+        (*cameraOperation->get_colors)(spca50x);
+        
+        return CameraErrorOK;
+    }
+    else 
+        return CameraErrorUnimplemented;
+}
+
+
+- (CameraError) spca5xx_setcolors
+{
+    if (cameraOperation != NULL) 
+    {
+        (*cameraOperation->set_colors)(spca50x);
         
         return CameraErrorOK;
     }
