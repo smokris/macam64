@@ -13,7 +13,7 @@
 
 // JPEG decompression using spca5xx code
 
-#if 1
+#if 0
 
 
 typedef unsigned int uint;
