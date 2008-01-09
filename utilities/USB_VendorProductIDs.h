@@ -52,7 +52,9 @@
 #define PRODUCT_XBOX_LIVE_VISION        0x0294      // UVC chipset
 
 #define VENDOR_MICRO_INNOVATION 0x0461
+#define PRODUCT_IC_100                  0x0815      // SPCA561A
 #define PRODUCT_IC_150                  0x0815      // SPCA561A
+#define PRODUCT_IC_200                  0x0815      // SPCA508A
 #define PRODUCT_WEBCAM_320              0x0a00      // ZC030x
 
 #define VENDOR_LOGITECH			0x046d
