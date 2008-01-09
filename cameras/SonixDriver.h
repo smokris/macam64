@@ -52,7 +52,7 @@
 - (id) initWithCentral: (id) c;
 - (void) setIsocFrameFunctions;
 - (BOOL) setGrabInterfacePipe;
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
+//- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
 

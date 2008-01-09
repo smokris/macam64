@@ -651,10 +651,12 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
+    hardwareSaturation = YES;
+    
     // This is important
     cameraOperation = &fsn9cxx;
     
-    spca50x->qindex = 5; // Should probably be set before init_jpeg_decoder()
+//    spca50x->qindex = 5; // Should probably be set before init_jpeg_decoder()
 
     // Set to reflect actual values
     spca50x->bridge = BRIDGE_SN9CXXX;
@@ -668,6 +670,8 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->i2c_base = 0x11;
     spca50x->i2c_trigger_on_write = 0;
     
+    compressionType = gspcaCompression;
+    
 	return self;
 }
 
@@ -676,7 +680,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     [super startupCamera];  // Calls config() and init()
     
-    init_jpeg_decoder(spca50x);  // May be irrelevant
+//    init_jpeg_decoder(spca50x);  // May be irrelevant
 }
 
 //
@@ -716,6 +720,21 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 #ifdef REALLY_VERBOSE
 //        printf("New image start!\n");
 #endif
+        
+        if (frameInfo != NULL) 
+        {
+            frameInfo->averageLuminance =  ((buffer[position + 29] << 8) | buffer[position + 30]) >> 6;	// w4
+            frameInfo->averageLuminance += ((buffer[position + 33] << 8) | buffer[position + 34]) >> 6;	// w6
+            frameInfo->averageLuminance += ((buffer[position + 25] << 8) | buffer[position + 26]) >> 6;	// w2
+            frameInfo->averageLuminance += ((buffer[position + 37] << 8) | buffer[position + 38]) >> 6;	// w8               
+            frameInfo->averageLuminance += ((buffer[position + 31] << 8) | buffer[position + 32]) >> 4;	// w5
+            frameInfo->averageLuminance = frameInfo->averageLuminance >> 4;
+            frameInfo->averageLuminanceSet = 1;
+#if REALLY_VERBOSE
+            printf("The average luminance is %d\n", frameInfo->averageLuminance);
+#endif
+        }
+        
         if (position > 0) 
             *tailLength = position + 2;
         
@@ -747,6 +766,7 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 // jpeg decoding here
 //
+/*
 - (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
     int i;
@@ -795,13 +815,13 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     // do jpeg decoding
     
-    jpeg_decode422(spca50x->frame, 1);  // bgr = 1 (works better for SPCA508A...)
+    jpeg_decode422(spca50x->frame, 0);  // bgr = 1 (works better for SPCA508A...)
     
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP orientation:NormalOrientation];
+    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
     
     return YES;
 }
-
+*/
 @end
 
 
@@ -1116,7 +1136,6 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     spca50x->i2c_ctrl_reg = 0x81;
     spca50x->i2c_base = 0x21;
-    spca50x->i2c_trigger_on_write = 0;
     
 	return self;
 }
