@@ -26,8 +26,11 @@
 #import "SPCA501ADriver.h"
 
 #include "MiscTools.h"
-#include "spcadecoder.h"
+#include "gspcadecoder.h"
 #include "USB_VendorProductIDs.h"
+
+
+int yuv_decode(struct spca50x_frame * myframe, int force_rgb);
 
 
 enum

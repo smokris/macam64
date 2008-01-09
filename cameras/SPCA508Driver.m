@@ -42,7 +42,10 @@
 #import "SPCA508Driver.h"
 
 #include "USB_VendorProductIDs.h"
-#include "spcadecoder.h"
+#include "gspcadecoder.h"
+
+
+int yuv_decode(struct spca50x_frame * myframe, int force_rgb);
 
 
 // These defines are needed by the spca5xx code
