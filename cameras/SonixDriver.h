@@ -28,17 +28,17 @@
 
 @interface SonixDriver : SPCA5XXDriver 
 {
-	UInt8 * decodingBuffer;
-    int bayerFormat;
+//	UInt8 * decodingBuffer;
+//    int bayerFormat;
 }
 
 + (NSArray *) cameraUsbDescriptions;
 
-- (id) initWithCentral: (id) c;
+- (id) initWithCentral:(id)c;
 - (void) setIsocFrameFunctions;
 - (BOOL) setGrabInterfacePipe;
 - (BOOL) startupGrabStream;
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
+//- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
 

@@ -25,8 +25,8 @@
 
 #import "TV8532Driver.h"
 
-#include "MiscTools.h"
-#include "spcadecoder.h"
+//#include "MiscTools.h"
+//#include "spcadecoder.h"
 #include "USB_VendorProductIDs.h"
 
 
@@ -56,27 +56,31 @@
 	self = [super initWithCentral:c];
 	if (self == NULL) 
         return NULL;
-    
+    /*
     bayerConverter = [[BayerConverter alloc] init];
 	if (bayerConverter == NULL) 
         return NULL;
-    
-    rotate = YES;
+    */
+    [LUT setDefaultOrientation:Rotate180];
     
     hardwareBrightness = YES;
     hardwareContrast = NO;
     
-    MALLOC(decodingBuffer, UInt8 *, 356 * 292 + 1000, "decodingBuffer");
+//    MALLOC(decodingBuffer, UInt8 *, 356 * 292 + 1000, "decodingBuffer");
+    
+    cameraOperation = &ftv8532;
+    
+    spca50x->cameratype = GBGR;
     
     spca50x->bridge = BRIDGE_TV8532;
     spca50x->sensor = SENSOR_INTERNAL;
+    
+    compressionType = gspcaCompression;
+    
 //    spca50x->header_len = 4;
 //    spca50x->i2c_ctrl_reg = 0;
 //    spca50x->i2c_base = 0;
 //    spca50x->i2c_trigger_on_write = 0;
-    spca50x->cameratype = GBGR;
-    
-    cameraOperation = &ftv8532;
     
 	return self;
 }
@@ -195,6 +199,7 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
+/*
 //
 // other stuff, including decompression
 //
@@ -231,6 +236,7 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     return YES;
 }
+*/
 
 @end
 
@@ -273,7 +279,7 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	if (self == NULL) 
         return NULL;
     
-    rotate = NO;
+    [LUT setDefaultOrientation:NormalOrientation];
     
 	return self;
 }

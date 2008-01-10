@@ -79,8 +79,8 @@ USB\VID_0c45 and PID_613e       ; SN9C120 + OV7630
 
 #import "SonixDriver.h"
 
-#include "MiscTools.h"
-#include "spcadecoder.h"
+//#include "MiscTools.h"
+#include "gspcadecoder.h"
 #include "USB_VendorProductIDs.h"
 
 
@@ -96,6 +96,7 @@ enum
     GeniusVideoCamMessenger,
     Lic200,
     Sonix6029,
+    TrustWB3400,
     
     SpeedNVC350K,
     SonixWC311P,
@@ -139,14 +140,14 @@ enum
 	self = [super initWithCentral:c];
 	if (self == NULL) 
         return NULL;
-    
+   /* 
     // Include if needed
     bayerConverter = [[BayerConverter alloc] init];
 	if (bayerConverter == NULL) 
         return NULL;
     
     bayerFormat = 6;
-    
+    */
     // Set as appropriate
     hardwareBrightness = YES;
     hardwareContrast = YES;
@@ -154,7 +155,7 @@ enum
     decodingSkipBytes = 6;
     
     // Again, use if needed
-    MALLOC(decodingBuffer, UInt8 *, 644 * 484 + 1000, "decodingBuffer");
+//    MALLOC(decodingBuffer, UInt8 *, 644 * 484 + 1000, "decodingBuffer");
     
     // This is important
     cameraOperation = &fsonix;
@@ -173,6 +174,8 @@ enum
     spca50x->i2c_ctrl_reg = 0x20;
     spca50x->i2c_base = 0x11;
     spca50x->i2c_trigger_on_write = 0;
+    
+    compression = gspcaCompression;
     
 	return self;
 }
@@ -259,6 +262,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     return result;
 }
 
+/*
 //
 // other stuff, including decompression
 //
@@ -299,6 +303,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     return YES;
 }
+*/
 
 @end
 
@@ -598,7 +603,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     decodingSkipBytes = 12;
     
-    bayerFormat = 4;
+//    bayerFormat = 4;
     
     // Green is like '105 and '120
     // valid up to 0x7f instead of 0x0f
@@ -606,7 +611,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
 //  cameraOperation->set_contrast = fsn9cxx.set_contrast;
     
-    spca50x->desc = BtcPc380;
+    spca50x->desc = TrustWB3400;
     spca50x->sensor = SENSOR_PAS202;
     spca50x->customid = SN9C103;
     

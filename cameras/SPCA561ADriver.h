@@ -36,6 +36,6 @@
 - (id) initWithCentral: (id) c;
 - (void) startupCamera;
 - (void) setIsocFrameFunctions;
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
+- (void) decodeBuffer:(GenericChunkBuffer *)buffer;
 
 @end

@@ -26,7 +26,7 @@
 #import "SPCA561ADriver.h"
 
 #include "USB_VendorProductIDs.h"
-#include "spcadecoder.h"
+//#include "spcadecoder.h"
 
 
 @implementation SPCA561ADriver
@@ -137,23 +137,26 @@
         return NULL;
     
     cameraOperation = &fspca561;
-    
+    /*
     bayerConverter = [[BayerConverter alloc] init];
 	if (bayerConverter == NULL) 
         return NULL;
     
     MALLOC(decodingBuffer, UInt8 *, 356 * 292 + 1000, "decodingBuffer");
-
+     */
     spca50x->compress = 1;
 
 //  spca50x->desc = ??; // Not needed
+    spca50x->cameratype = S561;
     spca50x->bridge = BRIDGE_SPCA561;
     spca50x->sensor = SENSOR_INTERNAL;
+    
+    compression = gspcaCompression;
+    
 //    spca50x->header_len = SPCA561_OFFSET_DATA;  // gone
 //    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
 //    spca50x->i2c_base = SPCA561_INDEX_I2C_BASE;
 //    spca50x->i2c_trigger_on_write = 1;
-    spca50x->cameratype = S561;
     
 	return self;
 }
@@ -226,8 +229,9 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 //
 // other stuff, including decompression
 //
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
+- (void) decodeBuffer:(GenericChunkBuffer *)buffer
 {
+/*
 #if REALLY_VERBOSE
     printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
 #endif
@@ -242,10 +246,14 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 #if REALLY_VERBOSE
     printf("buffer[0] = 0x%02x, buffer[1] =  0x%02x\n", buffer->buffer[0], buffer->buffer[1]);
 #endif
+*/
 	
     if (buffer->buffer[SPCA561_OFFSET_SNAP - 1] & SPCA561_SNAPBIT)
         [self mergeCameraEventHappened:CameraEventSnapshotButtonDown];
     
+    [super decodeBuffer:buffer];
+    
+/*
     if (buffer->buffer[SPCA561_OFFSET_TYPE - 1] & 0x10) 
         decode_spca561(buffer->buffer, decodePtr, rawWidth, rawHeight);  // Compressed
     else 
@@ -265,6 +273,7 @@ IsocFrameResult  spca561aIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
                          rotate180:NO];
     
     return YES;
+ */
 }
 
 @end
