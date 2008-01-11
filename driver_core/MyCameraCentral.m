@@ -78,6 +78,7 @@
 #import "SPCA533Driver.h"
 #import "SPCA536Driver.h"
 #import "SPCA551Driver.h"
+#import "OV534Driver.h"
 
 #include "unistd.h"
 
@@ -271,10 +272,14 @@ MyCameraCentral* sharedCameraCentral=NULL;
 //  [self registerCameraDriver:[PixartDriver class]];   // Disabled because working on SPCA5XX-based version instead
 #if EXPERIMENTAL
     [self registerCameraDriver:[SPCA525Driver class]];    
-//  [self registerCameraDriver:[OV518Driver class]];
-//  [self registerCameraDriver:[OV518PlusDriver class]];
 #endif
     [self registerCameraDriver:[OV519Driver class]];
+    [self registerCameraDriver:[OV518Driver class]];
+    [self registerCameraDriver:[OV518PlusDriver class]];
+    
+    [self registerCameraDriver:[OV534Driver class]];
+    [self registerCameraDriver:[OV538Driver class]];
+    
     [self registerCameraDriver:[PAC207Driver class]];     // Based on SPCA5XX - seems to work pretty well
     [self registerCameraDriver:[SPCA561ADriver class]];   // Based on SPCA5XX - seems to work now
     [self registerCameraDriver:[TV8532Driver class]];     // Based on SPCA5XX - seems to work now

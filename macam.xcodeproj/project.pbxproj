@@ -763,6 +763,12 @@
 		F5F6FF280D35F4FF00E994AC /* cxlib.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B2EEF40A1AFD9E001423D7 /* cxlib.h */; };
 		F5F6FF290D35F50400E994AC /* CTDC1100Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5CFB8AE09D8804E001FBB48 /* CTDC1100Driver.h */; };
 		F5F6FF2A0D35F50600E994AC /* cs2102.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B2EEF30A1AFD9E001423D7 /* cs2102.h */; };
+		F5F6FF300D370AED00E994AC /* OV534Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F6FF2E0D370AED00E994AC /* OV534Driver.h */; };
+		F5F6FF310D370AED00E994AC /* OV534Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FF2F0D370AED00E994AC /* OV534Driver.m */; };
+		F5F6FF320D370AED00E994AC /* OV534Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F6FF2E0D370AED00E994AC /* OV534Driver.h */; };
+		F5F6FF330D370AED00E994AC /* OV534Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FF2F0D370AED00E994AC /* OV534Driver.m */; };
+		F5F6FF340D370AED00E994AC /* OV534Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5F6FF2E0D370AED00E994AC /* OV534Driver.h */; };
+		F5F6FF350D370AED00E994AC /* OV534Driver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5F6FF2F0D370AED00E994AC /* OV534Driver.m */; };
 		F5FD71B90A1CFA9C00702950 /* MX88L510Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FD71B80A1CFA9C00702950 /* MX88L510Driver.h */; };
 		F5FD71BA0A1CFA9C00702950 /* MX88L510Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FD71B80A1CFA9C00702950 /* MX88L510Driver.h */; };
 		F5FD71BB0A1CFA9C00702950 /* MX88L510Driver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5FD71B80A1CFA9C00702950 /* MX88L510Driver.h */; };
@@ -1127,6 +1133,8 @@
 		F5F4374E02D52947018D4F8C /* RGBScaler.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RGBScaler.h; sourceTree = "<group>"; };
 		F5F5FC780A66B26000AC9079 /* SPCA525Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPCA525Driver.h; sourceTree = "<group>"; };
 		F5F5FC790A66B26000AC9079 /* SPCA525Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCA525Driver.m; sourceTree = "<group>"; };
+		F5F6FF2E0D370AED00E994AC /* OV534Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OV534Driver.h; sourceTree = "<group>"; };
+		F5F6FF2F0D370AED00E994AC /* OV534Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OV534Driver.m; sourceTree = "<group>"; };
 		F5F79A810212038E01E152CA /* MyCPIACameraDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyCPIACameraDriver.h; sourceTree = "<group>"; wrapsLines = 1; };
 		F5F79A820212038E01E152CA /* MyCPIACameraDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyCPIACameraDriver.m; sourceTree = "<group>"; wrapsLines = 1; };
 		F5F79A830212038E01E152CA /* MyKiaraFamilyDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyKiaraFamilyDriver.h; sourceTree = "<group>"; };
@@ -1604,6 +1612,8 @@
 				F5E9DFB80CEBAB4600FA8133 /* SPCA536Driver.m */,
 				F5E9DFC30CEBAB7F00FA8133 /* SPCA551Driver.h */,
 				F5E9DFC40CEBAB7F00FA8133 /* SPCA551Driver.m */,
+				F5F6FF2E0D370AED00E994AC /* OV534Driver.h */,
+				F5F6FF2F0D370AED00E994AC /* OV534Driver.m */,
 			);
 			path = cameras;
 			sourceTree = "<group>";
@@ -1783,6 +1793,7 @@
 				F5F6FF280D35F4FF00E994AC /* cxlib.h in Headers */,
 				F5F6FF290D35F50400E994AC /* CTDC1100Driver.h in Headers */,
 				F5F6FF2A0D35F50600E994AC /* cs2102.h in Headers */,
+				F5F6FF340D370AED00E994AC /* OV534Driver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1910,6 +1921,7 @@
 				F5E9DFC50CEBAB7F00FA8133 /* SPCA551Driver.h in Headers */,
 				F5F25CF10D32BF740009C1BE /* mc501cb.h in Headers */,
 				F5F25CF20D32BF740009C1BE /* ov7620.h in Headers */,
+				F5F6FF320D370AED00E994AC /* OV534Driver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2033,6 +2045,7 @@
 				F5E9DFC70CEBAB7F00FA8133 /* SPCA551Driver.h in Headers */,
 				F5F25CF30D32BF740009C1BE /* mc501cb.h in Headers */,
 				F5F25CF40D32BF740009C1BE /* ov7620.h in Headers */,
+				F5F6FF300D370AED00E994AC /* OV534Driver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2385,6 +2398,7 @@
 				F5E9DFB20CEBAB1300FA8133 /* SPCA533Driver.m in Sources */,
 				F5E9DFBE0CEBAB4600FA8133 /* SPCA536Driver.m in Sources */,
 				F5E9DFCA0CEBAB7F00FA8133 /* SPCA551Driver.m in Sources */,
+				F5F6FF350D370AED00E994AC /* OV534Driver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2485,6 +2499,7 @@
 				F5E9DFAE0CEBAB1300FA8133 /* SPCA533Driver.m in Sources */,
 				F5E9DFBA0CEBAB4600FA8133 /* SPCA536Driver.m in Sources */,
 				F5E9DFC60CEBAB7F00FA8133 /* SPCA551Driver.m in Sources */,
+				F5F6FF330D370AED00E994AC /* OV534Driver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2583,6 +2598,7 @@
 				F5E9DFB00CEBAB1300FA8133 /* SPCA533Driver.m in Sources */,
 				F5E9DFBC0CEBAB4600FA8133 /* SPCA536Driver.m in Sources */,
 				F5E9DFC80CEBAB7F00FA8133 /* SPCA551Driver.m in Sources */,
+				F5F6FF310D370AED00E994AC /* OV534Driver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
