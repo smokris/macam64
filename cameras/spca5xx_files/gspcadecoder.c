@@ -32,17 +32,19 @@
 #include <linux/string.h>
 #endif				/* __KERNEL__ */
 
-#if defined(MACAM)
-#include "spcagamma.h"
+
+#if !defined(MACAM)
+#include "gspcadecoder.h"
+#include "../utils/spcagamma.h"
+#else
 #include <AvailabilityMacros.h>
 #if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3)
 typedef unsigned int uint;
 #endif 
-#else
-#include "../utils/spcagamma.h"
+#include "gspcadecoder.h"
+#include "spcagamma.h"
 #endif
 
-#include "gspcadecoder.h"
 
 #define ISHIFT 11
 
@@ -316,11 +318,10 @@ const unsigned char GsmartQTable[][64] = {
 
 };
 
-int spca50x_outpicture(struct spca50x_frame *myframe);
 
 static int jpeg_decode411(struct spca50x_frame *myframe, int force_rgb);
 static int jpeg_decode422(struct spca50x_frame *myframe, int force_rgb);
-       int yuv_decode(struct spca50x_frame *myframe, int force_rgb);
+static int yuv_decode(struct spca50x_frame *myframe, int force_rgb);
 static int bayer_decode(struct spca50x_frame *myframe, int force_rgb);
 static int make_jpeg(struct spca50x_frame *myframe);
 static int make_jpeg_conexant(struct spca50x_frame *myframe);
@@ -392,7 +393,7 @@ void init_sonix_decoder(struct usb_spca50x *spca50x)
     }
 }
 
-void sonix_decompress(struct spca50x_frame *myframe)
+static void sonix_decompress(struct spca50x_frame *myframe)
 {
     int width = myframe->hdrwidth;
     int height = myframe->hdrheight;
@@ -547,7 +548,7 @@ pac_decompress_row(struct code_table_t *table, unsigned char *inp,
     return 2 * ((bitpos + 15) / 16);
 }
 
-void tv8532_preprocess(struct spca50x_frame *myframe)
+static void tv8532_preprocess(struct spca50x_frame *myframe)
 {
 /* we should received a whole frame with header and EOL marker
 in myframe->data and return a GBRG pattern in frame->tmpbuffer
@@ -588,7 +589,7 @@ static inline unsigned short getShort(unsigned char *pt)
     return ((pt[0] << 8) | pt[1]);
 }
 
-int pixart_decompress(struct spca50x_frame *myframe)
+static int pixart_decompress(struct spca50x_frame *myframe)
 {
 /* we should received a whole frame with header and EOL marker
 in myframe->data and return a GBRG pattern in frame->tmpbuffer
@@ -696,7 +697,7 @@ const unsigned char pac7311_jpeg_header[PAC7311_JPEG_HEADER_SIZE] = {
   0x11, 0x00, 0x3f, 0x00
 };
 
-int pac7311_make_jpg(struct spca50x_frame *myframe)
+static int pac7311_make_jpg(struct spca50x_frame *myframe)
 {
 /* we should received a whole frame with header and EOF marker
 in myframe->data and return a clean JPEG in frame->tmpbuffer
@@ -744,7 +745,7 @@ add a correct JPEG header*/
 
 static int jpeg_decode422_PAC7311(struct spca50x_frame *myframe, int force_rgb);
 
-int pac7311_decode(struct spca50x_frame *myframe, int force_rgb)
+static int pac7311_decode(struct spca50x_frame *myframe, int force_rgb)
 {
 /* we should received a whole frame with header and EOF marker
 in myframe->data and return a decoded frame in frame->tmpbuffer
@@ -1064,7 +1065,7 @@ static int fun_F(int cur_byte, int *bitfill)
     *bitfill += 7;
     return 0xff;
 }
-
+static
 int internal_spca561_decode(int width, int height, unsigned char *inbuf, unsigned char *outbuf)	// {{{
 {
     // buffers
@@ -1535,7 +1536,7 @@ int internal_spca561_decode(int width, int height, unsigned char *inbuf, unsigne
 
     return 0;
 }
-
+static
 void decode_spca561(unsigned char *inbuf, unsigned char *outbuf, int width,
 		    int height)
 {
@@ -1655,7 +1656,7 @@ static int dec_checkmarker(struct dec_data *decode)
 	dscans[i].dc = 0;
     return 0;
 }
-
+static
 void
 jpeg_reset_input_context(struct dec_data *decode, unsigned char *buf,
 			 int oescap)
@@ -2633,6 +2634,7 @@ int spca50x_outpicture(struct spca50x_frame *myframe)
     case JPGH:
 	width = (myframe->data[10] << 8) | myframe->data[11];
 	height = (myframe->data[12] << 8) | myframe->data[13];
+	PDEBUG(1, "Decoder find WidthxHeight %dx%d", width,height);
 	/* some camera did not respond with the good height ie:Labtec Pro 240 -> 232 */
 	if (myframe->hdrwidth != width)
 	    done = ERR_CORRUPTFRAME;
@@ -2646,6 +2648,27 @@ int spca50x_outpicture(struct spca50x_frame *myframe)
 	    else
 		done = jpeg_decode422(myframe, bgr);
 	}
+	break;
+    case JPGV: // Vimicro323
+    PDEBUG(3, "Vc323 0x%2X 0x%2X, 0x%2X,0x%2X", myframe->data[0] ,myframe->data[1],myframe->data[2] ,myframe->data[3]);
+	width = (myframe->data[9] << 8) | myframe->data[8];
+	height = (myframe->data[11] << 8) | myframe->data[10];
+	
+	if (myframe->hdrwidth != width) {
+		PDEBUG(0, "Decoder find WidthxHeight %dx%d", width,height);
+		done = ERR_CORRUPTFRAME;
+	} else {
+	if (myframe->format == VIDEO_PALETTE_JPEG){
+	    /* nothing todo */
+	    done = 1;
+	} else {
+		// reset info.dri
+	    myframe->decoder->info.dri = 0;
+	    memcpy(myframe->tmpbuffer, myframe->data +0x280,
+		   myframe->scanlength-0x280);
+	    done = jpeg_decode422(myframe, bgr);
+	    }
+	    }
 	break;
     case JPGM:
     case JPGS:
@@ -2718,7 +2741,7 @@ int spca50x_outpicture(struct spca50x_frame *myframe)
     return done;
 }
 
-int yuv_decode(struct spca50x_frame *myframe, int force_rgb)
+static int yuv_decode(struct spca50x_frame *myframe, int force_rgb)
 {
 
     int r_offset, g_offset, b_offset;
@@ -3447,7 +3470,7 @@ static int jpeg_decode411(struct spca50x_frame *myframe, int force_rgb)
     return 0;
 }
 
-int jpeg_decode422(struct spca50x_frame *myframe, int force_rgb)
+static int jpeg_decode422(struct spca50x_frame *myframe, int force_rgb)
 {
     int mcusx, mcusy, mx, my;
     int *dcts = myframe->dcts;
@@ -4194,7 +4217,7 @@ static int bayer_decode(struct spca50x_frame *myframe, int force_rgb)
 }				// end bayer_decode
 
 
-int yvyu_translate(struct spca50x_frame *myframe, int force_rgb)
+static int yvyu_translate(struct spca50x_frame *myframe, int force_rgb)
 {
 
     int r_offset, g_offset, b_offset;
