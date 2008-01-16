@@ -151,7 +151,7 @@
     spca50x->bridge = BRIDGE_SPCA561;
     spca50x->sensor = SENSOR_INTERNAL;
     
-    compression = gspcaCompression;
+    compressionType = gspcaCompression;
     
 //    spca50x->header_len = SPCA561_OFFSET_DATA;  // gone
 //    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;

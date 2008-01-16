@@ -175,7 +175,7 @@ enum
     spca50x->i2c_base = 0x11;
     spca50x->i2c_trigger_on_write = 0;
     
-    compression = gspcaCompression;
+    compressionType = gspcaCompression;
     
 	return self;
 }
