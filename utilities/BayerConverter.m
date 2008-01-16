@@ -250,7 +250,7 @@
             green2Run =src+srcRowBytes;
             break;
         case 2:	//Interleaved data (STV600-style) // GRBG
-        case 6: // works like 4 then switch R and B at the end // GBRG
+        case 6: // works like 2 then switch R and B at the end // GBRG
             componentStep=2;
             green1Run =src;
             red1Run   =src+1;
