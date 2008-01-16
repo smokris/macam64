@@ -1492,7 +1492,7 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
         
         while (shouldBeGrabbing && (grabContext.numFullBuffers > 0)) 
         {
-            int j;
+//            int j;
             GenericChunkBuffer currentBuffer;   // The buffer to decode
             
             // Get a full buffer
@@ -1500,11 +1500,11 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
             [grabContext.chunkListLock lock];   // Get access to the buffer lists
             grabContext.numFullBuffers--;       // There's always one since no one else can empty it completely
             
-//          currentBuffer = grabContext.fullChunkBuffers[grabContext.numFullBuffers];  // Grab oldest
+            currentBuffer = grabContext.fullChunkBuffers[grabContext.numFullBuffers];  // Grab oldest
             
-            currentBuffer = grabContext.fullChunkBuffers[0];  // Grab newest
-            for (j = 0; j < grabContext.numFullBuffers; j++) 
-                grabContext.fullChunkBuffers[j] = grabContext.fullChunkBuffers[j + 1];
+//            currentBuffer = grabContext.fullChunkBuffers[0];  // Grab newest
+//            for (j = 0; j < grabContext.numFullBuffers; j++) 
+//                grabContext.fullChunkBuffers[j] = grabContext.fullChunkBuffers[j + 1];
             
             [grabContext.chunkListLock unlock]; // Release access to the buffer lists
             
