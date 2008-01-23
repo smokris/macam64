@@ -3944,7 +3944,7 @@ and should be a spca504b then overwrite that setting */
 		case 0x6040:
 			spca50x->desc = SpeedNVC350K;
 			spca50x->bridge = BRIDGE_SN9CXXX;
-			spca50x->sensor = SENSOR_HV7131R;
+			spca50x->sensor = SENSOR_HV7131R; // Should be MI0360?
 			spca50x->customid = SN9C102P;
 			spca50x->i2c_ctrl_reg = 0x81;
 			spca50x->i2c_base = 0x11;
