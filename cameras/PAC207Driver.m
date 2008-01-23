@@ -26,6 +26,7 @@
 #import "PAC207Driver.h"
 
 #include "USB_VendorProductIDs.h"
+#include "gspcadecoder.h"
 
 
 @implementation PAC207Driver
@@ -241,6 +242,10 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
 	if (self == NULL) 
         return NULL;
     
+    bayerConverter = [[BayerConverter alloc] init];
+	if (bayerConverter == NULL) 
+        return NULL;
+    
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
@@ -371,6 +376,50 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     grabContext.isocFrameScanner = pac207IsocFrameScanner;
     grabContext.isocDataCopier = genericIsocDataCopier;
+}
+
+- (BOOL) decodeBufferGSPCA: (GenericChunkBuffer *) buffer
+{
+    BOOL ok = YES;
+    int error;
+    
+    spca50x->frame->data = nextImageBuffer;
+    spca50x->frame->tmpbuffer = buffer->buffer;
+    spca50x->frame->scanlength = buffer->numBytes;
+    
+    memcpy(spca50x->frame->data, spca50x->frame->tmpbuffer, spca50x->frame->scanlength);
+    
+    // do decoding
+    
+    error = spca50x_outpicture(spca50x->frame);
+    
+    if (error != 0) 
+    {
+#if VERBOSE
+        printf("There was an error in the decoding (%d).\n", error);
+#endif
+        ok = NO;
+    }
+    else 
+    {
+        short rawWidth  = [self width];
+        short rawHeight = [self height];
+        
+        // Turn the Bayer data into an RGB image
+        
+        [bayerConverter setSourceFormat:4]; // This is probably different
+        [bayerConverter setSourceWidth:rawWidth height:rawHeight];
+        [bayerConverter setDestinationWidth:rawWidth height:rawHeight];
+        [bayerConverter convertFromSrc:(buffer->buffer + 1)
+                                toDest:nextImageBuffer
+                           srcRowBytes:rawWidth
+                           dstRowBytes:nextImageBufferRowBytes
+                                dstBPP:nextImageBufferBPP
+                                  flip:hFlip
+                             rotate180:NO]; // This might be different too
+    }
+    
+    return ok;
 }
 
 @end
