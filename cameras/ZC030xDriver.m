@@ -553,7 +553,7 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x307b], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
-            @"ZSMC ZS211 USB PC Camera (ZS0211)", @"name", NULL], // appears to use an OV7648 sensor
+            @"ZSMC ZS211 USB PC Camera (ZS0211)", @"name", NULL], 
         
         NULL];
 }
