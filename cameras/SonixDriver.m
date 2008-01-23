@@ -79,7 +79,7 @@ USB\VID_0c45 and PID_613e       ; SN9C120 + OV7630
 
 #import "SonixDriver.h"
 
-//#include "MiscTools.h"
+#include "Resolvers.h"
 #include "gspcadecoder.h"
 #include "USB_VendorProductIDs.h"
 
@@ -88,6 +88,7 @@ USB\VID_0c45 and PID_613e       ; SN9C120 + OV7630
 
 enum 
 {
+    AnySonixCamera,
     GeniusVideoCamNB,
     SweexTas5110,
     Sonix6025,
@@ -98,14 +99,15 @@ enum
     Sonix6029,
     TrustWB3400,
     
-    SpeedNVC350K,
-    SonixWC311P,
-    Pccam168,
-    Pccam,
-    Sn535,
-    Lic300,
+    AnySN9CxxxCamera,
+//    SpeedNVC350K,
+//    SonixWC311P,
+//    Pccam168,
+//    Pccam,
+//    Sn535,
+//    Lic300,
     PhilipsSPC700NC,
-    Rainbow5790P,
+//    Rainbow5790P,
     M$VX1000,
     
     M$VX6000,
@@ -634,7 +636,67 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x6040], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"Speed NVC 350K", @"name", NULL], 
+            @"Speed NVC 350K (0x6040)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x607c], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Sonix WC 311P (0x607c)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x60c0], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Sonix SN 535 (0x60c0)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x60ec], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Talk Cam VX6 (0x60ec)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x60fb], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Sonix (0x60fb)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x60fc], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Sonix Lic 300 (0x60fc)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x60fe], @"idProduct", 
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Rainbow Color Webcam 5790P (0x60fe", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x612c], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Typhoon EasyCam 1.3 (0x612c)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x6130], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Sonix PC Cam (0x6130)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x6138], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Sonix (0x6138)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x613b], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Sonix (0x613b)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x613c], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Sonix PC Cam 168 (0x613c)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x613e], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Skype Video Pack Camera (Model C7) (0x613e)", @"name", NULL], 
         
         NULL];
 }
@@ -642,50 +704,203 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 // Initialize the driver
 //
-- (id) initWithCentral: (id) c 
+- (id) initWithCentral:(id)c 
 {
 	self = [super initWithCentral:c];
 	if (self == NULL) 
         return NULL;
     
-    LUT = [[LookUpTable alloc] init];
-	if (LUT == NULL) 
-        return NULL;
+    compressionType = gspcaCompression;
     
-    // Set as appropriate
     hardwareBrightness = YES;
     hardwareContrast = YES;
-    
     hardwareSaturation = YES;
     
-    // This is important
+    // General bridge settings - These are valid for all the bridges, '102P, '105, '120 etc
     cameraOperation = &fsn9cxx;
-    
-//    spca50x->qindex = 5; // Should probably be set before init_jpeg_decoder()
-
-    // Set to reflect actual values
     spca50x->bridge = BRIDGE_SN9CXXX;
     spca50x->cameratype = JPGS;	// jpeg 4.2.2 whithout header
-    
-    spca50x->desc = SpeedNVC350K;
-    spca50x->sensor = SENSOR_HV7131R;
-    spca50x->customid = SN9C102P;
-    
     spca50x->i2c_ctrl_reg = 0x81;
-    spca50x->i2c_base = 0x11;
-    spca50x->i2c_trigger_on_write = 0;
     
-    compressionType = gspcaCompression;
+    // Bridge and sensor settings are set up in [startupCamera]
+    spca50x->customid = SN9C102P;
+    spca50x->sensor = SENSOR_HV7131R;
+    spca50x->i2c_base = 0x11;
+    
+    // Sometimes a specific camera needs to be identified in the gspca code
+    spca50x->desc = AnySN9CxxxCamera; // used to be SpeedNVC350K
     
 	return self;
 }
 
-
+//
+// Adjust bridge and sensor settings
+//
 - (void) startupCamera
 {
+    IOReturn err;
+    UInt16 productID;
+    
     [super startupCamera];  // Calls config() and init()
     
-//    init_jpeg_decoder(spca50x);  // May be irrelevant
+    err = (*streamIntf)->GetDeviceProduct(streamIntf, &productID);
+    CheckError(err, "startupCamera-GetDeviceProduct");
+    
+    // Which bridge is being used?
+    
+    if (0x6040 <= productID && productID <= 0x607f) 
+        spca50x->customid = SN9C102P;
+    
+    if (0x6080 <= productID && productID <= 0x60bf) 
+        spca50x->customid = SN9C103;
+    
+    if (0x60c0 <= productID && productID <= 0x60ff) 
+        spca50x->customid = SN9C105;
+    
+    if (0x6100 <= productID && productID <= 0x610f) 
+        spca50x->customid = SN9C128;
+    
+    if (0x6120 <= productID && productID <= 0x612f) 
+        spca50x->customid = SN9C110;
+    
+    if (0x6130 <= productID && productID <= 0x613f) 
+        spca50x->customid = SN9C120;
+    
+    if (0x6240 <= productID && productID <= 0x627f) 
+        spca50x->customid = SN9C201;
+    
+    if (0x6280 <= productID && productID <= 0x62bf) 
+        spca50x->customid = SN9C202;
+    
+    // What sensor is being used?
+    
+    if (productID & 0x0003F == 0x00) 
+        spca50x->sensor = SENSOR_MI0360;  // 102P, 105, 128   // for '128 also MT9V111 & MI0360B
+    
+    if (productID & 0x0003F == 0x30) 
+        spca50x->sensor = SENSOR_MI0360;  // 120, 201, 202, 
+    
+    if (productID & 0x0003F == 0x38) 
+        spca50x->sensor = SENSOR_MO4000;  // 120, 
+    
+    if (productID & 0x0003F == 0x3a) 
+        spca50x->sensor = SENSOR_OV7648;  // 102P, 105, 120, 
+    
+    if (productID & 0x0003F == 0x3b) 
+        spca50x->sensor = SENSOR_OV7660;  // 120, 201, 202, 
+    
+    if (productID & 0x0003F == 0x3c) 
+        spca50x->sensor = SENSOR_HV7131R;  // 102P, 105, 120, 201, 202, 
+    
+    if (productID & 0x0003F == 0x3e) 
+        spca50x->sensor = SENSOR_OV7630;  // 102P, 105, 120, 
+    
+    if (productID & 0x0003F == 0x02) 
+        spca50x->sensor = SENSOR_MI0343;  // 103, 
+    
+    if (productID & 0x0003F == 0x03) 
+        spca50x->sensor = SENSOR_HV7131E;  // 103, 
+    
+    if (productID & 0x0003F == 0x0a) 
+        spca50x->sensor = SENSOR_OV7648;  // 128, 
+    
+    if (productID & 0x0003F == 0x0b) 
+        spca50x->sensor = SENSOR_OV7660;  // 128, 120, 
+    
+    if (productID & 0x0003F == 0x0c) 
+        spca50x->sensor = SENSOR_HV7131R;  // 103, 128, 
+    
+    if (productID & 0x0003F == 0x0e) 
+        spca50x->sensor = SENSOR_OV7630;  // 128,     // for '103 it is CISVF10
+    
+    if (productID & 0x0003F == 0x0f) 
+        spca50x->sensor = SENSOR_OV7630;  // 103, 
+    
+    if (productID & 0x0003F == 0x28) 
+        spca50x->sensor = SENSOR_PAS106;  // 103, 
+    
+    if (productID & 0x0003F == 0x2a) 
+        spca50x->sensor = SENSOR_TAS5130CXX;  // 103, 
+    
+    if (productID & 0x0003F == 0x2b) 
+        spca50x->sensor = SENSOR_TAS5110;  // 103, 
+    
+    if (productID & 0x0003F == 0x2c) 
+        spca50x->sensor = SENSOR_MO4000;  // 105, 120, 100, 
+    
+    if (productID & 0x0003F == 0x2f) 
+        spca50x->sensor = SENSOR_PAS202;  // 103, 
+    
+    if (spca50x->customid == SN9C201 || spca50x->customid == SN9C202) 
+    {
+        if (productID & 0x0003F == 0x00) 
+            spca50x->sensor = SENSOR_MI1300;  // 201, 202, 
+        
+        if (productID & 0x0003F == 0x02) 
+            spca50x->sensor = SENSOR_MI1310;  // 201, 202, 
+        
+        if (productID & 0x0003F == 0x0a) 
+            spca50x->sensor = SENSOR_ICM107;  // 202, 
+        
+        if (productID & 0x0003F == 0x0e) 
+            spca50x->sensor = SENSOR_SOI968;  // 201, 202, 
+        
+        if (productID & 0x0003F == 0x0f) 
+            spca50x->sensor = SENSOR_OV9650;  // 201, 202, 
+    }
+    
+    // Now set the i2c base register
+    
+    switch (spca50x->sensor)
+    {
+        case SENSOR_OV7630: 
+        case SENSOR_OV7648: 
+        case SENSOR_OV7660: 
+        case SENSOR_MO4000: 
+            spca50x->i2c_base = 0x21;
+            break;
+        
+        case SENSOR_PAS106: 
+        case SENSOR_PAS202: 
+			spca50x->i2c_base = 0x40;
+            break;
+        
+        case SENSOR_HV7131E: 
+        case SENSOR_HV7131R: 
+            spca50x->i2c_base = 0x11;
+            break;
+        
+        case SENSOR_MI0343: 
+        case SENSOR_MI0360: 
+			spca50x->i2c_base = 0x5d;
+            break;
+        
+        case SENSOR_TAS5110: 
+        case SENSOR_TAS5130CXX: 
+			spca50x->i2c_base = 0x11;
+            break;
+        
+        case SENSOR_MI1300: 
+        case SENSOR_MI1310: 
+			spca50x->i2c_base = 0x4c;  // 0x90 (48) or 0xB8 (5c)
+            break;
+            
+        case SENSOR_SOI968: 
+			spca50x->i2c_base = 0x30;  // best guess
+            break;
+        
+        case SENSOR_OV9650: 
+			spca50x->i2c_base = 0x30;
+            break;
+        
+        case SENSOR_ICM105A: 
+        case SENSOR_ICM107: 
+			spca50x->i2c_base = 0x10;
+            break;
+        
+        default:
+            break;
+    }
 }
 
 //
@@ -768,239 +983,10 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //  return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
 }
 
-//
-// jpeg decoding here
-//
-/*
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
-{
-    int i;
-	short rawWidth  = [self width];
-	short rawHeight = [self height];
-    
-#ifdef REALLY_VERBOSE
-    printf("Need to decode a JPEG buffer with %ld bytes.\n", buffer->numBytes);
-#endif
-    
-    // when jpeg_decode422() is called:
-    //   frame.data - points to output buffer
-    //   frame.tmpbuffer - points to input buffer
-    //   frame.scanlength -length of data (tmpbuffer on input, data on output)
-    
-    spca50x->frame->width = rawWidth;
-    spca50x->frame->height = rawHeight;
-    spca50x->frame->hdrwidth = rawWidth;
-    spca50x->frame->hdrheight = rawHeight;
-    
-    spca50x->frame->data = nextImageBuffer;
-    spca50x->frame->tmpbuffer = buffer->buffer;
-    spca50x->frame->scanlength = buffer->numBytes;
-    
-    spca50x->frame->decoder = &spca50x->maindecode;
-    
-    for (i = 0; i < 256; i++) 
-    {
-        spca50x->frame->decoder->Red[i] = i;
-        spca50x->frame->decoder->Green[i] = i;
-        spca50x->frame->decoder->Blue[i] = i;
-    }
-    
-    spca50x->frame->cameratype = spca50x->cameratype;
-    
-    spca50x->frame->format = VIDEO_PALETTE_RGB24;
-    
-    spca50x->frame->cropx1 = 0;
-    spca50x->frame->cropx2 = 0;
-    spca50x->frame->cropy1 = 0;
-    spca50x->frame->cropy2 = 0;
-    
-    // reset info.dri
-    
-    spca50x->frame->decoder->info.dri = 0;
-    
-    // do jpeg decoding
-    
-    jpeg_decode422(spca50x->frame, 0);  // bgr = 1 (works better for SPCA508A...)
-    
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
-    
-    return YES;
-}
-*/
 @end
 
 
-@implementation SN9CxxxDriverVariant1
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x607c], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"Sonix WC 311P", @"name", NULL], 
-        
-        NULL];
-}
-
-- (id) initWithCentral: (id) c 
-{
-	self = [super initWithCentral:c];
-	if (self == NULL) 
-        return NULL;
-    
-    spca50x->desc = SonixWC311P;
-    spca50x->sensor = SENSOR_HV7131R;
-    spca50x->customid = SN9C102P;
-    
-    spca50x->i2c_ctrl_reg = 0x81;
-    spca50x->i2c_base = 0x11;
-    spca50x->i2c_trigger_on_write = 0;
-    
-	return self;
-}
-
-@end
-
-
-@implementation SN9CxxxDriverVariant2
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x613c], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"Sonix PC Cam 168", @"name", NULL], 
-        
-        NULL];
-}
-
-- (id) initWithCentral: (id) c 
-{
-	self = [super initWithCentral:c];
-	if (self == NULL) 
-        return NULL;
-    
-    spca50x->desc = Pccam168;
-    spca50x->sensor = SENSOR_HV7131R;
-    spca50x->customid = SN9C120;
-    
-    spca50x->i2c_ctrl_reg = 0x81;
-    spca50x->i2c_base = 0x11;
-    spca50x->i2c_trigger_on_write = 0;
-    
-	return self;
-}
-
-@end
-
-
-@implementation SN9CxxxDriverVariant3
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x6130], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"Sonix PC Cam", @"name", NULL], 
-        
-        NULL];
-}
-
-- (id) initWithCentral: (id) c 
-{
-	self = [super initWithCentral:c];
-	if (self == NULL) 
-        return NULL;
-    
-    spca50x->desc = Pccam;
-    spca50x->sensor = SENSOR_MI0360;
-    spca50x->customid = SN9C120;
-    
-    spca50x->i2c_ctrl_reg = 0x81;
-    spca50x->i2c_base = 0x5d;
-    spca50x->i2c_trigger_on_write = 0;
-    
-	return self;
-}
-
-@end
-
-
-@implementation SN9CxxxDriverVariant4
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x60c0], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"Sonix SN 535", @"name", NULL], 
-        
-        NULL];
-}
-
-- (id) initWithCentral: (id) c 
-{
-	self = [super initWithCentral:c];
-	if (self == NULL) 
-        return NULL;
-    
-    spca50x->desc = Sn535;
-    spca50x->sensor = SENSOR_MI0360;
-    spca50x->customid = SN9C105;
-    
-    spca50x->i2c_ctrl_reg = 0x81;
-    spca50x->i2c_base = 0x5d;
-    spca50x->i2c_trigger_on_write = 0;
-    
-	return self;
-}
-
-@end
-
-
-@implementation SN9CxxxDriverVariant5
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x60fc], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"Sonix Lic 300", @"name", NULL], 
-        
-        NULL];
-}
-
-- (id) initWithCentral: (id) c 
-{
-	self = [super initWithCentral:c];
-	if (self == NULL) 
-        return NULL;
-    
-    spca50x->desc = Lic300;
-    spca50x->sensor = SENSOR_HV7131R;
-    spca50x->customid = SN9C105;
-    
-    spca50x->i2c_ctrl_reg = 0x81;
-    spca50x->i2c_base = 0x11;
-    spca50x->i2c_trigger_on_write = 0;
-    
-	return self;
-}
-
-@end
-
-
-@implementation SN9CxxxDriverVariant6
+@implementation SN9CxxxDriverPhilips1
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -1039,75 +1025,7 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 @end
 
 
-@implementation SN9CxxxDriverVariant7
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x60fe], @"idProduct", 
-            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"Rainbow Color Webcam 5790P", @"name", NULL], 
-        
-        NULL];
-}
-
-- (id) initWithCentral: (id) c 
-{
-	self = [super initWithCentral:c];
-	if (self == NULL) 
-        return NULL;
-    
-    spca50x->desc = Rainbow5790P;
-    spca50x->sensor = SENSOR_OV7630;
-    spca50x->customid = SN9C105;
-    
-    spca50x->i2c_ctrl_reg = 0x81;
-    spca50x->i2c_base = 0x21;
-    spca50x->i2c_trigger_on_write = 0;
-    
-	return self;
-}
-
-@end
-
-
-@implementation SN9CxxxDriverVariant8
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x613e], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"Skype Video Pack Camera (Model C7)", @"name", NULL], 
-        
-        NULL];
-}
-
-- (id) initWithCentral: (id) c 
-{
-	self = [super initWithCentral:c];
-	if (self == NULL) 
-        return NULL;
-    
-    spca50x->desc = Pccam168;  // not true
-    spca50x->sensor = SENSOR_OV7630;
-    spca50x->customid = SN9C120;
-    
-    spca50x->i2c_ctrl_reg = 0x81;
-    spca50x->i2c_base = 0x21;
-    spca50x->i2c_trigger_on_write = 0;
-    
-	return self;
-}
-
-@end
-
-
-@implementation SN9CxxxDriverVariant9
+@implementation SN9CxxxDriverMicrosoft1
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -1172,6 +1090,7 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 %USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_628e&MI_00	; SN9C202 + SOI968
 %USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_628f&MI_00	; SN9C202 + OV9650
 %USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_628a&MI_00	; SN9C202 + ICM107
+ 
 %USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_62b0&MI_00	; SN9C202 + MI0360
 %USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_62bc&MI_00	; SN9C202 + HV7131R
 %USBPCamMicDesc% = SN.PCamMic,USB\VID_0c45&PID_62bb&MI_00	; SN9C202 + Ov7660
@@ -1284,8 +1203,6 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	if (self == NULL) 
         return NULL;
     
-	// LUT set in super
-    
     // Set as appropriate
     hardwareBrightness = YES;
     hardwareContrast = YES;
@@ -1293,8 +1210,6 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     // This is important
     cameraOperation = &fsn9cxx;
     
-    spca50x->qindex = 5; // Should probably be set before init_jpeg_decoder()
-
     // Set to reflect actual values
     spca50x->bridge = BRIDGE_SN9CXXX;
     spca50x->cameratype = JPGS;	// jpeg 4.2.2 whithout header
@@ -1305,7 +1220,6 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     spca50x->i2c_ctrl_reg = 0x81;
     spca50x->i2c_base = 0x30;
-    spca50x->i2c_trigger_on_write = 0; // always 0
     
 	return self;
 }

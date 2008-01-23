@@ -318,15 +318,9 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SonixDriverVariant8 class]];
     
     [self registerCameraDriver:[SN9CxxxDriver class]];
-    [self registerCameraDriver:[SN9CxxxDriverVariant1 class]];
-    [self registerCameraDriver:[SN9CxxxDriverVariant2 class]];
-    [self registerCameraDriver:[SN9CxxxDriverVariant3 class]];
-    [self registerCameraDriver:[SN9CxxxDriverVariant4 class]];
-    [self registerCameraDriver:[SN9CxxxDriverVariant5 class]];
-    [self registerCameraDriver:[SN9CxxxDriverVariant6 class]];
-    [self registerCameraDriver:[SN9CxxxDriverVariant7 class]];
-    [self registerCameraDriver:[SN9CxxxDriverVariant8 class]];
-    [self registerCameraDriver:[SN9CxxxDriverVariant9 class]];
+    [self registerCameraDriver:[SN9CxxxDriverPhilips1 class]];
+    [self registerCameraDriver:[SN9CxxxDriverMicrosoft1 class]];
+    [self registerCameraDriver:[SN9C20xDriver class]];
     
     [self registerCameraDriver:[PicoDriver class]];
     

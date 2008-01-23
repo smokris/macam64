@@ -27,10 +27,6 @@
 
 
 @interface SonixDriver : SPCA5XXDriver 
-{
-//	UInt8 * decodingBuffer;
-//    int bayerFormat;
-}
 
 + (NSArray *) cameraUsbDescriptions;
 
@@ -44,12 +40,10 @@
 
 
 @interface SN9CxxxDriver : SPCA5XXDriver 
-{
-}
 
 + (NSArray *) cameraUsbDescriptions;
 
-- (id) initWithCentral: (id) c;
+- (id) initWithCentral:(id)c;
 - (void) setIsocFrameFunctions;
 - (BOOL) setGrabInterfacePipe;
 //- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
@@ -121,7 +115,7 @@
 @end
 
 
-@interface SN9CxxxDriverVariant1 : SN9CxxxDriver
+@interface SN9CxxxDriverPhilips1 : SN9CxxxDriver
 
 + (NSArray *) cameraUsbDescriptions;
 - (id) initWithCentral: (id) c;
@@ -129,63 +123,7 @@
 @end
 
 
-@interface SN9CxxxDriverVariant2 : SN9CxxxDriver
-
-+ (NSArray *) cameraUsbDescriptions;
-- (id) initWithCentral: (id) c;
-
-@end
-
-
-@interface SN9CxxxDriverVariant3 : SN9CxxxDriver
-
-+ (NSArray *) cameraUsbDescriptions;
-- (id) initWithCentral: (id) c;
-
-@end
-
-
-@interface SN9CxxxDriverVariant4 : SN9CxxxDriver
-
-+ (NSArray *) cameraUsbDescriptions;
-- (id) initWithCentral: (id) c;
-
-@end
-
-
-@interface SN9CxxxDriverVariant5 : SN9CxxxDriver
-
-+ (NSArray *) cameraUsbDescriptions;
-- (id) initWithCentral: (id) c;
-
-@end
-
-
-@interface SN9CxxxDriverVariant6 : SN9CxxxDriver
-
-+ (NSArray *) cameraUsbDescriptions;
-- (id) initWithCentral: (id) c;
-
-@end
-
-
-@interface SN9CxxxDriverVariant7 : SN9CxxxDriver
-
-+ (NSArray *) cameraUsbDescriptions;
-- (id) initWithCentral: (id) c;
-
-@end
-
-
-@interface SN9CxxxDriverVariant8 : SN9CxxxDriver
-
-+ (NSArray *) cameraUsbDescriptions;
-- (id) initWithCentral: (id) c;
-
-@end
-
-
-@interface SN9CxxxDriverVariant9 : SN9CxxxDriver
+@interface SN9CxxxDriverMicrosoft1 : SN9CxxxDriver
 
 + (NSArray *) cameraUsbDescriptions;
 - (id) initWithCentral: (id) c;
