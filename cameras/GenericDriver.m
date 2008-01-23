@@ -1674,19 +1674,22 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
                      bpp:nextImageBufferBPP];
 }
 
-- (void) decodeBufferJPEG: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBufferJPEG: (GenericChunkBuffer *) buffer
 {
     NSLog(@"Oops: [decodeBufferJPEG] needs to be implemented in current driver!");
+    return NO;
 }
 
-- (void) decodeBufferGSPCA: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBufferGSPCA: (GenericChunkBuffer *) buffer
 {
     NSLog(@"Oops: [decodeBufferGSPCA] needs to be implemented in current driver!");
+    return NO;
 }
 
-- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBufferProprietary: (GenericChunkBuffer *) buffer
 {
     NSLog(@"Oops: [decodeBufferProprietary] needs to be implemented in current driver!");
+    return NO;
 }
 
 //
@@ -1723,7 +1726,7 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
         switch (jpegVersion) 
         {
             case 0:
-                [self decodeBufferJPEG:&newBuffer];
+                ok = [self decodeBufferJPEG:&newBuffer];
                 break;
                 
             default:
@@ -1748,11 +1751,11 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     }
     else if (compressionType == gspcaCompression) 
     {
-        [self decodeBufferGSPCA:&newBuffer];
+        ok = [self decodeBufferGSPCA:&newBuffer];
     }
     else if (compressionType == proprietaryCompression) 
     {
-        [self decodeBufferProprietary:&newBuffer];
+        ok = [self decodeBufferProprietary:&newBuffer];
     }
     else 
         NSLog(@"GenericDriver - decodeBuffer must be implemented");

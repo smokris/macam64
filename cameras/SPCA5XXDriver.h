@@ -79,8 +79,8 @@ void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index,
 - (void) shutdownGrabStream;
 
 - (BOOL) setupDecoding;
-- (void) decodeBufferGSPCA: (GenericChunkBuffer *) buffer;
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBufferGSPCA: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 // The following must no longer be implemented by subclasses of the SPCA5XX driver
 // They still *can* be implemented, but they do not have to be.

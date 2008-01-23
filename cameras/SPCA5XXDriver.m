@@ -445,8 +445,9 @@ short SPCA5xxResolution(CameraResolution res)
 }
 
 
-- (void) decodeBufferGSPCA: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBufferGSPCA: (GenericChunkBuffer *) buffer
 {
+    BOOL ok = YES;
     int error;
     short rawHeight = [self height];
     
@@ -462,14 +463,21 @@ short SPCA5xxResolution(CameraResolution res)
 
     if (error != 0) 
     {
+#if VERBOSE
         printf("There was an error in the decoding (%d).\n", error);
+#endif
+        ok = NO;
+    }
+    else 
+    {
+        [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
     }
     
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
+    return ok;
 }
 
 
-- (void) decodeBuffer: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
     if (grabContext.frameInfo.averageLuminanceSet) 
     {
@@ -480,7 +488,7 @@ short SPCA5xxResolution(CameraResolution res)
             [self spca5xx_setAutobright];  // needed by PAC207, any others?
     }
     
-    [super decodeBuffer:buffer];
+    return [super decodeBuffer:buffer];
 }
 
 

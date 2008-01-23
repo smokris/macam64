@@ -261,9 +261,9 @@ typedef struct GenericGrabContext
 // specificIsocDataCopier()   // The existing version should work for most
 // specificIsocFrameScanner() // If a suitable one does not already exist
 - (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;  // Works for JPEG anyway
-- (void) decodeBufferJPEG: (GenericChunkBuffer *) buffer;
-- (void) decodeBufferGSPCA: (GenericChunkBuffer *) buffer;
-- (void) decodeBufferProprietary: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBufferJPEG: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBufferGSPCA: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBufferProprietary: (GenericChunkBuffer *) buffer;
 
 #pragma mark -> Subclass Must Implement! (Mostly stub implementations) <-
 
