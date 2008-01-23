@@ -182,6 +182,13 @@ if (debug >= level) info("[%s:%d] " fmt, __PRETTY_FUNCTION__, __LINE__ , ## args
 #define SENSOR_OV7670 29
 #define SENSOR_MI1310_SOC 30
 #define SENSOR_MC501CB 31
+#define SENSOR_OV7648 32
+#define SENSOR_MI0343 33
+#define SENSOR_HV7131E 34
+#define SENSOR_MI1300 35
+#define SENSOR_MI1310 36
+#define SENSOR_ICM107 37
+#define SENSOR_SOI968 38
 
 /* Alternate interface transfer sizes */
 #define SPCA50X_ALT_SIZE_0       0
