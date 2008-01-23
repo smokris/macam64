@@ -80,6 +80,9 @@ enum {
 	SN9C105,
 	SN9C110,
 	SN9C120,
+	SN9C128,
+	SN9C201,
+	SN9C202,
 };
 
 static __u8 sn_mi0360[] = {
