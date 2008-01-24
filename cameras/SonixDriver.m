@@ -99,21 +99,9 @@ enum
     Sonix6029,
     TrustWB3400,
     
-    AnySN9CxxxCamera,
-//    SpeedNVC350K,
-//    SonixWC311P,
-//    Pccam168,
-//    Pccam,
-//    Sn535,
-//    Lic300,
-    PhilipsSPC700NC,
-//    Rainbow5790P,
-    M$VX1000,
-    
-    M$VX6000,
+    AnySN9C1xxCamera,
+    AnySN9C20xCamera,
 };
-
-#define SENSOR_OV9650 27
 
 
 @implementation SonixDriver
@@ -728,7 +716,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->i2c_base = 0x11;
     
     // Sometimes a specific camera needs to be identified in the gspca code
-    spca50x->desc = AnySN9CxxxCamera; // used to be SpeedNVC350K
+    spca50x->desc = AnySN9C1xxCamera; // used to be SpeedNVC350K
     
 	return self;
 }
@@ -740,8 +728,6 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     IOReturn err;
     UInt16 productID;
-    
-    [super startupCamera];  // Calls config() and init()
     
     err = (*streamIntf)->GetDeviceProduct(streamIntf, &productID);
     CheckError(err, "startupCamera-GetDeviceProduct");
@@ -774,79 +760,44 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     // What sensor is being used?
     
-    if (productID & 0x0003F == 0x00) 
-        spca50x->sensor = SENSOR_MI0360;  // 102P, 105, 128   // for '128 also MT9V111 & MI0360B
-    
-    if (productID & 0x0003F == 0x30) 
-        spca50x->sensor = SENSOR_MI0360;  // 120, 201, 202, 
-    
-    if (productID & 0x0003F == 0x38) 
-        spca50x->sensor = SENSOR_MO4000;  // 120, 
-    
-    if (productID & 0x0003F == 0x3a) 
-        spca50x->sensor = SENSOR_OV7648;  // 102P, 105, 120, 
-    
-    if (productID & 0x0003F == 0x3b) 
-        spca50x->sensor = SENSOR_OV7660;  // 120, 201, 202, 
-    
-    if (productID & 0x0003F == 0x3c) 
-        spca50x->sensor = SENSOR_HV7131R;  // 102P, 105, 120, 201, 202, 
-    
-    if (productID & 0x0003F == 0x3e) 
-        spca50x->sensor = SENSOR_OV7630;  // 102P, 105, 120, 
-    
-    if (productID & 0x0003F == 0x02) 
-        spca50x->sensor = SENSOR_MI0343;  // 103, 
-    
-    if (productID & 0x0003F == 0x03) 
-        spca50x->sensor = SENSOR_HV7131E;  // 103, 
-    
-    if (productID & 0x0003F == 0x0a) 
-        spca50x->sensor = SENSOR_OV7648;  // 128, 
-    
-    if (productID & 0x0003F == 0x0b) 
-        spca50x->sensor = SENSOR_OV7660;  // 128, 120, 
-    
-    if (productID & 0x0003F == 0x0c) 
-        spca50x->sensor = SENSOR_HV7131R;  // 103, 128, 
-    
-    if (productID & 0x0003F == 0x0e) 
-        spca50x->sensor = SENSOR_OV7630;  // 128,     // for '103 it is CISVF10
-    
-    if (productID & 0x0003F == 0x0f) 
-        spca50x->sensor = SENSOR_OV7630;  // 103, 
-    
-    if (productID & 0x0003F == 0x28) 
-        spca50x->sensor = SENSOR_PAS106;  // 103, 
-    
-    if (productID & 0x0003F == 0x2a) 
-        spca50x->sensor = SENSOR_TAS5130CXX;  // 103, 
-    
-    if (productID & 0x0003F == 0x2b) 
-        spca50x->sensor = SENSOR_TAS5110;  // 103, 
-    
-    if (productID & 0x0003F == 0x2c) 
-        spca50x->sensor = SENSOR_MO4000;  // 105, 120, 100, 
-    
-    if (productID & 0x0003F == 0x2f) 
-        spca50x->sensor = SENSOR_PAS202;  // 103, 
+    switch (productID & 0x0003F)
+    {
+        case 0x00: spca50x->sensor = SENSOR_MI0360; break;  // 102P, 105, 128   // for '128 also MT9V111 & MI0360B
+        
+        case 0x30: spca50x->sensor = SENSOR_MI0360; break;  // 120, 201, 202, 
+        case 0x38: spca50x->sensor = SENSOR_MO4000; break;  // 120, 
+        case 0x3a: spca50x->sensor = SENSOR_OV7648; break;  // 102P, 105, 120, 
+        case 0x3b: spca50x->sensor = SENSOR_OV7660; break;  // 120, 201, 202, 
+        case 0x3c: spca50x->sensor = SENSOR_HV7131R;break;  // 102P, 105, 120, 201, 202, 
+        case 0x3e: spca50x->sensor = SENSOR_OV7630; break;  // 102P, 105, 120, 
+            
+        case 0x02: spca50x->sensor = SENSOR_MI0343; break;  // 103, 
+        case 0x03: spca50x->sensor = SENSOR_HV7131E;break;  // 103, 
+        case 0x0a: spca50x->sensor = SENSOR_OV7648; break;  // 128, 
+        case 0x0b: spca50x->sensor = SENSOR_OV7660; break;  // 128, 120, 
+        case 0x0c: spca50x->sensor = SENSOR_HV7131R;break;  // 103, 128, 
+        case 0x0e: spca50x->sensor = SENSOR_OV7630; break;  // 128,     // for '103 it is CISVF10
+        case 0x0f: spca50x->sensor = SENSOR_OV7630; break;  // 103, 
+        
+        case 0x28: spca50x->sensor = SENSOR_PAS106; break;  // 103, 
+        case 0x2a: spca50x->sensor = SENSOR_TAS5130CXX; break;  // 103, 
+        case 0x2b: spca50x->sensor = SENSOR_TAS5110; break;  // 103, 
+        case 0x2c: spca50x->sensor = SENSOR_MO4000; break;  // 105, 120, 100, 
+        case 0x2f: spca50x->sensor = SENSOR_PAS202; break;  // 103, 
+        
+        default: break;  // No change, probably specified in [init]
+    }
     
     if (spca50x->customid == SN9C201 || spca50x->customid == SN9C202) 
     {
-        if (productID & 0x0003F == 0x00) 
-            spca50x->sensor = SENSOR_MI1300;  // 201, 202, 
-        
-        if (productID & 0x0003F == 0x02) 
-            spca50x->sensor = SENSOR_MI1310;  // 201, 202, 
-        
-        if (productID & 0x0003F == 0x0a) 
-            spca50x->sensor = SENSOR_ICM107;  // 202, 
-        
-        if (productID & 0x0003F == 0x0e) 
-            spca50x->sensor = SENSOR_SOI968;  // 201, 202, 
-        
-        if (productID & 0x0003F == 0x0f) 
-            spca50x->sensor = SENSOR_OV9650;  // 201, 202, 
+        switch (productID & 0x0003F)
+        {
+            case 0x00: spca50x->sensor = SENSOR_MI1300; break;  // 201, 202, 
+            case 0x02: spca50x->sensor = SENSOR_MI1310; break;  // 201, 202, 
+            case 0x0a: spca50x->sensor = SENSOR_ICM107; break;  // 202, 
+            case 0x0e: spca50x->sensor = SENSOR_SOI968; break;  // 201, 202, 
+            case 0x0f: spca50x->sensor = SENSOR_OV9650; break;  // 201, 202, 
+        }
     }
     
     // Now set the i2c base register
@@ -901,6 +852,10 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         default:
             break;
     }
+    
+    // Now we can proceed!
+    
+    [super startupCamera];  // Calls config() and init()
 }
 
 //
@@ -925,31 +880,37 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         *dataLength = 0;
         
 #ifdef REALLY_VERBOSE
-//        printf("Invalid packet.\n");
+        printf("Invalid packet.\n");
 #endif
         return invalidFrame;
     }
     
 #ifdef REALLY_VERBOSE
-//    printf("buffer[0] = 0x%02x (length = %d) 0x%02x ... [length-64] = 0x%02x 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
-//           buffer[0], frameLength, buffer[1], buffer[frameLength-64], buffer[frameLength-63], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
+    printf("buffer[0] = 0x%02x (length = %d) 0x%02x ... [length-64] = 0x%02x 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
+           buffer[0], frameLength, buffer[1], buffer[frameLength-64], buffer[frameLength-63], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
 #endif
     
     if (position >= 0 && buffer[position] == 0xFF && buffer[position+1] == 0xD9) // JPEG Image-End marker
     {
 #ifdef REALLY_VERBOSE
-//        printf("New image start!\n");
+        printf("New image start!\n");
 #endif
         
         if (frameInfo != NULL) 
         {
+            int i;
+            printf(" average luminance values:");
+            for (i = 0; i < 10; i++) 
+                printf(" 0x%02x", buffer[position + 29 + i]);
+            printf("\n");
+            
             frameInfo->averageLuminance =  ((buffer[position + 29] << 8) | buffer[position + 30]) >> 6;	// w4
             frameInfo->averageLuminance += ((buffer[position + 33] << 8) | buffer[position + 34]) >> 6;	// w6
             frameInfo->averageLuminance += ((buffer[position + 25] << 8) | buffer[position + 26]) >> 6;	// w2
             frameInfo->averageLuminance += ((buffer[position + 37] << 8) | buffer[position + 38]) >> 6;	// w8               
             frameInfo->averageLuminance += ((buffer[position + 31] << 8) | buffer[position + 32]) >> 4;	// w5
             frameInfo->averageLuminance = frameInfo->averageLuminance >> 4;
-            frameInfo->averageLuminanceSet = 1;
+//            frameInfo->averageLuminanceSet = 1;
 #if REALLY_VERBOSE
             printf("The average luminance is %d\n", frameInfo->averageLuminance);
 #endif
@@ -1011,13 +972,8 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	if (self == NULL) 
         return NULL;
     
-    spca50x->desc = PhilipsSPC700NC;
     spca50x->sensor = SENSOR_MI0360;
     spca50x->customid = SN9C105;
-    
-    spca50x->i2c_ctrl_reg = 0x81;
-    spca50x->i2c_base = 0x5d;
-    spca50x->i2c_trigger_on_write = 0;
     
 	return self;
 }
@@ -1050,15 +1006,12 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	if (self == NULL) 
         return NULL;
     
-    spca50x->desc = M$VX1000;
-//    spca50x->sensor = SENSOR_HV7131R; // NOT in VX-3000 base = 0x11
-//    spca50x->sensor = SENSOR_MI0360;  // NOT in VX-3000 base = 0x5d
-//    spca50x->sensor = SENSOR_MO4000;  // NOT in VX-3000 base = 0.21 (seems unlikely)
+//  spca50x->sensor = SENSOR_HV7131R; // NOT in VX-3000 base = 0x11
+//  spca50x->sensor = SENSOR_MI0360;  // NOT in VX-3000 base = 0x5d
+//  spca50x->sensor = SENSOR_MO4000;  // NOT in VX-3000 base = 0x21
+    
     spca50x->sensor = SENSOR_OV7660;  // for LifeCam VX-1000 base = 0x21, seems to work for VX-3000 as well
     spca50x->customid = SN9C105;
-    
-    spca50x->i2c_ctrl_reg = 0x81;
-    spca50x->i2c_base = 0x21;
     
 	return self;
 }
@@ -1189,7 +1142,7 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x00f4], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_MICROSOFT], @"idVendor",
-            @"SN9C20x, 1.3M OV9650? (0x045e:0x00f4)", @"name", NULL], 
+            @"Microsoft LifeCam VX-6000 (0x045e:0x00f4)", @"name", NULL], 
         
         NULL];
 }
@@ -1214,14 +1167,26 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->bridge = BRIDGE_SN9CXXX;
     spca50x->cameratype = JPGS;	// jpeg 4.2.2 whithout header
     
-    spca50x->desc = M$VX6000;
+    spca50x->desc = AnySN9C20xCamera;
     spca50x->sensor = SENSOR_OV9650;
-    spca50x->customid = SN9C105;
+    spca50x->customid = SN9C202;
+    spca50x->sensor = SENSOR_OV7630;
+    spca50x->customid = SN9C120;
     
     spca50x->i2c_ctrl_reg = 0x81;
     spca50x->i2c_base = 0x30;
     
 	return self;
+}
+
+
+// only for VX-6000...
+- (void) startupCamera
+{
+    // Initialization sequence
+    
+    [self spca5xx_config];
+    [self spca5xx_init];
 }
 
 @end
