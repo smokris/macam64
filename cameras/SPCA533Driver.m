@@ -10,20 +10,48 @@
 #import "SPCA533Driver.h"
 
 
+enum 
+{
+    LogitechClickSmart420,
+    AiptekMiniPenCam13,
+    MegapixV4, 
+    LogitechClickSmart820,
+    
+};
+
+
 @implementation SPCA533Driver
 
 + (NSArray *) cameraUsbDescriptions 
 {
     return [NSArray arrayWithObjects:
-        /*
-         [NSDictionary dictionaryWithObjectsAndKeys:
-             [NSNumber numberWithUnsignedShort:PRODUCT_DSC_13M_SMART], @"idProduct",
-             [NSNumber numberWithUnsignedShort:VENDOR_GENIUS], @"idVendor",
-             @"Genius DSC 1.3M Smart", @"name", NULL], 
-         */
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x1314], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x0733], @"idVendor",
+            @"Mercury Peripherals Inc.", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x2211], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x0733], @"idVendor",
+            @"Jenoptik DC 21 LCD", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x2221], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x0733], @"idVendor",
+            @"Mercury Digital Pro 3.1Mp", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x1311], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x0733], @"idVendor",
+            @"Digital Dream Epsilon 1.3", @"name", NULL], 
+        
         NULL];
 }
 
+
+#include "jpeg_qtables.h"
+#include "sp5xxfw2.h"
 
 
 //
@@ -31,19 +59,23 @@
 //
 - (id) initWithCentral: (id) c 
 {
+    unsigned char (* dummy)[2][64];
+    
+    dummy = &qtable_kodak_ez200;
+    dummy = &qtable_pocketdv;
+    
 	self = [super initWithCentral:c];
 	if (self == NULL) 
         return NULL;
     
-    //  [LUT setDefaultOrientation:Rotate180];  // if necessary
-    
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
-    //  spca50x->desc = ???;
-    spca50x->cameratype = JPEG;
+    cameraOperation = &fsp5xxfw2;
+
     spca50x->bridge = BRIDGE_SPCA533;
     spca50x->sensor = SENSOR_INTERNAL;
+    spca50x->cameratype = JPEG;
     
     compressionType = gspcaCompression;
     
@@ -121,12 +153,7 @@ IsocFrameResult  spca533IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 + (NSArray *) cameraUsbDescriptions 
 {
     return [NSArray arrayWithObjects:
-        /*
-         [NSDictionary dictionaryWithObjectsAndKeys:
-             [NSNumber numberWithUnsignedShort:PRODUCT_DSC_13M_SMART], @"idProduct",
-             [NSNumber numberWithUnsignedShort:VENDOR_GENIUS], @"idVendor",
-             @"Genius DSC 1.3M Smart", @"name", NULL], 
-         */
+        
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0xA051], @"idProduct",
             [NSNumber numberWithUnsignedShort:0x3078], @"idVendor",
