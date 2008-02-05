@@ -75,10 +75,8 @@ enum
     spca50x->cameratype = JPEG;
     
     spca50x->desc = BenqDC1016;
-
-    compressionType = jpegCompression;
-    jpegVersion = 1;
-//    compressionType = gspcaCompression;
+    
+    compressionType = gspcaCompression;
     
 	return self;
 }
