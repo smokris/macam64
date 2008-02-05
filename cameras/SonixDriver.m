@@ -898,11 +898,13 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         
         if (frameInfo != NULL) 
         {
+#ifdef REALLY_VERBOSE
             int i;
             printf(" average luminance values:");
             for (i = 0; i < 10; i++) 
                 printf(" 0x%02x", buffer[position + 29 + i]);
             printf("\n");
+#endif
             
             frameInfo->averageLuminance =  ((buffer[position + 29] << 8) | buffer[position + 30]) >> 6;	// w4
             frameInfo->averageLuminance += ((buffer[position + 33] << 8) | buffer[position + 34]) >> 6;	// w6
@@ -910,7 +912,8 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             frameInfo->averageLuminance += ((buffer[position + 37] << 8) | buffer[position + 38]) >> 6;	// w8               
             frameInfo->averageLuminance += ((buffer[position + 31] << 8) | buffer[position + 32]) >> 4;	// w5
             frameInfo->averageLuminance = frameInfo->averageLuminance >> 4;
-//            frameInfo->averageLuminanceSet = 1;
+            if (frameInfo->averageLuminance != 0) 
+                frameInfo->averageLuminanceSet = 1;
 #if REALLY_VERBOSE
             printf("The average luminance is %d\n", frameInfo->averageLuminance);
 #endif
@@ -1012,6 +1015,8 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     spca50x->sensor = SENSOR_OV7660;  // for LifeCam VX-1000 base = 0x21, seems to work for VX-3000 as well
     spca50x->customid = SN9C105;
+    
+    spca50x->cameratype = JPGS;
     
 	return self;
 }
