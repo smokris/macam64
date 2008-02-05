@@ -49,6 +49,8 @@ int spca50x_write_vector(struct usb_spca50x * spca50x, __u16 data[][3]);
 void sonixRegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length); 
 void sonixRegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length);
 
+int spca50x_setup_qtable(struct usb_spca50x * spca50x, unsigned int request, unsigned int ybase, unsigned int cbase, unsigned char qtable[2][64]);
+
 
 // The actual driver
 

@@ -708,6 +708,7 @@ int spca5xx_isjpeg(struct usb_spca50x *spca50x)
         case JPGS:
         case JPGM:
         case PJPG:
+        case JPGV:
             return 1;
         
         default:
@@ -726,6 +727,42 @@ void spca5xx_initDecoder(struct usb_spca50x * spca50x)
     
 	if (spca50x->bridge == BRIDGE_PAC207)
 		init_pixart_decoder(spca50x);
+}
+
+
+int spca50x_setup_qtable(struct usb_spca50x * spca50x,
+                                unsigned int request,
+                                unsigned int ybase,
+                                unsigned int cbase,
+                                unsigned char qtable[2][64])
+{
+    int i;
+    int err;
+    
+    /* loop over y components */
+    for (i = 0; i < 64; i++) {
+        err =
+	    spca50x_reg_write(spca50x->dev, request, ybase + i,
+                          qtable[0][i]);
+        if (err < 0) {
+            PDEBUG(2, "spca50x_reg_write failed");
+            return err;
+        }
+    }
+    
+    /* loop over c components */
+    for (i = 0; i < 64; i++) {
+        err =
+	    spca50x_reg_write(spca50x->dev, request, cbase + i,
+                          qtable[1][i]);
+        if (err < 0) {
+            PDEBUG(2, "spca50x_reg_write failed");
+            return err;
+        }
+    }
+    
+    /* all ok */
+    return 0;
 }
 
 
