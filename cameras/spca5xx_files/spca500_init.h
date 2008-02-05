@@ -217,11 +217,12 @@ static int spca500_synch310(struct usb_spca50x *spca50x)
 
     __u8 Data;
 
-
+#if !defined(MACAM)
     if (spca_set_interface(spca50x->dev, spca50x->iface, 0) < 0) {
 	err("Set packet size: set interface error");
 	goto error;
     }
+#endif
     spca500_ping310(spca50x);
 
     spca5xxRegRead(spca50x->dev, 0, 0, 0x0d00, &Data, 1);
@@ -230,17 +231,22 @@ static int spca500_synch310(struct usb_spca50x *spca50x)
     PDEBUG(5, "ClickSmart310 sync pipe %d altsetting %d ",
 	   spca50x->pipe_size, spca50x->alt);
     /* Windoze use pipe with altsetting 6 why 7 here */
+#if !defined(MACAM)
     if (spca_set_interface(spca50x->dev, spca50x->iface, spca50x->alt) < 0) {
 	err("Set packet size: set interface error");
 
 	goto error;
 
     }
-
+#endif
+    
     return 0;
+    
+#if !defined(MACAM)
   error:
 
     return -EBUSY;
+#endif
 }
 
 static void spca500_clksmart310_init(struct usb_spca50x *spca50x)
