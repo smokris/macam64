@@ -79,6 +79,7 @@
 #import "SPCA536Driver.h"
 #import "SPCA551Driver.h"
 #import "OV534Driver.h"
+#import "DivioDriver.h"
 
 #include "unistd.h"
 
@@ -359,7 +360,9 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SPCA536ADriver class]];
     
     [self registerCameraDriver:[SPCA551ADriver class]];
-    
+
+    [self registerCameraDriver:[DivioDriver class]];
+
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
     [self registerCameraDriver:[KworldTV300UDriver class]];  // This is very incomplete at this time
