@@ -579,6 +579,12 @@
 		F5B92AA00A39F1E800BAF43D /* SPCA501ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B92A9C0A39F1E700BAF43D /* SPCA501ADriver.m */; };
 		F5B92AA10A39F1E800BAF43D /* SPCA501ADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B92A9B0A39F1E700BAF43D /* SPCA501ADriver.h */; };
 		F5B92AA20A39F1E800BAF43D /* SPCA501ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B92A9C0A39F1E700BAF43D /* SPCA501ADriver.m */; };
+		F5BA4AA30D4E416900F15480 /* DivioDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BA4AA10D4E416900F15480 /* DivioDriver.h */; };
+		F5BA4AA40D4E416900F15480 /* DivioDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BA4AA20D4E416900F15480 /* DivioDriver.m */; };
+		F5BA4AA50D4E416900F15480 /* DivioDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BA4AA10D4E416900F15480 /* DivioDriver.h */; };
+		F5BA4AA60D4E416900F15480 /* DivioDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BA4AA20D4E416900F15480 /* DivioDriver.m */; };
+		F5BA4AA70D4E416900F15480 /* DivioDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5BA4AA10D4E416900F15480 /* DivioDriver.h */; };
+		F5BA4AA80D4E416900F15480 /* DivioDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5BA4AA20D4E416900F15480 /* DivioDriver.m */; };
 		F5C5C2290A26C3CD00737FBB /* CN0352PDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5C2280A26C3CD00737FBB /* CN0352PDriver.h */; };
 		F5C5C22A0A26C3CD00737FBB /* CN0352PDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5C2280A26C3CD00737FBB /* CN0352PDriver.h */; };
 		F5C5C22B0A26C3CD00737FBB /* CN0352PDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5C5C2280A26C3CD00737FBB /* CN0352PDriver.h */; };
@@ -1033,6 +1039,8 @@
 		F5B92A9B0A39F1E700BAF43D /* SPCA501ADriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = SPCA501ADriver.h; sourceTree = "<group>"; };
 		F5B92A9C0A39F1E700BAF43D /* SPCA501ADriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = SPCA501ADriver.m; sourceTree = "<group>"; };
 		F5B9568C0250D31A0166DE1F /* MyCameraCentral.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyCameraCentral.m; sourceTree = "<group>"; };
+		F5BA4AA10D4E416900F15480 /* DivioDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DivioDriver.h; sourceTree = "<group>"; };
+		F5BA4AA20D4E416900F15480 /* DivioDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DivioDriver.m; sourceTree = "<group>"; };
 		F5BB387E0342871601E62307 /* JFIFHeaderTemplate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JFIFHeaderTemplate.h; sourceTree = "<group>"; };
 		F5BFF536029B59BD01B6CBC8 /* inspector.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = inspector.txt; path = texts/inspector.txt; sourceTree = "<group>"; wrapsLines = 1; };
 		F5BFF537029B59BD01B6CBC8 /* QCE.txt */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; name = QCE.txt; path = texts/QCE.txt; sourceTree = "<group>"; wrapsLines = 1; };
@@ -1614,6 +1622,8 @@
 				F5E9DFC40CEBAB7F00FA8133 /* SPCA551Driver.m */,
 				F5F6FF2E0D370AED00E994AC /* OV534Driver.h */,
 				F5F6FF2F0D370AED00E994AC /* OV534Driver.m */,
+				F5BA4AA10D4E416900F15480 /* DivioDriver.h */,
+				F5BA4AA20D4E416900F15480 /* DivioDriver.m */,
 			);
 			path = cameras;
 			sourceTree = "<group>";
@@ -1794,6 +1804,7 @@
 				F5F6FF290D35F50400E994AC /* CTDC1100Driver.h in Headers */,
 				F5F6FF2A0D35F50600E994AC /* cs2102.h in Headers */,
 				F5F6FF340D370AED00E994AC /* OV534Driver.h in Headers */,
+				F5BA4AA30D4E416900F15480 /* DivioDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1922,6 +1933,7 @@
 				F5F25CF10D32BF740009C1BE /* mc501cb.h in Headers */,
 				F5F25CF20D32BF740009C1BE /* ov7620.h in Headers */,
 				F5F6FF320D370AED00E994AC /* OV534Driver.h in Headers */,
+				F5BA4AA50D4E416900F15480 /* DivioDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2046,6 +2058,7 @@
 				F5F25CF30D32BF740009C1BE /* mc501cb.h in Headers */,
 				F5F25CF40D32BF740009C1BE /* ov7620.h in Headers */,
 				F5F6FF300D370AED00E994AC /* OV534Driver.h in Headers */,
+				F5BA4AA70D4E416900F15480 /* DivioDriver.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2399,6 +2412,7 @@
 				F5E9DFBE0CEBAB4600FA8133 /* SPCA536Driver.m in Sources */,
 				F5E9DFCA0CEBAB7F00FA8133 /* SPCA551Driver.m in Sources */,
 				F5F6FF350D370AED00E994AC /* OV534Driver.m in Sources */,
+				F5BA4AA40D4E416900F15480 /* DivioDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2500,6 +2514,7 @@
 				F5E9DFBA0CEBAB4600FA8133 /* SPCA536Driver.m in Sources */,
 				F5E9DFC60CEBAB7F00FA8133 /* SPCA551Driver.m in Sources */,
 				F5F6FF330D370AED00E994AC /* OV534Driver.m in Sources */,
+				F5BA4AA60D4E416900F15480 /* DivioDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2599,6 +2614,7 @@
 				F5E9DFBC0CEBAB4600FA8133 /* SPCA536Driver.m in Sources */,
 				F5E9DFC80CEBAB7F00FA8133 /* SPCA551Driver.m in Sources */,
 				F5F6FF310D370AED00E994AC /* OV534Driver.m in Sources */,
+				F5BA4AA80D4E416900F15480 /* DivioDriver.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

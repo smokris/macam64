@@ -14,7 +14,7 @@
 
 enum 
 {
-    LogitechClickSmart420,
+    LogitechClickSmart420 = 1,
     AiptekMiniPenCam13,
     MegapixV4, 
     LogitechClickSmart820,
@@ -47,42 +47,6 @@ enum
 }
 
 
-static int spca50x_setup_qtable(struct usb_spca50x *spca50x,
-                                unsigned int request,
-                                unsigned int ybase,
-                                unsigned int cbase,
-                                unsigned char qtable[2][64])
-{
-    int i;
-    int err;
-    
-    /* loop over y components */
-    for (i = 0; i < 64; i++) {
-        err =
-	    spca50x_reg_write(spca50x->dev, request, ybase + i,
-                          qtable[0][i]);
-        if (err < 0) {
-            PDEBUG(2, "spca50x_reg_write failed");
-            return err;
-        }
-    }
-    
-    /* loop over c components */
-    for (i = 0; i < 64; i++) {
-        err =
-	    spca50x_reg_write(spca50x->dev, request, cbase + i,
-                          qtable[1][i]);
-        if (err < 0) {
-            PDEBUG(2, "spca50x_reg_write failed");
-            return err;
-        }
-    }
-    
-    /* all ok */
-    return 0;
-}
-
-
 #include "jpeg_qtables.h"
 #include "sp5xxfw2.h"
 
@@ -108,7 +72,8 @@ static int spca50x_setup_qtable(struct usb_spca50x *spca50x,
     
     cameraOperation = &fsp5xxfw2;
     
-    //  spca50x->desc = ???;
+    spca50x->desc = AiptekMiniPenCam13;
+    
     spca50x->cameratype = JPEG;
     spca50x->bridge = BRIDGE_SPCA504;
     spca50x->sensor = SENSOR_INTERNAL;
@@ -277,9 +242,8 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 	if (self == NULL) 
         return NULL;
     
-    //  [LUT setDefaultOrientation:Rotate180];  // if necessary
+    spca50x->desc = LogitechClickSmart420;
     
-    //  spca50x->desc = ???;
     spca50x->bridge = BRIDGE_SPCA504B;
     
 	return self;
