@@ -13,7 +13,7 @@
 
 
 void jpgl_initDecoder(void);
-int jpgl_processFrame(unsigned char * data, unsigned char * buffer, int good_img_width, int good_img_height);
+int jpgl_processFrame(unsigned char * data, unsigned char * buffer, int good_img_width, int good_img_height, int bytesperpixel);
 
 
 @implementation DivioDriver
@@ -68,15 +68,8 @@ int jpgl_processFrame(unsigned char * data, unsigned char * buffer, int good_img
 	if (LUT == NULL) 
         return NULL;
     
-    compressionType = jpegCompression;
-    jpegVersion = 1;
-    compressionType = quicktimeImage;
-    quicktimeCodec = kOpenDMLJPEGCodecType;
+    compressionType = proprietaryCompression;  // JPEG Lite -- see Divio patent
 
-    compressionType = proprietaryCompression;
-
-//    decodingSkipBytes = 8;
-    
     jpgl_initDecoder();
 
 	return self;
@@ -334,10 +327,10 @@ IsocFrameResult  divioIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 #endif
             
             *dataStart = position - 6;
-            *dataLength = frameLength - 10;
+            *dataLength = frameLength - *dataStart;
             
             *tailStart = 0;
-            *tailLength = position - 6;
+            *tailLength = *dataStart;
 
             return newChunkFrame;
         }
@@ -381,13 +374,15 @@ IsocFrameResult  divioIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 
 - (BOOL) decodeBufferProprietary: (GenericChunkBuffer *) buffer
 {
-    int result = jpgl_processFrame(buffer->buffer, nextImageBuffer, [self width], [self height]);
+    int result = jpgl_processFrame(buffer->buffer, nextImageBuffer, [self width], [self height], nextImageBufferBPP);
     
     if (result != 0) 
     {
-        NSLog(@"Oops: jpgl_processFrame() returned an error!");
+        NSLog(@"Oops: jpgl_processFrame() returned an error! [%i]", result);
         return NO;
     }
+    
+    [LUT processImage:nextImageBuffer numRows:[self height] rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
     
     return YES;
 }
@@ -734,7 +729,7 @@ static inline int decodeBlock( struct rqBitReader *br, int *block, int *dc )
 	};	
 
 	// Vars
-	int hdr;
+	unsigned int hdr;
 	int *eff_iQWTbl;
 	int cc, run, amp;
 
@@ -745,10 +740,12 @@ static inline int decodeBlock( struct rqBitReader *br, int *block, int *dc )
 	{
 		// Differential mode
 		if ( hdr & 0x80 )
-			*dc += ( hdr >> 3 ) | ~0xF;
+			*dc += ( hdr >> 3 ) | ~0x01F;
 		else
-			*dc += ( hdr >> 3 ) & 0xF;
+			*dc += ( hdr >> 3 ) & 0x01F;
 
+//        *dc += ((char) (hdr & 0xFF)) >> 3;
+        
 		// Flush the header bits
 		rqBR_flushBits(br,8);
 	}
@@ -760,6 +757,8 @@ static inline int decodeBlock( struct rqBitReader *br, int *block, int *dc )
 		else
 			*dc = hdr & 0x7F;
 			
+//        *dc = (char) (hdr & 0xFF);
+        
 		// Flush the header bits
 		rqBR_flushBits(br,11);
 	}
@@ -820,7 +819,7 @@ static inline int decodeBlock( struct rqBitReader *br, int *block, int *dc )
 // jpgl_findHeader ). A complete frame MUST BE available !
 // Return 0 if the frame is valid.
 // Another code is an error code
-int jpgl_processFrame(unsigned char * rq, unsigned char * fb, int good_img_width, int good_img_height)
+int jpgl_processFrame(unsigned char * rq, unsigned char * fb, int good_img_width, int good_img_height, int bpp)
 {
 	// Vars
 	struct rqBitReader br;
@@ -961,23 +960,6 @@ int jpgl_processFrame(unsigned char * rq, unsigned char * fb, int good_img_width
 			// for U & V values
 			for ( x=0 ; x<img_width ; x+=4 )
 			{
-			# if 0
-				*(fb++) = *(Yline++);
-				*(fb++) = Uline[0];
-				*(fb++) = Vline[0];
-				
-				*(fb++) = *(Yline++);
-				*(fb++)= ( 3*Uline[0] + Uline[1] ) >> 2;
-				*(fb++) = ( 3*Vline[0] + Vline[1] ) >> 2;
-				
-				*(fb++) = *(Yline++);
-				*(fb++)= ( Uline[0] + Uline[1] ) >> 1;
-				*(fb++) = ( Vline[0] + Vline[1] ) >> 1;
-				
-				*(fb++) = *(Yline++);
-				*(fb++)= ( Uline[0] + 3*Uline[1] ) >> 2;
-				*(fb++) = ( Vline[0] + 3*Vline[1] ) >> 2;
-			#else	
 				// First pixel
 				yc = yuvTbl_y[*(Yline++)];
 				uc = Uline[0];
@@ -986,15 +968,8 @@ int jpgl_processFrame(unsigned char * rq, unsigned char * fb, int good_img_width
 					// B G R
 				(fb)[BBB] = clamp(( yc + yuvTbl_v2[vc] ) >> 16);
 				(fb)[GGG] = clamp(( yc - yuvTbl_u2[uc] - yuvTbl_v1[vc] ) >> 16);
-				(fb)[GGG] = clamp(( yc - yuvTbl_v1[vc] ) >> 16);
 				(fb)[RRR] = clamp(( yc + yuvTbl_u1[uc] ) >> 16);
-                (fb)[RRR] = clamp(vc >> 1);
-                (fb)[GGG] = clamp(vc >> 1);
-                (fb)[BBB] = clamp(vc >> 1);
-                fb += 3;
-#ifdef _JPGL_TEST_
-				fb++;
-#endif
+                fb += bpp;
 
 				// Second pixel
 				yc = yuvTbl_y[*(Yline++)];
@@ -1004,15 +979,8 @@ int jpgl_processFrame(unsigned char * rq, unsigned char * fb, int good_img_width
 					// B G R
 				(fb)[BBB] = clamp(( yc + yuvTbl_v2[vc] ) >> 16);
 				(fb)[GGG] = clamp(( yc - yuvTbl_u2[uc] - yuvTbl_v1[vc] ) >> 16);
-				(fb)[GGG] = clamp(( yc - yuvTbl_v1[vc] ) >> 16);
 				(fb)[RRR] = clamp(( yc + yuvTbl_u1[uc] ) >> 16);
-                (fb)[RRR] = clamp(vc >> 1);
-                (fb)[GGG] = clamp(vc >> 1);
-                (fb)[BBB] = clamp(vc >> 1);
-                fb += 3;
-#ifdef _JPGL_TEST_
-				fb++;
-#endif
+                fb += bpp;
 
 				// Third pixel
 				yc = yuvTbl_y[*(Yline++)];
@@ -1022,15 +990,8 @@ int jpgl_processFrame(unsigned char * rq, unsigned char * fb, int good_img_width
 					// B G R
 				(fb)[BBB] = clamp(( yc + yuvTbl_v2[vc] ) >> 16);
 				(fb)[GGG] = clamp(( yc - yuvTbl_u2[uc] - yuvTbl_v1[vc] ) >> 16);
-				(fb)[GGG] = clamp(( yc - yuvTbl_v1[vc] ) >> 16);
 				(fb)[RRR] = clamp(( yc + yuvTbl_u1[uc] ) >> 16);
-                (fb)[RRR] = clamp(vc >> 1);
-                (fb)[GGG] = clamp(vc >> 1);
-                (fb)[BBB] = clamp(vc >> 1);
-                fb += 3;
-#ifdef _JPGL_TEST_
-				fb++;
-#endif
+                fb += bpp;
 
 				// Fourth pixel
 				yc = yuvTbl_y[*(Yline++)];
@@ -1040,16 +1001,8 @@ int jpgl_processFrame(unsigned char * rq, unsigned char * fb, int good_img_width
 					// B G R
 				(fb)[BBB] = clamp(( yc + yuvTbl_v2[vc] ) >> 16);
 				(fb)[GGG] = clamp(( yc - yuvTbl_u2[uc] - yuvTbl_v1[vc] ) >> 16);
-				(fb)[GGG] = clamp(( yc - yuvTbl_v1[vc] ) >> 16);
 				(fb)[RRR] = clamp(( yc + yuvTbl_u1[uc] ) >> 16);
-                (fb)[RRR] = clamp(vc >> 1);
-                (fb)[GGG] = clamp(vc >> 1);
-                (fb)[BBB] = clamp(vc >> 1);
-                fb += 3;
-#ifdef _JPGL_TEST_
-				fb++;
-#endif
-			#endif
+                fb += bpp;
 
 				// Adjust pointers
 				Uline++;
