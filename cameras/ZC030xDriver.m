@@ -210,6 +210,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam Messenger (C)", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x0330], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x0471], @"idVendor",
+            @"Philips SPC 710/00 or 715NC/27 (experimental)", @"name", NULL], 
+        
         NULL];
 }
 
