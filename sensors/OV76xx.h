@@ -23,7 +23,9 @@
 #define OMNIVISION_OV7648_ID_LSB_VALUE  0xFF
 #define OMNIVISION_OV7660_ID_LSB_VALUE  0x60    // According to OV7660 Datasheet
 
-#define OMNIVISION_OV7670_ID_LSB_VALUE  0x63
+#define OMNIVISION_OV7670_ID_LSB_VALUE  0x73    // According to OV7670 Datasheet, in Creative Labs Live! Cam Vista IM
+
+// where did the 0x63 come from?
 
 
 @interface OV76xx : OmniVisionSensor 
