@@ -149,7 +149,7 @@
 }
 
 //
-// This is not use, just here for possible future use
+// This is not used, just here for possible future use
 //
 - (void) scanI2C
 {
@@ -364,7 +364,7 @@
         // It's possible that at SIF resolution you can go up to 60fps (OV7648 can do it)
         case 30:
             if ([self setRegister:0xa4 toValue:0x0c] < 0) return;	// These are undocumented register
-            if ([self setRegister:0x23 toValue:0xff] < 0) return;	// but they works
+            if ([self setRegister:0x23 toValue:0xff] < 0) return;	// but they work
             break;
             
         case 25:
