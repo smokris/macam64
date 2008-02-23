@@ -657,6 +657,11 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             @"Rainbow Color Webcam 5790P (0x60fe", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x612a], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Sonix (0x612a)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x612c], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
             @"Typhoon EasyCam 1.3 (0x612c)", @"name", NULL], 
@@ -779,7 +784,8 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         case 0x0e: spca50x->sensor = SENSOR_OV7630; break;  // 128,     // for '103 it is CISVF10
         case 0x0f: spca50x->sensor = SENSOR_OV7630; break;  // 103, 
         
-        case 0x28: spca50x->sensor = SENSOR_PAS106; break;  // 103, 
+        case 0x28: spca50x->sensor = SENSOR_OV7648; break;  // 110?? somewhat of a guess
+//      case 0x28: spca50x->sensor = SENSOR_PAS106; break;  // 103, 
         case 0x2a: spca50x->sensor = SENSOR_TAS5130CXX; break;  // 103, 
         case 0x2b: spca50x->sensor = SENSOR_TAS5110; break;  // 103, 
         case 0x2c: spca50x->sensor = SENSOR_MO4000; break;  // 105, 120, 100, 
