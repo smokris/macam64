@@ -69,7 +69,7 @@
     if (lsb == OMNIVISION_OV7660_ID_LSB_VALUE) 
         sensor = [[OV7660 alloc] init];
     
-    if (lsb == OMNIVISION_OV7670_ID_LSB_VALUE) // Creative ...
+    if (lsb == OMNIVISION_OV7670_ID_LSB_VALUE) // Creative Labs Live! Cam Vista IM
         sensor = [[OV7670 alloc] init];
     
     return sensor;
