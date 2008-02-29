@@ -583,6 +583,10 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     return [NSArray arrayWithObjects:
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x08dd], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam for Notebooks (0x08dd)", @"name", NULL], 
         
         NULL];
 }
