@@ -198,7 +198,7 @@
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COOL], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
-            @"Logitech QuickCam Cool", @"name", NULL], 
+            @"Logitech QuickCam Cool (0x08ac)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_CONNECT], @"idProduct",
@@ -214,6 +214,11 @@
             [NSNumber numberWithUnsignedShort:0x0330], @"idProduct",
             [NSNumber numberWithUnsignedShort:0x0471], @"idVendor",
             @"Philips SPC 710/00 or 715NC/27 (experimental)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x08af], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam Cool (0x08af)", @"name", NULL], 
         
         NULL];
 }
