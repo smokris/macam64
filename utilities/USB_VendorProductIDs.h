@@ -231,6 +231,9 @@
 #define PRODUCT_OV519_AKA2              0x4519
 #define PRODUCT_OV530                   0x0530
 
+#define VENDOR_RICOH            0x05ca
+// many webcams integrated into laptops
+
 #define VENDOR_DIGITAL_DREAM    0x05da
 #define PRODUCT_ENIGMA_1_3              0x1018      // SPCA504B
 
