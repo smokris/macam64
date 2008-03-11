@@ -41,4 +41,19 @@ static id defaultSensor = NULL;
     return -1;
 }
 
+- (int) setSensorRegister:(UInt8)reg toValue:(UInt8)val withMask:(UInt8)mask
+{
+    int result = [self getSensorRegister:reg];
+    UInt8 actualVal = result;
+    
+    if (result < 0) 
+        return result;
+    
+    actualVal &= ~mask;  // clear out bits
+    val &= mask;         // only set bits allowed by mask
+    actualVal |= val;    // combine them
+    
+    return [self setSensorRegister:reg toValue:actualVal];
+}
+
 @end
