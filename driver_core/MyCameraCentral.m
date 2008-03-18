@@ -283,6 +283,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[OV534Driver class]];
     [self registerCameraDriver:[OV538Driver class]];
     
+    [self registerCameraDriver:[PAC207DriverExperimental class]];
     [self registerCameraDriver:[PAC207Driver class]];     // Based on SPCA5XX - seems to work pretty well
     [self registerCameraDriver:[SPCA561ADriver class]];   // Based on SPCA5XX - seems to work now
     [self registerCameraDriver:[TV8532Driver class]];     // Based on SPCA5XX - seems to work now
