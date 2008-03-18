@@ -98,6 +98,7 @@ enum
     Lic200,
     Sonix6029,
     TrustWB3400,
+    MaxSonixCamera,
     
     AnySN9C1xxCamera,
     AnySN9C20xCamera,
@@ -607,6 +608,40 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     spca50x->i2c_ctrl_reg = 0x80;
     spca50x->i2c_base = 0x40;
+    spca50x->i2c_trigger_on_write = 0;
+    
+	return self;
+}
+
+@end
+
+
+@implementation SonixDriverOV6650
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x6011], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Max Webcam (SN9C101G-OV6650-352x288)", @"name", NULL], 
+        
+        NULL];
+}
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->desc = MaxSonixCamera;
+    spca50x->sensor = SENSOR_OV6650;
+    spca50x->customid = SN9C101;
+    
+    spca50x->i2c_ctrl_reg = 0x81;
+    spca50x->i2c_base = 0x21;
     spca50x->i2c_trigger_on_write = 0;
     
 	return self;

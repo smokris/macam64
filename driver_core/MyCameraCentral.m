@@ -320,6 +320,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SonixDriverVariant6 class]];
     [self registerCameraDriver:[SonixDriverVariant7 class]];
     [self registerCameraDriver:[SonixDriverVariant8 class]];
+    [self registerCameraDriver:[SonixDriverOV6650 class]];
     
     [self registerCameraDriver:[SN9CxxxDriver class]];
     [self registerCameraDriver:[SN9CxxxDriverPhilips1 class]];

@@ -115,6 +115,14 @@
 @end
 
 
+@interface SonixDriverOV6650 : SonixDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
+
+@end
+
+
 @interface SN9CxxxDriverPhilips1 : SN9CxxxDriver
 
 + (NSArray *) cameraUsbDescriptions;
