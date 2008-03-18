@@ -52,6 +52,15 @@
     IBOutlet NSWindow* disclaimerWindow;
     IBOutlet NSDrawer* settingsDrawer;
     IBOutlet NSDrawer* inspectorDrawer;
+    IBOutlet NSDrawer* debugDrawer;
+    IBOutlet NSTextField* registerAddress;
+    IBOutlet NSTextField* registerMask;
+    IBOutlet NSTextField* registerValueOld;
+    IBOutlet NSTextField* registerValueNew;
+    IBOutlet NSButton* registerSensorCheckbox;
+    IBOutlet NSImageView* histogramView;
+    IBOutlet NSTextField* debugMessage;
+    
     IBOutlet id blackwhiteCheckbox;
 	IBOutlet id ledCheckbox;
 	IBOutlet id cameraDisableCheckbox;
@@ -102,6 +111,11 @@
 - (IBAction)cameraDisableChanged:(id)sender;
 - (IBAction)reduceBandwidthChanged:(id)sender;
 
+- (IBAction)toggleDebugDrawer:(id)sender;
+- (IBAction)readRegister:(id)sender;
+- (IBAction)writeRegister:(id)sender;
+- (IBAction)dumpRegisters:(id)sender;
+
 //UI: Actions to do
 - (IBAction)doGrab:(id)sender;
 - (IBAction)doNextCam:(id)sender;
@@ -137,5 +151,8 @@
 - (BOOL) validateToolbarItem:(NSToolbarItem*)toolbarItem;
 //Delegates from the application
 - (BOOL) applicationOpenUntitledFile:(NSApplication*)theApplication;
+
+- (NSImageView *) getHistogramView;
+- (NSTextField *) getDebugMessageField;
 
 @end

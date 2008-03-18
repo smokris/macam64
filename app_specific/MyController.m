@@ -21,6 +21,7 @@
 
 #import "MyController.h"
 #import "MyCameraInspector.h"
+#import "ControllerInterface.h"
 #import "MiscTools.h"
 #import "MyMovieRecorder.h"
 #import "MyImageDocument.h"
@@ -317,6 +318,92 @@ extern NSString* SnapshotQualityPrefsKey;
     BOOL reduce = [reduceBandwidthCheckbox intValue];
     [driver setUSBReducedBandwidth:reduce];
 }
+
+- (void) toggleDebugDrawer:(id) sender 
+{
+    NSDrawerState state = [debugDrawer state];
+    
+    if ((state == NSDrawerOpeningState) || (state == NSDrawerOpenState)) 
+    {
+        [debugDrawer close];
+    } 
+    else 
+    {
+        [debugDrawer open];
+    }
+}
+
+- (IBAction)dumpRegisters:(id)sender
+{
+    [driver dumpRegisters];
+}
+
+- (IBAction)writeRegister:(id)sender
+{
+    BOOL ok = YES;
+    unsigned address, mask, newValue;
+    int oldValue;
+    
+    if (ok) 
+        ok = [[NSScanner scannerWithString:[registerAddress stringValue]] scanHexInt:&address];
+    
+    if (ok) 
+        ok = [[NSScanner scannerWithString:[registerMask stringValue]] scanHexInt:&mask];
+    
+    if (ok) 
+        ok = [[NSScanner scannerWithString:[registerValueNew stringValue]] scanHexInt:&newValue];
+    
+    if ([registerSensorCheckbox intValue]) 
+        oldValue = [driver setSensorRegister:address toValue:newValue withMask:mask];
+    else 
+        oldValue = [driver setRegister:address toValue:newValue withMask:mask];
+    
+    if (oldValue < 0) 
+        ok = NO;
+    
+    if (ok) 
+    {
+        [registerAddress  setStringValue:[NSString stringWithFormat:@"0x%04X", address]];
+        [registerValueOld setStringValue:@"---"];
+        [registerMask     setStringValue:[NSString stringWithFormat:@"0x%04X", mask]];
+        [registerValueNew setStringValue:[NSString stringWithFormat:@"0x%04X", newValue]];
+    }
+}
+
+- (IBAction)readRegister:(id)sender
+{
+    BOOL ok = YES;
+    unsigned address;
+    int oldValue;
+    
+    if (ok) 
+        ok = [[NSScanner scannerWithString:[registerAddress stringValue]] scanHexInt:&address];
+    
+    if ([registerSensorCheckbox intValue]) 
+        oldValue = [driver getSensorRegister:address];
+    else 
+        oldValue = [driver getRegister:address];
+    
+    if (oldValue < 0) 
+        ok = NO;
+    
+    if (ok) 
+    {
+        [registerAddress  setStringValue:[NSString stringWithFormat:@"0x%04X", address]];
+        [registerValueOld setStringValue:[NSString stringWithFormat:@"0x%04X", oldValue]];
+    }
+}
+
+- (NSImageView *) getHistogramView
+{
+    return histogramView;
+}
+
+- (NSTextField *) getDebugMessageField
+{
+    return debugMessage;
+}
+
 
 - (void) setImageOfToolbarItem:(NSString*)ident to:(NSString*)img {
     NSToolbar* toolbar=[window toolbar];
@@ -1363,6 +1450,11 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
     if ([item action]==@selector(doSavePrefs:)) return [self canDoSavePrefs];
     if ([item action]==@selector(doDownloadMedia:)) return [self canDoDownloadMedia];
     if ([item action]==@selector(doNextCam:)) return [self canDoNextCam];
+#if defined(DEBUG)
+    if ([item action]==@selector(toggleDebugDrawer:)) return YES;  // Only allow access in Debug builds!
+#else 
+    if ([item action]==@selector(toggleDebugDrawer:)) return NO;
+#endif
     return YES;		//Enable every other item
 }	
 
