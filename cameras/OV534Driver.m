@@ -239,7 +239,7 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
 }
 
 
-- (int) setRegister:(UInt16)reg toValue:(UInt8)val
+- (int) setRegister:(UInt16)reg toValue:(UInt16)val
 {
     UInt8 buffer[8];
     

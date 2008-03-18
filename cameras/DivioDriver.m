@@ -191,7 +191,7 @@ typedef struct
 }
 
 
-- (int) setRegister:(UInt16)reg toValue:(UInt8)val
+- (int) setRegister:(UInt16)reg toValue:(UInt16)val
 {
     UInt8 buffer[16];
     
