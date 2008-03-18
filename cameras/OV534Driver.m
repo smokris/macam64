@@ -6,6 +6,10 @@
 //  Copyright 2008 hxr. All rights reserved.
 //
 
+//
+// Many thanks to Jim Paris at PS2 developer forums
+//
+
 
 #import "OV534Driver.h"
 
@@ -26,7 +30,6 @@
 
 @interface OV534Driver (Private)
 
-- (void) led:(int)red;
 - (void) initCamera;
 
 @end
@@ -115,6 +118,20 @@
 	return ResolutionVGA;
 }
 
+- (BOOL) canSetLed
+{
+    return YES;
+}
+
+- (void) setLed:(BOOL) v
+{
+    [self setRegister:0x21 toValue:0x80 withMask:0x80];
+    [self setRegister:0x23 toValue:(v ? 0x80 : 0x00) withMask:0x80];
+    
+    [super setLed:v];
+}
+
+
 //
 // Set up some unusual defaults
 //
@@ -166,10 +183,11 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
 }
 
 
+//
+// Return YES if everything is OK
+//
 - (BOOL) decodeBufferProprietary: (GenericChunkBuffer *) buffer
 {
-    BOOL problem = NO;
-    
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
     
@@ -182,6 +200,9 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
     int B = 2;
     
     int row, column;
+    
+    if (buffer->numBytes < (grabContext.chunkBufferLength - 4)) 
+        return NO;  // Skip this chunk
     
     for (row = 0; row < rawHeight; row++) 
     {
@@ -204,7 +225,7 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
     
     [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
     
-    return problem == NO;
+    return YES;
 }
 
 
@@ -480,8 +501,6 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
     [self setSensorRegister:0x64 toValue:0xff];
     [self setSensorRegister:0x0d toValue:0x41];
     
-    [self led:1];
-    
     [self setSensorRegister:0x14 toValue:0x41];
     [self setSensorRegister:0x0e toValue:0xcd];
     [self setSensorRegister:0xac toValue:0xbf];
@@ -490,15 +509,6 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
     
     [self setRegister:0xe0 toValue:0x09];
 //  [self setRegister:0xe0 toValue:0x00];
-    
-    [self led:1];
-}
-
-
-- (void) led:(int)red
-{
-    [self setRegister:0x21 toValue:0x80 withMask:0x80];
-    [self setRegister:0x23 toValue:(red ? 0x80 : 0x00) withMask:0x80];
 }
 
 @end
