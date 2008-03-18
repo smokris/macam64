@@ -24,10 +24,32 @@
 
 
 #import <SPCA5XXDriver.h>
+#import <Histogram.h>
 
 
 @interface PAC207Driver : SPCA5XXDriver 
 {
+    UInt8 * decodingBuffer;  // Need an intermediate buffer for decompression
+	struct code_table codeTable[256];
+}
+
++ (NSArray *) cameraUsbDescriptions;
+
+- (id) initWithCentral: (id) c;
+- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate;
+- (UInt8) getGrabbingPipe;
+- (BOOL) setGrabInterfacePipe;
+- (void) setIsocFrameFunctions;
+
+@end
+
+
+@interface PAC207DriverExperimental : GenericDriver
+{
+    UInt8 * decodingBuffer;  // Need an intermediate buffer for decompression
+	struct code_table codeTable[256];
+    
+    Histogram * histogram;
 }
 
 + (NSArray *) cameraUsbDescriptions;
