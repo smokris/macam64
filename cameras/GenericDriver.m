@@ -645,6 +645,17 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
         grabContext.chunkListLock = NULL;
     }
     
+    // Cleanup bulk buffers
+    
+    for (i = 0; i < grabContext.numberOfTransfers; i++) 
+    {
+        if (grabContext.transferBuffers[i].buffer) 
+        {
+            FREE(grabContext.transferBuffers[i].buffer, "bulk data buffer");
+            grabContext.transferBuffers[i].buffer = NULL;
+        }
+    }
+    
     // Cleanup isoc buffers
     
     for (i = 0; i < grabContext.numberOfTransfers; i++) 
