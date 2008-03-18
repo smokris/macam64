@@ -332,6 +332,12 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (void) cameraHasShutDown:(id)sender;			//sends "notification" to "delegate"
 - (void) cameraEventHappened:(id)sender event:(CameraEvent)evt;	//sends "notification" to "delegate"	
 
+// Camera register functions, need to be defined for each controller
+- (int) dumpRegisters;
+- (int) getRegister:(UInt16)reg;
+- (int) setRegister:(UInt16)reg toValue:(UInt16)val;
+- (int) setRegister:(UInt16)reg toValue:(UInt16)val withMask:(UInt16)mask;
+
 //USB tool functions - should be used internally only
 - (BOOL) usbCmdWithBRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;//Sends a generic command
 - (BOOL) usbGenericCmd:(IOUSBInterfaceInterface**)intf onPipe:(UInt8)pipe BRequestType:(UInt8)bReqType bRequest:(UInt8)bReq wValue:(UInt16)wVal wIndex:(UInt16)wIdx buf:(void*)buf len:(short)len;

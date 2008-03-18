@@ -792,6 +792,44 @@
        cameraInfo = info;
 }
 
+
+// Camera register functions
+// they all return -1 if there is a problem
+
+- (int) dumpRegisters
+{
+    NSLog(@"MyCameraDriver:dumpRegisters: not implemented");
+    return -1;
+}
+
+- (int) getRegister:(UInt16)reg
+{
+    NSLog(@"MyCameraDriver:getRegister: not implemented");
+    return -1;
+}
+
+- (int) setRegister:(UInt16)reg toValue:(UInt16)val
+{
+    NSLog(@"MyCameraDriver:setRegister:toValue: not implemented");
+    return -1;
+}
+
+- (int) setRegister:(UInt16)reg toValue:(UInt16)val withMask:(UInt16)mask
+{
+    int result = [self getRegister:reg];
+    UInt8 actualVal = result;
+    
+    if (result < 0) 
+        return result;
+    
+    actualVal &= ~mask;  // clear out bits
+    val &= mask;         // only set bits allowed by mask
+    actualVal |= val;    // combine them
+    
+    return [self setRegister:reg toValue:actualVal];
+}
+
+
 // USB Tool functions for subclasses
 
 //

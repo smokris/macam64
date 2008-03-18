@@ -19,8 +19,8 @@
 
 - (int) setupSensorCommunication:(Class)sensor;
 
-- (int) getSensorRegister:(UInt8)reg;
-- (int) setSensorRegister:(UInt8)reg toValue:(UInt8)val;
-- (int) setSensorRegister:(UInt8)reg toValue:(UInt8)val withMask:(UInt8)mask;
+- (int) getSensorRegister:(UInt16)reg;
+- (int) setSensorRegister:(UInt16)reg toValue:(UInt16)val;
+- (int) setSensorRegister:(UInt16)reg toValue:(UInt16)val withMask:(UInt16)mask;
 
 @end

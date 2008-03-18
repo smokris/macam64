@@ -29,19 +29,19 @@ static id defaultSensor = NULL;
     return -1;
 }
 
-- (int) getSensorRegister:(UInt8)reg
+- (int) getSensorRegister:(UInt16)reg
 {
     NSLog(@"MyCameraDriver(ControllerInterface):getSensorRegister: not implemented");
     return -1;
 }
 
-- (int) setSensorRegister:(UInt8)reg toValue:(UInt8)val
+- (int) setSensorRegister:(UInt16)reg toValue:(UInt16)val
 {
     NSLog(@"MyCameraDriver(ControllerInterface):setSensorRegister:toValue: not implemented");
     return -1;
 }
 
-- (int) setSensorRegister:(UInt8)reg toValue:(UInt8)val withMask:(UInt8)mask
+- (int) setSensorRegister:(UInt16)reg toValue:(UInt16)val withMask:(UInt16)mask
 {
     int result = [self getSensorRegister:reg];
     UInt8 actualVal = result;
