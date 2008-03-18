@@ -220,6 +220,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam Cool (0x08af)", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x4029], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Creative Webcam Vista Pro", @"name", NULL], 
+        
         NULL];
 }
 
