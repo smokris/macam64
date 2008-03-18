@@ -23,6 +23,7 @@
 //
 
 #import "GenericDriver.h"
+#import "ControllerInterface.h"
 
 #include "MiscTools.h"
 #include "Resolvers.h"
@@ -84,6 +85,8 @@
     hardwareHue = NO;   
     hardwareFlicker = NO;   
     
+    buttonInterrupt = NO;
+    
     decodingSkipBytes = 0;
     
     compressionType = unknownCompression;
@@ -114,6 +117,28 @@
     
     if (error = [self usbConnectToCam:usbLocationId configIdx:0]) 
         return error; // setup connection to camera
+    
+    mainToButtonThreadConnection = NULL;
+    buttonToMainThreadConnection = NULL;
+    
+    if (error == CameraErrorOK && buttonInterrupt)  // Start a buttonThread if button sends an interrupt (USB)
+    {
+        id threadData = NULL;
+        
+        if (doNotificationsOnMainThread) 
+        {
+            NSPort * port1 = [NSPort port];
+            NSPort * port2 = [NSPort port];
+            mainToButtonThreadConnection = [[NSConnection alloc] initWithReceivePort:port1 sendPort:port2];
+            [mainToButtonThreadConnection setRootObject:self];
+            threadData = [NSArray arrayWithObjects:port2,port1,NULL];
+        }
+        
+        buttonThreadShouldBeActing = NO; // Not yet
+        buttonThreadShouldBeRunning = YES;
+        buttonThreadRunning = YES;
+        [NSThread detachNewThreadSelector:@selector(buttonThread:) toTarget:self withObject:threadData];
+    }
     
     [self startupCamera];
     
@@ -387,7 +412,7 @@
 
 //
 // Setup the alt-interface and pipe to use for grabbing
-// This *must* be subclassed
+// This *must* be subclassed for non-Bulk drivers
 //
 // Return YES if everything is ok
 //
@@ -455,6 +480,7 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
+
 //
 // Avoid subclassing this method if possible
 // Instead put functionality into [setIsocFrameFunctions]
@@ -465,6 +491,12 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     BOOL ok = YES;
     int i, j;
     
+    for (i = 0; i < GENERIC_MAX_TRANSFERS; i++) 
+    {
+        grabContext.transferPointers[i].transferIndex = i;
+        grabContext.transferPointers[i].context = &grabContext;
+    }
+    
     if (driverType == isochronousDriver) 
     {
         grabContext.numberOfTransfers = GENERIC_NUM_TRANSFERS;
@@ -472,8 +504,8 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     }
     else 
     {
-        grabContext.numberOfTransfers = 0;
-        grabContext.numberOfFramesPerTransfer = 0;
+        grabContext.numberOfTransfers = GENERIC_NUM_TRANSFERS;
+        grabContext.numberOfFramesPerTransfer = 1;
     }
     grabContext.numberOfChunkBuffers = GENERIC_NUM_CHUNK_BUFFERS;
     
@@ -489,8 +521,8 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     if (grabContext.numberOfFramesPerTransfer > GENERIC_FRAMES_PER_TRANSFER) 
         grabContext.numberOfFramesPerTransfer = GENERIC_FRAMES_PER_TRANSFER;
     
-    if (grabContext.numberOfChunkBuffers > GENERIC_NUM_CHUNK_BUFFERS) 
-        grabContext.numberOfChunkBuffers = GENERIC_NUM_CHUNK_BUFFERS;
+    if (grabContext.numberOfChunkBuffers > GENERIC_MAX_CHUNK_BUFFERS) 
+        grabContext.numberOfChunkBuffers = GENERIC_MAX_CHUNK_BUFFERS;
     
     // Clear things that have to be set back if init() fails
     
@@ -511,6 +543,7 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     grabContext.initiatedUntil = 0; // Will be set later (directly before start)
     grabContext.finishedTransfers = 0;
     grabContext.framesSinceLastChunk = 0;
+    grabContext.maxFramesBetweenChunks = 1000; // That's a second. Normally we should get at least one chunk per second
     
     grabContext.numFullBuffers = 0;
     grabContext.numEmptyBuffers = 0;
@@ -518,6 +551,8 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     
     grabContext.frameInfo.averageLuminance = 0;
     grabContext.frameInfo.averageLuminanceSet = 0;
+    grabContext.frameInfo.averageSurroundLuminance = 0;
+    grabContext.frameInfo.averageSurroundLuminanceSet = 0;
     grabContext.frameInfo.averageBlueGreen = 0;
     grabContext.frameInfo.averageBlueGreenSet = 0;
     grabContext.frameInfo.averageRedGreen = 0;
@@ -554,6 +589,20 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     }
     
     // Initialize chunk buffers
+    
+    for (i = 0; ok && (i < grabContext.numberOfTransfers); i++) 
+    {
+        MALLOC(grabContext.transferBuffers[i].buffer, UInt8 *, grabContext.chunkBufferLength, "Chunk transfer buffer");
+        
+        if (grabContext.transferBuffers[i].buffer == NULL) 
+            ok = NO;
+        else 
+		{
+            timerclear(&(grabContext.transferBuffers[i].tv));
+            timerclear(&(grabContext.transferBuffers[i].tvStart));
+            timerclear(&(grabContext.transferBuffers[i].tvDone));
+		}
+    }
     
     for (i = 0; ok && (i < grabContext.numberOfChunkBuffers); i++) 
     {
@@ -651,6 +700,7 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
 // Forward declaration because both isocComplete() and startNextIsochRead() refer to each other
 //
 static bool startNextIsochRead(GenericGrabContext * grabbingContext, int transferIndex);
+static bool startNextBulkRead(GenericGrabContext * grabbingContext, int transferIndex);
 
 //
 // Avoid recreating this function if possible
@@ -810,7 +860,7 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
         
         gCtx->framesSinceLastChunk += gCtx->numberOfFramesPerTransfer; // Count frames (not necessary to be too precise here...)
         
-        if (gCtx->framesSinceLastChunk > 1000) // One second without a frame? That is too long, something is wrong.
+        if (gCtx->framesSinceLastChunk > gCtx->maxFramesBetweenChunks) // Too long without a frame? Something is wrong. 
         {
             NSLog(@"GenericDriver: grab aborted because of invalid data stream (too long without a frame, %i invalid frames, %i invalid chunks)", droppedFrames, droppedChunks);
             *gCtx->shouldBeGrabbing = NO;
@@ -865,7 +915,7 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
         case kIOReturnNoDevice:
         case kIOReturnNotOpen:
         default:
-            CheckError(error, "StartNextIsochRead-ReadIsochPipeAsync");
+            CheckError(error, "startNextIsochRead-ReadIsochPipeAsync");
             if (gCtx->contextError == CameraErrorOK) 
                 gCtx->contextError = CameraErrorUSBProblem;
             break;
@@ -874,150 +924,139 @@ static bool startNextIsochRead(GenericGrabContext * gCtx, int transferIdx)
     return (error == kIOReturnSuccess);
 }
 
-//
-// This is the callback function for the bulk driver
-// This should nao have to be sibclassed or otherwise recreated
-//
-static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
-{
-    GenericDriver * driver = (GenericDriver *) refcon;
-    UInt32 size = (UInt32) arg0;
-    [driver handleFullChunkWithReadBytes:size error:result];
-}
 
-//
-// Called by the above function
-//
-- (void) handleFullChunkWithReadBytes:(UInt32) readSize error:(IOReturn) err  
+static void bulkComplete(void * refcon, IOReturn result, void * arg0) 
 {
-    videoBulkReadsPending--;
+    ContextAndIndex * ref = (ContextAndIndex *) refcon;
+    GenericGrabContext * gCtx = (GenericGrabContext *) ref->context;
+    short transferIdx = ref->transferIndex;
+    UInt32 bytesReceived = (UInt32) arg0;
     
-#if REALLY_VERBOSE
-    printf("read a chunk with %ld bytes (err = %d)\n", readSize, err);
-#endif
+    // Handle result from bulk transfer
     
-    if (err != kIOReturnSuccess) 
+    switch (result) 
     {
-        if (err != kIOReturnUnderrun && err != kIOReturnOverrun) 
-        {
-            CheckError(err, "handleFullChunkWithReadBytes");
-            shouldBeGrabbing = NO;
-            if (grabContext.contextError == CameraErrorOK) 
-                grabContext.contextError = CameraErrorUSBProblem;
-        }
+        case kIOReturnSuccess: // No error -> alright
+        case kIOReturnUnderrun: // Data hickup - not so serious
+            result = 0;
+            break;
+            
+        case kIOReturnOverrun:
+        case kIOReturnTimeout:
+            *gCtx->shouldBeGrabbing = NO;
+            if (gCtx->contextError == CameraErrorOK) 
+                gCtx->contextError = CameraErrorTimeout;
+                break;
+            
+        default:
+            *gCtx->shouldBeGrabbing = NO;
+            if (gCtx->contextError == CameraErrorOK) 
+                gCtx->contextError = CameraErrorUSBProblem;
+                break;
     }
     
-	if (shouldBeGrabbing && (readSize > 0))  // No USB error and not an empty chunk
+    CheckError(result, "bulkComplete"); // Show errors (really needed here? -- actually yes!)
+    
+    // Parse returned data
+    
+    if (*gCtx->shouldBeGrabbing && bytesReceived > 0) 
     {
         int j;
+        GenericChunkBuffer chunk;
+        unsigned char * savePointer;
         
-        grabContext.fillingChunkBuffer.numBytes = readSize;
+        // Now we need to get a new chunk
+        // Wait for access to the chunk buffers
+        
+        [gCtx->chunkListLock lock];
+        
+        // First get a chunk
+        // Switch the buffers
+        // Put it in the full list
+        
+        // We have the list access lock. Get a new buffer to fill.
+        
+        if (gCtx->numFullBuffers == GENERIC_MAX_CHUNK_BUFFERS ||
+            gCtx->numEmptyBuffers == 0) 
+        {
+            gCtx->numFullBuffers--;  // Use the oldest one
+            chunk = gCtx->fullChunkBuffers[gCtx->numFullBuffers];
+        }
+        else  // There's an empty buffer to use
+        {
+            gCtx->numEmptyBuffers--;
+            chunk = gCtx->emptyChunkBuffers[gCtx->numEmptyBuffers];
+        }
+        
+        chunk.numBytes = bytesReceived;
+        gettimeofday(&chunk.tvStart, NULL); // set the time of the buffer
+        chunk.tv = chunk.tvDone = chunk.tvStart;
         
         // Pass the complete chunk to the full list
         // Move full buffers one up
         
-        [grabContext.chunkListLock lock];
+        for (j = gCtx->numFullBuffers - 1; j >= 0; j--) 
+            gCtx->fullChunkBuffers[j + 1] = gCtx->fullChunkBuffers[j];
         
-        gettimeofday(&grabContext.fillingChunkBuffer.tvDone, NULL); // set the time of the buffer
-        grabContext.fillingChunkBuffer.tv = grabContext.fillingChunkBuffer.tvDone;
+        // Switch the pointers around
         
-        for (j = grabContext.numFullBuffers - 1; j >= 0; j--) 
-            grabContext.fullChunkBuffers[j + 1] = grabContext.fullChunkBuffers[j];
+        savePointer = chunk.buffer;
+        chunk.buffer = gCtx->transferBuffers[transferIdx].buffer;
+        gCtx->transferBuffers[transferIdx].buffer = savePointer;
         
-        grabContext.fullChunkBuffers[0] = grabContext.fillingChunkBuffer; // Insert the filling one as newest
-        grabContext.numFullBuffers++;				// We have inserted one buffer
-                                                    // What if the list was already full? - That is not possible
-        grabContext.fillingChunk = false;			// Now we're not filling (still in the lock to be sure no buffer is lost)
+        // We have anew full buffer
         
-        [grabContext.chunkListLock unlock];        // Free access to the chunk buffers
-    } 
-    else  // Incorrect chunk -> ignore (but back to empty chunks)
-    {
-        // Put the chunk buffer back to the empty ones
+        gCtx->fullChunkBuffers[0] = chunk;  // Insert the filling one as newest
+        gCtx->numFullBuffers++;				// We have inserted one buffer
         
-        [grabContext.chunkListLock lock];   // Get access to the buffer lists
-        
-        grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers] = grabContext.fillingChunkBuffer;
-        grabContext.numEmptyBuffers++;
-        grabContext.fillingChunk = false;			// Now we're not filling (still in the lock to be sure no buffer is lost)
-        
-        [grabContext.chunkListLock unlock]; // Release access to the buffer lists            
+        [gCtx->chunkListLock unlock];		// Free access to the chunk buffers
     }
     
-//  [self doAutoResetLevel];
+    // Initiate next transfer
     
-    if (shouldBeGrabbing) 
-        [self fillNextChunk];
+    if (*gCtx->shouldBeGrabbing) 
+    {
+        if (!startNextBulkRead(gCtx, transferIdx)) 
+            *gCtx->shouldBeGrabbing = NO;
+    }
     
-    // We can only stop if there are no read request left. 
-    // If there is an error, no new one was issued.
+    // Shutdown cleanup: Collect finished transfers and exit if all transfers have ended
     
-    if (videoBulkReadsPending <= 0) 
-        CFRunLoopStop(CFRunLoopGetCurrent());
+    if (!(*gCtx->shouldBeGrabbing)) 
+    {
+        gCtx->finishedTransfers++;
+        if (gCtx->finishedTransfers >= gCtx->numberOfTransfers) 
+            CFRunLoopStop(CFRunLoopGetCurrent());
+    }
 }
 
 
-- (void) fillNextChunk 
+static bool startNextBulkRead(GenericGrabContext * gCtx, int transferIdx) 
 {
-    IOReturn err;
-    BOOL newReadPending = YES;
+    IOReturn error;
     
-    // Get an empty chunk
+    error = (*gCtx->intf)->ReadPipeAsync(gCtx->intf,
+                                         gCtx->grabbingPipe,
+                                         gCtx->transferBuffers[transferIdx].buffer,
+                                         gCtx->chunkBufferLength,
+                                         (IOAsyncCallback1) (bulkComplete),
+                                         &gCtx->transferPointers[transferIdx]);
     
-    if (shouldBeGrabbing) 
+    switch (error) 
     {
-        [grabContext.chunkListLock lock];
-        
-        if (grabContext.numEmptyBuffers > 0) 			// There's an empty buffer to use
-        {
-            grabContext.numEmptyBuffers--;
-            grabContext.fillingChunkBuffer = grabContext.emptyChunkBuffers[grabContext.numEmptyBuffers];
-        } 
-        else // No empty buffer: discard a full one (there are enough, both lists can't be empty)
-        {
-            grabContext.numFullBuffers--;             // Use the oldest one
-            grabContext.fillingChunkBuffer = grabContext.fullChunkBuffers[grabContext.numFullBuffers];
-        }
-        grabContext.fillingChunk = true;				// Now we're filling (still in the lock to be sure no buffer is lost)
-        grabContext.fillingChunkBuffer.numBytes = 0;	// Start with empty buffer
-        [grabContext.chunkListLock unlock];			// Free access to the chunk buffers
-    }
-    
-    // Start the bulk read
-    
-    if (shouldBeGrabbing) 
-    {
-        gettimeofday(&grabContext.fillingChunkBuffer.tvStart, NULL); // set the time of the buffer
-        
-        err = ((IOUSBInterfaceInterface182*) (*streamIntf))->ReadPipeAsyncTO(streamIntf, [self getGrabbingPipe],
-                                                                    grabContext.fillingChunkBuffer.buffer,
-                                                                    grabContext.chunkBufferLength, 1000, 2000,
-                                                                    (IOAsyncCallback1) (handleFullChunk), self);  // Read one chunk
-        
-        if ((err == kIOUSBPipeStalled) && (streamIntf != NULL)) 
-        {
-            newReadPending = NO;
-#if VERBOSE
-            printf("pipe stalled, clearing\n");
-#endif
-            if (interfaceID >= 190) 
-                err = ((IOUSBInterfaceInterface190*) *streamIntf)->ClearPipeStallBothEnds(streamIntf, [self getGrabbingPipe]);
-            else 
-                err = (*streamIntf)->ClearPipeStall(streamIntf, [self getGrabbingPipe]);
+        case kIOReturnSuccess:
+            break;
             
-            if (err == kIOReturnSuccess) 
-                [self fillNextChunk];
-        }
-        
-        if (err) 
-        {
-            CheckError(err, "grabbingThread:ReadPipeAsync");
-            grabContext.contextError = CameraErrorUSBProblem;
-            shouldBeGrabbing = NO;
-        } 
-        else if (newReadPending) 
-            videoBulkReadsPending++;
+        case kIOReturnNoDevice:
+        case kIOReturnNotOpen:
+        default:
+            CheckError(error, "startNextBulkRead-ReadPipeAsync");
+            if (gCtx->contextError == CameraErrorOK) 
+                gCtx->contextError = CameraErrorUSBProblem;
+                break;
     }
+    
+    return (error == kIOReturnSuccess);
 }
 
 //
@@ -1073,12 +1112,17 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
         CFRunLoopAddSource(CFRunLoopGetCurrent(), cfSource, kCFRunLoopDefaultMode); // Add it to our run loop
         
         if (driverType == bulkDriver) 
-            [self fillNextChunk];
+            for (i = 0; ok && (i < grabContext.numberOfTransfers); i++) // Initiate transfers
+                ok = startNextBulkRead(&grabContext, i);
         
         if (driverType == isochronousDriver) 
             for (i = 0; ok && (i < grabContext.numberOfTransfers); i++) // Initiate transfers
                 ok = startNextIsochRead(&grabContext, i);
     }
+    
+    // Activate the snapshot mechanism (thread is already running if there is one)
+    
+    buttonThreadShouldBeActing = YES;
     
     // Go into the RunLoop until we are done
     
@@ -1566,6 +1610,112 @@ static void handleFullChunk(void * refcon, IOReturn result, void * arg0)
 }
 
 
+- (UInt8) getButtonPipe
+{
+    return 2;
+}
+
+
+- (void) shutdown
+{
+    if (buttonThreadRunning || buttonThreadShouldBeRunning) 
+    {
+        buttonThreadShouldBeRunning = NO;
+        buttonThreadShouldBeActing = NO;
+        
+        if ((streamIntf) && (isUSBOK)) 
+            (*streamIntf)->AbortPipe(streamIntf, [self getButtonPipe]);
+        
+        while (buttonThreadRunning) 
+            usleep(10000); 
+    }
+    
+    if (buttonToMainThreadConnection) 
+    {
+        [buttonToMainThreadConnection release];
+        buttonToMainThreadConnection = NULL;
+    }
+    
+    if (mainToButtonThreadConnection) 
+    {
+        [mainToButtonThreadConnection release];
+        mainToButtonThreadConnection = NULL;
+    }
+    
+    [super shutdown];
+}
+
+
+- (void) buttonThread:(id)data 
+{
+    NSAutoreleasePool * pool = [[NSAutoreleasePool alloc] init];
+    
+    if (data) 
+    {
+        buttonToMainThreadConnection=[[NSConnection alloc] initWithReceivePort:[data objectAtIndex:0] sendPort:[data objectAtIndex:1]];
+    }
+    
+    while (buttonThreadShouldBeRunning && isUSBOK) 
+    {
+        UInt32 length = 2;
+        unsigned char camData[2];
+        
+        (*streamIntf)->ReadPipe(streamIntf, [self getButtonPipe], camData, &length);
+        if (length == 2) 
+        {
+            /*
+            switch (camData) 
+            {
+                case 16:	//Button down
+                    [self mergeCameraEventHappened:CameraEventSnapshotButtonDown];
+                    break;
+                case 17:	//Button up
+                    [self mergeCameraEventHappened:CameraEventSnapshotButtonUp];
+                    break;
+				case   0:
+					// with CIF happening on grab start/stopon my QCE w/o button [added by mark.asbach]
+                case 194:	//sometimes sent on grab start / stop
+                    break;
+                default:
+                    */
+#ifdef VERBOSE
+                    NSLog(@"Button Down: unknown data on interrupt pipe:%i, %i", camData[0], camData[1]);
+                    if (camData[0] == 0x5a && camData[1] == 0x5a) 
+                        if (buttonThreadShouldBeRunning && buttonThreadShouldBeActing) 
+                            [self mergeCameraEventHappened:CameraEventSnapshotButtonDown];
+
+#endif
+            /*
+                    break;
+            }
+             */
+            camData[0] = 194;
+            camData[1] = 75;
+            (*streamIntf)->WritePipe(streamIntf, 4, camData, length);
+        }
+    }
+    
+    buttonThreadRunning = NO;
+    
+    [pool release];
+    [NSThread exit];
+}
+
+
+- (void) mergeCameraEventHappened:(CameraEvent)evt
+{
+    if (doNotificationsOnMainThread) 
+        if ([NSRunLoop currentRunLoop] != mainThreadRunLoop) 
+            if (buttonToMainThreadConnection) 
+            {
+                [(id)[buttonToMainThreadConnection rootProxy] mergeCameraEventHappened:evt];
+                return;
+            }
+    
+    [self cameraEventHappened:self event:evt];
+}
+
+
 void BufferProviderRelease(void * info, const void * data, size_t size)
 {
     if (info != NULL) 
@@ -1705,7 +1855,7 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
         return NO;
     
 #if REALLY_VERBOSE
-    printf("decoding a chunk with %ld bytes\n", buffer->numBytes);
+//    printf("decoding a chunk with %ld bytes\n", buffer->numBytes);
     if (0) 
     {
         int b = 0;
@@ -1765,6 +1915,34 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     
     return ok;
 }
+
+
+- (int) dumpRegisters
+{
+	UInt8 regLN, regHN;
+    
+	printf("Camera Registers: ");
+	for (regHN = 0; regHN < 0xf0; regHN += 0x10) {
+		printf("\n    ");
+		for (regLN = 0; regLN < 0x10; ++regLN)
+			printf(" %02X=%02X", regHN + regLN, [self getRegister:regHN + regLN]);
+	}
+	printf("\n\n");
+    
+    if ([self getSensorRegister:0x00] < 0) 
+        return 0; // probably not implemented
+    
+	printf("Sensor Registers: ");
+	for (regHN = 0; regHN < 0x80; regHN += 0x10) {
+		printf("\n    ");
+		for (regLN = 0; regLN < 0x10; ++regLN)
+			printf(" %02X=%02X", regHN + regLN, [self getSensorRegister:regHN + regLN]);
+	}
+	printf("\n\n");
+    
+    return 0;
+}
+
 
 @end
 

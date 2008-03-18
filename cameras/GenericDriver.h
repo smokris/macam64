@@ -54,6 +54,7 @@ typedef enum DriverType
 #define GENERIC_FRAMES_PER_TRANSFER  50
 #define GENERIC_MAX_TRANSFERS         5
 #define GENERIC_NUM_TRANSFERS         2
+#define GENERIC_MAX_CHUNK_BUFFERS     9
 #define GENERIC_NUM_CHUNK_BUFFERS     3
 
 // Define some compression constants
@@ -85,6 +86,8 @@ typedef struct GenericFrameInfo
 {
     int averageLuminance;
     int averageLuminanceSet;
+    int averageSurroundLuminance;
+    int averageSurroundLuminanceSet;
     int averageBlueGreen;
     int averageBlueGreenSet;
     int averageRedGreen;
@@ -119,8 +122,16 @@ typedef struct GenericChunkBuffer
 	struct timeval tvDone;
 } GenericChunkBuffer;
 
+typedef struct ContextAndIndex 
+{
+    int transferIndex;
+    struct GenericGrabContext * context;
+} ContextAndIndex;
+
 typedef struct GenericGrabContext 
 {
+    ContextAndIndex transferPointers[GENERIC_MAX_TRANSFERS];
+    
     int numberOfFramesPerTransfer;
     int numberOfTransfers;
     int numberOfChunkBuffers;
@@ -141,14 +152,16 @@ typedef struct GenericGrabContext
     short bytesPerFrame;		  // So many bytes are at max transferred per USB frame
     short finishedTransfers;	  // So many transfers have already finished (for cleanup)
     long framesSinceLastChunk;	  // Watchdog counter to detect invalid isoc data stream
+    long maxFramesBetweenChunks;  // Normally abot a second, but may be set longer for long-exposures
     
     UInt8 grabbingPipe;           // The pipe used by the camer for grabbing, usually 1, but not always
     
     NSLock * chunkListLock;		  // The lock for access to the empty buffer pool/ full chunk queue
     long chunkBufferLength;		  // The size of the chunk buffers
     GenericTransferContext transferContexts[GENERIC_MAX_TRANSFERS];  // The transfer contexts
-    GenericChunkBuffer emptyChunkBuffers[GENERIC_NUM_CHUNK_BUFFERS]; // The pool of empty (ready-to-fill) chunk buffers
-    GenericChunkBuffer fullChunkBuffers[GENERIC_NUM_CHUNK_BUFFERS];	 // The queue of full (ready-to-decode) chunk buffers (oldest=last)
+    GenericChunkBuffer transferBuffers[GENERIC_MAX_TRANSFERS]; // The pool of chunk buffers used for bulk 
+    GenericChunkBuffer emptyChunkBuffers[GENERIC_MAX_CHUNK_BUFFERS]; // The pool of empty (ready-to-fill) chunk buffers
+    GenericChunkBuffer fullChunkBuffers[GENERIC_MAX_CHUNK_BUFFERS];	 // The queue of full (ready-to-decode) chunk buffers (oldest=last)
     GenericChunkBuffer fillingChunkBuffer; // The chunk buffer currently filling up (only if fillingChunk == true)
     short numEmptyBuffers;		  // The number of empty (ready-to-fill) buffers in the array above
     short numFullBuffers;		  // The number of full (ready-to-decode) buffers in the array above
@@ -181,6 +194,8 @@ typedef struct GenericGrabContext
     BOOL hardwareHue;
     BOOL hardwareFlicker;
     
+    BOOL buttonInterrupt;
+    
     int decodingSkipBytes;
     
     CompressionType compressionType;
@@ -207,6 +222,12 @@ typedef struct GenericGrabContext
     {
         ImageSequence           sequenceIdentifier;
     } SequenceDecoding;
+    
+    BOOL buttonThreadRunning;
+    BOOL buttonThreadShouldBeRunning;
+    BOOL buttonThreadShouldBeActing;
+    NSConnection * mainToButtonThreadConnection;
+    NSConnection * buttonToMainThreadConnection;
 }
 
 #pragma mark -> Subclass Unlikely to Implement (generic implementation) <-
@@ -218,9 +239,8 @@ typedef struct GenericGrabContext
 - (void) grabbingThread: (id) data;
 - (CameraError) decodingThread;
 
-// A couple of methods specific to the bulk driver
-- (void) handleFullChunkWithReadBytes: (UInt32) readSize  error: (IOReturn) err;
-- (void) fillNextChunk;
+- (void) buttonThread:(id)data;
+- (void) mergeCameraEventHappened:(CameraEvent)evt;
 
 - (BOOL) setupDecoding;
 - (BOOL) setupJpegCompression;
