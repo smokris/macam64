@@ -117,13 +117,18 @@
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x405f], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
-            @"Creative WebCam Vista (D)", @"name", NULL], 
+            @"Creative WebCam Vista (D)/ Live! Cam Chat (VF0330)", @"name", NULL], 
         
 		[NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x4061], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
-            @"Creative VF0400 Live! Cam Notebook Pro", @"name", NULL], 
-			
+            @"Creative Live! Cam Notebook Pro (VF0400)", @"name", NULL], 
+        
+		[NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x4064], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Creative Live! Cam Vista IM (VF0420)", @"name", NULL], 
+        
         NULL];
 }
 
