@@ -119,6 +119,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative WebCam Vista (D)", @"name", NULL], 
         
+		[NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x4061], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Creative VF0400 Live! Cam Notebook Pro", @"name", NULL], 
+			
         NULL];
 }
 
@@ -229,7 +234,7 @@
 	if ([self setRegister:OV519_REG_RESET1 toValue:0x0f] < 0) return; // Reset
 	if ([self setRegister:OV519_REG_YS_CTRL toValue:0x6d] < 0) return; // Enables various things (adds "System Reset Mask" to defaults)
 	if ([self setRegister:OV519_REG_EN_CLK0 toValue:0x9b] < 0) return; // adds SCCB (I2C) and audio, unset microcontroller
-	if ([self setRegister:OV519_REG_En_CLK1 toValue:0x0f] < 0) return; // enables video fifo/jpeg/sfifo/cif
+	if ([self setRegister:OV519_REG_En_CLK1 toValue:0xff] < 0) return; // enables video fifo/jpeg/sfifo/cif // AG change
 	if ([self setRegister:OV519_REG_PWDN toValue:0x03] < 0) return; // sets Normal mode (not suspend) and Power Down Reset Mask
 	if ([self setRegister:0x49 toValue:0x01] < 0) return; // undocumented and unnecessary
 	if ([self setRegister:0x48 toValue:0x00] < 0) return; // same as above
@@ -283,6 +288,8 @@
         [self setRegister:OV519_REG_SR toValue:0x38];
     }
     
+    [sensor configure];
+    
 #if REALLY_VERBOSE
 	[self dumpRegisters];
 #endif
@@ -308,6 +315,7 @@
     {
 		case ResolutionSIF:
 		case ResolutionVGA:
+		
 			return YES;
             
 		case ResolutionSQSIF:
@@ -347,7 +355,7 @@
     switch (r) 
     {
         case ResolutionSIF:
-            [self setRegister:OV519_REG_X_OFFSETL toValue:0x01];	// Don't ask why but this make VGA/SIF works correctly (blue image!)
+            [self setRegister:OV519_REG_X_OFFSETL toValue:([sensor isKindOfClass:[OV7670 class]] ? 0x00 : 0x01)];	// Don't ask why but this make VGA/SIF works correctly (blue image!) // AG change
             break;
             
         case ResolutionVGA:
@@ -770,7 +778,6 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 @end
-
 
 
 /*
