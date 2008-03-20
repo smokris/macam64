@@ -253,6 +253,9 @@
 #define VENDOR_AME_CO           0x06be
 #define PRODUCT_AFINA_EYE               0x8116
 
+#define VENDOR_HERCULES         0x06f8
+#define PRODUCT_HERCULES_CLASSIC_SILVER 0x3004      // SN9C105R
+
 #define VENDOR_VIEWQUEST		0x0733
 #define PRODUCT_VQ110                   0x0110      // SPCA508A ?
 #define	PRODUCT_M318B                   0x0402		// SPCA500A ?
