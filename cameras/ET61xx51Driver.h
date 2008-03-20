@@ -26,9 +26,20 @@
 #import <SPCA5XXDriver.h>
 
 
-@interface ET61xx51Driver : SPCA5XXDriver 
-{
+@interface ET61xx51Driver : SPCA5XXDriver
 
-}
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
+
+- (void) setIsocFrameFunctions;
+- (BOOL) decodeBufferProprietary: (GenericChunkBuffer *) buffer;
+
+@end
+
+
+@interface ET61x151Driver : ET61xx51Driver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
 
 @end

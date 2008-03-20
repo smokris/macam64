@@ -80,6 +80,7 @@
 #import "SPCA551Driver.h"
 #import "OV534Driver.h"
 #import "DivioDriver.h"
+#import "ET61xx51Driver.h"
 #import "WinbondDriver.h"
 #import "R5U870Driver.h"
 
@@ -366,6 +367,9 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SPCA551ADriver class]];
 
     [self registerCameraDriver:[DivioDriver class]];
+    
+    [self registerCameraDriver:[ET61xx51Driver class]];
+    [self registerCameraDriver:[ET61x151Driver class]];
     
     [self registerCameraDriver:[WinbondDriver class]];
     

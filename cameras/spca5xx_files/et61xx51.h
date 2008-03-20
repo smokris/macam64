@@ -367,9 +367,9 @@ static void Et_init2(struct usb_spca50x *etx)
     /* Clock Pattern registers ***************** */
     value = 0x00;
     Et_RegWrite(etx->dev, 0x0, 0x0, ET_REG73, &value, 1);
-    value = 0x18;		//0x28
+    value = 0x28;//0x18;		//0x28    //640 - 28    //320 -28
     Et_RegWrite(etx->dev, 0x0, 0x0, ET_REG74, &value, 1);
-    value = 0x0f;		// 0x01
+    value = 0x1f;//0x0f;		// 0x01   //640 - 01   //320 -01
     Et_RegWrite(etx->dev, 0x0, 0x0, ET_REG75, &value, 1);
 	/**********************************************/
     value = 0x20;
@@ -414,25 +414,40 @@ static void Et_init2(struct usb_spca50x *etx)
 	   0x0b -> 24/(11+1) = 2 Mhz
 	   0x17 -> 24/(23+1) = 1 Mhz
 	 */
-	value = 0x1e;		//0x17
+	value = 0x1c;//0x1e;		//0x17  0x05   //640 - 05
 	Et_RegWrite(etx->dev, 0x0, 0x0, ET_PXL_CLK, &value, 1);
 	/* now set by fifo the FormatLine setting */
 	Et_RegWrite(etx->dev, 0x0, 0x0, 0x62, FormLine, 6);
 
     }
-
-    value = 0x47;		// 0x47;  
-    Et_RegWrite(etx->dev, 0x0, 0x0, 0x81, &value, 1);	// set exposure times [ 0..0x78] 0->longvalue 0x78->shortvalue
-    value = 0x40;		//  0x40;  
-    Et_RegWrite(etx->dev, 0x0, 0x0, 0x80, &value, 1);
+//
+//    value = 0x47;		// 0x47;    //70   
+//    Et_RegWrite(etx->dev, 0x0, 0x0, 0x81, &value, 1);	// set exposure times [ 0..0x78] 0->longvalue 0x78->shortvalue
+//    value = 0x40;		//  0x40;   //20   
+//    Et_RegWrite(etx->dev, 0x0, 0x0, 0x80, &value, 1);
     /* Pedro change */
     // Brightness change Brith+ decrease value 
     // Brigth- increase value 
     // original value = 0x70;
-    value = 0x30;		// 0x20; 
+	
+	
+//	value = 0xff;		// 0x20;   //32
+//    Et_RegWrite(etx->dev, 0x0, 0x0, 0x81, &value, 1);	// set brightness
+//    value = 0x00;		// 0x20;
+//   Et_RegWrite(etx->dev, 0x0, 0x0, 0x80, &value, 1);
+//	
+    
+	
+
+	 value =0x9b; //0x70;//0x9b;		// 0x20;   //32//
     Et_RegWrite(etx->dev, 0x0, 0x0, 0x81, &value, 1);	// set brightness
     value = 0x20;		// 0x20;
-    Et_RegWrite(etx->dev, 0x0, 0x0, 0x80, &value, 1);
+    Et_RegWrite(etx->dev, 0x0, 0x0, 0x80, &value, 1);	
+	
+   value = 0x61;//0x32;//0x61;//0x61;		// 0x20;   //32
+    Et_RegWrite(etx->dev, 0x0, 0x0, 0x81, &value, 1);	// set brightness
+    value = 0x00;		// 0x20;
+   Et_RegWrite(etx->dev, 0x0, 0x0, 0x80, &value, 1);
 }
 
 
@@ -661,6 +676,10 @@ static __u16 Et_getcontrast(struct usb_spca50x *etx)
     return etx->contrast;
 }
 
+
+static __u8 my_bright = 0x10;  // This breaks if there are 2 or more cameras...
+
+
 static __u8 Et_getgainG(struct usb_spca50x *etx)
 {
 
@@ -668,10 +687,12 @@ static __u8 Et_getgainG(struct usb_spca50x *etx)
     if (etx->sensor == SENSOR_PAS106) {
 	Et_i2cread(etx->dev, PAS106_REG0e, &value, 1, 1);
 	PDEBUG(5, "Etoms gain G %d", value);
-	return value;
-    } else {
-	return 0x1f;
-    }
+	    }
+	else if(etx->sensor == SENSOR_TAS5130CXX) {
+	value=my_bright;
+   }
+    else 	return 0x1f;
+   return value;
 }
 
 static void Et_setgainG(struct usb_spca50x *etx, __u8 gain)
@@ -688,7 +709,18 @@ static void Et_setgainG(struct usb_spca50x *etx, __u8 gain)
 	Et_i2cwrite(etx->dev, 0x0c, &gain, 1, 1);
 #endif
     }
-
+	else if(etx->sensor == SENSOR_TAS5130CXX) {
+	my_bright = gain;		
+    UInt8 value = 0x70 + ( (my_bright - 0x10) / 16.0 * 70 );
+    Et_RegWrite(etx->dev, 0x0, 0x0, 0x81, &value, 1);	// set brightness
+    value = 0x20;		// 0x20;
+    Et_RegWrite(etx->dev, 0x0, 0x0, 0x80, &value, 1);	
+	//printf ("bright=%d\n",my_bright);
+   // value = 0x78 - (my_bright / 32.0*77.0);//0x61;//0x61;		// 0x20;   //32
+//    Et_RegWrite(etx->dev, 0x0, 0x0, 0x81, &value, 1);	// set brightness
+//    value = 0x00;		// 0x20;
+//    Et_RegWrite(etx->dev, 0x0, 0x0, 0x80, &value, 1);
+   }
 }
 
 #define BLIMIT(bright) (__u8)((bright>0x1F)?0x1f:((bright<4)?3:bright))
@@ -715,6 +747,9 @@ static void Et_setAutobright(struct usb_spca50x *etx)
     PDEBUG(5, "Etoms luma G %d", luma);
     if ((luma < (luma_mean - luma_delta)) ||
 	(luma > (luma_mean + luma_delta))) {
+	if (etx->sensor == SENSOR_PAS106)
+	Gbright += ((luma_mean - luma) >> spring);
+	else
 	Gbright += ((luma_mean - luma) >> spring);
 	Gbright = BLIMIT(Gbright);
 	PDEBUG(5, "Etoms Gbright %d", Gbright);
@@ -758,7 +793,7 @@ static __u16 Et_getcolors(struct usb_spca50x *etx)
 static void set_EtxxVGA(struct usb_spca50x *spca50x)
 {
     memset(spca50x->mode_cam, 0x00, TOTMODE * sizeof(struct mwebcam));
-#if 0
+
     spca50x->mode_cam[VGA].width = 640;
     spca50x->mode_cam[VGA].height = 480;
     spca50x->mode_cam[VGA].t_palette =
@@ -766,6 +801,7 @@ static void set_EtxxVGA(struct usb_spca50x *spca50x)
     spca50x->mode_cam[VGA].pipe = 1000;
     spca50x->mode_cam[VGA].method = 0;
     spca50x->mode_cam[VGA].mode = 0;
+#if 0	
     spca50x->mode_cam[PAL].width = 384;
     spca50x->mode_cam[PAL].height = 288;
     spca50x->mode_cam[PAL].t_palette =
@@ -773,6 +809,7 @@ static void set_EtxxVGA(struct usb_spca50x *spca50x)
     spca50x->mode_cam[PAL].pipe = 1000;
     spca50x->mode_cam[PAL].method = 1;
     spca50x->mode_cam[PAL].mode = 0;
+#endif	
     spca50x->mode_cam[SIF].width = 352;
     spca50x->mode_cam[SIF].height = 288;
     spca50x->mode_cam[SIF].t_palette =
@@ -780,7 +817,7 @@ static void set_EtxxVGA(struct usb_spca50x *spca50x)
     spca50x->mode_cam[SIF].pipe = 1000;
     spca50x->mode_cam[SIF].method = 1;
     spca50x->mode_cam[SIF].mode = 0;
-#endif
+
     spca50x->mode_cam[CIF].width = 320;
     spca50x->mode_cam[CIF].height = 240;
     spca50x->mode_cam[CIF].t_palette =
@@ -788,6 +825,7 @@ static void set_EtxxVGA(struct usb_spca50x *spca50x)
     spca50x->mode_cam[CIF].pipe = 1000;
     spca50x->mode_cam[CIF].method = 0;
     spca50x->mode_cam[CIF].mode = 1;
+#if 0	
     spca50x->mode_cam[QPAL].width = 192;
     spca50x->mode_cam[QPAL].height = 144;
     spca50x->mode_cam[QPAL].t_palette =
@@ -795,6 +833,8 @@ static void set_EtxxVGA(struct usb_spca50x *spca50x)
     spca50x->mode_cam[QPAL].pipe = 1000;
     spca50x->mode_cam[QPAL].method = 1;
     spca50x->mode_cam[QPAL].mode = 1;
+#endif	
+
     spca50x->mode_cam[QSIF].width = 176;
     spca50x->mode_cam[QSIF].height = 144;
     spca50x->mode_cam[QSIF].t_palette =
@@ -802,6 +842,7 @@ static void set_EtxxVGA(struct usb_spca50x *spca50x)
     spca50x->mode_cam[QSIF].pipe = 1000;
     spca50x->mode_cam[QSIF].method = 1;
     spca50x->mode_cam[QSIF].mode = 1;
+	
     spca50x->mode_cam[QCIF].width = 160;
     spca50x->mode_cam[QCIF].height = 120;
     spca50x->mode_cam[QCIF].t_palette =
