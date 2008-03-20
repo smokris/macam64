@@ -86,6 +86,29 @@ registerWriteable
 }
 
 
+- (int) setRegisterArray:(struct register_array *) array
+{
+	while (array->bus != END_OF_ARRAY) 
+    {
+		if (array->bus == CONTROLLER_REGISTER) 
+        {
+			[controller setRegister:array->reg toValue:array->val];
+		} 
+        else if (array->bus == SENSOR_REGISTER) 
+        {
+			[self setRegister:array->reg toValue:array->val];
+		} 
+        else 
+        {
+			return -1;
+		}
+		array++;
+	}
+    
+	return 0;
+}
+
+
 - (int) reset
 {
     // Not implemented

@@ -9,6 +9,24 @@
 #import <MyCameraDriver.h>
 #import <ControllerInterface.h>
 
+
+typedef struct register_array 
+{
+	enum 
+    {
+        END_OF_ARRAY = 0,
+        CONTROLLER_REGISTER = 1,
+        SENSOR_REGISTER = 2,
+        
+		OV511_DONE_BUS = 0,
+		OV511_REG_BUS = 1,
+		OV511_I2C_BUS = 2,
+	} bus;
+	unsigned char reg;
+	unsigned char val;
+} register_array;
+
+
 //
 // This is the interface for all sensors
 // 
@@ -39,7 +57,7 @@
 - (int) getRegister:(UInt8)reg;
 - (int) setRegister:(UInt8)reg toValue:(UInt8)val;
 - (int) setRegister:(UInt8)reg toValue:(UInt8)val withMask:(UInt8)mask;
-
+- (int) setRegisterArray:(struct register_array *) array;
 
 - (int) reset;
 
