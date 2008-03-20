@@ -1036,7 +1036,7 @@
 		F5AEA390097A1D0600D45891 /* PAC7311Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PAC7311Driver.h; sourceTree = "<group>"; };
 		F5AEA391097A1D0700D45891 /* PAC7311Driver.m */ = {isa = PBXFileReference; comments = "OK, But needs work soon"; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PAC7311Driver.m; sourceTree = "<group>"; };
 		F5AEA6EC097D805400D45891 /* cx11646.h */ = {isa = PBXFileReference; comments = "OK, Updated to latest gspca"; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = cx11646.h; path = spca5xx_files/cx11646.h; sourceTree = "<group>"; };
-		F5AEA6ED097D805400D45891 /* et61xx51.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = et61xx51.h; path = spca5xx_files/et61xx51.h; sourceTree = "<group>"; };
+		F5AEA6ED097D805400D45891 /* et61xx51.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; lineEnding = 0; name = et61xx51.h; path = spca5xx_files/et61xx51.h; sourceTree = "<group>"; };
 		F5AEA6EE097D805400D45891 /* mr97311.h */ = {isa = PBXFileReference; comments = "OK, Inserted conditional compiles"; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = mr97311.h; path = spca5xx_files/mr97311.h; sourceTree = "<group>"; };
 		F5AEA6EF097D805400D45891 /* sn9cxxx.h */ = {isa = PBXFileReference; comments = OK; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = sn9cxxx.h; path = spca5xx_files/sn9cxxx.h; sourceTree = "<group>"; };
 		F5AEA6F0097D805400D45891 /* spca500_init.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spca500_init.h; path = spca5xx_files/spca500_init.h; sourceTree = "<group>"; };
