@@ -69,7 +69,7 @@
     
     [LUT setDefaultOrientation:NormalOrientation];
     
-    driverType = bulkDriver;
+    driverType = isochronousDriver;
     
     decodingSkipBytes = 0;
     
@@ -526,6 +526,20 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
             @"Sony HD Eye for PS3 (SLEH 00201)", @"name", NULL],
         
         NULL];
+}
+
+//
+// Initialize the driver
+//
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    driverType = bulkDriver;
+    
+	return self;
 }
 
 @end
