@@ -750,17 +750,20 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     hardwareSaturation = YES;
     
     // General bridge settings - These are valid for all the bridges, '102P, '105, '120 etc
+    
     cameraOperation = &fsn9cxx;
     spca50x->bridge = BRIDGE_SN9CXXX;
     spca50x->cameratype = JPGS;	// jpeg 4.2.2 whithout header
     spca50x->i2c_ctrl_reg = 0x81;
     
     // Bridge and sensor settings are set up in [startupCamera]
+    
     spca50x->customid = SN9C102P;
     spca50x->sensor = SENSOR_HV7131R;
     spca50x->i2c_base = 0x11;
     
     // Sometimes a specific camera needs to be identified in the gspca code
+    
     spca50x->desc = AnySN9C1xxCamera; // used to be SpeedNVC350K
     
 	return self;
@@ -990,7 +993,6 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 - (BOOL) setGrabInterfacePipe
 {
     return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:8];
-//  return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
 }
 
 @end
@@ -1046,6 +1048,11 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:VENDOR_MICROSOFT], @"idVendor",
             @"Microsoft LifeCam VX-3000", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys: 
+            [NSNumber numberWithUnsignedShort:PRODUCT_HERCULES_CLASSIC_SILVER], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_HERCULES], @"idVendor", 
+            @"Hercules Classic Silver", @"name", NULL],  
+        
         NULL];
 }
 
@@ -1055,14 +1062,8 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	if (self == NULL) 
         return NULL;
     
-//  spca50x->sensor = SENSOR_HV7131R; // NOT in VX-3000 base = 0x11
-//  spca50x->sensor = SENSOR_MI0360;  // NOT in VX-3000 base = 0x5d
-//  spca50x->sensor = SENSOR_MO4000;  // NOT in VX-3000 base = 0x21
-    
     spca50x->sensor = SENSOR_OV7660;  // for LifeCam VX-1000 base = 0x21, seems to work for VX-3000 as well
     spca50x->customid = SN9C105;
-    
-    spca50x->cameratype = JPGS;
     
 	return self;
 }
