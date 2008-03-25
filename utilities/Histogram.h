@@ -24,10 +24,24 @@
     int highThreshold;
     int lowPower;
     int highPower;
+    
+    int width;
+    int height;
+    struct timeval tvCurrent;
+
+    UInt8 * buffer;
+    int rowBytes;
+    int bytesPerPixel;
+    BOOL  newBuffer;
+    struct timeval tvNew;
 }
 
 - (id) init;
 
+- (void) setWidth:(int)newWidth andHeight:(int)newHeight;
+- (void) setupBuffer:(UInt8 *)buffer rowBytes:(int)rowBytes bytesPerPixel:(int)bpp;
+
+- (void) processRGB;
 - (void) processRGB:(UInt8 *)buffer width:(int)width height:(int)height rowBytes:(int)rowBytes bpp:(int)bpp;
 - (void) processOne:(UInt8 *)buffer width:(int)width height:(int)height rowBytes:(int)rowBytes bpp:(int)bpp;
 - (void) calculateStatistics;
@@ -42,5 +56,7 @@
 - (int) getHighPower;
 
 - (void) drawImage:(NSImageView *)view withMiddle:(int)middle low:(int)low high:(int)high;
+- (void) setImage:(NSImageView *)view;
+- (void) draw;
 
 @end

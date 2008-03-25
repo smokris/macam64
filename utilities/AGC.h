@@ -8,6 +8,7 @@
 
 
 #import <Cocoa/Cocoa.h>
+#import <Histogram.h>
 
 
 //
@@ -27,7 +28,12 @@
 
 @interface AGC : NSObject 
 {
-
+    BOOL softwareAGCon;
+    
 }
+
+
+- (BOOL) update:(Histogram *) histogram;
+
 
 @end

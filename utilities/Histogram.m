@@ -9,6 +9,8 @@
 
 #import "Histogram.h"
 
+#include <unistd.h>
+
 
 @implementation Histogram
 
@@ -23,9 +25,31 @@
 }
 
 
-- (void) processRGB:(UInt8 *)buffer width:(int)width height:(int)height rowBytes:(int)rowBytes bpp:(int)bpp
+- (void) setWidth:(int)newWidth andHeight:(int)newHeight
+{
+    width = newWidth;
+    height = newHeight;
+}
+
+
+- (void) setupBuffer:(UInt8 *)aBuffer rowBytes:(int)aRowBytes bytesPerPixel:(int)bpp
+{
+    gettimeofday(&tvNew, NULL);
+    
+    newBuffer = YES;
+    
+    buffer = aBuffer;
+    rowBytes = aRowBytes;
+    bytesPerPixel = bpp;
+}
+
+
+- (void) processRGB
 {
     int i, j;
+    
+    if (!newBuffer) 
+        return;
     
     [self reset];
     
@@ -33,19 +57,25 @@
     {
         UInt8 * p = buffer + j * rowBytes;
         
-        for (i = 0; i < width; i++, p += bpp) 
+        for (i = 0; i < width; i++, p += bytesPerPixel) 
         {
             value[p[0]]++;
             value[p[1]]++;
             value[p[2]]++;
         }
     }
+    
+    tvCurrent = tvNew;
+    newBuffer = NO;
 }
 
 
-- (void) processOne:(UInt8 *)buffer width:(int)width height:(int)height rowBytes:(int)rowBytes bpp:(int)bpp
+- (void) processOne
 {
     int i, j;
+    
+    if (!newBuffer) 
+        return;
     
     [self reset];
     
@@ -53,9 +83,28 @@
     {
         UInt8 * p = buffer + j * rowBytes;
         
-        for (i = 0; i < width; i++, p += bpp) 
+        for (i = 0; i < width; i++, p += bytesPerPixel) 
             value[*p]++;
     }
+    
+    tvCurrent = tvNew;
+    newBuffer = NO;
+}
+
+
+- (void) processRGB:(UInt8 *)theBuffer width:(int)newWidth height:(int)newHeight rowBytes:(int)newRowBytes bpp:(int)newBpp
+{
+    [self setWidth:newWidth andHeight:newHeight];
+    [self setupBuffer:theBuffer rowBytes:newRowBytes bytesPerPixel:newBpp];
+    [self processRGB];
+}
+
+
+- (void) processOne:(UInt8 *)theBuffer width:(int)newWidth height:(int)newHeight rowBytes:(int)newRowBytes bpp:(int)newBpp
+{
+    [self setWidth:newWidth andHeight:newHeight];
+    [self setupBuffer:theBuffer rowBytes:newRowBytes bytesPerPixel:newBpp];
+    [self processOne];
 }
 
 
@@ -250,5 +299,16 @@
     
     [view setImage:image];
 }
+
+
+- (void) setImage:(NSImageView *)view
+{
+}
+
+
+- (void) draw
+{
+}
+
 
 @end
