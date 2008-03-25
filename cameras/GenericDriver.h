@@ -37,9 +37,11 @@
 // - USB2 high-speed transfers
 //
 
-#include "MyCameraDriver.h"
-#include "BayerConverter.h"
-#include "LookUpTable.h"
+#import "MyCameraDriver.h"
+#import "BayerConverter.h"
+#import "LookUpTable.h"
+#import "Histogram.h"
+#import "AGC.h"
 
 #include "sys/time.h"
 
@@ -186,6 +188,9 @@ typedef struct GenericGrabContext
     BayerConverter * bayerConverter; // Our decoder for Bayer Matrix sensors, will be NULL if not a Bayer image
     LookUpTable * LUT; // Process brightness, contrast, saturation, and gamma for those without BayerConverters
     
+    Histogram * histogram;
+    AGC * agc;  // Automatic Gain Control software algorithm used for some cameras
+    
     BOOL hardwareBrightness;
     BOOL hardwareContrast;
     BOOL hardwareSaturation;
@@ -195,6 +200,7 @@ typedef struct GenericGrabContext
     BOOL hardwareFlicker;
     
     BOOL buttonInterrupt;
+    UInt32 buttonMessageLength;
     
     int decodingSkipBytes;
     
@@ -273,6 +279,9 @@ typedef struct GenericGrabContext
 - (BOOL) canSetWhiteBalanceMode;
 - (BOOL) canSetWhiteBalanceModeTo: (WhiteBalanceMode) newMode;
 - (void) setWhiteBalanceMode: (WhiteBalanceMode) newMode;
+
+- (UInt8) getButtonPipe;
+- (BOOL) buttonDataHandler:(UInt8 *)data length:(UInt32)length;
 
 #pragma mark -> Subclass May Implement (default implementation works) <-
 

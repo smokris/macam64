@@ -77,6 +77,9 @@
 	bayerConverter = NULL;
     LUT = NULL;
     
+    histogram = [[Histogram alloc] init];
+    agc = [[AGC alloc] init];
+    
     hardwareBrightness = NO;
     hardwareContrast = NO;
     hardwareSaturation = NO;
@@ -86,6 +89,7 @@
     hardwareFlicker = NO;   
     
     buttonInterrupt = NO;
+    buttonMessageLength = 0;
     
     decodingSkipBytes = 0;
     
@@ -1656,6 +1660,18 @@ static bool startNextBulkRead(GenericGrabContext * gCtx, int transferIdx)
     [super shutdown];
 }
 
+//
+//  This must be sub-classed for a real button handler
+//
+- (BOOL) buttonDataHandler:(UInt8 *)data length:(UInt32)length
+{
+#ifdef VERBOSE
+    NSLog(@"Button Down?: unknown data on interrupt pipe:%i, %i (%i)", data[0], data[1], length);
+#endif
+    
+    return NO;
+}
+
 
 - (void) buttonThread:(id)data 
 {
@@ -1668,12 +1684,15 @@ static bool startNextBulkRead(GenericGrabContext * gCtx, int transferIdx)
     
     while (buttonThreadShouldBeRunning && isUSBOK) 
     {
-        UInt32 length = 2;
-        unsigned char camData[2];
+        UInt32 length = buttonMessageLength;
+        unsigned char camData[length];
         
         (*streamIntf)->ReadPipe(streamIntf, [self getButtonPipe], camData, &length);
-        if (length == 2) 
-        {
+        
+        if ([self buttonDataHandler:camData length:length]) 
+            if (buttonThreadShouldBeRunning && buttonThreadShouldBeActing) 
+                [self mergeCameraEventHappened:CameraEventSnapshotButtonDown];
+
             /*
             switch (camData) 
             {
@@ -1688,22 +1707,7 @@ static bool startNextBulkRead(GenericGrabContext * gCtx, int transferIdx)
                 case 194:	//sometimes sent on grab start / stop
                     break;
                 default:
-                    */
-#ifdef VERBOSE
-                    NSLog(@"Button Down: unknown data on interrupt pipe:%i, %i", camData[0], camData[1]);
-                    if (camData[0] == 0x5a && camData[1] == 0x5a) 
-                        if (buttonThreadShouldBeRunning && buttonThreadShouldBeActing) 
-                            [self mergeCameraEventHappened:CameraEventSnapshotButtonDown];
-
-#endif
-            /*
-                    break;
-            }
-             */
-            camData[0] = 194;
-            camData[1] = 75;
-            (*streamIntf)->WritePipe(streamIntf, 4, camData, length);
-        }
+            */
     }
     
     buttonThreadRunning = NO;
@@ -1923,6 +1927,15 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     }
     else 
         NSLog(@"GenericDriver - decodeBuffer must be implemented");
+    
+    if (ok) 
+    {
+        [histogram setupBuffer:nextImageBuffer rowBytes:nextImageBufferRowBytes bytesPerPixel:nextImageBufferBPP];  // store (pointers to) data
+        
+        [agc update:histogram];  // update histogram if necessary, compute agc
+        
+        [histogram draw];  // update histogram if necessary, draw in view already specified
+    }
     
     return ok;
 }

@@ -813,6 +813,7 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
     [self setCompression:0];
     
     buttonInterrupt = YES; // need to specify pipe, length, proper value for snapshot
+    buttonMessageLength = 2;
     
     histogram = [[Histogram alloc] init];
     
@@ -923,6 +924,24 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
 - (UInt8) getButtonPipe
 {
     return 3;
+}
+
+
+- (BOOL) buttonDataHandler:(UInt8 *)data length:(UInt32)length
+{
+    BOOL result = NO;
+    
+    if (length == 2) 
+    {
+        if (data[0] == 0x5a && data[1] == 0x5a) 
+            result = YES;
+        
+        data[0] = 194;  // 0xc2
+        data[1] = 75;   // 0x4b
+        (*streamIntf)->WritePipe(streamIntf, 4, data, length);
+    }
+    
+    return result;
 }
 
 
