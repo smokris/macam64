@@ -46,6 +46,11 @@ enum
             [NSNumber numberWithUnsignedShort:0x0733], @"idVendor",
             @"Digital Dream Epsilon 1.3", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x5330], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x04fc], @"idVendor",
+            @"Securesight VL1 Digital Video Recorder", @"name", NULL], 
+        
         NULL];
 }
 
