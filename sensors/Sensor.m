@@ -119,6 +119,21 @@ registerWriteable
 }
 
 
+- (void) setResolution1:(CameraResolution)r fps:(short)fr
+{
+}
+
+
+- (void) setResolution2:(CameraResolution)r fps:(short)fr
+{
+}
+
+
+- (void) setResolution3:(CameraResolution)r fps:(short)fr
+{
+}
+
+
 - (void) setResolution:(CameraResolution)r fps:(short)fr
 {
 }
