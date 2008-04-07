@@ -14,14 +14,58 @@
 
 @implementation Histogram
 
+
 - (id) init
 {
     self = [super init];
     
     [self reset];
     threshold = 10;
+    width = 0;
+    height = 0;
+    
+    buffer = NULL;
+    rowBytes = 0;
+    bytesPerPixel = 3;
+    newBuffer = FALSE;
+    
+    image = NULL;
+    view = NULL;
+    
+    gettimeofday(&tvCurrent, NULL);
+    gettimeofday(&tvNew, NULL);
+    gettimeofday(&tvLastDraw, NULL);
+    
+    middle = 0;
+    low = 0;
+    height = 0;
     
     return self;
+}
+
+
+- (void) reset
+{
+    int i;
+    
+    for (i = 0; i < 256; i++) 
+        value[i] = 0;
+    
+    max = 0;
+    total = 0;
+    median = -1;
+    centroid = -1;
+    
+    lowThreshold = -1;
+    highThreshold = -1;
+    lowPower = -1;
+    highPower = -1;
+}
+
+
+- (void) setView:(NSImageView *) newView
+{
+    view = newView;
 }
 
 
@@ -89,22 +133,6 @@
     
     tvCurrent = tvNew;
     newBuffer = NO;
-}
-
-
-- (void) processRGB:(UInt8 *)theBuffer width:(int)newWidth height:(int)newHeight rowBytes:(int)newRowBytes bpp:(int)newBpp
-{
-    [self setWidth:newWidth andHeight:newHeight];
-    [self setupBuffer:theBuffer rowBytes:newRowBytes bytesPerPixel:newBpp];
-    [self processRGB];
-}
-
-
-- (void) processOne:(UInt8 *)theBuffer width:(int)newWidth height:(int)newHeight rowBytes:(int)newRowBytes bpp:(int)newBpp
-{
-    [self setWidth:newWidth andHeight:newHeight];
-    [self setupBuffer:theBuffer rowBytes:newRowBytes bytesPerPixel:newBpp];
-    [self processOne];
 }
 
 
@@ -180,24 +208,6 @@
 }
 
 
-- (void) reset
-{
-    int i;
-    
-    for (i = 0; i < 256; i++) 
-        value[i] = 0;
-    
-    max = 0;
-    total = 0;
-    median = -1;
-    lowThreshold = -1;
-    highThreshold = -1;
-    centroid = -1;
-    lowPower = -1;
-    highPower = -1;
-}
-
-
 - (int) getMedian
 {
     if (median < 0) 
@@ -252,12 +262,40 @@
 }
 
 
-- (void) drawImage:(NSImageView *)view withMiddle:(int)middle low:(int)low high:(int)high
+- (void) draw
 {
+    struct timeval currentTime, difference;
+    int diffMilliSeconds;
+    
+    if (view == NULL) 
+        return;
+    
+    gettimeofday(&currentTime, NULL);
+    timersub(&currentTime, &tvLastDraw, &difference);
+    diffMilliSeconds = (int) (difference.tv_sec * 1000 + difference.tv_usec / 1000);
+    
+//  NSLog(@"Histogram drawing difference = %d ms.\n", diffMilliSeconds);
+    
+    if (diffMilliSeconds < 500) 
+        return;
+    
+    tvLastDraw = currentTime;
+    [self processRGB];
+    
+    middle = [self getMedian];
+    low = [self getLowThreshold];
+    high = [self getHighThreshold];
+    
+    // draw
+    
     int i;
     NSPoint from, to;
     NSRect bounds = [view bounds];
-    NSImage * image = [[NSImage alloc] initWithSize:bounds.size];
+    
+    if (image != NULL) 
+        [image release];
+    
+    image = [[NSImage alloc] initWithSize:bounds.size];
     
     [image lockFocus];
     
@@ -298,16 +336,6 @@
     [image unlockFocus];
     
     [view setImage:image];
-}
-
-
-- (void) setImage:(NSImageView *)view
-{
-}
-
-
-- (void) draw
-{
 }
 
 

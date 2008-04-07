@@ -23,7 +23,10 @@
 //
 
 #import "GenericDriver.h"
-#import "ControllerInterface.h"
+#import "ControllerInterface.h"  // chip interface
+#import "MyController.h"         // user interface
+#import "Histogram.h"
+#import "AGC.h"
 
 #include "MiscTools.h"
 #include "Resolvers.h"
@@ -72,6 +75,7 @@
     
     driverType = isochronousDriver; // This is the default
     exactBufferLength = 0;
+    minimumBufferLength = 0;
     
     grabbingThreadRunning = NO;
 	bayerConverter = NULL;
@@ -1086,6 +1090,11 @@ static bool startNextBulkRead(GenericGrabContext * gCtx, int transferIdx)
     BOOL ok = YES;
     long i;
     
+    [histogram setWidth:[self width] andHeight:[self height]];
+#ifdef DEBUG
+    [histogram setView:[(MyController *) [[self central] delegate] getHistogramView]];
+#endif
+    
     if (ok && driverType == isochronousDriver) 
         ChangeMyThreadPriority(10);	// We need to update the isoch read in time, so timing is important for us
     
@@ -1462,6 +1471,16 @@ static bool startNextBulkRead(GenericGrabContext * gCtx, int transferIdx)
     
     RectMatrix(&scaleMatrix, &QuicktimeDecoding.boundsRect, &QuicktimeDecoding.boundsRect);
     
+    err = QTNewGWorld(&QuicktimeDecoding.gworldPtr,     // returned GWorld
+                      (nextImageBufferBPP == 4) ? k32ARGBPixelFormat : k24RGBPixelFormat,               // pixel format
+                      &QuicktimeDecoding.boundsRect,    // bounding rectangle
+                      0,                                // color table
+                      NULL,                             // graphic device handle
+                      0);                               // flags
+    
+    if (err) 
+        ok = NO;
+    
     err = DecompressSequenceBeginS(&SequenceDecoding.sequenceIdentifier, 
                             QuicktimeDecoding.imageDescription, 
                                    NULL, 
@@ -1472,7 +1491,7 @@ static bool startNextBulkRead(GenericGrabContext * gCtx, int transferIdx)
                             &scaleMatrix, 
                             srcCopy,
                             NULL, 
-                            codecFlagUseImageBuffer, // codecFlagUseImageBuffer ? or 0 ?
+                            0, // codecFlagUseImageBuffer, // codecFlagUseImageBuffer ? or 0 ?
                             codecNormalQuality, 
                             NULL);
     
@@ -1745,10 +1764,10 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
 }
 
 
-- (void) decodeBufferCocoaJPEG: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBufferCocoaJPEG: (GenericChunkBuffer *) buffer
 {
     CGDataProviderRef provider = CGDataProviderCreateWithData(NULL, buffer->buffer, buffer->numBytes, BufferProviderRelease);
-    CGImageRef image = CGImageCreateWithJPEGDataProvider(provider, NULL, false, kCGRenderingIntentDefault);
+    CGImageRef image = CGImageCreateWithJPEGDataProvider(provider, NULL, false /* interpolate */, kCGRenderingIntentDefault);
     
     CGContextDrawImage(CocoaDecoding.imageContext, CocoaDecoding.rect, image);
     
@@ -1762,10 +1781,12 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
                  numRows:[self height] 
                 rowBytes:nextImageBufferRowBytes 
                      bpp:nextImageBufferBPP];
+    
+    return YES;  // Wish there was a way to detect errors!
 }
 
 
-- (void) decodeBufferQuicktimeImage: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBufferQuicktimeImage: (GenericChunkBuffer *) buffer
 {
     OSErr err;
     GWorldPtr gw;
@@ -1778,7 +1799,7 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
                              nextImageBuffer,
                              nextImageBufferRowBytes);
     if (err) 
-        return;
+        return NO;
     
     (**QuicktimeDecoding.imageDescription).dataSize = buffer->numBytes;
     
@@ -1794,6 +1815,13 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     
     SetGWorld(oldPort, oldGDev);
     DisposeGWorld(gw);
+    
+#if REALLY_VERBOSE
+    if (err) 
+        printf("QuickTime image decoding error!\n");
+#endif
+    
+    return (err) ? NO : YES;
 }
 
 /*
@@ -1824,19 +1852,35 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
 }
 */
 
-- (void) decodeBufferQuicktimeSequence: (GenericChunkBuffer *) buffer
+- (BOOL) decodeBufferQuicktimeSequence: (GenericChunkBuffer *) buffer
 {
     OSErr err;
     
     err = DecompressSequenceFrameS(SequenceDecoding.sequenceIdentifier, 
                              (Ptr) (buffer->buffer + decodingSkipBytes),
                              buffer->numBytes - decodingSkipBytes, 0, NULL, NULL);
+            
+    [LUT processImageFrom:(UInt8 *) (* GetGWorldPixMap(QuicktimeDecoding.gworldPtr))->baseAddr
+                     into:nextImageBuffer
+                  numRows:[self height]
+             fromRowBytes:(* GetGWorldPixMap(QuicktimeDecoding.gworldPtr))->rowBytes
+             intoRowBytes:nextImageBufferRowBytes
+                  fromBPP:(* GetGWorldPixMap(QuicktimeDecoding.gworldPtr))->pixelSize/8
+               alphaFirst:NO];
     
+    /*
     [LUT processImageRep:QuicktimeDecoding.imageRep 
                   buffer:nextImageBuffer 
                  numRows:[self height] 
                 rowBytes:nextImageBufferRowBytes 
                      bpp:nextImageBufferBPP];
+    */
+#if REALLY_VERBOSE
+    if (err) 
+        printf("QuickTime Sequence decoding error!\n");
+#endif
+    
+    return (err) ? NO : YES;
 }
 
 - (BOOL) decodeBufferJPEG: (GenericChunkBuffer *) buffer
@@ -1867,6 +1911,9 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     GenericChunkBuffer newBuffer;
     
     if ((exactBufferLength > 0) && (exactBufferLength != buffer->numBytes)) 
+        return NO;
+    
+    if ((minimumBufferLength > 0) && (minimumBufferLength > buffer->numBytes)) 
         return NO;
     
 #if REALLY_VERBOSE
@@ -1901,21 +1948,21 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
                 NSLog(@"GenericDriver - decodeBuffer encountered unknown jpegVersion (%i)", jpegVersion);
             case 2:
             case 1:
-                [self decodeBufferCocoaJPEG:&newBuffer];
+                ok = [self decodeBufferCocoaJPEG:&newBuffer];
                 break;
         }
     }
     else if (compressionType == quicktimeImage) 
     {
-        [self decodeBufferQuicktimeImage:&newBuffer];
+        ok = [self decodeBufferQuicktimeImage:&newBuffer];
     }
     else if (compressionType == quicktimeSequence) 
     {
-        [self decodeBufferQuicktimeSequence:&newBuffer];
+        ok = [self decodeBufferQuicktimeSequence:&newBuffer];
     }
     else if (compressionType == noCompression) 
     {
-        // ???
+        // ??? just the LUT copy?
     }
     else if (compressionType == gspcaCompression) 
     {

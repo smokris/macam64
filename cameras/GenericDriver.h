@@ -40,8 +40,6 @@
 #import "MyCameraDriver.h"
 #import "BayerConverter.h"
 #import "LookUpTable.h"
-#import "Histogram.h"
-#import "AGC.h"
 
 #include "sys/time.h"
 
@@ -95,6 +93,11 @@ typedef struct GenericFrameInfo
     int averageRedGreen;
     int averageRedGreenSet;
 } GenericFrameInfo;
+
+// Forward declarations
+
+@class AGC;
+@class Histogram;
 
 // The scanner is just a placeholder whereas the copier is fully usable
 
@@ -184,6 +187,7 @@ typedef struct GenericGrabContext
     BOOL grabbingThreadRunning;
     int videoBulkReadsPending;
     long exactBufferLength;
+    long minimumBufferLength;
     
     BayerConverter * bayerConverter; // Our decoder for Bayer Matrix sensors, will be NULL if not a Bayer image
     LookUpTable * LUT; // Process brightness, contrast, saturation, and gamma for those without BayerConverters
@@ -256,9 +260,9 @@ typedef struct GenericGrabContext
 - (BOOL) setupQuicktimeSequenceCompression;
 - (void) cleanupDecoding;
 
-- (void) decodeBufferCocoaJPEG: (GenericChunkBuffer *) buffer;
-- (void) decodeBufferQuicktimeImage: (GenericChunkBuffer *) buffer;
-- (void) decodeBufferQuicktimeSequence: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBufferCocoaJPEG: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBufferQuicktimeImage: (GenericChunkBuffer *) buffer;
+- (BOOL) decodeBufferQuicktimeSequence: (GenericChunkBuffer *) buffer;
 
 
 #pragma mark -> Subclass May Implement (works for BayerConverter) <-
