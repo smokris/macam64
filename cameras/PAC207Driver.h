@@ -48,8 +48,6 @@
 {
     UInt8 * decodingBuffer;  // Need an intermediate buffer for decompression
 	struct code_table codeTable[256];
-    
-    Histogram * histogram;
 }
 
 + (NSArray *) cameraUsbDescriptions;
