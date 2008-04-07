@@ -214,10 +214,17 @@
 #import "OV7670.h"
 
 
+#define RUNNING_AVERAGE_MAX 10
+
+
 @interface OV519Driver : GenericDriver 
 {
     Sensor * sensor;
-//    UInt8   sensorSID;
+    
+    float runningAverageMin;
+    int runningAverageNext;
+    int runningAverageCount;
+    int runningAverage[RUNNING_AVERAGE_MAX];
 }
 
 + (NSArray *) cameraUsbDescriptions;
