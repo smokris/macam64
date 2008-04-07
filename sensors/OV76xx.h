@@ -31,6 +31,8 @@
 @interface OV76xx : OmniVisionSensor 
 {}
 
+- (id) initWithController:(MyCameraDriver *) driver;
+
 - (int) configure;
 
 @end

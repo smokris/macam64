@@ -64,13 +64,13 @@
         NSLog(@"The sensor appears to be in the OV76xx series (%02x).\n", lsb);
     
     if (lsb == OMNIVISION_OV7640_ID_LSB_VALUE) // EyeToy etc.
-        sensor = [[OV7640 alloc] init];
+        sensor = [[OV7640 alloc] initWithController:driver];
     
     if (lsb == OMNIVISION_OV7660_ID_LSB_VALUE) 
-        sensor = [[OV7660 alloc] init];
+        sensor = [[OV7660 alloc] initWithController:driver];
     
     if (lsb == OMNIVISION_OV7670_ID_LSB_VALUE) // Creative Labs Live! Cam Vista IM
-        sensor = [[OV7670 alloc] init];
+        sensor = [[OV7670 alloc] initWithController:driver];
     
     return sensor;
 }
@@ -88,11 +88,13 @@
 }
 
 
-- (id) init
+- (id) initWithController:(MyCameraDriver *) driver
 {
     self = [super init];
 	if (self == NULL) 
         return NULL;
+    
+    controller = driver;
     
     [self configure];
     
@@ -104,7 +106,8 @@
 {
     int result = 0;
     
-    result = [self setRegister:0x12 toValue:0x80]; // reset
+    result = [self reset];
+//  result = [self setRegister:0x12 toValue:0x80]; // reset
     if (result < 0) 
         return result;
     
@@ -118,7 +121,11 @@
 
 - (int) reset
 {
-	return [self setRegister:OV7648_REG_COMA toValue:0x80];
+    int result = [self setRegister:OV7648_REG_COMA toValue:0x80];
+    
+    usleep(150 * 1000);
+    
+    return result;
 }
 
 
