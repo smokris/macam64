@@ -145,8 +145,15 @@
 	if (LUT == NULL) 
         return NULL;
     
-    compressionType = jpegCompression;
+//  compressionType = jpegCompression;  // No error checking on image, get flickering sometimes
     jpegVersion = 1;
+    
+    compressionType = quicktimeImage;  // Does some error checking on image
+    quicktimeCodec = kJPEGCodecType;
+    
+    runningAverageMin = 0.61803399;  // Golden Ration is always a good constant! (seems to work well)
+    runningAverageNext = 0;
+    runningAverageCount = 4;
     
     // Allocate memory
     // Initialize variables and other structures
@@ -264,6 +271,8 @@
 	// ^^^ unnecessary (and undocumented on OV519 specs)
 	if ([self setRegister:OV519_REG_CAMERA_CLOCK toValue:0x04] < 0) return; // from windrv 090403
 	
+    // reset i2c, reset sensor here?
+    
 	if ([self setRegister:OV519_REG_DFR toValue:0x10 withMask:0x50] < 0) return;	// 8-bit mode (color) (bridge->host)
 																			// it's also possible to choose CCIR with 6th bit
 																			// 0 - CCIR601, 1 - CCIR656
@@ -357,6 +366,8 @@
 	if (isGrabbing) 
         return;
     
+    [sensor setResolution1:r fps:fr];
+    
     switch (r) 
     {
         case ResolutionSIF:
@@ -370,6 +381,8 @@
         default:
             break;
     }
+    
+    [sensor setResolution2:r fps:fr];
     
     switch (fr) 
     {
@@ -409,6 +422,8 @@
             break;
     }
     
+    [sensor setResolution3:r fps:fr];
+    
     if ([self setRegister:OV519_REG_H_SIZE toValue:width/16] < 0) 
         return;
     
@@ -422,21 +437,21 @@
 - (void) setBrightness: (float) v
 {
 	[super setBrightness:v];
-//  [sensor setBrightness:v];
+    [sensor setBrightness:v];
 }
 
 
 - (void) setSaturation: (float) v
 {
 	[super setSaturation:v];
-//  [sensor setSaturation:v];
+    [sensor setSaturation:v];
 }
 
 
 - (void) setGain: (float) v
 {
 	[super setBrightness:v];
-//  [sensor setGain:v];
+    [sensor setGain:v];
 }
 
 
@@ -530,7 +545,7 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     *tailStart = frameLength;
     *tailLength = 0;
     
-#if REALLY_VERBOSE
+#if 0
     if (frameLength == 0) 
         printf("zero-length buffer\n");
     else 
@@ -543,11 +558,11 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     if (buffer[0] == 0xff && buffer[1] == 0xff && buffer[2] == 0xff) 
     {
-#if REALLY_VERBOSE
-        printf("HEADER!\n");
-#endif
 		if (buffer[3] == 0x50) // Start of frame
         {
+#if REALLY_VERBOSE
+//            printf("HEADER!\n");
+#endif
 			if (buffer[9] == 0x01) 
                 return invalidFrame;
             
@@ -560,6 +575,9 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 		} 
         else if (buffer[3] == 0x51) // End of frame
         {
+#if REALLY_VERBOSE
+//            printf("footer!\n");
+#endif
 			if (currState == WAIT_NEW) // It's common to have EOF without SOF at beginning of the stream
                 return invalidFrame;
             
@@ -567,17 +585,18 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 				return invalidFrame;
 			
 			currState = WAIT_NEW;
+            
+			*dataStart = 16;
+			*dataLength = 0;
+            
 #if REALLY_VERBOSE
 			if (currLen != 8 * (buffer[15]*256 + buffer[14])) // this check could be useful for debugging
             {
                 printf("End of frame length value (%d) does not correspond to total length (%d)\n", 
                        8 * (buffer[15]*256 + buffer[14]), currLen);
-//                return invalidFrame;
+//                return invalidChunk;
             }
 #endif
-			*dataStart = 16;
-			*dataLength = 0;
-            
 			return validFrame;
 		} 
 	} 
@@ -605,6 +624,11 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 - (BOOL) startupGrabStream 
 {
+    int i;
+    
+    for (i = 0; i < runningAverageCount; i++) 
+        runningAverage[i] = 0;
+
 //  if ([self setRegister:0x2f val:0x80] < 0) // no comment in ov51x, undocumented and not necessary
 //      return FALSE;
 	
@@ -628,6 +652,30 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     [self usbSetAltInterfaceTo:0 testPipe:[self getGrabbingPipe]];
     
 	return;
+}
+
+
+- (BOOL) decodeBuffer:(GenericChunkBuffer *) buffer
+{
+    int i;
+    long limit = 0;
+    
+    for (i = 0; i < runningAverageCount; i++) 
+        limit += runningAverage[i];
+    limit = runningAverageMin * limit / runningAverageCount;
+    
+    runningAverage[runningAverageNext] = buffer->numBytes;
+    runningAverageNext = (runningAverageNext + 1) % runningAverageCount;
+    
+    if (buffer->numBytes < limit) 
+    {
+#if REALLY_VERBOSE
+        printf("Frame dropped because it was too short, length=%ld, limit=%ld\n", buffer->numBytes, limit);
+#endif
+        return NO;
+    }
+    
+    return [super decodeBuffer:buffer];
 }
 
 //
