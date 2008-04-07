@@ -96,7 +96,7 @@
     
     controller = driver;
     
-    [self configure];
+//    [self configure];
     
     return self;
 }
