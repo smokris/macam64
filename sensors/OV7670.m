@@ -207,6 +207,7 @@ static register_array registersNormal7670[] =
 	{ OV511_I2C_BUS, 0x53, 0x5e }, 	/* "matrix coefficient 5" */
 	{ OV511_I2C_BUS, 0x54, 0x80 }, 	/* "matrix coefficient 6" */
 	{ OV511_I2C_BUS, OV7670_REG_COM13, OV7670_COM13_GAMMA|OV7670_COM13_UVSAT },
+    
 	{ OV511_DONE_BUS, 0x0, 0x00 },
 };	
 
