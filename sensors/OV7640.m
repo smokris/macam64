@@ -12,7 +12,7 @@
 @implementation OV7640
 
 
-- (void) setResolution:(CameraResolution)r fps:(short)fr
+- (void) setResolution1:(CameraResolution)r fps:(short)fr
 {
     switch (r) 
     {
@@ -29,7 +29,11 @@
         default:
             break;
     }
-    
+}
+
+
+- (void) setResolution3:(CameraResolution)r fps:(short)fr
+{
     switch (fr) 
     {
         // FIXME (from ov51x): these are only valid at the max resolution.
@@ -65,10 +69,10 @@
 - (void) setBrightness:(float)v
 {
     UInt8 value = (UInt8) (v*255);
-    NSLog(@"Setting brightness to %02x.\n", value);
+//    NSLog(@"Setting brightness to %02x.\n", value);
 	[self setRegister:OV7648_REG_BRT toValue:value];
-    value = [self getRegister:OV7648_REG_BRT];
-    NSLog(@"Returned brightness is %02x.\n", value);
+//    value = [self getRegister:OV7648_REG_BRT];
+//    NSLog(@"Returned brightness is %02x.\n", value);
 }
 
 
@@ -81,10 +85,10 @@
 - (void) setSaturation:(float)v
 {
     UInt8 value = ((UInt8) (v*255)) & 0xf0;
-    NSLog(@"Setting saturation to %02x.\n", value);
+//    NSLog(@"Setting saturation to %02x.\n", value);
 	[self setRegister:OV7648_REG_SAT toValue:value];	// some bit are reserved
-    value = [self getRegister:OV7648_REG_SAT];
-    NSLog(@"Returned saturation is %02x.\n", value);
+//    value = [self getRegister:OV7648_REG_SAT];
+//    NSLog(@"Returned saturation is %02x.\n", value);
 }
 
 
@@ -97,10 +101,10 @@
 - (void) setGain:(float)v
 {
     UInt8 value = (UInt8) (v*255);
-    NSLog(@"Setting gain to %02x.\n", value);
+//    NSLog(@"Setting gain to %02x.\n", value);
 	[self setRegister:OV7648_REG_GAIN toValue:value];
-    value = [self getRegister:OV7648_REG_GAIN];
-    NSLog(@"Returned gain is %02x.\n", value);
+//    value = [self getRegister:OV7648_REG_GAIN];
+//    NSLog(@"Returned gain is %02x.\n", value);
 }
 
 
