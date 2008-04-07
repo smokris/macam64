@@ -244,6 +244,8 @@
 - (BOOL) startupGrabStream;
 - (void) shutdownGrabStream;
 
+- (BOOL) decodeBuffer:(GenericChunkBuffer *) buffer;
+
 - (int) getRegister:(UInt8)reg;
 - (int) setRegister:(UInt8)reg toValue:(UInt8)val;
 - (int) setRegister:(UInt8)reg toValue:(UInt8)val withMask:(UInt8)mask;
