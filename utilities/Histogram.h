@@ -34,18 +34,25 @@
     int bytesPerPixel;
     BOOL  newBuffer;
     struct timeval tvNew;
+    
+    NSImage * image;
+    NSImageView * view;
+    int middle;
+    int low;
+    int high;
+    struct timeval tvLastDraw;
 }
 
 - (id) init;
+- (void) reset;
 
 - (void) setWidth:(int)newWidth andHeight:(int)newHeight;
 - (void) setupBuffer:(UInt8 *)buffer rowBytes:(int)rowBytes bytesPerPixel:(int)bpp;
 
 - (void) processRGB;
-- (void) processRGB:(UInt8 *)buffer width:(int)width height:(int)height rowBytes:(int)rowBytes bpp:(int)bpp;
-- (void) processOne:(UInt8 *)buffer width:(int)width height:(int)height rowBytes:(int)rowBytes bpp:(int)bpp;
+- (void) processOne;
+
 - (void) calculateStatistics;
-- (void) reset;
 
 - (int) getMedian;
 - (int) getLowThreshold;
@@ -55,8 +62,7 @@
 - (int) getLowPower;
 - (int) getHighPower;
 
-- (void) drawImage:(NSImageView *)view withMiddle:(int)middle low:(int)low high:(int)high;
-- (void) setImage:(NSImageView *)view;
+- (void) setView:(NSImageView *)view;
 - (void) draw;
 
 @end
