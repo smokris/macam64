@@ -219,7 +219,7 @@ IsocFrameResult  spca525IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     *tailStart = frameLength;
     *tailLength = 0;
     
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
     if (frameLength > 12000) 
     printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
             buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5], buffer[6], buffer[7], 
@@ -239,7 +239,7 @@ IsocFrameResult  spca525IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         *tailStart = buffer[0];
         *tailLength = frameLength - *tailStart;
         
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
         if (0) 
         printf("New image start!\n");
 #endif
