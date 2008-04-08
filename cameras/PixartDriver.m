@@ -363,7 +363,7 @@ static inline unsigned short getShort(unsigned char *pt)
         {
             case 0x0FF0:
                 bad = 0;
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
                 NSLog(@"0x0FF0");
 #endif
                 memcpy(output, input + 2, width);
@@ -377,7 +377,7 @@ static inline unsigned short getShort(unsigned char *pt)
                 break;
                 
             default:
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
                 if (bad == 0) 
                     NSLog(@"other EOL 0x%04x", word);
                 else 

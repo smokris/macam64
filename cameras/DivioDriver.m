@@ -306,13 +306,13 @@ IsocFrameResult  divioIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     {
         *dataLength = 0;
         
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
 //        printf("Invalid packet.\n");
 #endif
         return invalidFrame;
     }
     
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
 //    printf("buffer[0] = 0x%02x (length = %d) 0x%02x ... [length-64] = 0x%02x 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
 //           buffer[0], frameLength, buffer[1], buffer[frameLength-64], buffer[frameLength-63], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
 #endif
@@ -320,7 +320,7 @@ IsocFrameResult  divioIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     for (position = 6; position < frameLength; position++) 
         if (buffer[position] == 0xFF && buffer[position+1] == 0xFF && buffer[position-6] == 0x00 && buffer[position-5] == 0x00) 
         {
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
 //            printf("New image start! (%d)\n", position - 6);
 //            printf("(length = %d) [%d-6] = 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", 
 //                    frameLength, position, buffer[position-6], buffer[position-5], buffer[position-4], buffer[position-3], buffer[position-2], buffer[position-1], buffer[position-0], buffer[position+1]);
