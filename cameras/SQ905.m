@@ -209,7 +209,7 @@
     for(i = 0; i < numEntries; i++)
         numImages += [self numFrames:i];
     
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
     printf("There are %d entries in the camera!\n", numEntries);
     printf("There are %d images in the camera!\n", numImages);
     
@@ -1858,14 +1858,14 @@ sq_decompress (SQModel model, unsigned char *output, unsigned char *data,
     if (error != CameraErrorOK)
         return error;
     
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
     if (zero_byte != COMMAND_ZERO) 
         printf("accessRegister: after rawWrite reg=0x%02x, zero-byte=0x%02x\n", reg & 0x00ff, zero_byte & 0x00ff);
 #endif
     
     error =  [self rawRead:USB_REGISTER_COMPLETE index:0x00 buf:&zero_byte len:1];
     
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
     if (zero_byte != COMMAND_ZERO) 
         printf("accessRegister: after rawRead reg=0x%02x, zero-byte=0x%02x\n", reg & 0x00ff, zero_byte & 0x00ff);
 #endif    
