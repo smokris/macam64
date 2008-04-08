@@ -176,8 +176,15 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (BOOL) canSetBrightness;
 - (float) brightness;
 - (void) setBrightness:(float)v;
+- (float) brightnessStep;
 
-// Contrast
+// Offset -  a hardware-pnly setting
+- (BOOL) canSetOffset;
+- (float) offset;
+- (void) setOffset:(float)v;
+- (float) offsetStep;
+
+    // Contrast
 - (BOOL) canSetContrast;
 - (float) contrast;
 - (void) setContrast:(float)v;
@@ -206,11 +213,15 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (BOOL) canSetGain;
 - (float) gain;
 - (void) setGain:(float)v;
+- (float) gainStep;
+- (BOOL) agcDisablesGain;
 
 // Shutter speed
 - (BOOL) canSetShutter;
 - (float) shutter;
 - (void) setShutter:(float)v;
+- (float) shutterStep;
+- (BOOL) agcDisablesShutter;
 
 // Automatic exposure - will affect shutter and gain
 - (BOOL) canSetAutoGain;

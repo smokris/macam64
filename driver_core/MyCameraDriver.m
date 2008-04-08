@@ -229,6 +229,32 @@
     brightness=v;
 }
 
+- (float) brightnessStep
+{
+    return 1 / 255.0;
+}
+
+// offset is a hardware-only setting
+
+- (BOOL) canSetOffset
+{
+    return NO;
+}
+
+- (float) offset
+{
+    return 0;
+}
+
+- (void) setOffset:(float) v
+{
+}
+
+- (float) offsetStep
+{
+    return 1 / 255.0;
+}
+
 - (BOOL) canSetContrast {
     return NO;
 }
@@ -301,6 +327,16 @@
     gain=v;
 }
 
+- (float) gainStep
+{
+    return 1 / 255.0;
+}
+
+- (BOOL) agcDisablesGain
+{
+    return YES;
+}
+
 - (BOOL) canSetShutter {
     return NO;
 }
@@ -311,6 +347,16 @@
 
 - (void) setShutter:(float)v {
     shutter=v;
+}
+
+- (float) shutterStep
+{
+    return 1 / 255.0;
+}
+
+- (BOOL) agcDisablesShutter
+{
+    return YES;
 }
 
 - (BOOL) canSetAutoGain {	//Gain and shutter combined (so far - let's see what other cams can do...)
