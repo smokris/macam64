@@ -104,13 +104,13 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     {
         *dataLength = 0;
         
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
         printf("Invalid packet.\n");
 #endif
         return invalidFrame;
     }
     
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
     printf("buffer[0] = 0x%02x (length = %d) 0x%02x ... [129] = 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
            buffer[0], frameLength, buffer[1], buffer[129], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
 #endif
@@ -120,7 +120,7 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
         
     if (buffer[0] == 0xFE) // start a new image
     {
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
         printf("New image start!\n");
 #endif
         *dataStart = SPCA50X_OFFSET_DATA;
