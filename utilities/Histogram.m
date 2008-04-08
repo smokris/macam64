@@ -88,12 +88,12 @@
 }
 
 
-- (void) processRGB
+- (BOOL) processRGB
 {
     int i, j;
     
     if (!newBuffer) 
-        return;
+        return NO;
     
     [self reset];
     
@@ -111,15 +111,17 @@
     
     tvCurrent = tvNew;
     newBuffer = NO;
+    
+    return YES;
 }
 
 
-- (void) processOne
+- (BOOL) processOne
 {
     int i, j;
     
     if (!newBuffer) 
-        return;
+        return NO;
     
     [self reset];
     
@@ -133,6 +135,8 @@
     
     tvCurrent = tvNew;
     newBuffer = NO;
+    
+    return YES;
 }
 
 

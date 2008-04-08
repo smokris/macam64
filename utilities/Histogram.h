@@ -49,8 +49,8 @@
 - (void) setWidth:(int)newWidth andHeight:(int)newHeight;
 - (void) setupBuffer:(UInt8 *)buffer rowBytes:(int)rowBytes bytesPerPixel:(int)bpp;
 
-- (void) processRGB;
-- (void) processOne;
+- (BOOL) processRGB;
+- (BOOL) processOne;
 
 - (void) calculateStatistics;
 
