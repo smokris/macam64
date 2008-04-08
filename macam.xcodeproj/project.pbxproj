@@ -484,6 +484,45 @@
 		F57A02EE0D8E0BEF000EFF61 /* AGC.m in Sources */ = {isa = PBXBuildFile; fileRef = F57A02EA0D8E0BEF000EFF61 /* AGC.m */; };
 		F57A02EF0D8E0BEF000EFF61 /* AGC.h in Headers */ = {isa = PBXBuildFile; fileRef = F57A02E90D8E0BEF000EFF61 /* AGC.h */; };
 		F57A02F00D8E0BEF000EFF61 /* AGC.m in Sources */ = {isa = PBXBuildFile; fileRef = F57A02EA0D8E0BEF000EFF61 /* AGC.m */; };
+		F5821C630DAC0F690052E94E /* cvideopro.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C560DAC0F690052E94E /* cvideopro.init */; };
+		F5821C640DAC0F690052E94E /* d-link-350c.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C570DAC0F690052E94E /* d-link-350c.init */; };
+		F5821C650DAC0F690052E94E /* DS3303u.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C580DAC0F690052E94E /* DS3303u.init */; };
+		F5821C660DAC0F690052E94E /* kr651us.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C590DAC0F690052E94E /* kr651us.init */; };
+		F5821C670DAC0F690052E94E /* kritter.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5A0DAC0F690052E94E /* kritter.init */; };
+		F5821C680DAC0F690052E94E /* mustek_300_mini.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5B0DAC0F690052E94E /* mustek_300_mini.init */; };
+		F5821C690DAC0F690052E94E /* nw800.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5C0DAC0F690052E94E /* nw800.init */; };
+		F5821C6A0DAC0F690052E94E /* nw801.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5D0DAC0F690052E94E /* nw801.init */; };
+		F5821C6B0DAC0F690052E94E /* nw802.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5E0DAC0F690052E94E /* nw802.init */; };
+		F5821C6C0DAC0F690052E94E /* proscope.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5F0DAC0F690052E94E /* proscope.init */; };
+		F5821C6D0DAC0F690052E94E /* SpaceCam.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C600DAC0F690052E94E /* SpaceCam.init */; };
+		F5821C6E0DAC0F690052E94E /* trust_space.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C610DAC0F690052E94E /* trust_space.init */; };
+		F5821C6F0DAC0F690052E94E /* Twinkle.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C620DAC0F690052E94E /* Twinkle.init */; };
+		F5821C700DAC0F690052E94E /* cvideopro.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C560DAC0F690052E94E /* cvideopro.init */; };
+		F5821C710DAC0F690052E94E /* d-link-350c.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C570DAC0F690052E94E /* d-link-350c.init */; };
+		F5821C720DAC0F690052E94E /* DS3303u.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C580DAC0F690052E94E /* DS3303u.init */; };
+		F5821C730DAC0F690052E94E /* kr651us.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C590DAC0F690052E94E /* kr651us.init */; };
+		F5821C740DAC0F690052E94E /* kritter.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5A0DAC0F690052E94E /* kritter.init */; };
+		F5821C750DAC0F690052E94E /* mustek_300_mini.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5B0DAC0F690052E94E /* mustek_300_mini.init */; };
+		F5821C760DAC0F690052E94E /* nw800.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5C0DAC0F690052E94E /* nw800.init */; };
+		F5821C770DAC0F690052E94E /* nw801.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5D0DAC0F690052E94E /* nw801.init */; };
+		F5821C780DAC0F690052E94E /* nw802.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5E0DAC0F690052E94E /* nw802.init */; };
+		F5821C790DAC0F690052E94E /* proscope.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5F0DAC0F690052E94E /* proscope.init */; };
+		F5821C7A0DAC0F690052E94E /* SpaceCam.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C600DAC0F690052E94E /* SpaceCam.init */; };
+		F5821C7B0DAC0F690052E94E /* trust_space.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C610DAC0F690052E94E /* trust_space.init */; };
+		F5821C7C0DAC0F690052E94E /* Twinkle.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C620DAC0F690052E94E /* Twinkle.init */; };
+		F5821C7D0DAC0F690052E94E /* cvideopro.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C560DAC0F690052E94E /* cvideopro.init */; };
+		F5821C7E0DAC0F690052E94E /* d-link-350c.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C570DAC0F690052E94E /* d-link-350c.init */; };
+		F5821C7F0DAC0F690052E94E /* DS3303u.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C580DAC0F690052E94E /* DS3303u.init */; };
+		F5821C800DAC0F690052E94E /* kr651us.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C590DAC0F690052E94E /* kr651us.init */; };
+		F5821C810DAC0F690052E94E /* kritter.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5A0DAC0F690052E94E /* kritter.init */; };
+		F5821C820DAC0F690052E94E /* mustek_300_mini.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5B0DAC0F690052E94E /* mustek_300_mini.init */; };
+		F5821C830DAC0F690052E94E /* nw800.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5C0DAC0F690052E94E /* nw800.init */; };
+		F5821C840DAC0F690052E94E /* nw801.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5D0DAC0F690052E94E /* nw801.init */; };
+		F5821C850DAC0F690052E94E /* nw802.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5E0DAC0F690052E94E /* nw802.init */; };
+		F5821C860DAC0F690052E94E /* proscope.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C5F0DAC0F690052E94E /* proscope.init */; };
+		F5821C870DAC0F690052E94E /* SpaceCam.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C600DAC0F690052E94E /* SpaceCam.init */; };
+		F5821C880DAC0F690052E94E /* trust_space.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C610DAC0F690052E94E /* trust_space.init */; };
+		F5821C890DAC0F690052E94E /* Twinkle.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C620DAC0F690052E94E /* Twinkle.init */; };
 		F592C8E30974504700183A7D /* spcausb.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E20974504700183A7D /* spcausb.h */; };
 		F592C8E50974504700183A7D /* spcausb.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E20974504700183A7D /* spcausb.h */; };
 		F592C8EA0974520E00183A7D /* sonix.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E90974520E00183A7D /* sonix.h */; };
@@ -987,6 +1026,19 @@
 		F57D11B7C5B26FF6010B00CC /* QX3-2.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = "QX3-2.tiff"; sourceTree = "<group>"; };
 		F57D11B8C5B26FF6010B00CC /* QX3-1.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = "QX3-1.tiff"; sourceTree = "<group>"; };
 		F57D11BDC5B26FF6010B00CC /* QX3-0.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = "QX3-0.tiff"; sourceTree = "<group>"; };
+		F5821C560DAC0F690052E94E /* cvideopro.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = cvideopro.init; sourceTree = "<group>"; };
+		F5821C570DAC0F690052E94E /* d-link-350c.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = "d-link-350c.init"; sourceTree = "<group>"; };
+		F5821C580DAC0F690052E94E /* DS3303u.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = DS3303u.init; sourceTree = "<group>"; };
+		F5821C590DAC0F690052E94E /* kr651us.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = kr651us.init; sourceTree = "<group>"; };
+		F5821C5A0DAC0F690052E94E /* kritter.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = kritter.init; sourceTree = "<group>"; };
+		F5821C5B0DAC0F690052E94E /* mustek_300_mini.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = mustek_300_mini.init; sourceTree = "<group>"; };
+		F5821C5C0DAC0F690052E94E /* nw800.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = nw800.init; sourceTree = "<group>"; };
+		F5821C5D0DAC0F690052E94E /* nw801.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = nw801.init; sourceTree = "<group>"; };
+		F5821C5E0DAC0F690052E94E /* nw802.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = nw802.init; sourceTree = "<group>"; };
+		F5821C5F0DAC0F690052E94E /* proscope.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = proscope.init; sourceTree = "<group>"; };
+		F5821C600DAC0F690052E94E /* SpaceCam.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = SpaceCam.init; sourceTree = "<group>"; };
+		F5821C610DAC0F690052E94E /* trust_space.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = trust_space.init; sourceTree = "<group>"; };
+		F5821C620DAC0F690052E94E /* Twinkle.init */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = Twinkle.init; sourceTree = "<group>"; };
 		F58530E10229AAB601479C37 /* BayerConverter.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = BayerConverter.h; sourceTree = "<group>"; };
 		F58530E20229AAB601479C37 /* BayerConverter.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = BayerConverter.m; sourceTree = "<group>"; };
 		F589724A0374636B01159FE2 /* RecordMovieToolbarItem.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RecordMovieToolbarItem.tiff; sourceTree = "<group>"; };
@@ -1453,6 +1505,26 @@
 			path = component_specific;
 			sourceTree = "<group>";
 		};
+		F5821C550DAC0F690052E94E /* nw80x */ = {
+			isa = PBXGroup;
+			children = (
+				F5821C560DAC0F690052E94E /* cvideopro.init */,
+				F5821C570DAC0F690052E94E /* d-link-350c.init */,
+				F5821C580DAC0F690052E94E /* DS3303u.init */,
+				F5821C590DAC0F690052E94E /* kr651us.init */,
+				F5821C5A0DAC0F690052E94E /* kritter.init */,
+				F5821C5B0DAC0F690052E94E /* mustek_300_mini.init */,
+				F5821C5C0DAC0F690052E94E /* nw800.init */,
+				F5821C5D0DAC0F690052E94E /* nw801.init */,
+				F5821C5E0DAC0F690052E94E /* nw802.init */,
+				F5821C5F0DAC0F690052E94E /* proscope.init */,
+				F5821C600DAC0F690052E94E /* SpaceCam.init */,
+				F5821C610DAC0F690052E94E /* trust_space.init */,
+				F5821C620DAC0F690052E94E /* Twinkle.init */,
+			);
+			path = nw80x;
+			sourceTree = "<group>";
+		};
 		F5994D54096ED733004F6807 /* spca5xx_files */ = {
 			isa = PBXGroup;
 			children = (
@@ -1528,6 +1600,7 @@
 		F5F79A800212038E01E152CA /* cameras */ = {
 			isa = PBXGroup;
 			children = (
+				F5821C550DAC0F690052E94E /* nw80x */,
 				F5F1829F0CE8C39C002CF7AC /* IBMcamDriver.h */,
 				F5F182A00CE8C39C002CF7AC /* IBMcamDriver.m */,
 				F51B953E0AB9DB0400179B4C /* pwc_files */,
@@ -2289,6 +2362,19 @@
 				F5DFAB970A3145F700D86C03 /* spca505.dat in Resources */,
 				F5DFAB980A3145F700D86C03 /* spca508.dat in Resources */,
 				F5F6FF200D35F4DB00E994AC /* sp5xxfw2.dat in Resources */,
+				F5821C630DAC0F690052E94E /* cvideopro.init in Resources */,
+				F5821C640DAC0F690052E94E /* d-link-350c.init in Resources */,
+				F5821C650DAC0F690052E94E /* DS3303u.init in Resources */,
+				F5821C660DAC0F690052E94E /* kr651us.init in Resources */,
+				F5821C670DAC0F690052E94E /* kritter.init in Resources */,
+				F5821C680DAC0F690052E94E /* mustek_300_mini.init in Resources */,
+				F5821C690DAC0F690052E94E /* nw800.init in Resources */,
+				F5821C6A0DAC0F690052E94E /* nw801.init in Resources */,
+				F5821C6B0DAC0F690052E94E /* nw802.init in Resources */,
+				F5821C6C0DAC0F690052E94E /* proscope.init in Resources */,
+				F5821C6D0DAC0F690052E94E /* SpaceCam.init in Resources */,
+				F5821C6E0DAC0F690052E94E /* trust_space.init in Resources */,
+				F5821C6F0DAC0F690052E94E /* Twinkle.init in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2301,6 +2387,19 @@
 				F5DFAB910A3145F700D86C03 /* spca501.dat in Resources */,
 				F5DFAB920A3145F700D86C03 /* spca505.dat in Resources */,
 				F5DFAB930A3145F700D86C03 /* spca508.dat in Resources */,
+				F5821C700DAC0F690052E94E /* cvideopro.init in Resources */,
+				F5821C710DAC0F690052E94E /* d-link-350c.init in Resources */,
+				F5821C720DAC0F690052E94E /* DS3303u.init in Resources */,
+				F5821C730DAC0F690052E94E /* kr651us.init in Resources */,
+				F5821C740DAC0F690052E94E /* kritter.init in Resources */,
+				F5821C750DAC0F690052E94E /* mustek_300_mini.init in Resources */,
+				F5821C760DAC0F690052E94E /* nw800.init in Resources */,
+				F5821C770DAC0F690052E94E /* nw801.init in Resources */,
+				F5821C780DAC0F690052E94E /* nw802.init in Resources */,
+				F5821C790DAC0F690052E94E /* proscope.init in Resources */,
+				F5821C7A0DAC0F690052E94E /* SpaceCam.init in Resources */,
+				F5821C7B0DAC0F690052E94E /* trust_space.init in Resources */,
+				F5821C7C0DAC0F690052E94E /* Twinkle.init in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2332,6 +2431,19 @@
 				F5DFAB8C0A3145F700D86C03 /* spca501.dat in Resources */,
 				F5DFAB8D0A3145F700D86C03 /* spca505.dat in Resources */,
 				F5DFAB8E0A3145F700D86C03 /* spca508.dat in Resources */,
+				F5821C7D0DAC0F690052E94E /* cvideopro.init in Resources */,
+				F5821C7E0DAC0F690052E94E /* d-link-350c.init in Resources */,
+				F5821C7F0DAC0F690052E94E /* DS3303u.init in Resources */,
+				F5821C800DAC0F690052E94E /* kr651us.init in Resources */,
+				F5821C810DAC0F690052E94E /* kritter.init in Resources */,
+				F5821C820DAC0F690052E94E /* mustek_300_mini.init in Resources */,
+				F5821C830DAC0F690052E94E /* nw800.init in Resources */,
+				F5821C840DAC0F690052E94E /* nw801.init in Resources */,
+				F5821C850DAC0F690052E94E /* nw802.init in Resources */,
+				F5821C860DAC0F690052E94E /* proscope.init in Resources */,
+				F5821C870DAC0F690052E94E /* SpaceCam.init in Resources */,
+				F5821C880DAC0F690052E94E /* trust_space.init in Resources */,
+				F5821C890DAC0F690052E94E /* Twinkle.init in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
