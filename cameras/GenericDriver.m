@@ -82,7 +82,7 @@
     LUT = NULL;
     
     histogram = [[Histogram alloc] init];
-    agc = [[AGC alloc] init];
+    agc = [[AGC alloc] initWithDriver:self];
     
     hardwareBrightness = NO;
     hardwareContrast = NO;
@@ -565,6 +565,8 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     grabContext.frameInfo.averageBlueGreenSet = 0;
     grabContext.frameInfo.averageRedGreen = 0;
     grabContext.frameInfo.averageRedGreenSet = 0;
+    
+    [agc setFrameInfo:&grabContext.frameInfo];
     
     // Setup things that have to be set back if init fails
     
@@ -1979,7 +1981,8 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     {
         [histogram setupBuffer:nextImageBuffer rowBytes:nextImageBufferRowBytes bytesPerPixel:nextImageBufferBPP];  // store (pointers to) data
         
-        [agc update:histogram];  // update histogram if necessary, compute agc
+        if ([self isAutoGain]) 
+            [agc update:histogram];  // update histogram if necessary, compute agc
         
         [histogram draw];  // update histogram if necessary, draw in view already specified
     }
@@ -2014,6 +2017,11 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     return 0;
 }
 
+
+- (NSTextField *) getDebugMessageField
+{
+    return [[central delegate] getDebugMessageField];
+}
 
 @end
 

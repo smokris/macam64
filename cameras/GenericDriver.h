@@ -264,6 +264,7 @@ typedef struct GenericGrabContext
 - (BOOL) decodeBufferQuicktimeImage: (GenericChunkBuffer *) buffer;
 - (BOOL) decodeBufferQuicktimeSequence: (GenericChunkBuffer *) buffer;
 
+- (NSTextField *) getDebugMessageField;
 
 #pragma mark -> Subclass May Implement (works for BayerConverter) <-
 
