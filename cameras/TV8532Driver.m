@@ -162,7 +162,7 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         
         *dataLength = 0;
         
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
         printf("Invalid packet.\n");
 #endif
         return invalidFrame;
@@ -170,14 +170,14 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     int frameNumber = buffer[0];
     
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
     printf("buffer[0] = 0x%02x (length = %d) 0x%02x ... [129] = 0x%02x ... 0x%02x 0x%02x 0x%02x 0x%02x\n", 
             buffer[0], frameLength, buffer[1], buffer[129], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
 #endif
     
     if (frameNumber == 0x80 && lastWasInvalid) // start a new image
     {
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
         printf("New image start!\n");
 #endif
         lastWasInvalid = 0;
@@ -205,7 +205,7 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 - (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
 {
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
     printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
 #endif
     
