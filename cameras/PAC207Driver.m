@@ -25,6 +25,7 @@
 
 #import "PAC207Driver.h"
 #import "MyController.h"
+#import "AGC.h"
 
 #include "USB_VendorProductIDs.h"
 #include "gspcadecoder.h"
@@ -35,6 +36,7 @@
 - (BOOL) pixartDecompress:(UInt8 *)inp to:(UInt8 *)outp width:(short)width height:(short)height;
 
 @end
+
 
 void initializePixartDecoder(struct code_table * table);
 inline unsigned short getShort(unsigned char * pt);
@@ -93,12 +95,12 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x07], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
             @"PixArt PAC207 based webcam (previously unknown 07)", @"name", NULL], 
-        /*
+        
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x08], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
             @"Common PixArt PAC207 based webcam (A)", @"name", NULL], 
-        */
+        
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x09], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
@@ -218,50 +220,72 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
 }
 
 
-static void pac207RegRead(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length) 
-{   
-    SPCA5XXDriver * driver = (SPCA5XXDriver *) dev->driver;
-    
-    [driver usbReadVICmdWithBRequest:reg 
-                              wValue:value 
-                              wIndex:index 
-                                 buf:buffer 
-                                 len:length];
-}
-
-
-static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u16 index, __u8 * buffer, __u16 length)
+- (int) getRegister:(UInt16)reg
 {
-    SPCA5XXDriver * driver = (SPCA5XXDriver *) dev->driver;
+    UInt8 buffer[8];
     
-    [driver usbWriteVICmdWithBRequest:reg 
-                               wValue:value 
-                               wIndex:index 
-                                  buf:buffer 
-                                  len:length];
+    BOOL ok = [self usbReadVICmdWithBRequest:0x00 wValue:0x00 wIndex:reg buf:buffer len:1];
+    
+    return (ok) ? buffer[0] : -1;
 }
 
 
-#include "pac207.h"
-
-
-- (short) maxCompression 
+- (int) setRegister:(UInt16)reg toValue:(UInt16)val
 {
-    return 1;
+    BOOL ok = [self usbWriteVICmdWithBRequest:0x00 wValue:val wIndex:reg buf:NULL len:0];
+    
+    return (ok) ? val : -1;
 }
 
 
-- (void) setCompression: (short) v 
+- (int) setRegisterList:(UInt16)reg number:(int)length withValues:(UInt8 *)buffer
 {
-    [super setCompression:v];
+    BOOL ok = [self usbWriteVICmdWithBRequest:0x01 wValue:0x00 wIndex:reg buf:buffer len:length];
     
-    spca50x->compress = v;
-    
-#if VERBOSE
-    printf("Compression set to %d (spca50x->compress = %d)\n", v, spca50x->compress);
-#endif
+    return (ok) ? length : -1;
 }
 
+
+- (int) getSensorRegister:(UInt16)reg
+{
+    return [self getRegister:reg];
+}
+
+
+- (int) setSensorRegister:(UInt16)reg toValue:(UInt16)val
+{
+    BOOL ok = YES;
+    
+    if (ok) 
+        if ([self setRegister:reg toValue:val] < 0) 
+            ok = NO;
+    
+    if (ok) 
+        if ([self setRegister:0x13 toValue:0x01] < 0) 
+            ok = NO;
+    
+    if (ok) 
+        if ([self setRegister:0x1c toValue:0x01] < 0) 
+            ok = NO;
+    
+    return (ok) ? val : -1;
+}
+
+
+- (int) dumpRegisters
+{
+	UInt8 regLN, regHN;
+    
+	printf("Camera Registers: ");
+	for (regHN = 0; regHN < 0x50; regHN += 0x10) {
+		printf("\n    ");
+		for (regLN = 0; regLN < 0x10; ++regLN)
+			printf(" %02X=%02X", regHN + regLN, [self getRegister:regHN + regLN]);
+	}
+	printf("\n\n");
+    
+    return 0;
+}
 
 //
 // Initialize the driver
@@ -272,20 +296,16 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
 	if (self == NULL) 
         return NULL;
     
+    [agc setEffects:[NSArray arrayWithObjects:[NSNumber numberWithInt:agcAffectGain], [NSNumber numberWithInt:agcAffectOffset], nil]];
+    [agc setMode:agcProvidedAverage];  // use agcHistogram when histogram "breadth" matters
+    
     bayerConverter = [[BayerConverter alloc] init];
 	if (bayerConverter == NULL) 
         return NULL;
     
     hardwareBrightness = YES;
-    hardwareContrast = YES;
+    hardwareContrast = NO;
     
-    cameraOperation = &fpac207;
-    
-    spca50x->cameratype = PGBRG;
-    spca50x->bridge = BRIDGE_PAC207;
-    spca50x->sensor = SENSOR_PAC207;
-    
-    compressionType = gspcaCompression;  // Use the gspca decompression, but not Bayer, since it is wrong
     compressionType = proprietaryCompression;  // Use own decompression routines
     
     MALLOC(decodingBuffer, UInt8 *, 356 * 292 + 1000, "decodingBuffer");
@@ -293,11 +313,20 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
     
     [self setCompression:0];
     
-    autobrightIdle = YES;
-    
-    buttonInterrupt = YES; // need to specify pipe, length, proper value for snapshot
+    buttonInterrupt = YES;
+    buttonMessageLength = 2;
     
 	return self;
+}
+
+
+- (void) startupCamera
+{
+    [self setRegister:0x41 toValue:0x00];
+    [self setRegister:0x0f toValue:0x00];
+    [self setRegister:0x11 toValue:0x30];
+    
+    [super startupCamera];
 }
 
 //
@@ -313,15 +342,152 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
             return YES;
             break;
             
+#if defined(DEBUG)
         case ResolutionQCIF:
             if (rate > 30) 
                 return NO;
-            return NO; // Not working yet for some unknown reason •••
+            return YES; // Not working yet for some unknown reason •••
             break;
+#endif
             
         default: 
             return NO;
     }
+}
+
+
+- (CameraResolution) defaultResolutionAndRate: (short *) rate
+{
+	if (rate) 
+        *rate = 5;
+    
+	return ResolutionCIF;
+}
+
+
+- (void) setBrightness:(float)v 
+{
+    if ([self isAutoGain]) 
+        [super setBrightness:v];
+    else 
+        [self setOffset:v];
+}
+
+
+- (BOOL) canSetOffset
+{
+    return YES;
+}
+
+
+- (float) offset
+{
+    int value = [self getRegister:0x08];
+    
+    if (value < 0) 
+        return 0.5;
+    
+    return value / 255.0;
+}
+
+
+- (void) setOffset:(float) v
+{
+    UInt8 value = 255 * v;
+    
+    [self setRegister:0x08 toValue:value];
+    
+    [self setRegister:0x13 toValue:0x01];
+    [self setRegister:0x1c toValue:0x01];
+}
+
+
+- (BOOL) canSetGain
+{
+    return [self isAutoGain] == NO;
+}
+
+
+- (void) setGain:(float) v 
+{
+    //    if ([self isAutoGain]) 
+    [super setGain:v];
+    //    else 
+    {
+        UInt8 value = 31 * v;
+        [self setRegister:0x0e toValue:value];
+        [self setRegister:0x13 toValue:0x01];
+        [self setRegister:0x1c toValue:0x01];
+    }
+}
+
+- (float) gainStep
+{
+    return 8 / 255.0;
+}
+
+
+- (BOOL) canSetShutter
+{
+    return YES;
+}
+
+
+- (void) setShutter:(float) v 
+{
+    UInt8 value = 0x04 + v * (0x7f - 0x04);  // min and max values
+    
+    if (value > 0x0f) 
+        grabContext.maxFramesBetweenChunks = 1000 * 10;
+    
+    [super setShutter:v];
+    
+#if REALLY_VERBOSE
+    printf("Setting shutter value to %f (0x%02x).\n", v, value);
+#endif
+    
+    [self setRegister:0x02 toValue:value];
+    [self setRegister:0x13 toValue:0x01];
+    [self setRegister:0x1c toValue:0x01];
+}
+
+
+- (BOOL) agcDisablesShutter
+{
+    return NO;
+}
+
+
+- (short) maxCompression 
+{
+    return 1;
+}
+
+
+- (void) setCompression: (short) v 
+{
+    float limit = (0x0a - 0x04) / (float) (0x7f - 0x04);
+    
+    [super setCompression:v];
+    
+    if (v == 0) 
+        if ([self shutter] < limit) 
+            [self setShutter:limit];
+}
+
+
+- (BOOL) canSetLed
+{
+    return YES;
+}
+
+
+- (void) setLed:(BOOL)v
+{
+    if ([self canSetLed]) 
+        [self setRegister:0x41 toValue:(v ? 0x02 : 0x00) withMask:0x02];
+    
+    [super setLed:v];
 }
 
 
@@ -330,6 +496,23 @@ static void pac207RegWrite(struct usb_device * dev, __u16 reg, __u16 value, __u1
     return 3;
 }
 
+
+- (BOOL) buttonDataHandler:(UInt8 *)data length:(UInt32)length
+{
+    BOOL result = NO;
+    
+    if (length == 2) 
+    {
+        if (data[0] == 0x5a && data[1] == 0x5a) 
+            result = YES;
+        
+        data[0] = 194;  // 0xc2
+        data[1] = 75;   // 0x4b
+        (*streamIntf)->WritePipe(streamIntf, 4, data, length);  // Some kind of reset?
+    }
+    
+    return result;
+}
 
 //
 // Returns the pipe used for grabbing
@@ -402,7 +585,7 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                 frameInfo->averageSurroundLuminance = buffer[position + 10];
                 frameInfo->averageSurroundLuminanceSet = 1;
 #if REALLY_VERBOSE
-                printf("The central luminance is %d (surround is %d)\n", frameInfo->averageLuminance, frameInfo->averageSurroundLuminance);
+//              printf("The central luminance is %d (surround is %d)\n", frameInfo->averageLuminance, frameInfo->averageSurroundLuminance);
 #endif
             }
             
@@ -425,49 +608,96 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
-
-- (BOOL) decodeBufferGSPCA: (GenericChunkBuffer *) buffer
+//
+// This is the key method that starts up the stream
+//
+- (BOOL) startupGrabStream 
 {
-    BOOL ok = YES;
-    int error;
+    CameraError error = CameraErrorOK;
     
-    spca50x->frame->data = nextImageBuffer;
-    spca50x->frame->tmpbuffer = buffer->buffer;
-    spca50x->frame->scanlength = buffer->numBytes;
-    
-    memcpy(spca50x->frame->data, spca50x->frame->tmpbuffer, spca50x->frame->scanlength);
-    
-    // do decoding
-    
-    error = spca50x_outpicture(spca50x->frame);
-    
-    if (error != 0) 
+    UInt8 init[][8] = 
     {
-#if VERBOSE
-        printf("There was an error in the decoding (%d).\n", error);
-#endif
-        ok = NO;
-    }
-    else 
-    {
-        short rawWidth  = [self width];
-        short rawHeight = [self height];
-        
-        // Turn the Bayer data into an RGB image
-        
-        [bayerConverter setSourceFormat:4]; // This is probably different
-        [bayerConverter setSourceWidth:rawWidth height:rawHeight];
-        [bayerConverter setDestinationWidth:rawWidth height:rawHeight];
-        [bayerConverter convertFromSrc:(buffer->buffer + 1)
-                                toDest:nextImageBuffer
-                           srcRowBytes:rawWidth
-                           dstRowBytes:nextImageBufferRowBytes
-                                dstBPP:nextImageBufferBPP
-                                  flip:hFlip
-                             rotate180:NO]; // This might be different too
-    }
+    { 0x04, 0x12, 0x0d, 0x00, 0x6f, 0x03, 0x29, 0x00 }, 
+    { 0x00, 0x96, 0x80, 0xa0, 0x04, 0x10, 0xf0, 0x30 }, 
+    { 0x00, 0x00, 0x00, 0x70, 0xa0, 0xf8, 0x00, 0x00 }, 
+    { 0x00, 0x00, 0x32, 0x00, 0x96, 0x00, 0xa2, 0x02 }, 
+    { 0x00, 0x00, 0x36, 0x00 }, 
+    { 0x04, 0x12, 0x05, 0x22, 0x00, 0x01, 0x29 },
+    { 0x32, 0x00, 0x96, 0x00, 0xa2, 0x02, 0xaf, 0x00 },
+    };
     
-    return ok;
+    [self setRegisterList:0x02 number:8 withValues:init[0]];
+    [self setRegisterList:0x0a number:8 withValues:init[1]];
+    [self setRegisterList:0x12 number:8 withValues:init[2]];
+    [self setRegisterList:0x40 number:8 withValues:init[3]];
+    [self setRegisterList:0x48 number:4 withValues:init[4]];
+    
+    [self setRegister:0x4a toValue:([self compression] ? 0x88 : 0xff)];
+    [self setRegister:0x4b toValue:0x00];
+    
+    [self setRegister:0x13 toValue:0x01];
+    [self setRegister:0x1c toValue:0x01];
+    
+    [self setRegister:0x41 toValue:([self resolution] == ResolutionCIF ? 0x00 : 0x01) withMask:0x01];
+    [self setRegisterList:0x02 number:7 withValues:init[5]];
+    [self setRegister:0x0e toValue:0x0a];
+    [self setRegister:0x18 toValue:0x00];
+    [self setRegisterList:0x42 number:8 withValues:init[6]];
+    
+    [self setShutter:[self shutter]];  // Also does the 0x13/0x1c
+    
+    [self setRegister:0x40 toValue:0x01];  // Start the stream
+    
+    return error == CameraErrorOK;
+}
+
+//
+// For comparison
+//
+- (BOOL) startupGrabStreamOriginal
+{
+    CameraError error = CameraErrorOK;
+    
+    UInt8 init[][8] = 
+    {
+    { 0x04, 0x12, 0x0d, 0x00, 0x6f, 0x03, 0x29, 0x00 }, 
+    { 0x00, 0x96, 0x80, 0xa0, 0x04, 0x10, 0xf0, 0x30 }, 
+    { 0x00, 0x00, 0x00, 0x70, 0xa0, 0xf8, 0x00, 0x00 }, 
+    { 0x00, 0x00, 0x32, 0x00, 0x96, 0x00, 0xa2, 0x02 }, 
+    { 0x00, 0x00, 0x36, 0x00 }, 
+    { 0x04, 0x12, 0x05, 0x22, 0x00, 0x01, 0x29 },
+    { 0x32, 0x00, 0x96, 0x00, 0xa2, 0x02, 0xaf, 0x00 },
+    };
+    
+    [self setRegisterList:0x02 number:8 withValues:init[0]];
+    [self setRegisterList:0x0a number:8 withValues:init[1]];
+    [self setRegisterList:0x12 number:8 withValues:init[2]];
+    [self setRegisterList:0x40 number:8 withValues:init[3]];
+    [self setRegisterList:0x48 number:4 withValues:init[4]];
+    [self setRegister:0x13 toValue:0x01];
+    [self setRegister:0x1c toValue:0x01];
+    
+    [self setRegisterList:0x02 number:7 withValues:init[5]];
+    [self setRegister:0x0e toValue:0x0a];
+    [self setRegister:0x18 toValue:0x00];
+    [self setRegisterList:0x42 number:8 withValues:init[6]];
+    [self setRegister:0x4a toValue:0x48];
+    [self setRegister:0x13 toValue:0x01];
+    [self setRegister:0x1c toValue:0x01];
+    
+    [self setRegister:0x40 toValue:0x01];
+    
+    return error == CameraErrorOK;
+}
+
+//
+// The key routine for shutting down the stream
+//
+- (void) shutdownGrabStream 
+{
+    [self setRegister:0x40 toValue:0x00];  // Stop the stream
+    
+    [self usbSetAltInterfaceTo:0 testPipe:[self getGrabbingPipe]]; // Must set alt interface to normal
 }
 
 //
@@ -479,6 +709,17 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
 	short rawWidth  = [self width];
 	short rawHeight = [self height];
+    
+#if defined(DEBUG)
+    if (YES) 
+    {
+        UInt8 * buf = buffer->buffer;
+        NSTextField * message = [self getDebugMessageField];
+        if (message) 
+            [message setStringValue:[NSString stringWithFormat:@"%02X %02X %02X %02X  %02X %02X %02X %02X  %02X %02X %02X %02X  %02X %02X %02X %02X ", 
+                buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7], buf[8], buf[9], buf[10], buf[11], buf[12], buf[13], buf[14], buf[15]]];
+    }
+#endif
     
 	// Decode the bytes
     
@@ -507,11 +748,19 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
 	// We should received a whole frame with header and EOL marker in *input
 	// and return a BGGR pattern in *output
-	// remove the header then copy line by line EOL is set with 0x0f 0xf0 marker
-	// or 0x1e 0xe1 marker for compressed line
+	// remove the header then 
+    // - copy line by line EOL is set with 0x0ff0 marker or 
+	// - 0x1ee1 marker for compressed line
+    // - 0x2dd2 is still unknown
     
 	unsigned short word;
-	int row, bad = 0;
+	int row;
+    
+#if REALLY_VERBOSE
+    int bad = 0;
+    int comp = 0;
+    int uncomp = 0;
+#endif
     
 	input += 16;  // Skip the header
     
@@ -523,35 +772,58 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 		switch (word) 
         {
             case 0x0FF0:
+#if REALLY_VERBOSE
+                uncomp++;
                 bad = 0;
-#ifdef REALLY_VERBOSE
-//              NSLog(@"0x0FF0");
+                //              NSLog(@"0x0FF0");
 #endif
                 memcpy(output, input + 2, width);
                 input += (2 + width);
                 break;
                 
             case 0x1EE1:
+#if REALLY_VERBOSE
+                comp++;
                 bad = 0;
-    //			NSLog(@"0x1EE1");
+                //              NSLog(@"0x1EE1");
+#endif
                 input += pixartDecompressRow(codeTable, input, output, width);
                 break;
                 
+            case 0x2DD2:  // Don't know what this means yet
+#if REALLY_VERBOSE
+                bad++;
+                NSLog(@"0x2DD2");
+#endif
+                return NO;
+                break;
+                
             default:
-#ifdef REALLY_VERBOSE
+#if REALLY_VERBOSE
                 if (bad == 0) 
                     NSLog(@"other EOL 0x%04x", word);
                 else 
                     NSLog(@"-- EOL 0x%04x", word);
-#endif
                 bad++;
                 row--; // try again!
                 input += 1;
                 if (bad > 4) 
+#endif
                     return YES;
 		}
 		output += width;
 	}
+    
+#if 0
+#if REALLY_VERBOSE
+    if (comp == 0) 
+        printf("Image is uncompressed!\n");
+    else if (uncomp == 0) 
+        printf("Every line is compressed!\n");
+    else 
+        printf("Image has %d uncompressed and %d compressed lines.\n", uncomp, comp);
+#endif
+#endif
     
 	return NO;
 }
@@ -694,581 +966,3 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
     
 	return 2 * ((bitpos + 15) / 16); // return the number of bytes used for line, rounded up to whole words
 }
-
-
-//
-//  This is the future of the PAC207 class
-//
-
-@interface PAC207DriverExperimental (Private)
-
-- (BOOL) pixartDecompress:(UInt8 *)input to:(UInt8 *)output width:(short)width height:(short)height;
-
-@end
-
-
-@implementation PAC207DriverExperimental
-
-+ (NSArray *) cameraUsbDescriptions 
-{
-    return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x08], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"Common PixArt PAC207 based webcam (A) [experimental]", @"name", NULL], 
-        
-        NULL];
-}
-
-
-- (int) getRegister:(UInt16)reg
-{
-    UInt8 buffer[8];
-    
-    BOOL ok = [self usbReadVICmdWithBRequest:0x00 wValue:0x00 wIndex:reg buf:buffer len:1];
-    
-    return (ok) ? buffer[0] : -1;
-}
-
-
-- (int) setRegister:(UInt16)reg toValue:(UInt16)val
-{
-    BOOL ok = [self usbWriteVICmdWithBRequest:0x00 wValue:val wIndex:reg buf:NULL len:0];
-    
-    return (ok) ? val : -1;
-}
-
-
-- (int) setRegisters:(UInt16)reg number:(int)length withValues:(UInt8 *)buffer
-{
-    BOOL ok = [self usbWriteVICmdWithBRequest:0x01 wValue:0x00 wIndex:reg buf:buffer len:length];
-    
-    return (ok) ? length : -1;
-}
-
-
-- (int) getSensorRegister:(UInt16)reg
-{
-    return [self getRegister:reg];
-}
-
-
-- (int) setSensorRegister:(UInt16)reg toValue:(UInt16)val
-{
-    BOOL ok = YES;
-    
-    if (ok) 
-        if ([self setRegister:reg toValue:val] < 0) 
-            ok = NO;
-    
-    if (ok) 
-        if ([self setRegister:0x13 toValue:0x01] < 0) 
-            ok = NO;
-    
-    if (ok) 
-        if ([self setRegister:0x1c toValue:0x01] < 0) 
-            ok = NO;
-    
-    return (ok) ? val : -1;
-}
-
-
-- (int) dumpRegisters
-{
-	UInt8 regLN, regHN;
-    
-	printf("Camera Registers: ");
-	for (regHN = 0; regHN < 0x50; regHN += 0x10) {
-		printf("\n    ");
-		for (regLN = 0; regLN < 0x10; ++regLN)
-			printf(" %02X=%02X", regHN + regLN, [self getRegister:regHN + regLN]);
-	}
-	printf("\n\n");
-    
-    return 0;
-}
-
-//
-// Initialize the driver
-//
-- (id) initWithCentral: (id) c 
-{
-	self = [super initWithCentral:c];
-	if (self == NULL) 
-        return NULL;
-    
-    bayerConverter = [[BayerConverter alloc] init];
-	if (bayerConverter == NULL) 
-        return NULL;
-    
-    hardwareBrightness = YES;
-    hardwareContrast = YES;
-    
-    compressionType = proprietaryCompression;  // Use own decompression routines
-    
-    MALLOC(decodingBuffer, UInt8 *, 356 * 292 + 1000, "decodingBuffer");
-    initializePixartDecoder(codeTable);
-    
-    [self setCompression:0];
-    
-    buttonInterrupt = YES; // need to specify pipe, length, proper value for snapshot
-    buttonMessageLength = 2;
-    
-    histogram = [[Histogram alloc] init];
-    
-	return self;
-}
-
-
-- (void) startupCamera
-{
-    [self setRegister:0x41 toValue:0x00];
-    [self setRegister:0x0f toValue:0x00];
-    [self setRegister:0x11 toValue:0x30];
-    
-    [super startupCamera];
-}
-
-//
-// Provide feedback about which resolutions and rates are supported
-//
-- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate 
-{
-    switch (res) 
-    {
-        case ResolutionCIF:
-            if (rate > 24) 
-                return NO;
-            return YES;
-            break;
-            
-#if defined(DEBUG)
-        case ResolutionQCIF:
-            if (rate > 30) 
-                return NO;
-            return YES; // Not working yet for some unknown reason •••
-            break;
-#endif
-            
-        default: 
-            return NO;
-    }
-}
-
-
-- (CameraResolution) defaultResolutionAndRate: (short *) rate
-{
-	if (rate) 
-        *rate = 5;
-    
-	return ResolutionCIF;
-}
-
-
-- (void) setBrightness:(float)v 
-{
-    if ([self isAutoGain]) 
-        [super setBrightness:v];
-    else 
-    {
-        UInt8 value = 255 * v;
-        [self setRegister:0x08 toValue:value];
-        [self setRegister:0x13 toValue:0x01];
-        [self setRegister:0x1c toValue:0x01];
-    }
-}
-
-
-- (void) setContrast:(float)v 
-{
-    if ([self isAutoGain]) 
-        [super setContrast:v];
-    else 
-    {
-        UInt8 value = 31 * v;
-        [self setRegister:0x0e toValue:value];
-        [self setRegister:0x13 toValue:0x01];
-        [self setRegister:0x1c toValue:0x01];
-    }
-}
-
-
-- (short) maxCompression 
-{
-    return 1;
-}
-
-
-- (void) setCompression: (short) v 
-{
-    [super setCompression:v];
-}
-
-
-- (BOOL) canSetLed
-{
-    return YES;
-}
-
-
-- (void) setLed:(BOOL)v
-{
-    if ([self canSetLed]) 
-        [self setRegister:0x41 toValue:(v ? 0x02 : 0x00) withMask:0x02];
-    
-    [super setLed:v];
-}
-
-
-- (UInt8) getButtonPipe
-{
-    return 3;
-}
-
-
-- (BOOL) buttonDataHandler:(UInt8 *)data length:(UInt32)length
-{
-    BOOL result = NO;
-    
-    if (length == 2) 
-    {
-        if (data[0] == 0x5a && data[1] == 0x5a) 
-            result = YES;
-        
-        data[0] = 194;  // 0xc2
-        data[1] = 75;   // 0x4b
-        (*streamIntf)->WritePipe(streamIntf, 4, data, length);
-    }
-    
-    return result;
-}
-
-
-//
-// Returns the pipe used for grabbing
-//
-- (UInt8) getGrabbingPipe
-{
-    return 5;
-}
-
-//
-// Put in the alt-interface with the highest bandwidth (instead of 8)
-// This attempts to provide the highest bandwidth
-//
-- (BOOL) setGrabInterfacePipe
-{
-    return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:8];
-}
-
-//
-// These are the C functions to be used for scanning the frames
-//
-- (void) setIsocFrameFunctions
-{
-    grabContext.isocFrameScanner = pac207IsocFrameScanner;
-    grabContext.isocDataCopier = genericIsocDataCopier;
-}
-
-
-
-//
-// This is the key method that starts up the stream
-//
-- (BOOL) startupGrabStream 
-{
-    CameraError error = CameraErrorOK;
-    
-    UInt8 init[][8] = 
-    {
-        { 0x04, 0x12, 0x0d, 0x00, 0x6f, 0x03, 0x29, 0x00 }, 
-        { 0x00, 0x96, 0x80, 0xa0, 0x04, 0x10, 0xf0, 0x30 }, 
-        { 0x00, 0x00, 0x00, 0x70, 0xa0, 0xf8, 0x00, 0x00 }, 
-        { 0x00, 0x00, 0x32, 0x00, 0x96, 0x00, 0xa2, 0x02 }, 
-        { 0x00, 0x00, 0x36, 0x00 }, 
-        { 0x04, 0x12, 0x05, 0x22, 0x00, 0x01, 0x29 },
-//      { 0x04, 0x24, 0x06, 0x22, 0x00, 0x01, 0x29 },
-        { 0x32, 0x00, 0x96, 0x00, 0xa2, 0x02, 0xaf, 0x00 },
-    };
-    
-    [self setRegisters:0x02 number:8 withValues:init[0]];
-    [self setRegisters:0x0a number:8 withValues:init[1]];
-    [self setRegisters:0x12 number:8 withValues:init[2]];
-    [self setRegisters:0x40 number:8 withValues:init[3]];
-    [self setRegisters:0x48 number:4 withValues:init[4]];
-    
-    [self setRegister:0x4a toValue:([self compression] ? 0x88 : 0xff)];
-    [self setRegister:0x4b toValue:0x00];
-    
-    [self setRegister:0x13 toValue:0x01];
-    [self setRegister:0x1c toValue:0x01];
-    
-    [self setRegister:0x41 toValue:([self resolution] == ResolutionCIF ? 0x00 : 0x01) withMask:0x01];
-    [self setRegisters:0x02 number:7 withValues:init[5]];
-    [self setRegister:0x0e toValue:0x0a];
-    [self setRegister:0x18 toValue:0x00];
-    [self setRegisters:0x42 number:8 withValues:init[6]];
-//    [self setRegister:0x4a toValue:0x48];
-    [self setRegister:0x13 toValue:0x01];
-    [self setRegister:0x1c toValue:0x01];
-    
-    [self setRegister:0x40 toValue:0x01];
-    
-    return error == CameraErrorOK;
-}
-
-- (BOOL) startupGrabStreamOriginal
-{
-    CameraError error = CameraErrorOK;
-    
-    UInt8 init[][8] = 
-    {
-    { 0x04, 0x12, 0x0d, 0x00, 0x6f, 0x03, 0x29, 0x00 }, 
-    { 0x00, 0x96, 0x80, 0xa0, 0x04, 0x10, 0xf0, 0x30 }, 
-    { 0x00, 0x00, 0x00, 0x70, 0xa0, 0xf8, 0x00, 0x00 }, 
-    { 0x00, 0x00, 0x32, 0x00, 0x96, 0x00, 0xa2, 0x02 }, 
-    { 0x00, 0x00, 0x36, 0x00 }, 
-    { 0x04, 0x12, 0x05, 0x22, 0x00, 0x01, 0x29 },
-    { 0x32, 0x00, 0x96, 0x00, 0xa2, 0x02, 0xaf, 0x00 },
-    };
-    
-    [self setRegisters:0x02 number:8 withValues:init[0]];
-    [self setRegisters:0x0a number:8 withValues:init[1]];
-    [self setRegisters:0x12 number:8 withValues:init[2]];
-    [self setRegisters:0x40 number:8 withValues:init[3]];
-    [self setRegisters:0x48 number:4 withValues:init[4]];
-    [self setRegister:0x13 toValue:0x01];
-    [self setRegister:0x1c toValue:0x01];
-    
-    [self setRegisters:0x02 number:7 withValues:init[5]];
-    [self setRegister:0x0e toValue:0x0a];
-    [self setRegister:0x18 toValue:0x00];
-    [self setRegisters:0x42 number:8 withValues:init[6]];
-    [self setRegister:0x4a toValue:0x48];
-    [self setRegister:0x13 toValue:0x01];
-    [self setRegister:0x1c toValue:0x01];
-    
-    [self setRegister:0x40 toValue:0x01];
-    
-    return error == CameraErrorOK;
-}
-
-//
-// The key routine for shutting down the stream
-//
-- (void) shutdownGrabStream 
-{
-    //  More of the same
-    //  [self usbWriteVICmdWithBRequest:0x00 wValue:0x00 wIndex:0x40 buf:NULL len:0];
-    
-    [self setRegister:0x40 toValue:0x00];
-    
-    [self usbSetAltInterfaceTo:0 testPipe:[self getGrabbingPipe]]; // Must set alt interface to normal
-}
-
-
-
-//
-// This is the method that takes the raw chunk data and turns it into an image
-//
-- (BOOL) decodeBufferProprietary: (GenericChunkBuffer *) buffer
-{
-    BOOL problem;
-    
-	short rawWidth  = [self width];
-	short rawHeight = [self height];
-    
-    if (YES) 
-    {
-        UInt8 * buf = buffer->buffer;
-        MyController * controller = (MyController *) [[self central] delegate];
-        NSTextField * message = [controller getDebugMessageField];
-        if (message) 
-            [message setStringValue:[NSString stringWithFormat:@"%02X %02X %02X %02X  %02X %02X %02X %02X  %02X %02X %02X %02X  %02X %02X %02X %02X ", 
-                buf[0], buf[1], buf[2], buf[3], buf[4], buf[5], buf[6], buf[7], buf[8], buf[9], buf[10], buf[11], buf[12], buf[13], buf[14], buf[15]]];
-    }
-    
-    // Deal with auto-gain, brightness and whatever
-    
-    if (NO && [self isAutoGain] && grabContext.frameInfo.averageLuminanceSet)
-    {
-        int mean = 128;
-        int delta = 20;
-        int gbright = [self getRegister:0x02];
-        int thegain = [self getRegister:0x0e];
-        
-        grabContext.frameInfo.averageLuminanceSet = 0;
-        // use grabContext.frameInfo.averageLuminance;
-        // set some register
-        
-        if (grabContext.frameInfo.averageLuminance < (mean - delta)) 
-            if (gbright < 0x7f) // normally 0x18
-                gbright++;
-        
-        if (grabContext.frameInfo.averageLuminance > (mean + delta)) 
-            if (gbright > 0x04) 
-                gbright--;
-#if 0        
-        grabContext.maxFramesBetweenChunks = 1000 * (gbright > 0x0f ? 10 : 1);
-        
-        NSLog(@"setting reg 0x02 to 0x%02x", gbright);
-        [self setRegister:0x02 toValue:gbright];
-#endif  
-        
-        mean = 192;
-        delta = 10;
-        
-        if (grabContext.frameInfo.averageLuminance < (mean - delta)) 
-            if (thegain < 0x1f) 
-                thegain++;
-        
-        if (grabContext.frameInfo.averageLuminance > (mean + delta)) 
-            if (thegain > 0x00) 
-                thegain--;
-        
-        NSLog(@"setting reg 0x0e to 0x%02x", thegain);
-        [self setRegister:0x0e toValue:thegain];
-        
-        
-        [self setRegister:0x13 toValue:0x01];
-        [self setRegister:0x1c toValue:0x01];
-    }
-    
-	// Decode the bytes
-    
-    problem = [self pixartDecompress:buffer->buffer to:decodingBuffer width:rawWidth height:rawHeight];
-    
-    // Turn the Bayer data into an RGB image
-    
-    [bayerConverter setSourceFormat:4];
-    [bayerConverter setSourceWidth:rawWidth height:rawHeight];
-    [bayerConverter setDestinationWidth:rawWidth height:rawHeight];
-    [bayerConverter convertFromSrc:decodingBuffer
-                            toDest:nextImageBuffer
-                       srcRowBytes:rawWidth
-                       dstRowBytes:nextImageBufferRowBytes
-                            dstBPP:nextImageBufferBPP
-                              flip:hFlip
-                         rotate180:NO];
-    
-    if (!problem) 
-    {
-        int middle, low, high;
-        
-        [histogram processRGB:nextImageBuffer width:rawWidth height:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
-        middle = [histogram getMedian];
-        low = [histogram getLowThreshold];
-        high = [histogram getHighThreshold];
-//      NSLog(@"histogram centroid is %i, with power low at %i and high at %i (range = %i)", middle, low, high, high-low);
-        
-        NSImageView * imageView = [[[self central] delegate] getHistogramView];
-        if (imageView) 
-            [histogram drawImage:imageView withMiddle:middle low:low high:high];
-    }
-    
-    if (!problem && [self isAutoGain]) 
-    {
-        BOOL change = NO;
-        int middle, low, high;
-        int thegain = [self getRegister:0x0e];
-        int thebrightness = [self getRegister:0x08];
-        
-        middle = [histogram getMedian];
-        low = [histogram getLowThreshold];
-        high = [histogram getHighThreshold];
-        
-        if (middle < (128 - 10)) 
-        {
-            if (thegain < 0x1f) 
-                thegain++, change = YES;
-            else if (thebrightness < 0xff) 
-                thebrightness++, change = YES;
-        }
-        
-        if (middle > (128 + 10)) 
-        {
-            if (thegain > 0x00) 
-                thegain--, change = YES;
-            else if (thebrightness > 0x00) 
-                thebrightness--, change = YES;
-        }
-        
-        if (change) 
-        {
-            NSLog(@"setting reg 0x08 to 0x%02x", thebrightness);
-            [self setRegister:0x08 toValue:thebrightness];
-            NSLog(@"setting reg 0x0e to 0x%02x", thegain);
-            [self setRegister:0x0e toValue:thegain];
-            
-            [self setRegister:0x13 toValue:0x01];
-            [self setRegister:0x1c toValue:0x01];
-        }
-    }
-    
-    return problem == NO;
-}
-
-//
-// Decompress the byte stream
-//
-- (BOOL) pixartDecompress:(UInt8 *)input to:(UInt8 *)output width:(short)width height:(short)height
-{
-	// We should received a whole frame with header and EOL marker in *input
-	// and return a BGGR pattern in *output
-	// remove the header then copy line by line EOL is set with 0x0f 0xf0 marker
-	// or 0x1e 0xe1 marker for compressed line
-    
-	unsigned short word;
-	int row, bad = 0;
-    
-	input += 16;  // Skip the header
-    
-	// Go through row by row
-    
-	for (row = 0; row < height; row++) 
-    {
-		word = getShort(input);
-		switch (word) 
-        {
-            case 0x0FF0:
-                bad = 0;
-#ifdef REALLY_VERBOSE
-//              NSLog(@"0x0FF0");
-#endif
-                memcpy(output, input + 2, width);
-                input += (2 + width);
-                break;
-                
-            case 0x1EE1:
-                bad = 0;
-    //			NSLog(@"0x1EE1");
-                input += pixartDecompressRow(codeTable, input, output, width);
-                break;
-                
-            case 0x2DD2:
-                bad++;
-                NSLog(@"0x2DD2");
-                return NO;
-                break;
-                
-            default:
-#ifdef REALLY_VERBOSE
-//                if (bad == 0) 
-//                    NSLog(@"other EOL 0x%04x", word);
-//                else 
-//                    NSLog(@"-- EOL 0x%04x", word);
-#endif
-                bad++;
-                row--; // try again!
-                input += 1;
-                if (bad > 4) 
-                    return YES;
-		}
-		output += width;
-	}
-    
-	return NO;
-}
-
-@end
