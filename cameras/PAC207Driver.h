@@ -27,10 +27,16 @@
 #import <Histogram.h>
 
 
+@class RGBScaler;
+
 @interface PAC207Driver : GenericDriver 
 {
     UInt8 * decodingBuffer;  // Need an intermediate buffer for decompression
 	struct code_table codeTable[256];
+    
+    CameraResolution rawResolution;
+    RGBScaler * scaler;
+    UInt8 * rgbBuffer;
 }
 
 + (NSArray *) cameraUsbDescriptions;

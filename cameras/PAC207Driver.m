@@ -26,9 +26,10 @@
 #import "PAC207Driver.h"
 #import "MyController.h"
 #import "AGC.h"
+#import "RGBScaler.h"
 
 #include "USB_VendorProductIDs.h"
-#include "gspcadecoder.h"
+#include "MiscTools.h"
 
 
 @interface PAC207Driver (Private)
@@ -296,6 +297,10 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
 	if (self == NULL) 
         return NULL;
     
+    rawResolution = ResolutionCIF;
+    scaler = [[RGBScaler alloc] init];  // Create a scaler/blitter instance
+    MALLOC(rgbBuffer, UInt8 *, 4 * 352 * 288, "rgbBuffer");
+    
     [agc setEffects:[NSArray arrayWithObjects:[NSNumber numberWithInt:agcAffectGain], [NSNumber numberWithInt:agcAffectOffset], nil]];
     [agc setMode:agcProvidedAverage];  // use agcHistogram when histogram "breadth" matters
     
@@ -320,6 +325,16 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
 }
 
 
+- (void) dealloc
+{
+    if (scaler) 
+        [scaler release];
+    scaler = NULL;
+    
+    [super dealloc];
+}
+
+
 - (void) startupCamera
 {
     [self setRegister:0x41 toValue:0x00];
@@ -334,21 +349,18 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
 //
 - (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate 
 {
+    if (rate > 24) 
+        return NO;
+    
     switch (res) 
     {
+        case ResolutionVGA:
+        case ResolutionSIF:
+        case ResolutionQSIF:
         case ResolutionCIF:
-            if (rate > 24) 
-                return NO;
+        case ResolutionQCIF:
             return YES;
             break;
-            
-#if defined(DEBUG)
-        case ResolutionQCIF:
-            if (rate > 30) 
-                return NO;
-            return YES; // Not working yet for some unknown reason •••
-            break;
-#endif
             
         default: 
             return NO;
@@ -362,6 +374,24 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
         *rate = 5;
     
 	return ResolutionCIF;
+}
+
+
+- (short) rawWidth 
+{						//Current image width
+    return WidthOfResolution(rawResolution);
+}
+
+
+- (short) rawHeight 
+{						//Current image height
+    return HeightOfResolution(rawResolution);
+}
+
+
+- (CameraResolution) rawResolution 
+{				//Current image predefined format constant
+    return rawResolution;
 }
 
 
@@ -638,7 +668,7 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     [self setRegister:0x13 toValue:0x01];
     [self setRegister:0x1c toValue:0x01];
     
-    [self setRegister:0x41 toValue:([self resolution] == ResolutionCIF ? 0x00 : 0x01) withMask:0x01];
+    [self setRegister:0x41 toValue:([self rawResolution] == ResolutionCIF ? 0x00 : 0x01) withMask:0x01];
     [self setRegisterList:0x02 number:7 withValues:init[5]];
     [self setRegister:0x0e toValue:0x0a];
     [self setRegister:0x18 toValue:0x00];
@@ -707,8 +737,8 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     BOOL problem;
     
-	short rawWidth  = [self width];
-	short rawHeight = [self height];
+	short rawWidth  = [self rawWidth];
+	short rawHeight = [self rawHeight];
     
 #if defined(DEBUG)
     if (YES) 
@@ -730,13 +760,31 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     [bayerConverter setSourceFormat:4];
     [bayerConverter setSourceWidth:rawWidth height:rawHeight];
     [bayerConverter setDestinationWidth:rawWidth height:rawHeight];
-    [bayerConverter convertFromSrc:decodingBuffer
-                            toDest:nextImageBuffer
-                       srcRowBytes:rawWidth
-                       dstRowBytes:nextImageBufferRowBytes
-                            dstBPP:nextImageBufferBPP
-                              flip:hFlip
-                         rotate180:NO];
+    
+    if ([self resolution] == [self rawResolution]) 
+    {
+        [bayerConverter convertFromSrc:decodingBuffer
+                                toDest:nextImageBuffer
+                           srcRowBytes:rawWidth
+                           dstRowBytes:nextImageBufferRowBytes
+                                dstBPP:nextImageBufferBPP
+                                  flip:hFlip
+                             rotate180:NO];
+    }
+    else 
+    {
+        [bayerConverter convertFromSrc:decodingBuffer
+                                toDest:rgbBuffer
+                           srcRowBytes:rawWidth
+                           dstRowBytes:rawWidth*4
+                                dstBPP:4
+                                  flip:hFlip
+                             rotate180:NO];
+        
+        [scaler setSourceWidth:rawWidth height:rawHeight bytesPerPixel:4 rowBytes:rawWidth*4];
+        [scaler setDestinationWidth:[self width] height:[self height]  bytesPerPixel:nextImageBufferBPP rowBytes:nextImageBufferRowBytes];
+        [scaler convert:rgbBuffer to:nextImageBuffer];
+    }
     
     return problem == NO;
 }
