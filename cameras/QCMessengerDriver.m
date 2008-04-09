@@ -198,13 +198,6 @@
         grabContext.chunkListLock=[[NSLock alloc] init];
         if ((grabContext.chunkListLock)==NULL) ok=NO;
     }
-    if (ok) {
-        grabContext.chunkReadyLock=[[NSLock alloc] init];
-        if ((grabContext.chunkReadyLock)==NULL) ok=NO;
-        else {					//locked by standard, will be unlocked by isocComplete
-            [grabContext.chunkReadyLock tryLock];
-        }
-    }
 //get the chunk buffers
     for (i=0;(i<STV600_NUM_CHUNK_BUFFERS)&&(ok);i++) {
         MALLOC(grabContext.emptyChunkBuffers[i].buffer,unsigned char*,grabContext.chunkBufferLength,"STV600 chunk buffers");
@@ -240,8 +233,6 @@
     long i;
     if (grabContext.chunkListLock)  [grabContext.chunkListLock release];	//release lock
     grabContext.chunkListLock=NULL;
-    if (grabContext.chunkReadyLock) [grabContext.chunkReadyLock release];	//release lock
-    grabContext.chunkReadyLock=NULL;
     for (i=0;i<grabContext.numEmptyBuffers;i++) {
         if (grabContext.emptyChunkBuffers[i].buffer) FREE(grabContext.emptyChunkBuffers[i].buffer,"empty chunk buffers");
         grabContext.emptyChunkBuffers[i].buffer=NULL;
@@ -694,8 +685,7 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
         if (!grabContext.err) grabContext.err = CameraErrorUSBProblem;
         ok = NO;
     }
-
-    [grabContext.chunkReadyLock unlock];	//give the decodingThread a chance to abort
+    
     [pool release];
     grabbingThreadRunning = NO;
     [NSThread exit];
@@ -723,9 +713,9 @@ static bool StartNextIsochRead(STV600GrabContext* grabContext, int transferIdx) 
 
     while (shouldBeGrabbing)
     {
-        // wait for ready-to-decode chunks
-        [grabContext.chunkReadyLock lock];
-
+        if (grabContext.numFullBuffers == 0) 
+            usleep(1000); // 1 ms (1000 micro-seconds)
+        
         // decode new chunks or skip if we have stopped grabbing
         if ((grabContext.numFullBuffers>0)&&(shouldBeGrabbing))
         {
