@@ -492,7 +492,6 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
 //preliminary set more complicated parameters to NULL, so there are no stale pointers if setup fails
     grabContext.initiatedUntil=0;
     grabContext.chunkListLock=NULL;
-    grabContext.chunkReadyLock=NULL;
     grabContext.buffer=NULL;
     grabContext.transferContexts=NULL;
     grabContext.chunkList=NULL;
@@ -500,13 +499,6 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     if (ok) {
         grabContext.chunkListLock=[[NSLock alloc] init];
         if ((grabContext.chunkListLock)==NULL) ok=NO;
-    }
-    if (ok) {
-        grabContext.chunkReadyLock=[[NSLock alloc] init];
-        if ((grabContext.chunkReadyLock)==NULL) ok=NO;
-        else {					//locked by standard, will be unlocked by isocComplete
-            //[grabContext.chunkReadyLock tryLock];
-        }
     }
 //Setup ring buffer
     if (ok) {
@@ -816,10 +808,6 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         [grabContext.chunkListLock release];
         grabContext.chunkListLock=NULL;
     }
-    if (grabContext.chunkReadyLock) {			//throw away the chunk ready gate lock
-        [grabContext.chunkReadyLock release];
-        grabContext.chunkReadyLock=NULL;
-    }
     return YES;
 }
 
@@ -932,9 +920,6 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                 }
                 [grabContext->chunkListLock unlock];		//exit critical section
 
-                //[grabContext->chunkReadyLock tryLock];		//try to wake up the decoder
-                //[grabContext->chunkReadyLock unlock];
-				
 				SendMessageToDecoderThread(grabContext->decoderPort, (unsigned) kDataRecievedMessage);
 				
                 grabContext->currentChunkStart = -1;
@@ -1064,7 +1049,6 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
     }
 
     shouldBeGrabbing=NO;			//error in grabbingThread or abort? initiate shutdown of everything else
-    //[grabContext.chunkReadyLock unlock];	//give the decodingThread a chance to abort
     [pool release];
     grabbingThreadRunning=NO;
     [NSThread exit];

@@ -494,10 +494,6 @@ static int pac_decompress_row(struct code_table *table, unsigned char *inp, unsi
 	fullChunkLock=[[NSLock alloc] init];
 	if (!fullChunkLock) return CameraErrorNoMem;
 
-	chunkReadyLock=[[NSLock alloc] init];
-	if (!chunkReadyLock) return CameraErrorNoMem;
-	[chunkReadyLock tryLock]; // Should be locked by default
-
     return CameraErrorOK;
 }
 
@@ -532,10 +528,6 @@ static int pac_decompress_row(struct code_table *table, unsigned char *inp, unsi
     if(fullChunkLock){
         [fullChunkLock release];
         fullChunkLock = NULL;
-    }
-    if(chunkReadyLock){
-        [chunkReadyLock release];
-        chunkReadyLock = NULL;
     }
 }
 
@@ -573,7 +565,6 @@ static int pac_decompress_row(struct code_table *table, unsigned char *inp, unsi
 			[fillingChunk release];
 			fillingChunk = nil;			//to be sure...
 			[fullChunkLock unlock];
-			[chunkReadyLock unlock];						// Wake up decoding thread
 			framesSinceLastChunk = 0;						// reset watchdog
 		} else { // There was no current filling chunk. Just get a new one.
 			//Get an empty chunk
@@ -729,7 +720,6 @@ static void transferComplete(void *refcon, IOReturn result, void *arg0)
 
     [self shutdownGrabbing];
 	shouldBeGrabbing = NO;				// error in grabbingThread or abort? initiate shutdown of everything else
-	[chunkReadyLock unlock];			// give the decodingThread a chance to abort
 	[pool release];
 	grabbingThreadRunning = NO;
 	[NSThread exit];
@@ -882,8 +872,7 @@ static void transferComplete(void *refcon, IOReturn result, void *arg0)
 	NSMutableData* currChunk; // The buffer to decode
 
 	while(shouldBeGrabbing){
-		[chunkReadyLock lock];						// Wait for chunks to become ready
-		if([fullChunks count] == 0) continue;
+		if([fullChunks count] == 0) usleep(1000);
 		if(!shouldBeGrabbing) break;
 		[fullChunkLock lock];						//Take the oldest chunk to decode
 		currChunk = [fullChunks objectAtIndex:0];

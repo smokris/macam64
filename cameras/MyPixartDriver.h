@@ -58,7 +58,6 @@ struct code_table_t {
 
     NSLock* emptyChunkLock;			// Lock to access the empty chunk array
     NSLock* fullChunkLock;			// Lock to access the full chunk array
-    NSLock* chunkReadyLock;			// Lock to message a new chunk from grabbingThread to decodingThread
 
 	long framesSinceLastChunk;		// Watchdog counter to detect invalid isoc data stream
 

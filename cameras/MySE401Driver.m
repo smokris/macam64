@@ -329,7 +329,6 @@
     fullChunks=NULL;
     emptyChunkLock=NULL;
     fullChunkLock=NULL;
-    chunkReadyLock=NULL;
     fillingChunk=NULL;
     emptyChunks=[[NSMutableArray alloc] initWithCapacity:SE401_NUM_CHUNKS];
     if (!emptyChunks) return CameraErrorNoMem;
@@ -339,9 +338,6 @@
     if (!emptyChunkLock) return CameraErrorNoMem;
     fullChunkLock=[[NSLock alloc] init];
     if (!fullChunkLock) return CameraErrorNoMem;
-    chunkReadyLock=[[NSLock alloc] init];
-    if (!chunkReadyLock) return CameraErrorNoMem;
-    [chunkReadyLock tryLock];								//Should be locked by default
     jangGuBuffer=[[NSMutableData alloc] initWithCapacity:[self width]*[self height]+1000];
     if (!jangGuBuffer) return CameraErrorNoMem;
     
@@ -396,10 +392,6 @@
     if (fullChunkLock) {
         [fullChunkLock release];
         fullChunkLock=NULL;
-    }
-    if (chunkReadyLock) {
-        [chunkReadyLock release];
-        chunkReadyLock=NULL;
     }
     if (jangGuBuffer) {
         [jangGuBuffer release];
@@ -501,7 +493,6 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     }
 
     shouldBeGrabbing=NO;			//error in grabbingThread or abort? initiate shutdown of everything else
-    [chunkReadyLock unlock];			//give the decodingThread a chance to abort
     [pool release];
     grabbingThreadRunning=NO;
     [NSThread exit];
@@ -723,7 +714,9 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
         width=[self width];						//Should remain constant during grab
         height=[self height];						//Should remain constant during grab
         while (shouldBeGrabbing) {
-            [chunkReadyLock lock];					//wait for new chunks to arrive
+            if ([fullChunks count] == 0) 
+                usleep(1000); // 1 ms (1000 micro-seconds)
+
             while ((shouldBeGrabbing)&&([fullChunks count]>0)) {	//decode all full chunks we have
                 currChunk=[self getOldestFullChunkBuffer];
                 if (currChunk) {
@@ -920,8 +913,6 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     [fullChunks addObject:fillingChunk];
     [buf release];
     [fullChunkLock unlock];
-    [chunkReadyLock tryLock];			//New chunk is there. Try to wake up the decoder
-    [chunkReadyLock unlock];
 }
 
 - (NSMutableData*) getOldestFullChunkBuffer {
