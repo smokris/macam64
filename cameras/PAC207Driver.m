@@ -303,6 +303,7 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
     
     [agc setEffects:[NSArray arrayWithObjects:[NSNumber numberWithInt:agcAffectGain], [NSNumber numberWithInt:agcAffectOffset], nil]];
     [agc setMode:agcProvidedAverage];  // use agcHistogram when histogram "breadth" matters
+    [agc setBrightnessTracking:YES];
     
     bayerConverter = [[BayerConverter alloc] init];
 	if (bayerConverter == NULL) 
@@ -377,29 +378,29 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
 }
 
 
-- (short) rawWidth 
-{						//Current image width
+- (short) rawWidth
+{
     return WidthOfResolution(rawResolution);
 }
 
 
-- (short) rawHeight 
-{						//Current image height
+- (short) rawHeight
+{
     return HeightOfResolution(rawResolution);
 }
 
 
-- (CameraResolution) rawResolution 
-{				//Current image predefined format constant
+- (CameraResolution) rawResolution
+{
     return rawResolution;
 }
 
 
 - (void) setBrightness:(float)v 
 {
-    if ([self isAutoGain]) 
-        [super setBrightness:v];
-    else 
+    [super setBrightness:v];
+    
+    if (![self isAutoGain]) 
         [self setOffset:v];
 }
 
