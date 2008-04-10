@@ -28,6 +28,8 @@
     list = NULL;
     effectCount = 0;
     
+    trackBrightness = NO;
+    
     target = 128;
     delta = 10;
     
@@ -51,6 +53,12 @@
 - (void) setFrameInfo:(GenericFrameInfo *) info
 {
     frameInfo = info;
+}
+
+
+- (void) setBrightnessTracking:(BOOL) track
+{
+    trackBrightness = track;
 }
 
 
@@ -155,6 +163,9 @@
 {
     if (mode == agcNone) 
         return NO;
+    
+    if (trackBrightness) 
+        target = 255 * [driver brightness];
     
     if (mode == agcProvidedAverage) 
         return [self updateProvided];

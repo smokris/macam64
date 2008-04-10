@@ -55,6 +55,8 @@ typedef enum AGCEffect
     AGCMode mode;
     NSArray * list;
     
+    BOOL trackBrightness;
+    
     int effectCount;
     AGCEffect effect1;
     AGCEffect effect2;
@@ -76,6 +78,7 @@ typedef enum AGCEffect
 - (void) setMode:(AGCMode) newMode;
 - (void) setEffects:(NSArray *) array;
 - (void) setFrameInfo:(struct GenericFrameInfo *) frameInfo;
+- (void) setBrightnessTracking:(BOOL) track;
 
 - (BOOL) update:(Histogram *) histogram;
 - (BOOL) updateProvided;
