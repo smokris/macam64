@@ -261,8 +261,8 @@ extern NSString* SnapshotQualityPrefsKey;
             [previewView setImage:image];
             winFrame=[window frame];
             screenFrame=[[window screen] frame];
-            minWinSize.width=[driver width]+40;
-            minWinSize.height=[driver height]+48;
+            minWinSize.width=[driver width] + 40;
+            minWinSize.height=[driver height] + 116;  // Must account for the toolbar
 //If the window is to small to show the whole preview, resize it to fit
             if ((minWinSize.width>winFrame.size.width)||(minWinSize.height>winFrame.size.height)) {
                 if (minWinSize.width>winFrame.size.width) {
