@@ -47,4 +47,6 @@
 - (BOOL) setGrabInterfacePipe;
 - (void) setIsocFrameFunctions;
 
+- (BOOL) initializeCamera;
+
 @end

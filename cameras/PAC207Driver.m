@@ -343,6 +343,8 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
     [self setRegister:0x11 toValue:0x30];
     
     [super startupCamera];
+    
+    [self initializeCamera];
 }
 
 //
@@ -504,6 +506,12 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
     if (v == 0) 
         if ([self shutter] < limit) 
             [self setShutter:limit];
+    
+    [self setRegister:0x4a toValue:([self compression] ? 0x88 : 0xff)];
+    [self setRegister:0x4b toValue:0x00];
+    
+    [self setRegister:0x13 toValue:0x01];
+    [self setRegister:0x1c toValue:0x01];
 }
 
 
@@ -642,7 +650,7 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //
 // This is the key method that starts up the stream
 //
-- (BOOL) startupGrabStream 
+- (BOOL) initializeCamera 
 {
     CameraError error = CameraErrorOK;
     
@@ -677,6 +685,16 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     [self setShutter:[self shutter]];  // Also does the 0x13/0x1c
     
+    return error == CameraErrorOK;
+}
+
+//
+// This is the key method that starts up the stream
+//
+- (BOOL) startupGrabStream 
+{
+    CameraError error = CameraErrorOK;
+        
     [self setRegister:0x40 toValue:0x01];  // Start the stream
     
     return error == CameraErrorOK;
