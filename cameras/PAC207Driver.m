@@ -778,11 +778,14 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                                 toDest:rgbBuffer
                            srcRowBytes:rawWidth
                            dstRowBytes:rawWidth*4
-                                dstBPP:4
+                                dstBPP:3
                                   flip:hFlip
                              rotate180:NO];
         
-        [scaler setSourceWidth:rawWidth height:rawHeight bytesPerPixel:4 rowBytes:rawWidth*4];
+        // 3 to 3 works OK
+        // 4 to 3 has problems with top 2 lines are black and white, red lines on sides
+        
+        [scaler setSourceWidth:rawWidth height:rawHeight bytesPerPixel:3 rowBytes:rawWidth*4];
         [scaler setDestinationWidth:[self width] height:[self height]  bytesPerPixel:nextImageBufferBPP rowBytes:nextImageBufferRowBytes];
         [scaler convert:rgbBuffer to:nextImageBuffer];
     }
