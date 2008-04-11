@@ -444,7 +444,6 @@ extern UInt8 ZigZagLookup[];
     BOOL ok=YES;
     int i,j;
     //Clear things that have to be set back if init fails
-    grabContext.chunkReadyLock=NULL;
     grabContext.chunkListLock=NULL;
     for (i=0;i<SPCA504_NUM_TRANSFERS;i++) {
         grabContext.transferContexts[i].buffer=NULL;
@@ -478,10 +477,6 @@ having none at all...) */
         pccamJfifHeader[JFIF_QTABLE1_OFFSET+i]=ZigZagUV(pccamQTabIdx,i);
     }
     //Setup things that have to be set back if init fails
-    if (ok) {
-        grabContext.chunkReadyLock=[[NSLock alloc] init];
-        if (grabContext.chunkReadyLock==NULL) ok=NO;
-    }
     if (ok) {
         grabContext.chunkListLock=[[NSLock alloc] init];
         if (grabContext.chunkListLock==NULL) ok=NO;
@@ -518,10 +513,6 @@ But we can make sure that nothing bad can happen then...
 
 - (void) cleanupGrabContext {
     int i;
-    if (grabContext.chunkReadyLock) {			//cleanup chunk ready lock
-        [grabContext.chunkReadyLock release];
-        grabContext.chunkReadyLock=NULL;
-    }
     if (grabContext.chunkListLock) {			//cleanup chunk list lock
         [grabContext.chunkListLock release];
         grabContext.chunkListLock=NULL;
@@ -619,7 +610,6 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                         gCtx->fullChunkBuffers[0]=gCtx->fillingChunkBuffer;	//Insert the filling one as newest
                         gCtx->numFullBuffers++;				//We have inserted one buffer
                         gCtx->fillingChunk=false;			//Now we're not filling (still in the lock to be sure no buffer is lost)
-                        [gCtx->chunkReadyLock unlock];			//Wake up decoding thread
                         gCtx->framesSinceLastChunk=0;			//reset watchdog
                     } else {						//There was no current filling chunk. Just get a new one.
                         [gCtx->chunkListLock lock];			//Get access to the chunk buffers
@@ -763,7 +753,6 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
     [self shutdownGrabStream];
     [self usbSetAltInterfaceTo:0 testPipe:0];
     shouldBeGrabbing=NO;			//error in grabbingThread or abort? initiate shutdown of everything else
-    [grabContext.chunkReadyLock unlock];	//give the decodingThread a chance to abort
     [pool release];
     grabbingThreadRunning=NO;
     [NSThread exit];
@@ -897,7 +886,9 @@ static bool StartNextIsochRead(SPCA504GrabContext* gCtx, int transferIdx) {
     
     //The decoding loop
     while (shouldBeGrabbing) {
-        [grabContext.chunkReadyLock lock];	//Wait for chunks to become ready
+        if (grabContext.numFullBuffers == 0) 
+            usleep(1000); // 1 ms (1000 micro-seconds)
+
         while ((grabContext.numFullBuffers>0)&&(shouldBeGrabbing)) {
             SPCA504ChunkBuffer currBuffer;	//The buffer to decode
             //Get a full buffer

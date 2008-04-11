@@ -51,7 +51,6 @@
     
 //Grabbing Thread state and variables
     BOOL			grabbingThreadRunning;	//State of grabbingThread (set by decodingThread, reset by grabbingThread)
-    NSLock*			chunkReadyLock;		//Notification lock about freshly filled chunks
     NSLock*			fullChunkLock;		//Access lock to fullChunks array
     NSLock*			emptyChunkLock;		//Access lock to ep
     NSMutableArray*		fullChunks;		//An Array of NSMutableData objects for raw image data ("chunks") - filled, for decoding

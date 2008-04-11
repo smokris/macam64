@@ -336,13 +336,6 @@ typedef enum SonixSensorType {
         grabContext.chunkListLock=[[NSLock alloc] init];
         if ((grabContext.chunkListLock)==NULL) ok=NO;
     }
-    if (ok) {
-        grabContext.chunkReadyLock=[[NSLock alloc] init];
-        if ((grabContext.chunkReadyLock)==NULL) ok=NO;
-        else {					//locked by standard, will be unlocked by isocComplete
-            [grabContext.chunkReadyLock tryLock];
-        }
-    }
 //get the chunk buffers
     for (i=0;(i<SONIX_NUM_CHUNK_BUFFERS)&&(ok);i++) {
         MALLOC(grabContext.emptyChunkBuffers[i].buffer,unsigned char*,grabContext.chunkBufferLength,"SONIX chunk buffers");
@@ -373,8 +366,6 @@ typedef enum SonixSensorType {
     long i;
     if (grabContext.chunkListLock)  [grabContext.chunkListLock release];	//release lock
     grabContext.chunkListLock=NULL;
-    if (grabContext.chunkReadyLock) [grabContext.chunkReadyLock release];	//release lock
-    grabContext.chunkReadyLock=NULL;
     for (i=0;i<grabContext.numEmptyBuffers;i++) {
         if (grabContext.emptyChunkBuffers[i].buffer) FREE(grabContext.emptyChunkBuffers[i].buffer,"empty chunk buffers");
         grabContext.emptyChunkBuffers[i].buffer=NULL;
@@ -432,8 +423,6 @@ inline static void passCurrentChunk(SONIXGrabContext* gCtx) {
     gCtx->fillingChunk=false;
     gCtx->fillingChunkBuffer.buffer=NULL;	//it's redundant but to be safe...
     [gCtx->chunkListLock unlock];		//exit critical section
-    [gCtx->chunkReadyLock tryLock];		//try to wake up the decoder
-    [gCtx->chunkReadyLock unlock];
     gCtx->framesSinceLastChunk=0;
 }
 
@@ -627,7 +616,6 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
     [self shutdownGrabStream];
     [self usbSetAltInterfaceTo:0 testPipe:0];
     shouldBeGrabbing=NO;			//error in grabbingThread or abort? initiate shutdown of everything else
-    [grabContext.chunkReadyLock unlock];	//give the decodingThread a chance to abort
     [pool release];
     grabbingThreadRunning=NO;
     [NSThread exit];
@@ -746,7 +734,9 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 
 //Following: The decoding loop
     while (shouldBeGrabbing) {
-        [grabContext.chunkReadyLock lock];				//wait for ready-to-decode chunks
+        if (grabContext.numFullBuffers == 0) 
+            usleep(1000); // 1 ms (1000 micro-seconds)
+        
         while ((grabContext.numFullBuffers>0)&&(shouldBeGrabbing)&&(err==CameraErrorOK)) {	//decode all chunks or skip if we have stopped grabbing
             [grabContext.chunkListLock lock];				//lock for access to chunk list
             currChunk=grabContext.fullChunkBuffers[0];			//take first (oldest) chunk

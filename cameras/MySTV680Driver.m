@@ -194,7 +194,6 @@
     fullChunks=NULL;
     emptyChunkLock=NULL;
     fullChunkLock=NULL;
-    chunkReadyLock=NULL;
     emptyChunks=[[NSMutableArray alloc] initWithCapacity:STV680_NUM_CHUNKS];
     if (!emptyChunks) return CameraErrorNoMem;
     fullChunks=[[NSMutableArray alloc] initWithCapacity:STV680_NUM_CHUNKS];
@@ -203,9 +202,6 @@
     if (!emptyChunkLock) return CameraErrorNoMem;
     fullChunkLock=[[NSLock alloc] init];
     if (!fullChunkLock) return CameraErrorNoMem;
-    chunkReadyLock=[[NSLock alloc] init];
-    if (!chunkReadyLock) return CameraErrorNoMem;
-    [chunkReadyLock tryLock];					//Should be locked by default
 
     if (![self usbSetAltInterfaceTo:1 testPipe:1]) return CameraErrorNoBandwidth;
 
@@ -310,10 +306,6 @@
         [fullChunkLock release];
         fullChunkLock=NULL;
     }
-    if (chunkReadyLock) {
-        [chunkReadyLock release];
-        chunkReadyLock=NULL;
-    }
 
     [self usbSetAltInterfaceTo:0 testPipe:0];
 }
@@ -358,8 +350,6 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
         [fillingChunk release];
         fillingChunk=NULL;			//to be sure...
         [fullChunkLock unlock];
-        [chunkReadyLock tryLock];	//New chunk is there. Try to wake up the decoder
-        [chunkReadyLock unlock];
     } else {				//Incorrect chunk -> ignore (but back to empty chunks)
         [emptyChunkLock lock];
         [emptyChunks addObject:fillingChunk];
@@ -430,7 +420,6 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     }
 
     shouldBeGrabbing=NO;			//error in grabbingThread or abort? initiate shutdown of everything else
-    [chunkReadyLock unlock];			//give the decodingThread a chance to abort
     [pool release];
     grabbingThreadRunning=NO;
     [NSThread exit];
@@ -460,7 +449,9 @@ static void handleFullChunk(void *refcon, IOReturn result, void *arg0) {
     }
     
     while (shouldBeGrabbing) {
-        [chunkReadyLock lock];				//wait for new chunks to arrive
+        if ([fullChunks count] == 0) 
+            usleep(1000); // 1 ms (1000 micro-seconds)
+
         while ((shouldBeGrabbing)&&([fullChunks count]>0)) {	//decode all full chunks we have
             [fullChunkLock lock];			//Take the oldest chunk to decode
             currChunk=[fullChunks objectAtIndex:0];

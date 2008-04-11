@@ -58,7 +58,6 @@ typedef struct SONIXGrabContext {
     SONIXTransferContext transferContexts[SONIX_NUM_TRANSFERS];	//The transfer contexts
     IOUSBInterfaceInterface** intf;	//Just a copy from our interface interface so the callback can issue usb
     UInt64 initiatedUntil;		//next usb frame number to initiate a transfer for
-    NSLock* chunkReadyLock;		//Our "traffic light" for decodingThread
     NSLock* chunkListLock;		//Mutex for chunkBuffer manipulation
     BOOL* shouldBeGrabbing;		//Ref to the global indicator if the grab should go on
     CameraError err;			//Return value for common errors during grab

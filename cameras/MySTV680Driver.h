@@ -44,7 +44,6 @@
     NSMutableArray* fullChunks;		//Array of filled raw chunks (NSMutableData objects) - fifo queue: idx 0 = oldest
     NSLock* emptyChunkLock;		//Lock to access the empty chunk array
     NSLock* fullChunkLock;		//Lock to access the full chunk array
-    NSLock* chunkReadyLock;		//Lock to message a new chunk from grabbingThread to decodingThread
     long grabWidth;			//The real width the camera is sending (usually there's a border for interpolation)
     long grabHeight;			//The real height the camera is sending (usually there's a border for interpolation)
     unsigned long grabBufferSize;	//The number of bytes the cam will send in the bulk pipe for each chunk
