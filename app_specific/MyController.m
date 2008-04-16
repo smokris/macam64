@@ -175,6 +175,27 @@ extern NSString* SnapshotQualityPrefsKey;
     [super dealloc];
 }
 
+
+- (BOOL) acceptsFirstResponder
+{
+    return YES;
+}
+
+
+- (void) keyDown:(NSEvent *) theEvent 
+{
+    NSString * theKey = [theEvent charactersIgnoringModifiers];
+    
+    if ([theKey length] == 1) 
+    {
+        unichar keyChar = [theKey characterAtIndex:0];
+        
+        if (keyChar == ' ') 
+            [self doGrab:theEvent];
+    }
+}
+
+
 - (IBAction)brightnessChanged:(id)sender {
     [driver setBrightness:[brightnessSlider floatValue]];
 }

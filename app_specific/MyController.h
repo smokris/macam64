@@ -27,7 +27,7 @@
 @class MyCameraInspector,MyMovieRecorder;
 
 
-@interface MyController : NSObject
+@interface MyController : NSResponder
 {
     IBOutlet NSWindow* window;
     IBOutlet NSSlider* brightnessSlider;
@@ -90,6 +90,10 @@
 //Disclaimer handling
 - (void) disclaimerOK:(id)sender;	
 - (void) disclaimerQuit:(id)sender;
+
+// Respond to space-bar
+- (BOOL) acceptsFirstResponder;
+- (void) keyDown:(NSEvent *) theEvent;
 
 //UI: Handlers for control value changes
 - (IBAction)brightnessChanged:(id)sender;

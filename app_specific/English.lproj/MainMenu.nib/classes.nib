@@ -32,7 +32,6 @@
                 blackwhiteCheckboxChanged = id; 
                 brightnessChanged = id; 
                 cameraDisableChanged = id; 
-                colorModeChanged = id; 
                 compressionChanged = id; 
                 contrastChanged = id; 
                 disclaimerOK = id; 
@@ -71,11 +70,12 @@
             OUTLETS = {
                 blackwhiteCheckbox = id; 
                 brightnessSlider = NSSlider; 
-                cameraDisableCheckbox = NSButton; 
+                cameraDisableCheckbox = id; 
                 central = MyCameraCentral; 
+                colorModePopup = NSPopUpButton; 
                 compressionSlider = NSSlider; 
                 contrastSlider = NSSlider; 
-                debugDrawer = id; 
+                debugDrawer = NSDrawer; 
                 debugMessage = NSTextField; 
                 disclaimerWindow = NSWindow; 
                 flickerPopup = NSPopUpButton; 
@@ -89,7 +89,7 @@
                 ledCheckbox = id; 
                 manGainCheckbox = NSButton; 
                 previewView = NSImageView; 
-                reduceBandwidthCheckbox = NSButton; 
+                reduceBandwidthCheckbox = id; 
                 registerAddress = NSTextField; 
                 registerMask = NSTextField; 
                 registerSensorCheckbox = NSButton; 
@@ -104,7 +104,7 @@
                 whiteBalancePopup = NSPopUpButton; 
                 window = NSWindow; 
             }; 
-            SUPERCLASS = NSObject; 
+            SUPERCLASS = NSResponder; 
         }, 
         {
             ACTIONS = {
