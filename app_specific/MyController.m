@@ -165,7 +165,12 @@ extern NSString* SnapshotQualityPrefsKey;
     [previewView setImage:image];
     [window makeKeyAndOrderFront:self];
     [window display];
+    
     [central startupWithNotificationsOnMainThread:YES recognizeLaterPlugins:YES];
+    
+    // Need to set the size of drawers programatically, can't find a better way
+    [settingsDrawer setContentSize:(NSSize) { 351, 0 }];
+    [debugDrawer setContentSize:(NSSize) { 0, 254 }];
 }
 
 - (void) dealloc {
@@ -326,9 +331,10 @@ extern NSString* SnapshotQualityPrefsKey;
     [driver setLed:ledOn];
 }
 
-- (IBAction)horizontalFlipChanged:(id)sender {
-    BOOL flip=[horizontalFlipCheckbox intValue];
-    [driver setHFlip:flip];
+- (IBAction) orientationChanged:(id) sender 
+{
+    OrientationMode mode = [orientationPopup indexOfSelectedItem] + 1;
+    [driver setOrientation:mode];
 }
 
 - (IBAction)cameraDisableChanged:(id)sender
@@ -1079,6 +1085,18 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
     }
 }
 
+- (void) doDeleteSavedPrefs:(id) sender
+{
+    if (driver && central) 
+        [central deleteCameraSettings:driver];
+}
+
+- (NSWindow *) window
+{
+    return window;
+}
+
+
 - (void) toggleSettingsDrawer:(id) sender 
 {
     NSDrawerState state = [settingsDrawer state];
@@ -1275,7 +1293,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
             [fpsPopup setEnabled:YES];
             [flickerPopup setEnabled:[driver canSetFlicker]];
             [whiteBalancePopup setEnabled:[driver canSetWhiteBalanceMode]];
-            [horizontalFlipCheckbox setEnabled:[driver canSetHFlip]];
+            [orientationPopup setEnabled:YES];
             [blackwhiteCheckbox setEnabled:[driver canBlackWhiteMode]];
             [ledCheckbox setEnabled:[driver canSetLed]];
             [cameraDisableCheckbox setEnabled:[driver canSetDisabled]];
@@ -1305,7 +1323,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
             [flickerPopup selectItemAtIndex:[driver flicker]];
             [compressionSlider setFloatValue:((float)[driver compression])
                 /((float)(([driver maxCompression]>0)?[driver maxCompression]:1))];
-            [horizontalFlipCheckbox setIntValue:([driver hFlip]==YES)?1:0];
+            [orientationPopup selectItemAtIndex:[driver orientation] - 1];
             [cameraDisableCheckbox setIntValue:([driver disabled] == YES) ? 1 : 0];
             [reduceBandwidthCheckbox setIntValue:([driver usbReducedBandwidth] == YES) ? 1 : 0];
             [self formatChanged:self];
@@ -1423,7 +1441,7 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
     [flickerPopup setEnabled:NO];
     [whiteBalancePopup setEnabled:NO];
     [compressionSlider setEnabled:NO];
-    [horizontalFlipCheckbox setEnabled:NO];
+    [orientationPopup setEnabled:NO];
     [cameraDisableCheckbox setEnabled:NO];
     [reduceBandwidthCheckbox setEnabled:NO];
     
@@ -1463,6 +1481,14 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
     if (wb>0) {	//validate res entry
         if (driver==NULL) return NO;//No camera - no white balance
         else return [driver canSetWhiteBalanceModeTo:wb];
+    }
+    int orientation = [orientationPopup indexOfItem:item] + 1;
+    if (orientation > 1)  // First item ("Normal") is always OK
+    {
+        if (driver == NULL) 
+            return NO;  // No camera
+        else 
+            return [driver canSetOrientationTo:orientation];
     }
     if ([item action]==@selector(doGrab:)) return [self canDoGrab];
     if ([item action]==@selector(toggleSettings:)) return [self canToggleSettings];

@@ -233,6 +233,11 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (BOOL) isLedOn;
 - (void) setLed:(BOOL)v;
 
+// Orientation
+- (BOOL) canSetOrientationTo:(OrientationMode) m;
+- (OrientationMode) orientation;
+- (void) setOrientation:(OrientationMode) m;
+
 // Horizontal flipping
 - (BOOL) canSetHFlip;		//Horizontal flipping
 - (BOOL) hFlip;

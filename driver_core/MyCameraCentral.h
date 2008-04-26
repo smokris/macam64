@@ -106,6 +106,7 @@
 //Camera defaults managements
 - (BOOL) setCameraToDefaults:(MyCameraDriver*) camera;
 - (BOOL) saveCameraSettingsAsDefaults:(MyCameraDriver*) camera;
+- (BOOL) deleteCameraSettings:(MyCameraDriver *) cam;
 
 - (BOOL) cameraDisabled:(Class)driver withVendorID:(UInt16)vid andProductID:(UInt16)pid;
 - (void) setDisableCamera:(MyCameraDriver *)camera yesNo:(BOOL)disable;

@@ -371,6 +371,37 @@
     autoGain=v;
 }
 
+// Orientation
+
+- (BOOL) canSetOrientationTo:(OrientationMode) m
+{
+    if ([self canSetHFlip]) 
+        if (m == FlipHorizontal) 
+            return YES;
+    
+    return (m == NormalOrientation) ? YES : NO;
+}
+
+- (OrientationMode) orientation
+{
+    if ([self hFlip]) 
+        return FlipHorizontal;
+    
+    return NormalOrientation;
+}
+
+- (void) setOrientation:(OrientationMode) m
+{
+    if ([self canSetHFlip]) 
+    {
+        if (m == NormalOrientation) 
+            [self setHFlip:NO];
+        
+        if (m == FlipHorizontal) 
+            [self setHFlip:YES];
+    }
+}
+
 - (BOOL) canSetHFlip {
     return NO;
 }

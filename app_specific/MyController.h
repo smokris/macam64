@@ -40,11 +40,11 @@
     IBOutlet NSSlider* gainSlider;
     IBOutlet NSSlider* shutterSlider;
     IBOutlet NSSlider* compressionSlider;
-    IBOutlet NSButton* horizontalFlipCheckbox;
+    IBOutlet NSPopUpButton* orientationPopup;
     IBOutlet NSImageView* previewView;
     IBOutlet NSTextField* statusText;
     IBOutlet NSPopUpButton* whiteBalancePopup;
-    IBOutlet NSPopUpButton* colorModePopup;
+//  IBOutlet NSPopUpButton* colorModePopup;
     IBOutlet NSPopUpButton* sizePopup;
     IBOutlet NSPopUpButton* fpsPopup;
     IBOutlet NSPopUpButton* flickerPopup;
@@ -109,7 +109,7 @@
 - (IBAction)flickerChanged:(id)sender;
 - (IBAction)compressionChanged:(id)sender;
 - (IBAction)whiteBalanceChanged:(id)sender;
-- (IBAction)horizontalFlipChanged:(id)sender;
+- (IBAction)orientationChanged:(id)sender;
 - (IBAction)blackwhiteCheckboxChanged:(id)sender;
 - (IBAction)ledCheckboxChanged:(id)sender;
 - (IBAction)cameraDisableChanged:(id)sender;

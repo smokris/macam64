@@ -39,6 +39,7 @@
                 doDeleteAll = id; 
                 doDeleteLast = id; 
                 doDeleteOne = id; 
+                doDeleteSavedPrefs = id; 
                 doDownloadMedia = id; 
                 doGrab = id; 
                 doNextCam = id; 
@@ -51,10 +52,10 @@
                 formatChanged = id; 
                 gainChanged = id; 
                 gammaChanged = id; 
-                horizontalFlipChanged = id; 
                 hueChanged = id; 
                 ledCheckboxChanged = id; 
                 manGainChanged = id; 
+                orientationChanged = id; 
                 readRegister = id; 
                 reduceBandwidthChanged = id; 
                 saturationChanged = id; 
@@ -72,7 +73,6 @@
                 brightnessSlider = NSSlider; 
                 cameraDisableCheckbox = id; 
                 central = MyCameraCentral; 
-                colorModePopup = NSPopUpButton; 
                 compressionSlider = NSSlider; 
                 contrastSlider = NSSlider; 
                 debugDrawer = NSDrawer; 
@@ -83,11 +83,11 @@
                 gainSlider = NSSlider; 
                 gammaSlider = NSSlider; 
                 histogramView = NSImageView; 
-                horizontalFlipCheckbox = NSButton; 
                 hueSlider = NSSlider; 
                 inspectorDrawer = NSDrawer; 
                 ledCheckbox = id; 
                 manGainCheckbox = NSButton; 
+                orientationPopup = NSPopUpButton; 
                 previewView = NSImageView; 
                 reduceBandwidthCheckbox = id; 
                 registerAddress = NSTextField; 
