@@ -265,7 +265,7 @@ IsocFrameResult  empiaIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                        dstRowBytes:nextImageBufferRowBytes
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
-                         rotate180:NO]; // This might be different too
+                         rotate180:rotate]; // This might be different too
 */
     return YES;
 }

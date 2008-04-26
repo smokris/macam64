@@ -788,7 +788,7 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                            dstRowBytes:nextImageBufferRowBytes
                                 dstBPP:nextImageBufferBPP
                                   flip:hFlip
-                             rotate180:NO];
+                             rotate180:rotate];
     }
     else 
     {
@@ -798,7 +798,7 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
                            dstRowBytes:rawWidth*4
                                 dstBPP:3
                                   flip:hFlip
-                             rotate180:NO];
+                             rotate180:rotate];
         
         // 3 to 3 works OK
         // 4 to 3 has problems with top 2 lines are black and white, red lines on sides

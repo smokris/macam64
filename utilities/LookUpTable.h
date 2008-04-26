@@ -86,6 +86,7 @@
 - (void) setGainsRed:(float)r green:(float)g blue:(float)b;
 - (void) setDefaultOrientation:(OrientationMode)mode;
 - (void) setOrientationSetting:(OrientationMode)mode;
+- (OrientationMode) getOrientationSetting;
 
 - (OrientationMode) combineOrientationMode:(OrientationMode)mode1 with:(OrientationMode)mode2;
 

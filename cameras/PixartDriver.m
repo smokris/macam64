@@ -23,6 +23,8 @@
 //  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, USA
 //
 
+// DEPRECATED
+
 //
 // Still need to implement the snapshot button
 // Snapshot button causes BulkOrInterruptTransfer 0x5a,0x5a
@@ -334,7 +336,7 @@ static inline unsigned short getShort(unsigned char *pt)
                        dstRowBytes:nextImageBufferRowBytes
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
-                         rotate180:NO];
+                         rotate180:rotate];
     
     return YES;
 }
