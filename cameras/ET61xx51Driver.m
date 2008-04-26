@@ -142,7 +142,7 @@ IsocFrameResult  et61xx51IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
                        dstRowBytes:nextImageBufferRowBytes
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
-                         rotate180:NO];
+                         rotate180:rotate];
     
     return YES;
 }	

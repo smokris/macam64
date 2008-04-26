@@ -80,6 +80,7 @@
     grabbingThreadRunning = NO;
 	bayerConverter = NULL;
     LUT = NULL;
+    rotate = NO;
     
     histogram = [[Histogram alloc] init];
     agc = [[AGC alloc] initWithDriver:self];
@@ -307,6 +308,69 @@
         [bayerConverter setMakeImageStats:v];
 }
 
+// Orientation
+
+- (BOOL) canSetOrientationTo:(OrientationMode) m
+{
+    if (LUT != NULL) 
+        return YES;
+    else if (bayerConverter != NULL) 
+        return YES;
+    else 
+        return [super canSetOrientationTo:m];
+}
+
+- (OrientationMode) orientation
+{
+    if (LUT != NULL) 
+        return [LUT getOrientationSetting];
+    else if (bayerConverter != NULL) 
+    {
+        if (rotate && hFlip) 
+            return InvertVertical;
+        else if (rotate) 
+            return Rotate180;
+        else if (hFlip) 
+            return FlipHorizontal;
+        else 
+            return NormalOrientation;
+    }
+    else 
+        return [super orientation];
+}
+
+- (void) setOrientation:(OrientationMode) m
+{
+    if (LUT != NULL) 
+        [LUT setOrientationSetting:m];
+    else if (bayerConverter != NULL) 
+    {
+        switch (m) 
+        {
+            case NormalOrientation:
+                hFlip = NO;
+                rotate = NO;
+                break;
+                
+            case FlipHorizontal:
+                hFlip = YES;
+                rotate = NO;
+                break;
+                
+            case InvertVertical:
+                hFlip = YES;
+                rotate = YES;
+                break;
+                
+            case Rotate180:
+                hFlip = NO;
+                rotate = YES;
+                break;
+        }
+    }
+    else 
+        [super setOrientation:m];
+}
 
 //
 // Horizontal flip (mirror)

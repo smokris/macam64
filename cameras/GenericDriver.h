@@ -191,6 +191,7 @@ typedef struct GenericGrabContext
     
     BayerConverter * bayerConverter; // Our decoder for Bayer Matrix sensors, will be NULL if not a Bayer image
     LookUpTable * LUT; // Process brightness, contrast, saturation, and gamma for those without BayerConverters
+    BOOL rotate;
     
     Histogram * histogram;
     AGC * agc;  // Automatic Gain Control software algorithm used for some cameras
@@ -289,6 +290,10 @@ typedef struct GenericGrabContext
 - (BOOL) buttonDataHandler:(UInt8 *)data length:(UInt32)length;
 
 #pragma mark -> Subclass May Implement (default implementation works) <-
+
+- (BOOL) canSetOrientationTo:(OrientationMode) m;
+- (OrientationMode) orientation;
+- (void) setOrientation:(OrientationMode) m;
 
 - (void) startupCamera;
 - (UInt8) getGrabbingPipe;

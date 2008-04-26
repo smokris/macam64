@@ -70,6 +70,8 @@
     frameCount = 0;
     multiplier = 0;
     
+    rotate = YES;
+    
     // Allocate memory
     // Initialize variable and other structures
     
@@ -579,7 +581,7 @@ return size;
                        dstRowBytes:nextImageBufferRowBytes
                             dstBPP:nextImageBufferBPP
                               flip:hFlip
-                         rotate180:YES]; // This might be different too
+                         rotate180:rotate]; // This might be different too
     
     return YES;
 }
