@@ -96,6 +96,11 @@
     modeSetting = mode;
 }
 
+- (OrientationMode) getOrientationSetting
+{
+    return modeSetting;
+}
+
 
 - (OrientationMode) combineOrientationMode:(OrientationMode)mode1 with:(OrientationMode)mode2
 {
