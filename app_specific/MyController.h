@@ -145,6 +145,8 @@
 - (void)grabFinished:(id)cam withError:(CameraError)err;
 - (void)cameraHasShutDown:(id)cam;
 - (void) cameraEventHappened:(id)sender event:(CameraEvent)evt;
+- (void) updateStatus:(NSString *)status fpsDisplay:(float)fpsDisplay fpsReceived:(float)fpsReceived;
+
 //menu item validation
 - (BOOL) validateMenuItem:(NSMenuItem *)item;
 //Toolbar stuff

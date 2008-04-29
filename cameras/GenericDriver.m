@@ -27,6 +27,7 @@
 #import "MyController.h"         // user interface
 #import "Histogram.h"
 #import "AGC.h"
+#import "FrameCounter.h"
 
 #include "MiscTools.h"
 #include "Resolvers.h"
@@ -112,6 +113,9 @@
     SetQDRect(&QuicktimeDecoding.boundsRect, 0, 0, [self width], [self height]);
     
     SequenceDecoding.sequenceIdentifier = 0;
+    
+    displayFPS = [[FrameCounter alloc] init];
+    receiveFPS = [[FrameCounter alloc] init];
     
 	return self;
 }
@@ -701,6 +705,8 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
         [self cleanupGrabContext];
     }
     
+    grabContext.receiveFPS = receiveFPS;
+    
     return ok;
 }
 
@@ -897,7 +903,8 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
 //                  printf("Chunk filled with %ld bytes\n", gCtx->fillingChunkBuffer.numBytes);
                     
 					gettimeofday(&gCtx->fillingChunkBuffer.tvDone, NULL); // set the time of the buffer
-					
+					[gCtx->receiveFPS addFrame];
+                    
                     // Pass the complete chunk to the full list
                     // Move full buffers one up
                     
@@ -1076,6 +1083,7 @@ static void bulkComplete(void * refcon, IOReturn result, void * arg0)
         chunk.numBytes = bytesReceived;
         gettimeofday(&chunk.tvStart, NULL); // set the time of the buffer
         chunk.tv = chunk.tvDone = chunk.tvStart;
+        [gCtx->receiveFPS addFrame];
         
         // Pass the complete chunk to the full list
         // Move full buffers one up
@@ -2049,6 +2057,17 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
             [agc update:histogram];  // update histogram if necessary, compute agc
         
         [histogram draw];  // update histogram if necessary, draw in view already specified
+    }
+    
+    [displayFPS addFrame];
+    
+    if ([displayFPS update]) 
+    {
+#if 1
+        [[central delegate] updateStatus:NULL fpsDisplay:[displayFPS getCumulativeFPS] fpsReceived:[receiveFPS getFPS]];
+#else
+        [[central delegate] updateStatus:NULL fpsDisplay:[displayFPS getCumulativeFPS] fpsReceived:0.0];
+#endif
     }
     
     return ok;

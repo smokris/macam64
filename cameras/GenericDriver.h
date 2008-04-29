@@ -98,6 +98,7 @@ typedef struct GenericFrameInfo
 
 @class AGC;
 @class Histogram;
+@class FrameCounter;
 
 // The scanner is just a placeholder whereas the copier is fully usable
 
@@ -174,6 +175,8 @@ typedef struct GenericGrabContext
     
     GenericFrameInfo frameInfo;   // Use this to get more information from the frame scanner
     
+    FrameCounter * receiveFPS;
+    
 //  ImageType imageType;          // Is it Bayer, JPEG or something else?
 } GenericGrabContext;
 
@@ -239,6 +242,9 @@ typedef struct GenericGrabContext
     BOOL buttonThreadShouldBeActing;
     NSConnection * mainToButtonThreadConnection;
     NSConnection * buttonToMainThreadConnection;
+    
+    FrameCounter * displayFPS;
+    FrameCounter * receiveFPS;
 }
 
 #pragma mark -> Subclass Unlikely to Implement (generic implementation) <-

@@ -630,6 +630,12 @@
 		F5AEAE2D0980992B00D45891 /* SPCA561ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAE290980992B00D45891 /* SPCA561ADriver.m */; };
 		F5AEAE2E0980992B00D45891 /* SPCA561ADriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5AEAE280980992B00D45891 /* SPCA561ADriver.h */; };
 		F5AEAE2F0980992B00D45891 /* SPCA561ADriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5AEAE290980992B00D45891 /* SPCA561ADriver.m */; };
+		F5B1381C0DC68844000D09CB /* FrameCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B1381A0DC68844000D09CB /* FrameCounter.h */; };
+		F5B1381D0DC68844000D09CB /* FrameCounter.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B1381B0DC68844000D09CB /* FrameCounter.m */; };
+		F5B1381E0DC68844000D09CB /* FrameCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B1381A0DC68844000D09CB /* FrameCounter.h */; };
+		F5B1381F0DC68844000D09CB /* FrameCounter.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B1381B0DC68844000D09CB /* FrameCounter.m */; };
+		F5B138200DC68844000D09CB /* FrameCounter.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B1381A0DC68844000D09CB /* FrameCounter.h */; };
+		F5B138210DC68844000D09CB /* FrameCounter.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B1381B0DC68844000D09CB /* FrameCounter.m */; };
 		F5B2EF2F0A1B8861001423D7 /* QuickCamVCDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B2EF2D0A1B8861001423D7 /* QuickCamVCDriver.h */; };
 		F5B2EF300A1B8861001423D7 /* QuickCamVCDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F5B2EF2E0A1B8861001423D7 /* QuickCamVCDriver.m */; };
 		F5B2EF310A1B8861001423D7 /* QuickCamVCDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F5B2EF2D0A1B8861001423D7 /* QuickCamVCDriver.h */; };
@@ -1100,6 +1106,8 @@
 		F5AEA6F6097D805400D45891 /* tv8532.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = tv8532.h; path = spca5xx_files/tv8532.h; sourceTree = "<group>"; };
 		F5AEAE280980992B00D45891 /* SPCA561ADriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SPCA561ADriver.h; sourceTree = "<group>"; };
 		F5AEAE290980992B00D45891 /* SPCA561ADriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SPCA561ADriver.m; sourceTree = "<group>"; };
+		F5B1381A0DC68844000D09CB /* FrameCounter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FrameCounter.h; sourceTree = "<group>"; };
+		F5B1381B0DC68844000D09CB /* FrameCounter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FrameCounter.m; sourceTree = "<group>"; };
 		F5B1CC460375DAF501159FE2 /* RecordMovieActiveToolbarItem.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RecordMovieActiveToolbarItem.tiff; sourceTree = "<group>"; };
 		F5B2EEF30A1AFD9E001423D7 /* cs2102.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = cs2102.h; path = spca5xx_files/cs2102.h; sourceTree = "<group>"; };
 		F5B2EEF40A1AFD9E001423D7 /* cxlib.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = cxlib.h; path = spca5xx_files/cxlib.h; sourceTree = "<group>"; };
@@ -1740,6 +1748,8 @@
 		F5F79A910212038E01E152CA /* utilities */ = {
 			isa = PBXGroup;
 			children = (
+				F5B1381A0DC68844000D09CB /* FrameCounter.h */,
+				F5B1381B0DC68844000D09CB /* FrameCounter.m */,
 				F522580908725639002023A4 /* USB_VendorProductIDs.h */,
 				F5ED13DB0A48752A00770B6A /* LookUpTable.h */,
 				F5ED13DC0A48752A00770B6A /* LookUpTable.m */,
@@ -1922,6 +1932,7 @@
 				F54943A30D7F0C61004624D7 /* R5U870Driver.h in Headers */,
 				F5465D020D8109CE00D8170B /* Histogram.h in Headers */,
 				F57A02ED0D8E0BEF000EFF61 /* AGC.h in Headers */,
+				F5B1381C0DC68844000D09CB /* FrameCounter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2055,6 +2066,7 @@
 				F54943A10D7F0C61004624D7 /* R5U870Driver.h in Headers */,
 				F5465D000D8109CE00D8170B /* Histogram.h in Headers */,
 				F57A02EB0D8E0BEF000EFF61 /* AGC.h in Headers */,
+				F5B1381E0DC68844000D09CB /* FrameCounter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2184,6 +2196,7 @@
 				F54943A50D7F0C61004624D7 /* R5U870Driver.h in Headers */,
 				F5465CFE0D8109CE00D8170B /* Histogram.h in Headers */,
 				F57A02EF0D8E0BEF000EFF61 /* AGC.h in Headers */,
+				F5B138200DC68844000D09CB /* FrameCounter.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2581,6 +2594,7 @@
 				F54943A40D7F0C61004624D7 /* R5U870Driver.m in Sources */,
 				F5465D030D8109CE00D8170B /* Histogram.m in Sources */,
 				F57A02EE0D8E0BEF000EFF61 /* AGC.m in Sources */,
+				F5B1381D0DC68844000D09CB /* FrameCounter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2687,6 +2701,7 @@
 				F54943A20D7F0C61004624D7 /* R5U870Driver.m in Sources */,
 				F5465D010D8109CE00D8170B /* Histogram.m in Sources */,
 				F57A02EC0D8E0BEF000EFF61 /* AGC.m in Sources */,
+				F5B1381F0DC68844000D09CB /* FrameCounter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2791,6 +2806,7 @@
 				F54943A60D7F0C61004624D7 /* R5U870Driver.m in Sources */,
 				F5465CFF0D8109CE00D8170B /* Histogram.m in Sources */,
 				F57A02F00D8E0BEF000EFF61 /* AGC.m in Sources */,
+				F5B138210DC68844000D09CB /* FrameCounter.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

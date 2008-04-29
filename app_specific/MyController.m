@@ -532,6 +532,25 @@ extern NSString* SnapshotQualityPrefsKey;
 }
 
 
+- (void) updateStatus:(NSString *)status fpsDisplay:(float)fpsDisplay fpsReceived:(float)fpsReceived
+{
+    NSString * append;
+    NSString * newStatus;
+    
+    if (fpsReceived == 0.0) 
+        append = [NSString stringWithFormat:LStr(@" (%3.1f fps)"), fpsDisplay];
+    else 
+        append = [NSString stringWithFormat:LStr(@" (%3.1f fps, receiving %3.1f fps)"), fpsDisplay, fpsReceived];
+    
+    if (status == NULL) 
+        newStatus = [[NSString stringWithString:LStr(@"Status: Playing")] stringByAppendingString:append];
+    else 
+        newStatus = [status stringByAppendingString:append];
+    
+    [statusText setStringValue:newStatus];
+}
+
+
 - (IBAction) copy:(id) sender
 {
     if (imageRep != NULL) 
