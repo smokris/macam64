@@ -2063,7 +2063,7 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
     
     if ([displayFPS update]) 
     {
-#if 1
+#if VERBOSE
         [[central delegate] updateStatus:NULL fpsDisplay:[displayFPS getCumulativeFPS] fpsReceived:[receiveFPS getFPS]];
 #else
         [[central delegate] updateStatus:NULL fpsDisplay:[displayFPS getCumulativeFPS] fpsReceived:0.0];
