@@ -75,7 +75,9 @@
     if (diffMilliSeconds < interval) 
         return NO;
     
-    float newFPS = 1000.0 * frameCount / diffMilliSeconds;
+    int count = frameCount;
+    frameCount = 0;
+    float newFPS = 1000.0 * count / diffMilliSeconds;
     
     frameCount = 0;
     start = currentTime;
