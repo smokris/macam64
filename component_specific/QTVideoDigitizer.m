@@ -186,12 +186,13 @@ bool vdigLookupSelector(short what,ProcPtr* ptr,ProcInfoType* info) {
                                                   *ptr=(ComponentRoutineUPP)vdigGetMaxAuxBuffer; break;
             case kVDReleaseAsyncBuffersSelect:    *info=uppVDReleaseAsyncBuffersProcInfo;
                                                   *ptr=(ComponentRoutineUPP)vdigReleaseAsyncBuffers; break;
+            
 //          case kVDGetPreferredImageDimensionsSelect: *info=uppVDGetPreferredImageDimensionsProcInfo;
 //                                                *ptr=(ComponentRoutineUPP)vdigGetPreferredImageDimensions; break;
             
-//			case kVDGetDeviceNameAndFlagsSelect:    *info = uppVDGetDeviceNameAndFlagsProcInfo;
-//                                                  *ptr = (ComponentRoutineUPP) vdigGetDeviceNameAndFlags; 
-//                                                  break;
+			case kVDGetDeviceNameAndFlagsSelect:    *info = uppVDGetDeviceNameAndFlagsProcInfo;
+                                                    *ptr = (ComponentRoutineUPP) vdigGetDeviceNameAndFlags; 
+                                                    break;
             
 			case kVDCaptureStateChangingSelect:     *info = uppVDCaptureStateChangingProcInfo;
                                                     *ptr = (ComponentRoutineUPP) vdigCaptureStateChanging; 
@@ -700,17 +701,19 @@ pascal VideoDigitizerError vdigGetInputName(vdigGlobals storage, long videoInput
     
     // Append #1, or #2 etc to the camera name to make it unique
     index = [bridge getIndexOfCamera];
-    sprintf(nstr, " #%d", index);
+    sprintf(nstr, "macam #%d: ", index);
     if (strlen(cstr) + strlen(nstr) < 256) 
-        strcpy(cstr + strlen(cstr), nstr);
+        strcpy(nstr + strlen(nstr), cstr);
     else 
-        strcpy(cstr + 255 - strlen(nstr), nstr);
+        strncpy(nstr + strlen(nstr), cstr, 256 - strlen(cstr));
+    
+    nstr[255] = 0;
+    CStr2PStr(nstr, name);
     
 #if LOG_QT_CALLS
-    printf("vdigGetInputName: returning name: <%s>\n", cstr);
+    printf("vdigGetInputName: returning name: <%s>\n", nstr);
 #endif
     
-    CStr2PStr(cstr, name);
     return 0;
 }
 
@@ -913,19 +916,20 @@ pascal VideoDigitizerError vdigGetDeviceNameAndFlags(vdigGlobals storage, Str255
     
     // Append #1, or #2 etc to the camera name to make it unique
     index = [bridge getIndexOfCamera];
-    sprintf(nstr, " #%d", index);
+    sprintf(nstr, "macam #%d: ", index);
     if (strlen(cstr) + strlen(nstr) < 256) 
-        strcpy(cstr + strlen(cstr), nstr);
+        strcpy(nstr + strlen(nstr), cstr);
     else 
-        strcpy(cstr + 255 - strlen(nstr), nstr);
+        strncpy(nstr + strlen(nstr), cstr, 255 - strlen(cstr));
+    
+    nstr[255] = 0;
+    CStr2PStr(nstr, outName);
     
 #if LOG_QT_CALLS
-    printf("vdigGetDeviceNameAndFlags: returning name: <%s>\n", cstr);
+    printf("vdigGetDeviceNameAndFlags: returning name: <%s>\n", nstr);
 #endif
     
-    CStr2PStr(cstr, outName);
-    
-    *outNameFlags = 0; // vdDeviceFlagShowInputsAsDevices | vdDeviceFlagHideDevice;
+    *outNameFlags = vdDeviceFlagShowInputsAsDevices; // vdDeviceFlagShowInputsAsDevices | vdDeviceFlagHideDevice;
 
 	return noErr;
 }
