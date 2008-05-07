@@ -1014,6 +1014,11 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
             @"Philips SPC 600NC", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x0330], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
+            @"Philips SPC 710NC", @"name", NULL], 
+        
         NULL];
 }
 
@@ -1052,6 +1057,11 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:PRODUCT_HERCULES_CLASSIC_SILVER], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_HERCULES], @"idVendor", 
             @"Hercules Classic Silver", @"name", NULL],  
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x3008], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_HERCULES], @"idVendor",
+            @"Hercules Deluxe Optical Glass", @"name", NULL], 
         
         NULL];
 }
