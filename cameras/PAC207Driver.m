@@ -60,7 +60,7 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x00], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"Q-TEC Webcam 100 USB (or similar)", @"name", NULL], 
+            @"Q-Tec Webcam 100 USB (or similar)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x01], @"idProduct",
@@ -100,7 +100,7 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x08], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"Common PixArt PAC207 based webcam (A)", @"name", NULL], 
+            @"Common PixArt PAC207 based webcam (0x2468)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x09], @"idProduct",
@@ -140,12 +140,12 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x10], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"Genius VideoCAM GE112 (or similar)", @"name", NULL], 
+            @"Genius VideoCAM GF112 (or similar)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x11], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"Genius KYE VideoCAM GE111 (or similar)", @"name", NULL], 
+            @"Genius (KYE) VideoCAM GE111 (or similar)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x12], @"idProduct",
@@ -167,10 +167,13 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
             @"PixArt PAC207 based webcam (previously unknown 15)", @"name", NULL], 
         
+        // rotated
+        /*
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x16], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 16)", @"name", NULL], 
+            @"Genius e-Messenger 112 (or similar)", @"name", NULL], 
+        */
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x17], @"idProduct",
@@ -1036,3 +1039,32 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
     
 	return 2 * ((bitpos + 15) / 16); // return the number of bytes used for line, rounded up to whole words
 }
+
+
+@implementation PAC207DriverRotated
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x16], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
+            @"Genius e-Messenger 112 (or similar)", @"name", NULL], 
+        
+        NULL];
+}
+
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    rotate = YES;
+    
+	return self;
+}
+
+@end

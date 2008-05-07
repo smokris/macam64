@@ -50,3 +50,13 @@
 - (BOOL) initializeCamera;
 
 @end
+
+
+@interface PAC207DriverRotated : PAC207Driver 
+
++ (NSArray *) cameraUsbDescriptions;
+
+- (id) initWithCentral: (id) c;
+
+@end
+
