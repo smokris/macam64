@@ -56,6 +56,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
             @"Vimicro Generic VC0321", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x0328], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",  // sensor is SENSOR_MI1320, variant needed?
+            @"A4Tech PK-130MG", @"name", NULL], 
+        
         //  "Sony Visual Communication VGP-VCC1"
 
         [NSDictionary dictionaryWithObjectsAndKeys:
@@ -179,7 +184,7 @@ IsocFrameResult  vc032xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_VIMICRO_GENERIC_323], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
-            @"Vimicro Generic VC0321", @"name", NULL], 
+            @"Vimicro Generic VC0323", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_LENOVO_USB_WEBCAM], @"idProduct",
@@ -211,7 +216,7 @@ IsocFrameResult  vc032xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 //  spca50x->desc = Vimicro0323;
     spca50x->cameratype = JPGV;
     spca50x->bridge = BRIDGE_VC0323;
-    spca50x->sensor = SENSOR_OV7670;  // Sensor detection overrides this
+    spca50x->sensor = SENSOR_OV7670;  // Sensor detection may override this
     
     compressionType = gspcaCompression;
     
