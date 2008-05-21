@@ -11,18 +11,12 @@
 
 
 @interface SPCA536Driver : SPCA504ADriver 
-{
-    
-}
+{}
 
 @end
 
 
 @interface SPCA536ADriver : SPCA536Driver 
-{
-    
-}
+{}
 
 @end
-
-
