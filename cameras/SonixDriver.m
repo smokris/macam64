@@ -692,6 +692,11 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             @"Rainbow Color Webcam 5790P (0x60fe", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x6128], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"iMicro (0x6128)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x612a], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
             @"Sonix (0x612a)", @"name", NULL], 
