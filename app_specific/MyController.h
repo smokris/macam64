@@ -92,6 +92,7 @@
 - (void) disclaimerQuit:(id)sender;
 
 // Respond to space-bar
+- (BOOL) needsPanelToBecomeKey;
 - (BOOL) acceptsFirstResponder;
 - (void) keyDown:(NSEvent *) theEvent;
 

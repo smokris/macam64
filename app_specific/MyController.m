@@ -181,6 +181,12 @@ extern NSString* SnapshotQualityPrefsKey;
 }
 
 
+- (BOOL) needsPanelToBecomeKey
+{
+    return YES;
+}
+
+
 - (BOOL) acceptsFirstResponder
 {
     return YES;
