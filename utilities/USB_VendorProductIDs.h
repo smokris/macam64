@@ -238,7 +238,7 @@
 #define PRODUCT_ENIGMA_1_3              0x1018      // SPCA504B
 
 #define VENDOR_MAXELL           0x060b
-#define PRODUCT_COMPACT_PC_PM3          0xa001      // SPCA561A [not yet]
+#define PRODUCT_COMPACT_PC_PM3          0xa001      // SPCA561A
 #define PRODUCT_EZONICS_ICONTACT        0xa005      // SPCA561A
 
 #define VENDOR_ALARIS           0x0620
