@@ -589,6 +589,8 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     grabContext.imageHeight = [self height];
     grabContext.chunkBufferLength = [self width] * [self height] * 4 + 10000; // That should be more than enough, but should include any JPEG header
     
+    grabContext.maxFramesBetweenChunks = 1000; // That's a second. Normally we should get at least one chunk per second
+    
     [self setIsocFrameFunctions];  // can also adjust number of transfers, frames, buffers, buffer-sizes
     
     if (grabContext.numberOfTransfers > GENERIC_MAX_TRANSFERS) 
@@ -619,7 +621,6 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     grabContext.initiatedUntil = 0; // Will be set later (directly before start)
     grabContext.finishedTransfers = 0;
     grabContext.framesSinceLastChunk = 0;
-    grabContext.maxFramesBetweenChunks = 1000; // That's a second. Normally we should get at least one chunk per second
     
     grabContext.numFullBuffers = 0;
     grabContext.numEmptyBuffers = 0;
