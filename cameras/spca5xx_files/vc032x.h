@@ -146,11 +146,11 @@ static int vc032x_probe_sensor(struct usb_spca50x *spca50x)
 		spca5xxRegWrite( spca50x->dev, 0xa0, 0x01, 0xb308, NULL, 0);
 		spca5xxRegWrite( spca50x->dev, 0xa0, 0x0c, 0xb309, NULL, 0);
 		spca5xxRegWrite( spca50x->dev, 0xa0, ptsensor_info->I2cAdd, 0xb335, NULL, 0);
-	// PDEBUG(0,"check sensor VC032X -> %d Add -> ox%02X!", i, ptsensor_info->I2cAdd);
+	    PDEBUG(0,"check sensor VC032X -> %d Add -> ox%02X!", i, ptsensor_info->I2cAdd);
 		spca5xxRegWrite( spca50x->dev, 0xa0, ptsensor_info->op, 0xb301, NULL, 0);
 		vc032x_read_sensor_register ( spca50x->dev, ptsensor_info->IdAdd, &value );
 		if(value == ptsensor_info->VpId) {
-			// PDEBUG(0,"find sensor VC032X -> ox%04X!",ptsensor_info->VpId);
+			PDEBUG(0,"find sensor VC032X -> ox%04X!",ptsensor_info->VpId);
 			sensor_id = ptsensor_info->sensorId;
 			break;
 		}
