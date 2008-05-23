@@ -15,12 +15,7 @@
 + (NSArray *) cameraUsbDescriptions 
 {
     return [NSArray arrayWithObjects:
-        /*
-         [NSDictionary dictionaryWithObjectsAndKeys:
-             [NSNumber numberWithUnsignedShort:PRODUCT_DSC_13M_SMART], @"idProduct",
-             [NSNumber numberWithUnsignedShort:VENDOR_GENIUS], @"idVendor",
-             @"Genius DSC 1.3M Smart", @"name", NULL], 
-         */
+        
         NULL];
 }
 

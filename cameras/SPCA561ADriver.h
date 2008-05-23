@@ -27,9 +27,6 @@
 
 
 @interface SPCA561ADriver : SPCA5XXDriver
-{
-	UInt8 * decodingBuffer;
-}
 
 + (NSArray *) cameraUsbDescriptions;
 
