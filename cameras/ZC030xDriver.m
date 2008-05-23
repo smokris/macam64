@@ -36,12 +36,12 @@
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_WEBCAM_NOTEBOOK], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_WEBCAM_NOTEBOOK], @"idProduct",  // SENSOR_TAS5130CXX ??
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative Webcam NoteBook", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_WEBCAM_MOBILE], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_WEBCAM_MOBILE], @"idProduct",  // SENSOR_ICM105A ??
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative Webcam Mobile", @"name", NULL], 
         
@@ -66,7 +66,7 @@
             @"Genius VideoCam V3", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_LABTEC_WEBCAM_PRO], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_LABTEC_WEBCAM_PRO], @"idProduct",  // SENSOR_HDCS2020 ??
             [NSNumber numberWithUnsignedShort:VENDOR_LABTEC], @"idVendor",
             @"Labtec Webcam Pro", @"name", NULL], 
         
@@ -76,17 +76,17 @@
             @"Genius VideoCam Web", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_NX_PRO], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_NX_PRO], @"idProduct",  // SENSOR_HV7131B ??
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative NX Pro", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_NX_PRO2], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_NX_PRO2], @"idProduct",  // SENSOR_TAS5130CXX ??
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative NX Pro 2", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_LIVE], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_LIVE], @"idProduct",  // SENSOR_TAS5130CXX ??
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative Live!", @"name", NULL], 
         
@@ -96,7 +96,7 @@
             @"Generic ZC0301P Webcam", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_GENERIC_ZC0302], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_GENERIC_ZC0302], @"idProduct",  // SENSOR_ICM105A ??
             [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
             @"Generic ZC0302 Webcam", @"name", NULL], 
         
@@ -116,27 +116,27 @@
             @"Micro Innovation WebCam 320", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_A], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_A], @"idProduct",  // SENSOR_TAS5130CXX ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam IM (A)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_MIC], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_MIC], @"idProduct",  // SENSOR_TAS5130CXX ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam IM with sound", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_CHAT_A], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_CHAT_A], @"idProduct",  // SENSOR_TAS5130CXX ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam Chat (A)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_NOTEBOOKS_B], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_NOTEBOOKS_B], @"idProduct",  // SENSOR_HDCS2020 ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam for Notebooks (B)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_B], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_B], @"idProduct",  // SENSOR_TAS5130CXX ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam IM (B)", @"name", NULL], 
         
@@ -146,32 +146,32 @@
             @"Typhoon Webshot II (C)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_NX], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_NX], @"idProduct",  // SENSOR_PAS106 ??
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative Webcam NX", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_INSTANT_A], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_INSTANT_A], @"idProduct",  // SENSOR_PAS106 ??
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative Instant (A)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_INSTANT_B], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_CREATIVE_INSTANT_B], @"idProduct",  // SENSOR_PAS106 ??
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative Instant (B)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_NOTEBOOK_DELUXE], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_NOTEBOOK_DELUXE], @"idProduct",  // SENSOR_HDCS2020 ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam NoteBook Deluxe", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_NOTEBOOK_DLX_B], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_NOTEBOOK_DLX_B], @"idProduct",  // SENSOR_HDCS2020 ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam for NoteBooks Deluxe (B)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_LABTEC_NOTEBOOKS], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_LABTEC_NOTEBOOKS], @"idProduct",  // SENSOR_HDCS2020 ??
             [NSNumber numberWithUnsignedShort:VENDOR_LABTEC], @"idVendor",
             @"Labtec NoteBooks", @"name", NULL], 
         
@@ -181,7 +181,7 @@
             @"Vimicro Generic", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_C], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_C], @"idProduct",  // SENSOR_HV7131C ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam IM (C)", @"name", NULL], 
         
@@ -191,22 +191,22 @@
             @"Chuntex CTX M730V TFT", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IMAGE], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IMAGE], @"idProduct",  // SENSOR_PAS202 ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam Image", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COOL], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COOL], @"idProduct",  // SENSOR_HV7131B ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam Cool (0x08ac)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_CONNECT], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_IM_CONNECT], @"idProduct",  // SENSOR_TAS5130CXX ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam IM (D) / Connect", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_MESSENGER_C], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_MESSENGER_C], @"idProduct",  // SENSOR_TAS5130CXX ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam Messenger (C)", @"name", NULL], 
         
@@ -216,12 +216,12 @@
             @"Philips SPC 710/00 or 715NC/27 (experimental)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x08af], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x08af], @"idProduct",  // SENSOR_HV7131B ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam Cool (0x08af)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x4029], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x4029], @"idProduct",  // SENSOR_PB0330 ??
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative Webcam Vista Pro", @"name", NULL], 
         
@@ -251,17 +251,21 @@ static int force_sensor_id = -1;
     
     cameraOperation = &fzc3xx;
     
-    [self setCompression:1];
-    
     spca50x->cameratype = JPGH;
     spca50x->bridge = BRIDGE_ZC3XX;
-    spca50x->sensor = SENSOR_TAS5130CXX;  // Assume this sensor for now, will get overwritten
+    spca50x->sensor = SENSOR_PB0330;  // Assume this sensor for now, will get overwritten
     
     compressionType = gspcaCompression;
     
-//  jpegVersion = 0;  // Possibly useful if we try using the jpeg-decompression
-
 	return self;
+}
+
+
+- (void) startupCamera
+{
+    [super startupCamera];
+    
+    [self setCompression:1];
 }
 
 
@@ -337,82 +341,6 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
-/*
-- (BOOL) setupJpegCompression
-{
-    if (jpegVersion == 0) 
-    {
-        // any other initialization
-        
-        return YES;
-    }
-    else 
-        return [super setupJpegCompression];
-}
-*/
-/*
-//
-// other stuff, including decompression
-//
-- (BOOL) decodeBufferJPEG: (GenericChunkBuffer *) buffer
-{
-    int i, error;
-	short rawWidth  = [self width];
-	short rawHeight = [self height];
-    int forceRGB = 1;
-    
-#if VERBOSE
-    printf("Need to decode a JPEG buffer with %ld bytes.\n", buffer->numBytes);
-#endif
-    
-    // when jpeg_decode422() is called:
-    //   frame.data - points to output buffer
-    //   frame.tmpbuffer - points to input buffer
-    //   frame.scanlength -length of data (tmpbuffer on input, data on output)
-    
-    spca50x->frame->width = rawWidth;
-    spca50x->frame->height = rawHeight;
-    spca50x->frame->hdrwidth = rawWidth;
-    spca50x->frame->hdrheight = rawHeight;
-     
-    spca50x->frame->data = nextImageBuffer;
-    spca50x->frame->tmpbuffer = buffer->buffer + 16;
-    spca50x->frame->scanlength = buffer->numBytes - 16;
-    
-    spca50x->frame->decoder = &spca50x->maindecode;
-    
-    for (i = 0; i < 256; i++) 
-    {
-        spca50x->frame->decoder->Red[i] = i;
-        spca50x->frame->decoder->Green[i] = i;
-        spca50x->frame->decoder->Blue[i] = i;
-    }
-    
-    spca50x->frame->cameratype = spca50x->cameratype;
-    
-    spca50x->frame->format = VIDEO_PALETTE_RGB24;
-    
-    spca50x->frame->cropx1 = 0;
-    spca50x->frame->cropx2 = 0;
-    spca50x->frame->cropy1 = 0;
-    spca50x->frame->cropy2 = 0;
-    
-    // reset info.dri
-    
-    spca50x->frame->decoder->info.dri = 0;
-    
-    // do jpeg decoding
-    
-    error = jpeg_decode422(spca50x->frame, forceRGB);  // bgr = 1 (works better for SPCA508A...)
-    
-    if (error != 0) 
-        return NO;
-    
-    [LUT processImage:nextImageBuffer numRows:rawHeight rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
-    
-    return YES;
-}
-*/
 @end
 
 
@@ -494,12 +422,12 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMMUNICATE_STX], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMMUNICATE_STX], @"idProduct",  // SENSOR_HV7131C ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech Communicate STX (A)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMM_STX_PLUS], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_QUICKCAM_COMM_STX_PLUS], @"idProduct",  // SENSOR_HV7131C ??
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech Communicate STX (B) Plus?", @"name", NULL], 
         
@@ -594,7 +522,7 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x08dd], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x08dd], @"idProduct",  // SENSOR_MC501CB
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech QuickCam for Notebooks (0x08dd)", @"name", NULL], 
         
@@ -608,6 +536,8 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         return NULL;
     
     spca50x->sensor = SENSOR_MC501CB;
+    
+    usbReducedBandwidth = YES;
     
 	return self;
 }
