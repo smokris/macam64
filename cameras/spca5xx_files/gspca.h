@@ -55,7 +55,7 @@ enum
 #endif
 
 #if DEBUG
-#define SPCA50X_ENABLE_DEBUG
+#define SPCA50X_ENABLE_DEBUG 1
 #define info(args...) { printf(args); printf("\n"); }
 extern int debug;
 #endif
