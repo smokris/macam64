@@ -19,32 +19,25 @@
 
 
 @interface IBMcamModel1Driver : IBMcamDriver 
-{
-    
-}
 
 @end
 
 
 @interface IBMcamModel2Driver : IBMcamDriver 
-{
-    
-}
 
 @end
 
 
 @interface IBMcamModel3Driver : IBMcamDriver 
-{
-    
-}
 
 @end
 
 
 @interface IBMcamModel4Driver : IBMcamDriver 
-{
-    
-}
+
+@end
+
+
+@interface IBMcamUnknownModelDriver : IBMcamDriver 
 
 @end
