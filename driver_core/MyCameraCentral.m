@@ -83,6 +83,7 @@
 #import "ET61xx51Driver.h"
 #import "WinbondDriver.h"
 #import "R5U870Driver.h"
+#import "CX11646Driver.h"
 
 #include "unistd.h"
 
@@ -287,10 +288,17 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[PAC207Driver class]];
     [self registerCameraDriver:[PAC207DriverRotated class]];
     
-    [self registerCameraDriver:[SPCA561ADriver class]];   // Based on SPCA5XX - seems to work now
-    [self registerCameraDriver:[TV8532Driver class]];     // Based on SPCA5XX - seems to work now
+    [self registerCameraDriver:[PicoDriver class]];
+    
+    
+    // Based on gspca (subclass SPCA5xxDriver)
+    
+    [self registerCameraDriver:[SPCA561ADriver class]];
+    
+    [self registerCameraDriver:[TV8532Driver class]];
     [self registerCameraDriver:[TV8532RotatedDriver class]];
-    [self registerCameraDriver:[ZC030xDriver class]];     // Based on SPCA5XX - seems to work
+    
+    [self registerCameraDriver:[ZC030xDriver class]];
     [self registerCameraDriver:[ZC030xDriverBGR class]];
     [self registerCameraDriver:[ZC030xDriverInverted class]];
     [self registerCameraDriver:[ZC030xDriverMic class]];
@@ -301,19 +309,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[VC0321Driver class]];
     [self registerCameraDriver:[VC0323Driver class]];
     
-    [self registerCameraDriver:[SPCA501ADriver class]];   // Based on SPCA5XX - testing
-    [self registerCameraDriver:[SPCA501ADriverVariant1 class]];
-    [self registerCameraDriver:[SPCA501ADriverVariant2 class]];
-    [self registerCameraDriver:[SPCA501ADriverVariant3 class]];
-    [self registerCameraDriver:[SPCA501ADriverVariant4 class]];
-    
-    [self registerCameraDriver:[SPCA508Driver class]];    // Based on SPCA5XX - Works, but not too pretty
-    [self registerCameraDriver:[SPCA508CS110Driver class]];
-    [self registerCameraDriver:[SPCA508SightcamDriver class]];
-    [self registerCameraDriver:[SPCA508Sightcam2Driver class]];
-    [self registerCameraDriver:[SPCA508CreativeVistaDriver class]];
-    
-    [self registerCameraDriver:[SonixDriver class]];  // Based on SPCA5XX - Have no idea if it works
+    [self registerCameraDriver:[SonixDriver class]];
     [self registerCameraDriver:[SonixDriverVariant1 class]];
     [self registerCameraDriver:[SonixDriverVariant2 class]];
     [self registerCameraDriver:[SonixDriverVariant3 class]];
@@ -327,31 +323,31 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SN9CxxxDriver class]];
     [self registerCameraDriver:[SN9CxxxDriverPhilips1 class]];
     [self registerCameraDriver:[SN9CxxxDriverMicrosoft1 class]];
-    [self registerCameraDriver:[SN9C20xDriver class]];
+    [self registerCameraDriver:[SN9CxxxDriverGenius1 class]];
     
-    [self registerCameraDriver:[PicoDriver class]];
+    [self registerCameraDriver:[SN9C20xDriver class]];
     
     [self registerCameraDriver:[PAC7311Driver class]];
     
     [self registerCameraDriver:[MR97311Driver class]];
     [self registerCameraDriver:[MR97310Driver class]];
     
-    [self registerCameraDriver:[M560xDriver class]];
-    
-    [self registerCameraDriver:[IBMcamDriver class]];
-    [self registerCameraDriver:[IBMcamModel1Driver class]];
-    [self registerCameraDriver:[IBMcamModel2Driver class]];
-    [self registerCameraDriver:[IBMcamModel3Driver class]];
-    [self registerCameraDriver:[IBMcamModel4Driver class]];
-    
     [self registerCameraDriver:[SPCA500Driver class]];
     [self registerCameraDriver:[SPCA500ADriver class]];
     [self registerCameraDriver:[SPCA500CDriver class]];
     
+    [self registerCameraDriver:[SPCA501ADriver class]];
+    [self registerCameraDriver:[SPCA501ADriverVariant1 class]];
+    [self registerCameraDriver:[SPCA501ADriverVariant2 class]];
+    [self registerCameraDriver:[SPCA501ADriverVariant3 class]];
+    [self registerCameraDriver:[SPCA501ADriverVariant4 class]];
+    
     [self registerCameraDriver:[SPCA504ADriver class]];
+    [self registerCameraDriver:[SPCA504ADriverAiptekMiniCam class]];
     [self registerCameraDriver:[SPCA504BDriver class]];
     [self registerCameraDriver:[SPCA504B_P3Driver class]];
     [self registerCameraDriver:[SPCA504CDriver class]];
+    [self registerCameraDriver:[SPCA504CDriverClickSmart420 class]];
     
     [self registerCameraDriver:[SPCA505Driver class]];
     [self registerCameraDriver:[SPCA505BDriver class]];
@@ -359,18 +355,38 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SPCA506Driver class]];
     [self registerCameraDriver:[SPCA506ADriver class]];
     
+    [self registerCameraDriver:[SPCA508Driver class]];
+    [self registerCameraDriver:[SPCA508CS110Driver class]];
+    [self registerCameraDriver:[SPCA508SightcamDriver class]];
+    [self registerCameraDriver:[SPCA508Sightcam2Driver class]];
+    [self registerCameraDriver:[SPCA508CreativeVistaDriver class]];
+    
     [self registerCameraDriver:[SPCA533Driver class]];
     [self registerCameraDriver:[SPCA533ADriver class]];
+    [self registerCameraDriver:[SPCA533ADriverMegapixV4 class]];
+    [self registerCameraDriver:[SPCA533ADriverClickSmart820 class]];
     
     [self registerCameraDriver:[SPCA536Driver class]];
     [self registerCameraDriver:[SPCA536ADriver class]];
     
-    [self registerCameraDriver:[SPCA551ADriver class]];
+    [self registerCameraDriver:[SPCA551ADriver class]];  // not finished, maybe not necessary?
 
-    [self registerCameraDriver:[DivioDriver class]];
-    
     [self registerCameraDriver:[ET61xx51Driver class]];
     [self registerCameraDriver:[ET61x151Driver class]];
+    
+    [self registerCameraDriver:[CX11646Driver class]];
+    
+    // End of gpsca drivers
+    
+    [self registerCameraDriver:[M560xDriver class]];
+    
+    [self registerCameraDriver:[IBMcamUnknownModelDriver class]];
+    [self registerCameraDriver:[IBMcamModel1Driver class]];
+    [self registerCameraDriver:[IBMcamModel2Driver class]];
+    [self registerCameraDriver:[IBMcamModel3Driver class]];
+    [self registerCameraDriver:[IBMcamModel4Driver class]];
+    
+    [self registerCameraDriver:[DivioDriver class]];
     
     [self registerCameraDriver:[WinbondDriver class]];
     
