@@ -34,7 +34,6 @@
 - (void) setIsocFrameFunctions;
 - (BOOL) setGrabInterfacePipe;
 - (BOOL) startupGrabStream;
-//- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
 
@@ -46,7 +45,6 @@
 - (id) initWithCentral:(id)c;
 - (void) setIsocFrameFunctions;
 - (BOOL) setGrabInterfacePipe;
-//- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
 
@@ -132,6 +130,14 @@
 
 
 @interface SN9CxxxDriverMicrosoft1 : SN9CxxxDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
+
+@end
+
+
+@interface SN9CxxxDriverGenius1 : SN9CxxxDriver
 
 + (NSArray *) cameraUsbDescriptions;
 - (id) initWithCentral: (id) c;
