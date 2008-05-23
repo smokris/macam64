@@ -11,17 +11,10 @@
 
 
 @interface SPCA505Driver : SPCA5XXDriver 
-{
-
-}
 
 @end
 
 
 @interface SPCA505BDriver : SPCA505Driver 
-{
-    
-}
 
 @end
-

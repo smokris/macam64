@@ -25,7 +25,7 @@ enum
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x430], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x0430], @"idProduct",
             [NSNumber numberWithUnsignedShort:0x0733], @"idVendor",
             @"Intel PC Camera Pro", @"name", NULL], 
         
