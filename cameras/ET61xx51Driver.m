@@ -29,6 +29,13 @@
 #include "USB_VendorProductIDs.h"
 
 
+enum
+{
+    Etoms61x151,
+    Etoms61x251
+};
+
+
 @implementation ET61xx51Driver
 
 + (NSArray *) cameraUsbDescriptions 
@@ -43,16 +50,12 @@
         NULL];
 }
 
-enum
-{
-    Etoms61x151,
-    Etoms61x251
-};
 
 #define Et_RegWrite(dev,req,value,index,buffer,length) sonixRegWrite(dev,req,value,index,buffer,length)
 #define Et_RegRead(dev,req,value,index,buffer,length) sonixRegRead(dev,req,value,index,buffer,length)
 
 #include "et61xx51.h"
+
 
 //
 // Initialize the driver
@@ -70,15 +73,15 @@ enum
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
-    spca50x->bridge = BRIDGE_ETOMS;
-    spca50x->sensor = SENSOR_TAS5130CXX;
-    
-    spca50x->cameratype = GBRG;  // This only matters if we use gspcaCompression
-    
-    spca50x->desc=Etoms61x251;
     cameraOperation = &fet61x;
     
+    spca50x->bridge = BRIDGE_ETOMS;
+    spca50x->sensor = SENSOR_TAS5130CXX;
+    spca50x->cameratype = GBRG;
+    
     compressionType = proprietaryCompression;
+    
+    spca50x->desc = Etoms61x251;
     
 	return self;
 }
@@ -174,6 +177,7 @@ IsocFrameResult  et61xx51IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
         return NULL;
     
     spca50x->sensor = SENSOR_PAS106;
+    
     spca50x->desc = Etoms61x151;
     
 	return self;
