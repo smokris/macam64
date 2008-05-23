@@ -895,6 +895,7 @@ sonix_config(struct usb_spca50x *spca50x)
 	case SENSOR_OV7660:
 	case SENSOR_MO4000:
 	case SENSOR_OV7630:
+	case SENSOR_OV7648:
 	case SENSOR_TAS5130CXX:
 	case SENSOR_HV7131R:
 	case SENSOR_MI0360:
