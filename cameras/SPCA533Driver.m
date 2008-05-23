@@ -9,15 +9,7 @@
 
 #import "SPCA533Driver.h"
 
-
-enum 
-{
-    LogitechClickSmart420,
-    AiptekMiniPenCam13,
-    MegapixV4, 
-    LogitechClickSmart820,
-    
-};
+#include "USB_VendorProductIDs.h"
 
 
 @implementation SPCA533Driver
@@ -46,47 +38,115 @@ enum
             [NSNumber numberWithUnsignedShort:0x0733], @"idVendor",
             @"Digital Dream Epsilon 1.3", @"name", NULL], 
         
+        
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x5330], @"idProduct",
             [NSNumber numberWithUnsignedShort:0x04fc], @"idVendor",
-            @"Securesight VL1 Digital Video Recorder", @"name", NULL], 
+            @"Generic SPCA533 (Securesight VL1 DVR)", @"name", NULL], 
+        
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x0104], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x08ca], @"idVendor",
+            @"Aiptek PocketDVII  1.3 MPixels", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x0106], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x08ca], @"idVendor",
+            @"Aiptek PocketDV 3100", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0xc232], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x055f], @"idVendor",
+            @"Mustek MDC 3500", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0xc630], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x055f], @"idVendor",
+            @"Mustek MDC 4000", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x2020], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x08ca], @"idVendor",
+            @"Aiptek Slim 3000F", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x2022], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x08ca], @"idVendor",
+            @"Aiptek Slim 3200", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x2028], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x08ca], @"idVendor",
+            @"Aiptek PocketCam 4M", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x3008], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x04a5], @"idVendor",
+            @"BenQ DC 1500", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x300a], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x04a5], @"idVendor",
+            @"BenQ DC 35 or 3410", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x2010], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x08ca], @"idVendor",
+            @"Aiptek PocketCam 3M", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0xc230], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x055f], @"idVendor",
+            @"Mustek Digicam 330K", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0xc530], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x055f], @"idVendor",
+            @"Mustek Gsmart LCD 3", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0xc440], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x055f], @"idVendor",
+            @"Mustek DV 3000", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0xc540], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x055f], @"idVendor",
+            @"Mustek Gsmart D30 (SPCA533)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0xc650], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x055f], @"idVendor",
+            @"Mustek MDC5500Z", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x0031], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x06d6], @"idVendor",
+            @"Trust 610 LCD PowerCam Zoom", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_PDC_3070], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_POLAROID], @"idVendor",
+            @"Polaroid PDC 3070", @"name", NULL], 
         
         NULL];
 }
-
-
-#include "jpeg_qtables.h"
-#include "sp5xxfw2.h"
-
 
 //
 // Initialize the driver
 //
 - (id) initWithCentral: (id) c 
 {
-    unsigned char (* dummy)[2][64];
-    
-    dummy = &qtable_kodak_ez200;
-    dummy = &qtable_pocketdv;
-    
 	self = [super initWithCentral:c];
 	if (self == NULL) 
         return NULL;
     
-    hardwareBrightness = YES;
-    hardwareContrast = YES;
-    
-    cameraOperation = &fsp5xxfw2;
-
     spca50x->bridge = BRIDGE_SPCA533;
     spca50x->sensor = SENSOR_INTERNAL;
-    spca50x->cameratype = JPEG;
-    
-    compressionType = gspcaCompression;
     
 	return self;
 }
-
 
 //
 // Scan the frame and return the results
@@ -149,7 +209,6 @@ IsocFrameResult  spca533IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
-
 @end
 
 
@@ -164,10 +223,70 @@ IsocFrameResult  spca533IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:0x3078], @"idVendor",
             @"VcamNow 2.0", @"name", NULL], 
         
-        // Aiptek Pocket DV 3100 0x08ca:0x0106
-        
         NULL];
 }
 
 @end
 
+
+@implementation SPCA533ADriverMegapixV4 
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x1513], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x052b], @"idVendor",
+            @"Megapix V4", @"name", NULL], 
+        
+        NULL];
+}
+
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->desc = MegapixV4;
+    
+	return self;
+}
+
+@end
+
+
+@implementation SPCA533ADriverClickSmart820 
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_CLICKSMART_820_A], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech Clicksmart 820 (A)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_CLICKSMART_820_B], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech Clicksmart 820 (B)", @"name", NULL], 
+        
+        NULL];
+}
+
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->desc = LogitechClickSmart820;
+    
+	return self;
+}
+
+@end

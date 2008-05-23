@@ -11,18 +11,24 @@
 
 
 @interface SPCA533Driver : SPCA504ADriver 
-{
-    
-}
+{}
 
 @end
 
 
 @interface SPCA533ADriver : SPCA533Driver 
-{
-    
-}
+{}
 
 @end
 
 
+@interface SPCA533ADriverMegapixV4 : SPCA533ADriver 
+{}
+
+@end
+
+
+@interface SPCA533ADriverClickSmart820 : SPCA533ADriver 
+{}
+
+@end
