@@ -27,10 +27,6 @@
 
 
 @interface TV8532Driver : SPCA5XXDriver 
-{
-//	UInt8 * decodingBuffer;
-//    BOOL rotate;
-}
 
 + (NSArray *) cameraUsbDescriptions;
 
@@ -38,14 +34,11 @@
 - (void) spcaSetResolution:(int)spcaRes;
 - (BOOL) supportsResolution:(CameraResolution)res fps:(short)rate;
 - (void) setIsocFrameFunctions;
-//- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer;
 
 @end
 
 
 @interface TV8532RotatedDriver : TV8532Driver 
-{
-}
 
 + (NSArray *) cameraUsbDescriptions;
 

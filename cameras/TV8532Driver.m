@@ -25,8 +25,6 @@
 
 #import "TV8532Driver.h"
 
-//#include "MiscTools.h"
-//#include "spcadecoder.h"
 #include "USB_VendorProductIDs.h"
 
 
@@ -56,17 +54,11 @@
 	self = [super initWithCentral:c];
 	if (self == NULL) 
         return NULL;
-    /*
-    bayerConverter = [[BayerConverter alloc] init];
-	if (bayerConverter == NULL) 
-        return NULL;
-    */
+    
     [LUT setDefaultOrientation:Rotate180];
     
     hardwareBrightness = YES;
     hardwareContrast = NO;
-    
-//    MALLOC(decodingBuffer, UInt8 *, 356 * 292 + 1000, "decodingBuffer");
     
     cameraOperation = &ftv8532;
     
@@ -199,46 +191,10 @@ IsocFrameResult  tv8532IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
 
-/*
-//
-// other stuff, including decompression
-//
-- (BOOL) decodeBuffer: (GenericChunkBuffer *) buffer
-{
-#if REALLY_VERBOSE
-    printf("Need to decode a buffer with %ld bytes.\n", buffer->numBytes);
-#endif
-    
-	short rawWidth  = [self width];
-	short rawHeight = [self height];
-    
-	// Decode the bytes
-    
-    spca50x->frame->hdrwidth = rawWidth;
-    spca50x->frame->hdrheight = rawHeight;
-    spca50x->frame->data = buffer->buffer;
-    spca50x->frame->tmpbuffer = decodingBuffer;
-    
-    tv8532_preprocess(spca50x->frame);  // Re-use the spca5xx code
-    
-    // Turn the Bayer data into an RGB image
-    
-    [bayerConverter setSourceFormat:6];
-    [bayerConverter setSourceWidth:rawWidth height:rawHeight];
-    [bayerConverter setDestinationWidth:rawWidth height:rawHeight];
-    [bayerConverter convertFromSrc:decodingBuffer
-                            toDest:nextImageBuffer
-                       srcRowBytes:rawWidth
-                       dstRowBytes:nextImageBufferRowBytes
-                            dstBPP:nextImageBufferBPP
-                              flip:hFlip
-                         rotate180:rotate];
-    
-    return YES;
-}
-*/
+//    [bayerConverter setSourceFormat:6];
 
 @end
+
 
 
 @implementation TV8532RotatedDriver

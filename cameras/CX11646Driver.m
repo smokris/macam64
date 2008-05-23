@@ -23,15 +23,17 @@
 //
 
 
+// 572:041 // Creative Webcam NoteBook PD1170 [CX11646 and CX28490]
+// 572:040 // Wondereye CP-115  // Mot working, must be different somehow
+
+
 #import "CX11646Driver.h"
 
 #include "gspcadecoder.h"
-
 #include "USB_VendorProductIDs.h"
 
 
 @implementation CX11646Driver
-
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -51,11 +53,7 @@
 }
 
 
-// 572:041 // Creative Webcam NoteBook PD1170 [CX11646 and CX28490]
-// 572:040 // Wondereye CP-115
-
 #include "cx11646.h"
-
 
 
 - (id) initWithCentral: (id) c 
@@ -64,11 +62,8 @@
 	if (self == NULL) 
         return NULL;
     
-    [self setCompression:0];
-    
     spca50x->bridge = BRIDGE_CX11646;
     spca50x->sensor = SENSOR_INTERNAL;
-    
     spca50x->cameratype = JPGC;
     
     if (YES) 
@@ -85,9 +80,18 @@
     
     cameraOperation = &fcx11646;
     
+    spca50x->mode = 0;  // Make sure this is initailized
+    
 	return self;
 }
 
+
+- (void) startupCamera
+{
+    [super startupCamera];
+    
+    [self setCompression:0];
+}
 
 
 - (short) maxCompression 
@@ -133,7 +137,7 @@ IsocFrameResult  cx11646IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     }
     
 #if REALLY_VERBOSE
-//    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
 #endif
     
     if (buffer[0] == 0xFF && buffer[1] == 0xD8) // JPEG Image-Start marker
