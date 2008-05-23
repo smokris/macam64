@@ -131,30 +131,24 @@ enum
 	self = [super initWithCentral:c];
 	if (self == NULL) 
         return NULL;
-   /* 
-    // Include if needed
-    bayerConverter = [[BayerConverter alloc] init];
-	if (bayerConverter == NULL) 
-        return NULL;
     
-    bayerFormat = 6;
-    */
     // Set as appropriate
+    
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
     decodingSkipBytes = 6;
     
-    // Again, use if needed
-//    MALLOC(decodingBuffer, UInt8 *, 644 * 484 + 1000, "decodingBuffer");
-    
     // This is important
+    
     cameraOperation = &fsonix;
     
     // And so is this
+    
 	init_sonix_decoder(spca50x);
     
     // Set to reflect actual values
+    
     spca50x->bridge = BRIDGE_SONIX;
     spca50x->cameratype = SN9C;
     
@@ -239,7 +233,6 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 - (BOOL) setGrabInterfacePipe
 {
     return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:8];
-//  return [self usbSetAltInterfaceTo:8 testPipe:[self getGrabbingPipe]];
 }
 
 
@@ -561,7 +554,7 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->customid = SN9C101;
     
     spca50x->i2c_ctrl_reg = 0x81;
-    spca50x->i2c_base = 0x11;
+    spca50x->i2c_base = 0x40;
     spca50x->i2c_trigger_on_write = 0;
     
 	return self;
@@ -854,6 +847,11 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         }
     }
     
+    // Exceptions:
+    
+    if (productID == 0x6128) 
+        spca50x->sensor = SENSOR_OV7630;    // not sure what this should be yet, try 7660 as well (OV7648 is not supported yet)
+    
     // Now set the i2c base register
     
     switch (spca50x->sensor)
@@ -1079,6 +1077,36 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     spca50x->sensor = SENSOR_OV7660;  // for LifeCam VX-1000 base = 0x21, seems to work for VX-3000 as well
     spca50x->customid = SN9C105;
+    
+	return self;
+}
+
+@end
+
+
+@implementation SN9CxxxDriverGenius1
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x7025], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_GENIUS], @"idVendor",
+            @"Genius Eye 311Q", @"name", NULL], 
+        
+        NULL];
+}
+
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->sensor = SENSOR_MI0360;
+    spca50x->customid = SN9C120;
     
 	return self;
 }
