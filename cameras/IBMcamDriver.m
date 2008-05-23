@@ -17,15 +17,11 @@
 
 @implementation IBMcamDriver
 
-
 + (NSArray *) cameraUsbDescriptions 
 {
     return [NSArray arrayWithObjects:
         
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_KSX_MODELS], @"idProduct", 
-            [NSNumber numberWithUnsignedShort:VENDOR_VEO], @"idVendor", 
-            @"IBM/Xirlink C-it webcam", @"name", NULL], 
+        // None! See subclasses.
         
         NULL];
 }
@@ -35,46 +31,45 @@
 //
 - (id) initWithCentral:(id)c
 {
-    short index;
-    UInt16 version;
-    MyCameraCentral * cent = c;
-    
 	self = [super initWithCentral:c];
 	if (self == NULL) 
         return NULL;
     
     // initialize any variables here
     
-    // look at USB revision
-    
-    index = [cent indexOfDriverClass:[self class]];
-    
-    if (index < 0) 
-    {
-        // Second time through, call from subclass, everything OK
-        return self;
-    }
-    
-    version = [cent versionOfCameraWithIndex:index];
-    
-#if VERBOSE
-    NSLog(@"OK, we've got an IBM camera with release %04x (index=%d)", version, index);
-#endif
-    
-    if (version == 0x0002) 
-        return [[IBMcamModel1Driver alloc] initWithCentral:c];
-    
-    if (version == 0x030A) 
-        return [[IBMcamModel2Driver alloc] initWithCentral:c];
-    
-    if (version == 0x0301) 
-        return [[IBMcamModel3Driver alloc] initWithCentral:c];
-    
-    NSLog(@"This is an unknown model! (%04x) It is unlikely to work.\n", version);
-    
 	return self;
 }
 
+
+- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate 
+{
+    switch (res) 
+    {
+        case ResolutionVGA:
+            if (rate > 30) 
+                return NO;
+            return YES;
+            break;
+            
+        case ResolutionSIF:
+            if (rate > 120) 
+                return NO;
+            return NO; // Not working yet 
+            break;
+            
+        default: 
+            return NO;
+    }
+}
+
+
+- (CameraResolution) defaultResolutionAndRate: (short *) rate
+{
+	if (rate) 
+        *rate = 30;
+    
+	return ResolutionVGA;
+}
 
 @end
 
@@ -90,7 +85,6 @@
         NULL];
 }
 
-
 @end
 
 
@@ -99,15 +93,14 @@
 + (NSArray *) cameraUsbDescriptions 
 {
     return [NSArray arrayWithObjects:
-        
+        /*
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_STINGRAY_C], @"idProduct", 
             [NSNumber numberWithUnsignedShort:VENDOR_VEO], @"idVendor", 
             @"Veo Stingray (0x800c)", @"name", NULL], 
-        
+        */
         NULL];
 }
-
 
 @end
 
@@ -122,7 +115,6 @@
         
         NULL];
 }
-
 
 @end
 
@@ -146,6 +138,73 @@
         NULL];
 }
 
-
 @end
 
+
+@implementation IBMcamUnknownModelDriver
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_KSX_MODELS], @"idProduct", 
+            [NSNumber numberWithUnsignedShort:VENDOR_VEO], @"idVendor", 
+            @"IBM/Xirlink C-it webcam", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_STINGRAY_C], @"idProduct", 
+            [NSNumber numberWithUnsignedShort:VENDOR_VEO], @"idVendor", 
+            @"Veo Stingray (0x800c)", @"name", NULL], 
+        
+        NULL];
+}
+
+//
+// Initialize the driver
+//
+- (id) initWithCentral:(id) c
+{
+    short index;
+    UInt16 version;
+    MyCameraCentral * cameraCentral = c;
+    
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    // look at USB revision
+    
+    index = [cameraCentral indexOfDriverClass:[self class]];
+    
+#if VERBOSE
+    NSLog(@"OK, we've got an IBM camera (index=%d)", index);
+#endif
+    
+    if (index < 0) 
+    {
+        // Second time through, call from subclass, everything OK
+        return self;
+    }
+    
+    version = [cameraCentral versionOfCameraWithIndex:index];
+    
+#if VERBOSE
+    NSLog(@"OK, we've got an IBM camera with release %04x (index=%d)", version, index);
+#endif
+    
+    if (version == 0x0002) 
+        return [[IBMcamModel1Driver alloc] initWithCentral:c];
+    
+    if (version == 0x030A) 
+        return [[IBMcamModel2Driver alloc] initWithCentral:c];
+    
+    if (version == 0x0301) 
+        return [[IBMcamModel3Driver alloc] initWithCentral:c];
+    
+    NSLog(@"This is an unknown model! (%04x) It is unlikely to work.\n", version);
+    
+	return self;
+}
+
+@end
