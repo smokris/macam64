@@ -23,15 +23,9 @@
 //
 
 
-// Vimicro claims VC0321 is UVC compatible, but it isn't
-// endpoint 2
-// YUY2 (like iMage?) [would be consistent with UVC]
-
-
 #import "VC032xDriver.h"
 
 #include "MiscTools.h"
-//#include "gspcadecoder.h"
 #include "USB_VendorProductIDs.h"
 
 
@@ -42,36 +36,36 @@
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_ORBICAM_A], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_ORBICAM_A], @"idProduct",  // SENSOR_OV7660
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech Orbicam [A]", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_ORBICAM_B], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_ORBICAM_B], @"idProduct",  // SENSOR_OV7660
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
             @"Logitech Orbicam [B]", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_VIMICRO_GENERIC_321], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_VIMICRO_GENERIC_321], @"idProduct",  // SENSOR_OV7660
             [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
             @"Vimicro Generic VC0321", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x0328], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",  // sensor is SENSOR_MI1320, variant needed?
+            [NSNumber numberWithUnsignedShort:0x0328], @"idProduct",  // SENSOR_MI1320
+            [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",  // variant needed?
             @"A4Tech PK-130MG", @"name", NULL], 
         
         //  "Sony Visual Communication VGP-VCC1"
 
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_SONY_C001], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_SONY_C001], @"idProduct",  // SENSOR_OV7660
             [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
             @"Sony Embedded Notebook Webcam (C001)", @"name", NULL], 
         
         //  "Motion Eye Webcamera in Sony Vaio FE11M"
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_SONY_C002], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_SONY_C002], @"idProduct",  // SENSOR_OV7660
             [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
             @"Sony Embedded Notebook Webcam (C002)", @"name", NULL], 
         
@@ -93,18 +87,15 @@
 	if (self == NULL) 
         return NULL;
     
-//  [LUT setDefaultOrientation:Rotate180];  // if necessary
-
     // Don't know if these work yet
     
-    hardwareBrightness = YES;
-    hardwareContrast = YES;
+//  hardwareBrightness = YES;
+//  hardwareContrast = YES;
     
     cameraOperation = &fvc0321;
     
     decodingSkipBytes = 46;
     
-//  spca50x->desc = Vimicro0321;
     spca50x->cameratype = YUY2;
     spca50x->bridge = BRIDGE_VC0321;
     spca50x->sensor = SENSOR_OV7660;
@@ -131,7 +122,7 @@ IsocFrameResult  vc032xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     *tailLength = 0;
     
     
-    if (frameLength < 1) 
+    if (frameLength < 2) 
     {
         *dataLength = 0;
         
@@ -157,14 +148,13 @@ IsocFrameResult  vc032xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     return validFrame;
 }
 
-//
-// These are the C functions to be used for scanning the frames
-//
+
 - (void) setIsocFrameFunctions
 {
     grabContext.isocFrameScanner = vc032xIsocFrameScanner;
     grabContext.isocDataCopier = genericIsocDataCopier;
 }
+
 
 - (UInt8) getGrabbingPipe
 {
@@ -182,23 +172,17 @@ IsocFrameResult  vc032xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_VIMICRO_GENERIC_323], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_VIMICRO_GENERIC_323], @"idProduct",  // SENSOR_OV7670
             [NSNumber numberWithUnsignedShort:VENDOR_Z_STAR_MICRO], @"idVendor",
             @"Vimicro Generic VC0323", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_LENOVO_USB_WEBCAM], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_LENOVO_USB_WEBCAM], @"idProduct",  // SENSOR_MI1310_SOC
             [NSNumber numberWithUnsignedShort:VENDOR_LENOVO], @"idVendor",
             @"Lenovo USB Webcam (40Y8519)", @"name", NULL], 
         
         NULL];
 }
-
-
-#undef CLAMP
-
-#include "vc032x.h"
-
 
 //
 // Initialize the driver
@@ -213,7 +197,6 @@ IsocFrameResult  vc032xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     decodingSkipBytes = 0;
     
-//  spca50x->desc = Vimicro0323;
     spca50x->cameratype = JPGV;
     spca50x->bridge = BRIDGE_VC0323;
     spca50x->sensor = SENSOR_OV7670;  // Sensor detection may override this
