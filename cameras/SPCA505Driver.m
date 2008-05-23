@@ -62,6 +62,59 @@ enum
 	return self;
 }
 
+//
+// This is an example that will have to be tailored to the specific camera or chip
+// Scan the frame and return the results
+//
+IsocFrameResult  spca505IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer, 
+                                         UInt32 * dataStart, UInt32 * dataLength, 
+                                         UInt32 * tailStart, UInt32 * tailLength, 
+                                         GenericFrameInfo * frameInfo)
+{
+    int frameLength = frame->frActCount;
+    
+    *dataStart = 1;
+    *dataLength = frameLength - *dataStart;
+    
+    *tailStart = frameLength;
+    *tailLength = 0;
+    
+#if REALLY_VERBOSE
+    //  printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+#endif
+    
+    if (frameLength < 1 || buffer[0] == SPCA50X_SEQUENCE_DROP) 
+    {
+        *dataLength = 0;
+        
+        return invalidFrame;
+    }
+    
+#if REALLY_VERBOSE
+    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+#endif
+    
+    if (buffer[0] == 0x00) 
+    {
+        *dataStart = SPCA50X_OFFSET_DATA;
+        *dataLength = frameLength - *dataStart;
+        
+        return newChunkFrame;
+    }
+    
+    return validFrame;
+}
+
+
+//
+// These are the C functions to be used for scanning the frames
+//
+- (void) setIsocFrameFunctions
+{
+    grabContext.isocFrameScanner = spca505IsocFrameScanner;
+    grabContext.isocDataCopier = genericIsocDataCopier;
+}
+
 @end
 
 
