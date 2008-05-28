@@ -12,26 +12,11 @@
 #include "USB_VendorProductIDs.h"
 
 
-enum 
-{
-    LogitechClickSmart420 = 1,
-    AiptekMiniPenCam13,
-    MegapixV4, 
-    LogitechClickSmart820,
-    
-};
-
-
 @implementation SPCA504ADriver
 
 + (NSArray *) cameraUsbDescriptions 
 {
     return [NSArray arrayWithObjects:
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_MINI_PENCAM13_A], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SUNPLUS], @"idVendor",
-            @"Aiptek Mini PenCam 1.3 (or similar 504A)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_GSMART_MINI2], @"idProduct",
@@ -65,20 +50,24 @@ enum
 	if (self == NULL) 
         return NULL;
     
-    //  [LUT setDefaultOrientation:Rotate180];  // if necessary
-    
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
     cameraOperation = &fsp5xxfw2;
     
-    spca50x->desc = AiptekMiniPenCam13;
+    spca50x->desc = AnySPCA504;
     
     spca50x->cameratype = JPEG;
     spca50x->bridge = BRIDGE_SPCA504;
     spca50x->sensor = SENSOR_INTERNAL;
     
     compressionType = gspcaCompression;
+    
+    if (NO) // Black image is the result if we do this; why?
+    {
+        compressionType = jpegCompression;
+        jpegVersion = 1;
+    }
     
 	return self;
 }
@@ -100,7 +89,7 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     *tailLength = 0;
     
     
-    if (frameLength < 1) 
+    if ((frameLength < 1) || (buffer[0] == SPCA50X_SEQUENCE_DROP)) 
     {
         *dataLength = 0;
         
@@ -115,9 +104,6 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
            buffer[0], frameLength, buffer[1], buffer[129], buffer[frameLength-4], buffer[frameLength-3], buffer[frameLength-2], buffer[frameLength-1]);
 #endif
     
-    if (buffer[0] == SPCA50X_SEQUENCE_DROP) 
-        return invalidFrame;
-        
     if (buffer[0] == 0xFE) // start a new image
     {
 #if REALLY_VERBOSE
@@ -142,6 +128,43 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 {
     grabContext.isocFrameScanner = spca504AIsocFrameScanner;
     grabContext.isocDataCopier = genericIsocDataCopier;
+}
+
+@end
+
+
+@implementation SPCA504ADriverAiptekMiniCam 
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_MINI_PENCAM13_A], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SUNPLUS], @"idVendor",
+            @"Aiptek Mini PenCam 1.3 (or similar 504A)", @"name", NULL], 
+        
+        NULL];
+}
+
+
+- (void) startupCamera
+{
+    UInt8 fw;
+    
+    spca5xxRegRead(spca50x->dev, 0x20, 0, 0, &fw, 1);
+    
+#if VERBOSE
+    printf("Firmware tested, result = %d\n", fw);
+#endif
+    
+    if (fw == 1) 
+        spca50x->desc = AiptekMiniPenCam13;
+    
+    if (fw == 2) 
+        spca50x->bridge = BRIDGE_SPCA504B;
+    
+    [super startupCamera];
 }
 
 @end
@@ -189,11 +212,6 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
             @"Benq DC 1300", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_PC_CAM_750], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
-            @"Creative PC Cam 750", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_ENIGMA_1_3], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_DIGITAL_DREAM], @"idVendor",
             @"Digital Dream Enigma 1.3", @"name", NULL], 
@@ -202,11 +220,6 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
             [NSNumber numberWithUnsignedShort:PRODUCT_GC_A50], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_JVC], @"idVendor",
             @"JVC GC-A50", @"name", NULL], 
-        
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:PRODUCT_CLICKSMART_420], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
-            @"Logitech Clicksmart 420", @"name", NULL], 
         
         // more
         
@@ -230,6 +243,11 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
             [NSNumber numberWithUnsignedShort:VENDOR_PHILIPS], @"idVendor",
             @"Philips DMVC 1300K", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0xffff], @"idProduct",
+            [NSNumber numberWithUnsignedShort:0x04fc], @"idVendor", 
+            @"Pure Digital Dakota", @"name", NULL], 
+        
         NULL];
 }
 
@@ -241,8 +259,6 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 	self = [super initWithCentral:c];
 	if (self == NULL) 
         return NULL;
-    
-    spca50x->desc = LogitechClickSmart420;
     
     spca50x->bridge = BRIDGE_SPCA504B;
     
@@ -266,8 +282,6 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
         NULL];
 }
 
-// same as SPCA504BDriver
-
 @end
 
 
@@ -276,6 +290,11 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 + (NSArray *) cameraUsbDescriptions 
 {
     return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_PC_CAM_750], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Creative PC Cam 750", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PC_CAM_600], @"idProduct",
@@ -299,9 +318,6 @@ IsocFrameResult  spca504AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 	if (self == NULL) 
         return NULL;
     
-    //  [LUT setDefaultOrientation:Rotate180];  // if necessary
-    
-    //  spca50x->desc = ???;
     spca50x->bridge = BRIDGE_SPCA504C;
     
 	return self;
@@ -323,15 +339,16 @@ IsocFrameResult  spca504CIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     *tailStart = frameLength;
     *tailLength = 0;
     
-    if (frameLength < 1) 
+    if ((frameLength < 1) || (buffer[0] == SPCA50X_SEQUENCE_DROP)) 
+    {
+        *dataLength = 0;
+        
         return invalidFrame;
-    
-    if (buffer[0] == SPCA504_PCCAM600_OFFSET_DATA) 
-        return invalidFrame;
+    }
     
     if (buffer[0] == 0xFE) // start a new image
     {
-        *dataStart = SPCA50X_OFFSET_DATA;
+        *dataStart = SPCA504_PCCAM600_OFFSET_DATA;
         *dataLength = frameLength - *dataStart;
         
         return newChunkFrame;
@@ -353,3 +370,33 @@ IsocFrameResult  spca504CIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
 }
 
 @end
+
+
+@implementation SPCA504CDriverClickSmart420 
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:PRODUCT_CLICKSMART_420], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech Clicksmart 420", @"name", NULL], 
+        
+        NULL];
+}
+
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->desc = LogitechClickSmart420;
+    
+	return self;
+}
+
+@end
+
