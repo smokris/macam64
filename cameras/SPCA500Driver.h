@@ -11,26 +11,26 @@
 
 
 @interface SPCA500Driver : SPCA5XXDriver 
-{
-
-}
 
 @end
 
 
 
-@interface SPCA500ADriver : SPCA500Driver 
-{
-    
-}
+@interface SPCA500DriverIntel1 : SPCA500Driver 
 
 @end
 
 
-@interface SPCA500CDriver : SPCA500ADriver 
-{
-    
-}
+@interface SPCA500DriverLogitech1 : SPCA500Driver 
 
 @end
 
+
+@interface SPCA500DriverClickSmart310 : SPCA500Driver 
+
+@end
+
+
+@interface SPCA500DriverKodakEZ200 : SPCA500Driver 
+
+@end
