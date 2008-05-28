@@ -145,6 +145,14 @@
 @end
 
 
+@interface SN9CxxxDriverGenius2 : SN9CxxxDriver
+
++ (NSArray *) cameraUsbDescriptions;
+- (id) initWithCentral: (id) c;
+
+@end
+
+
 @interface SN9C20xDriver : SN9CxxxDriver 
 {
 }
