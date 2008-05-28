@@ -27,8 +27,6 @@
 
 
 @interface SPCA501ADriver : SPCA5XXDriver 
-{
-}
 
 + (NSArray *) cameraUsbDescriptions;
 

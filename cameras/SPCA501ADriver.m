@@ -30,11 +30,15 @@
 
 enum
 {
-    ThreeComHomeConnectLite,
-    Arowana300KCMOSCamera, 
-    SmileIntlCamera,
-    MystFromOriUnknownCamera,
-    IntelCreateAndShare,
+    ThreeComHomeConnectLite, // Variant1
+    
+    Arowana300KCMOSCamera, // Variant2
+    
+    SmileIntlCamera, // same, but different sensor // Variant3
+    
+    MystFromOriUnknownCamera, // not connected // Variant4
+    
+    IntelCreateAndShare, // generic
 };
 
 
@@ -75,25 +79,22 @@ enum
 	if (self == NULL) 
         return NULL;
     
-    // Set as appropriate
     hardwareBrightness = YES;
     hardwareContrast = YES;
     
-    // This is important
     cameraOperation = &fspca501;
     
-    // Set to reflect actual values
     spca50x->cameratype = YUYV;
-    spca50x->bridge = BRIDGE_SPCA501;
-    spca50x->sensor = SENSOR_INTERNAL;
-    
     compressionType = gspcaCompression;
 
-    spca50x->desc = IntelCreateAndShare;
-    
     spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
     spca50x->i2c_base = 0;
     spca50x->i2c_trigger_on_write = 0;
+    
+    spca50x->bridge = BRIDGE_SPCA501;
+    spca50x->sensor = SENSOR_INTERNAL;
+    
+    spca50x->desc = IntelCreateAndShare;
     
 	return self;
 }
@@ -109,12 +110,12 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     int frameLength = frame->frActCount;
     
     *dataStart = 1;
-    *dataLength = frameLength - 1;
+    *dataLength = frameLength - *dataStart;
     
     *tailStart = 0;
     *tailLength = 0;
     
-    if (frameLength < 1 || buffer[0] == SPCA50X_SEQUENCE_DROP) 
+    if ((frameLength < 1) || (buffer[0] == SPCA50X_SEQUENCE_DROP)) 
     {
         *dataLength = 0;
         
@@ -176,11 +177,6 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
         return NULL;
     
     spca50x->desc = ThreeComHomeConnectLite;
-    spca50x->sensor = SENSOR_INTERNAL;
-    
-    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
-    spca50x->i2c_base = 0;
-    spca50x->i2c_trigger_on_write = 0;
     
 	return self;
 }
@@ -209,11 +205,8 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
         return NULL;
     
     spca50x->desc = Arowana300KCMOSCamera;
-    spca50x->sensor = SENSOR_HV7131B;
     
-    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
-    spca50x->i2c_base = 0;
-    spca50x->i2c_trigger_on_write = 0;
+    spca50x->sensor = SENSOR_HV7131B;
     
 	return self;
 }
@@ -228,9 +221,9 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
     return [NSArray arrayWithObjects:
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0xC001], @"idProduct",
-            [NSNumber numberWithUnsignedShort:0x0497], @"idVendor", // Smile International
-            @"Smile International Camera (SPCA501A?)", @"name", NULL], 
+            [NSNumber numberWithUnsignedShort:0xC001], @"idProduct",  // SPCA501C
+            [NSNumber numberWithUnsignedShort:0x0497], @"idVendor",   // Smile International
+            @"Smile International Camera (SPCA501C?)", @"name", NULL], 
         
         NULL];
 }
@@ -242,11 +235,6 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
         return NULL;
     
     spca50x->desc = SmileIntlCamera;
-    spca50x->sensor = SENSOR_INTERNAL;
-    
-    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
-    spca50x->i2c_base = 0;
-    spca50x->i2c_trigger_on_write = 0;
     
 	return self;
 }
@@ -275,11 +263,8 @@ IsocFrameResult  spca501AIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer
         return NULL;
     
     spca50x->desc = MystFromOriUnknownCamera;
-    spca50x->sensor = SENSOR_HV7131B;
     
-    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
-    spca50x->i2c_base = 0;
-    spca50x->i2c_trigger_on_write = 0;
+    spca50x->sensor = SENSOR_HV7131B;
     
 	return self;
 }
