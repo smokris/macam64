@@ -57,10 +57,7 @@ enum
 };
 
 
-// The actual driver
-
 @implementation SPCA508Driver
-
 
 + (NSArray *) cameraUsbDescriptions 
 {
@@ -87,26 +84,24 @@ enum
 	if (self == NULL) 
         return NULL;
     
-    spca50x->desc = ViewQuestVQ110;
+    hardwareContrast = NO;
+    
+    cameraOperation = &fspca508;
+    
     spca50x->bridge = BRIDGE_SPCA508;
     spca50x->sensor = SENSOR_INTERNAL;
     
+    spca50x->cameratype = YUVY;
     compressionType = gspcaCompression;
     
     spca50x->i2c_ctrl_reg = 0;
     spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
     spca50x->i2c_trigger_on_write = 1;
-    spca50x->cameratype = YUVY;
     
-    // YUVY - whatever that means
-    
-    hardwareContrast = NO;
-    
-    cameraOperation = &fspca508;
+    spca50x->desc = ViewQuestVQ110;
     
 	return self;
 }
-
 
 //
 // This is an example that will have to be tailored to the specific camera or chip
@@ -119,20 +114,17 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     int frameLength = frame->frActCount;
     
-//  frame->seq = cdata[SPCA508_OFFSET_FRAMSEQ];
-//  header length SPCA508_OFFSET_DATA
-    
     *dataStart = 1;
-    *dataLength = frameLength - 1;
+    *dataLength = frameLength - *dataStart;
     
     *tailStart = frameLength;
     *tailLength = 0;
     
 #if REALLY_VERBOSE
-//  printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
+    printf("buffer[0] = 0x%02x (length = %d) 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x\n", buffer[0], frameLength, buffer[1], buffer[2], buffer[3], buffer[4], buffer[5]);
 #endif
     
-    if (frameLength < 1 || buffer[0] == 0xFF) 
+    if ((frameLength < 1) || (buffer[0] == SPCA50X_SEQUENCE_DROP)) 
     {
         *dataLength = 0;
         
@@ -146,14 +138,13 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     if (buffer[0] == 0x00) 
     {
         *dataStart = SPCA508_OFFSET_DATA;
-        *dataLength = frameLength - SPCA508_OFFSET_DATA;
+        *dataLength = frameLength - *dataStart;
         
         return newChunkFrame;
     }
     
     return validFrame;
 }
-
 
 //
 // These are the C functions to be used for scanning the frames
@@ -196,15 +187,8 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         return NULL;
     
     spca50x->desc = IntelEasyPCCamera;
-    spca50x->bridge = BRIDGE_SPCA508;
-    spca50x->sensor = SENSOR_PB100_BA;
-//    spca50x->header_len = SPCA508_OFFSET_DATA;
     
-//    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
-    spca50x->i2c_ctrl_reg = 0;
-    spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
-    spca50x->i2c_trigger_on_write = 1;
-    spca50x->cameratype = YUVY;
+    spca50x->sensor = SENSOR_PB100_BA;
     
 	return self;
 }
@@ -238,17 +222,8 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         return NULL;
     
     spca50x->desc = HamaUSBSightcam;
-    spca50x->bridge = BRIDGE_SPCA508;
-    spca50x->sensor = SENSOR_INTERNAL;
-//    spca50x->header_len = SPCA508_OFFSET_DATA;
     
-//    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
-//    spca50x->i2c_base = 0;
-//    spca50x->i2c_trigger_on_write = 0;
-    spca50x->i2c_ctrl_reg = 0;
-    spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
-    spca50x->i2c_trigger_on_write = 1;
-    spca50x->cameratype = YUVY;
+    spca50x->sensor = SENSOR_INTERNAL;
     
 	return self;
 }
@@ -282,17 +257,8 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         return NULL;
     
     spca50x->desc = HamaUSBSightcam2;
-    spca50x->bridge = BRIDGE_SPCA508;
-    spca50x->sensor = SENSOR_INTERNAL;
-//    spca50x->header_len = SPCA508_OFFSET_DATA;
     
-//    spca50x->i2c_ctrl_reg = SPCA50X_REG_I2C_CTRL;
-//    spca50x->i2c_base = 0;
-//    spca50x->i2c_trigger_on_write = 0;
-    spca50x->i2c_ctrl_reg = 0;
-    spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
-    spca50x->i2c_trigger_on_write = 1;
-    spca50x->cameratype = YUVY;
+    spca50x->sensor = SENSOR_INTERNAL;
     
 	return self;
 }
@@ -309,7 +275,7 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         // CreativeVista
         
         [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x401a], @"idProduct",
+            [NSNumber numberWithUnsignedShort:PRODUCT_VISTA_A], @"idProduct",
             [NSNumber numberWithUnsignedShort:0x041e], @"idVendor",
             @"Creative Vista (A)", @"name", NULL], 
         
@@ -325,17 +291,9 @@ IsocFrameResult  spca508IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	if (self == NULL) 
         return NULL;
     
-    // header-length = SPCA50X_OFFSET_DATA
-    
     spca50x->desc = CreativeVista;
-    spca50x->bridge = BRIDGE_SPCA508;
-    spca50x->sensor = SENSOR_PB100_BA;
-//    spca50x->header_len = SPCA50X_OFFSET_DATA;
     
-    spca50x->i2c_ctrl_reg = 0;
-    spca50x->i2c_base = SPCA508_INDEX_I2C_BASE;
-    spca50x->i2c_trigger_on_write = 1;
-    spca50x->cameratype = YUVY;
+    spca50x->sensor = SENSOR_PB100_BA;
     
 	return self;
 }
