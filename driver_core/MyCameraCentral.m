@@ -324,6 +324,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SN9CxxxDriverPhilips1 class]];
     [self registerCameraDriver:[SN9CxxxDriverMicrosoft1 class]];
     [self registerCameraDriver:[SN9CxxxDriverGenius1 class]];
+    [self registerCameraDriver:[SN9CxxxDriverGenius2 class]];
     
     [self registerCameraDriver:[SN9C20xDriver class]];
     
@@ -333,14 +334,16 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[MR97310Driver class]];
     
     [self registerCameraDriver:[SPCA500Driver class]];
-    [self registerCameraDriver:[SPCA500ADriver class]];
-    [self registerCameraDriver:[SPCA500CDriver class]];
+    [self registerCameraDriver:[SPCA500DriverIntel1 class]];
+    [self registerCameraDriver:[SPCA500DriverLogitech1 class]];
+    [self registerCameraDriver:[SPCA500DriverClickSmart310 class]];
+    [self registerCameraDriver:[SPCA500DriverKodakEZ200 class]];
     
     [self registerCameraDriver:[SPCA501ADriver class]];
     [self registerCameraDriver:[SPCA501ADriverVariant1 class]];
     [self registerCameraDriver:[SPCA501ADriverVariant2 class]];
     [self registerCameraDriver:[SPCA501ADriverVariant3 class]];
-    [self registerCameraDriver:[SPCA501ADriverVariant4 class]];
+//  [self registerCameraDriver:[SPCA501ADriverVariant4 class]];
     
     [self registerCameraDriver:[SPCA504ADriver class]];
     [self registerCameraDriver:[SPCA504ADriverAiptekMiniCam class]];
