@@ -353,7 +353,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.9.1 or later © 2007 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.9.2 or later © 2007 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>WebcamHelp</string>
 	<key>CFBundleHelpBookName</key>
@@ -369,11 +369,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.9.1</string>
+	<string>0.9.2</string>
 	<key>CFBundleSignature</key>
 	<string>wC?!</string>
 	<key>CFBundleVersion</key>
-	<string>0.9.1 or later (built using XCode 1.5)</string>
+	<string>0.9.2 or later (built using XCode 1.5)</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -849,7 +849,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macamDSC</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.8.2 © 2005 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.9.2 © 2008 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleHelpBookFolder</key>
 	<string>WebcamHelp</string>
 	<key>CFBundleHelpBookName</key>
@@ -865,11 +865,11 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.8.2</string>
+	<string>0.9.2</string>
 	<key>CFBundleSignature</key>
 	<string>wC?!</string>
 	<key>CFBundleVersion</key>
-	<string>0.8.2</string>
+	<string>0.9.2</string>
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
@@ -5585,7 +5585,7 @@
 	<key>CFBundleExecutable</key>
 	<string>macam</string>
 	<key>CFBundleGetInfoString</key>
-	<string>macam 0.9.1 or later © 2007 the macam project (http://webcam-osx.sourceforge.net)</string>
+	<string>macam 0.9.2 or later © 2007 the macam project (http://webcam-osx.sourceforge.net)</string>
 	<key>CFBundleIconFile</key>
 	<string></string>
 	<key>CFBundleIdentifier</key>
@@ -5597,11 +5597,11 @@
 	<key>CFBundlePackageType</key>
 	<string>thng</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.9.1 or later</string>
+	<string>0.9.2 or later</string>
 	<key>CFBundleSignature</key>
 	<string>wCam</string>
 	<key>CFBundleVersion</key>
-	<string>0.9.1 or later (compiled with XCode 1.5)</string>
+	<string>0.9.2 or later (compiled with XCode 1.5)</string>
 </dict>
 </plist>
 ";
