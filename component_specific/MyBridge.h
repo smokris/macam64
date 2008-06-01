@@ -23,6 +23,11 @@
 #import <QuickTime/QuickTime.h>
 #include "GlobalDefs.h"
 
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3)
+#include <sys/time.h>
+#endif 
+
+
 #define NUM_BRIDGE_GRAB_BUFFERS 2
 
 

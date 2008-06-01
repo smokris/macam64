@@ -38,7 +38,7 @@
 #include "../utils/spcagamma.h"
 #else
 #include <AvailabilityMacros.h>
-#if (MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_3)
+#if (MAC_OS_X_VERSION_MAX_ALLOWED > MAC_OS_X_VERSION_10_3)
 typedef unsigned int uint;
 #endif 
 #include "gspcadecoder.h"

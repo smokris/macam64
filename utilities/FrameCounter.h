@@ -9,6 +9,9 @@
 
 #import <Cocoa/Cocoa.h>
 
+#if (MAC_OS_X_VERSION_MAX_ALLOWED <= MAC_OS_X_VERSION_10_3)
+#include <sys/time.h>
+#endif 
 
 // add every frame, no need to compre times, just store if needed
 // getFPS checks if time difference greaterthan interval, compute new FPS, new time etc
