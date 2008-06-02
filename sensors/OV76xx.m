@@ -57,7 +57,7 @@
     
     if (msb != OMNIVISION_PRODUCT_ID_MSB_VALUE) // 0x76
     {
-        NSLog(@"The Product ID MSB does not match the OV76xx series.\n");
+        NSLog(@"The Product ID MSB does not match the OV76xx series (%02x:%02x).\n", msb, lsb);
         return NULL;
     }
     else 
