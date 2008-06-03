@@ -216,4 +216,21 @@ static register_array registersNormal7670[] =
     return [self setRegisterArray:registersNormal7670];
 }
 
+// super method set resolution works incorrectly with VF0400 (blue color over image)
+- (void) setResolution:(CameraResolution)r fps:(short)fr   
+{
+}
+
+- (void) setResolution1:(CameraResolution)r fps:(short)fr
+{
+}
+
+- (void) setResolution2:(CameraResolution)r fps:(short)fr
+{
+}
+
+- (void) setResolution3:(CameraResolution)r fps:(short)fr
+{
+}
+
 @end
