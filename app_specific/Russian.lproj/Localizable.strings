@@ -3,86 +3,86 @@
 <plist version="1.0">
 <dict>
 	<key>Camera video settings</key>
-	<string>Camera video settings</string>
+	<string>Настройки видео</string>
 	<key>Change camera</key>
-	<string>Change camera</string>
+	<string>Выбрать камеру</string>
 	<key>Download</key>
-	<string>Download</string>
+	<string>Загрузить</string>
 	<key>Download Media?</key>
 	<string>Download Media?</string>
 	<key>Download media</key>
 	<string>Download media</string>
 	<key>No</key>
-	<string>No</string>
+	<string>Нет</string>
 	<key>Pause</key>
-	<string>Pause</string>
+	<string>Пауза</string>
 	<key>Pause camera video</key>
 	<string>Pause camera video</string>
 	<key>Play</key>
-	<string>Play</string>
+	<string>Включить</string>
 	<key>Play camera video</key>
-	<string>Play camera video</string>
+	<string>Проиграть видео с камеры</string>
 	<key>Record live video to a QuickTime movie</key>
-	<string>Record live video to a QuickTime movie</string>
+	<string>Запись видео в QuickTime</string>
 	<key>Record movie</key>
-	<string>Record movie</string>
+	<string>Запись видео</string>
 	<key>Save current image</key>
-	<string>Save current image</string>
+	<string>Сохранитть текущую картинку</string>
 	<key>Save image</key>
-	<string>Save image</string>
+	<string>Сохранить изображение</string>
 	<key>Save like this</key>
 	<string>Save like this</string>
 	<key>Settings</key>
-	<string>Settings</string>
+	<string>Настройки</string>
 	<key>Status: A problem occurred - please check files</key>
-	<string>Status: A problem occurred - please check files</string>
+	<string>Статус: Произошла ошибка - пожалуйста проверьте файлы</string>
 	<key>Status: CPU too busy</key>
-	<string>Status: CPU too busy</string>
+	<string>Статус: Процессор занят</string>
 	<key>Status: Camera not found (this shouldn't happen)</key>
-	<string>Status: Camera not found (this shouldn't happen)</string>
+	<string>Статус: Камера не найдена (этого не должно было быть)</string>
 	<key>Status: Camera switch failed</key>
-	<string>Status: Camera switch failed</string>
+	<string>Статус: Не удалось включить камеру</string>
 	<key>Status: Camera unplugged</key>
-	<string>Status: Camera unplugged</string>
+	<string>Статус: Каера отключена</string>
 	<key>Status: Camera used by another app</key>
-	<string>Status: Camera used by another app</string>
+	<string>Статус: Камера используется другим приложением</string>
 	<key>Status: Connected to </key>
-	<string>Status: Connected to </string>
+	<string>Статус: Подключено к </string>
 	<key>Status: Downloading number %i</key>
-	<string>Status: Downloading number %i</string>
+	<string>Статус: Downloading number %i</string>
 	<key>Status: Internal error (this shouldn't happen)</key>
-	<string>Status: Internal error (this shouldn't happen)</string>
+	<string>Статус: Внутренняя ошибка (этого не должно было быть)</string>
 	<key>Status: Media downloaded from camera</key>
-	<string>Status: Media downloaded from camera</string>
+	<string>Статус: Media downloaded from camera</string>
 	<key>Status: Media not downloaded</key>
-	<string>Status: Media not downloaded</string>
+	<string>Статус: Media not downloaded</string>
 	<key>Status: No Camera</key>
-	<string>Status: No Camera</string>
+	<string>Статус: Камера отсутствует</string>
 	<key>Status: Not enough USB bus power</key>
-	<string>Status: Not enough USB bus power</string>
+	<string>Статус: Недостаточно питания на шине USB</string>
 	<key>Status: Not enough bandwidth</key>
-	<string>Status: Not enough bandwidth</string>
+	<string>Статус: Нехватка пропускной способности шины USB</string>
 	<key>Status: Out of memory</key>
-	<string>Status: Out of memory</string>
+	<string>Статус: Нехватка памяти</string>
 	<key>Status: Paused</key>
-	<string>Status: Paused</string>
+	<string>Статус: Пауза</string>
 	<key>Status: Pausing</key>
-	<string>Status: Pausing</string>
+	<string>Статус: На паузу</string>
 	<key>Status: Playing</key>
-	<string>Status: Playing</string>
+	<string>Статус: Снимает</string>
 	<key>Status: USB communication problem</key>
-	<string>Status: USB communication problem</string>
+	<string>Статус: Проблемы передачи по шине USB</string>
 	<key>Status: Unknown error (this shouldn't happen)</key>
-	<string>Status: Unknown error (this shouldn't happen)</string>
+	<string>Статус: Неизвестная ошибка (этого не должно было быть)</string>
 	<key>Status: Unsupported</key>
-	<string>Status: Unsupported</string>
+	<string>Статус: Не поддерживается</string>
 	<key>Switch to next camera</key>
-	<string>Switch to next camera</string>
+	<string>Переключиться на следующую камеру</string>
 	<key>The camera you just plugged in contains %i stored images. Do you want to download them to your computer?</key>
 	<string>The camera you just plugged in contains %i stored images. Do you want to download them to your computer?</string>
 	<key>The camera you just plugged in contains one stored image. Do you want to download them to your computer?</key>
 	<string>The camera you just plugged in contains one stored image. Do you want to download them to your computer?</string>
 	<key>Yes</key>
-	<string>Yes</string>
+	<string>Да</string>
 </dict>
 </plist>
