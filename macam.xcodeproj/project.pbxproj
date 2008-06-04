@@ -109,6 +109,12 @@
 		F525144C0AE740E2006217A0 /* pwc-misc.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143D0AE740E2006217A0 /* pwc-misc.c */; };
 		F525144D0AE740E2006217A0 /* pwc-timon.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143E0AE740E2006217A0 /* pwc-timon.c */; };
 		F525144E0AE740E2006217A0 /* pwc-uncompress.c in Sources */ = {isa = PBXBuildFile; fileRef = F525143F0AE740E2006217A0 /* pwc-uncompress.c */; };
+		F530194F0DF5E72A00B9B778 /* OV7F7F.h in Headers */ = {isa = PBXBuildFile; fileRef = F530194D0DF5E72A00B9B778 /* OV7F7F.h */; };
+		F53019500DF5E72A00B9B778 /* OV7F7F.m in Sources */ = {isa = PBXBuildFile; fileRef = F530194E0DF5E72A00B9B778 /* OV7F7F.m */; };
+		F53019510DF5E72A00B9B778 /* OV7F7F.h in Headers */ = {isa = PBXBuildFile; fileRef = F530194D0DF5E72A00B9B778 /* OV7F7F.h */; };
+		F53019520DF5E72A00B9B778 /* OV7F7F.m in Sources */ = {isa = PBXBuildFile; fileRef = F530194E0DF5E72A00B9B778 /* OV7F7F.m */; };
+		F53019530DF5E72A00B9B778 /* OV7F7F.h in Headers */ = {isa = PBXBuildFile; fileRef = F530194D0DF5E72A00B9B778 /* OV7F7F.h */; };
+		F53019540DF5E72A00B9B778 /* OV7F7F.m in Sources */ = {isa = PBXBuildFile; fileRef = F530194E0DF5E72A00B9B778 /* OV7F7F.m */; };
 		F53370330D622A5E009B65A4 /* WinbondDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F53370310D622A5E009B65A4 /* WinbondDriver.h */; };
 		F53370340D622A5E009B65A4 /* WinbondDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F53370320D622A5E009B65A4 /* WinbondDriver.m */; };
 		F53370350D622A5E009B65A4 /* WinbondDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F53370310D622A5E009B65A4 /* WinbondDriver.h */; };
@@ -949,12 +955,20 @@
 		F525143D0AE740E2006217A0 /* pwc-misc.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "pwc-misc.c"; path = "pwc_files/pwc-misc.c"; sourceTree = "<group>"; };
 		F525143E0AE740E2006217A0 /* pwc-timon.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "pwc-timon.c"; path = "pwc_files/pwc-timon.c"; sourceTree = "<group>"; };
 		F525143F0AE740E2006217A0 /* pwc-uncompress.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; name = "pwc-uncompress.c"; path = "pwc_files/pwc-uncompress.c"; sourceTree = "<group>"; };
-		F5285DAB0248103E01AEB99D /* English */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/DriverLocalizable.strings; sourceTree = "<group>"; };
-		F5285DAE0248104601AEB99D /* German */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/DriverLocalizable.strings; sourceTree = "<group>"; };
+		F5285DAB0248103E01AEB99D /* English */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/DriverLocalizable.strings; sourceTree = "<group>"; };
+		F5285DAE0248104601AEB99D /* German */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = German; path = German.lproj/DriverLocalizable.strings; sourceTree = "<group>"; };
 		F52D2ED1025A7383016EC628 /* English */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = folder; name = English; path = English.lproj/WebcamHelp; sourceTree = "<group>"; };
 		F52D2ED2025A7383016EC628 /* German */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = folder; name = German; path = German.lproj/WebcamHelp; sourceTree = "<group>"; };
 		F52D2ED4025A9425016EC628 /* RotateCWToolbarItem.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RotateCWToolbarItem.tiff; sourceTree = "<group>"; };
 		F52D2ED5025A9425016EC628 /* RotateCCWToolbarItem.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = RotateCCWToolbarItem.tiff; sourceTree = "<group>"; };
+		F53019470DF5E64800B9B778 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Russian; path = Russian.lproj/MainMenu.nib; sourceTree = "<group>"; };
+		F53019480DF5E67400B9B778 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Russian; path = Russian.lproj/MyImageDocument.nib; sourceTree = "<group>"; };
+		F53019490DF5E6A700B9B778 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = wrapper.nib; name = Russian; path = Russian.lproj/MyMovieDocument.nib; sourceTree = "<group>"; };
+		F530194A0DF5E6C700B9B778 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Russian; path = Russian.lproj/DriverLocalizable.strings; sourceTree = "<group>"; };
+		F530194D0DF5E72A00B9B778 /* OV7F7F.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OV7F7F.h; sourceTree = "<group>"; };
+		F530194E0DF5E72A00B9B778 /* OV7F7F.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OV7F7F.m; sourceTree = "<group>"; };
+		F53019750DF5ED5A00B9B778 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = text.xml; name = Russian; path = Russian.lproj/Localizable.strings; sourceTree = "<group>"; };
+		F53019760DF5ED8600B9B778 /* Russian */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Russian; path = Russian.lproj/WebcamHelp; sourceTree = "<group>"; };
 		F53370310D622A5E009B65A4 /* WinbondDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WinbondDriver.h; sourceTree = "<group>"; };
 		F53370320D622A5E009B65A4 /* WinbondDriver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WinbondDriver.m; sourceTree = "<group>"; };
 		F533EEB70271ACF80166DE1F /* MyQCExpressBDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyQCExpressBDriver.h; sourceTree = "<group>"; };
@@ -988,7 +1002,7 @@
 		F553F48F0A22BB6300591163 /* JpgDecompress.c */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.c; path = JpgDecompress.c; sourceTree = "<group>"; };
 		F553F4900A22BB6300591163 /* JpgDecompress.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JpgDecompress.h; sourceTree = "<group>"; };
 		F55855D302EEF4A70166DE1F /* French */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/Localizable.strings; sourceTree = "<group>"; };
-		F55855D402EEF4BF0166DE1F /* French */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/DriverLocalizable.strings; sourceTree = "<group>"; };
+		F55855D402EEF4BF0166DE1F /* French */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = French; path = French.lproj/DriverLocalizable.strings; sourceTree = "<group>"; };
 		F55A58C102572BFE014CA2B1 /* MyPB0100Sensor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyPB0100Sensor.h; sourceTree = "<group>"; };
 		F55A58C202572BFE014CA2B1 /* MyPB0100Sensor.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyPB0100Sensor.m; sourceTree = "<group>"; };
 		F55A58C302572BFE014CA2B1 /* MySTV600Sensor.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MySTV600Sensor.h; sourceTree = "<group>"; };
@@ -1415,6 +1429,8 @@
 				F5217D500CDB848D001F446D /* OV7660.m */,
 				F5217D590CDB84A7001F446D /* OV7670.h */,
 				F5217D5A0CDB84A7001F446D /* OV7670.m */,
+				F530194D0DF5E72A00B9B778 /* OV7F7F.h */,
+				F530194E0DF5E72A00B9B778 /* OV7F7F.m */,
 			);
 			path = sensors;
 			sourceTree = "<group>";
@@ -1933,6 +1949,7 @@
 				F5465D020D8109CE00D8170B /* Histogram.h in Headers */,
 				F57A02ED0D8E0BEF000EFF61 /* AGC.h in Headers */,
 				F5B1381C0DC68844000D09CB /* FrameCounter.h in Headers */,
+				F530194F0DF5E72A00B9B778 /* OV7F7F.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2067,6 +2084,7 @@
 				F5465D000D8109CE00D8170B /* Histogram.h in Headers */,
 				F57A02EB0D8E0BEF000EFF61 /* AGC.h in Headers */,
 				F5B1381E0DC68844000D09CB /* FrameCounter.h in Headers */,
+				F53019510DF5E72A00B9B778 /* OV7F7F.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2197,6 +2215,7 @@
 				F5465CFE0D8109CE00D8170B /* Histogram.h in Headers */,
 				F57A02EF0D8E0BEF000EFF61 /* AGC.h in Headers */,
 				F5B138200DC68844000D09CB /* FrameCounter.h in Headers */,
+				F53019530DF5E72A00B9B778 /* OV7F7F.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2328,6 +2347,13 @@
 				4A9504CDFFE6A4B311CA0CBA /* Deployment */,
 			);
 			hasScannedForEncodings = 1;
+			knownRegions = (
+				English,
+				Japanese,
+				French,
+				German,
+				Russian,
+			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* wc */;
 			projectDirPath = "";
 			targets = (
@@ -2595,6 +2621,7 @@
 				F5465D030D8109CE00D8170B /* Histogram.m in Sources */,
 				F57A02EE0D8E0BEF000EFF61 /* AGC.m in Sources */,
 				F5B1381D0DC68844000D09CB /* FrameCounter.m in Sources */,
+				F53019500DF5E72A00B9B778 /* OV7F7F.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2702,6 +2729,7 @@
 				F5465D010D8109CE00D8170B /* Histogram.m in Sources */,
 				F57A02EC0D8E0BEF000EFF61 /* AGC.m in Sources */,
 				F5B1381F0DC68844000D09CB /* FrameCounter.m in Sources */,
+				F53019520DF5E72A00B9B778 /* OV7F7F.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2807,6 +2835,7 @@
 				F5465CFF0D8109CE00D8170B /* Histogram.m in Sources */,
 				F57A02F00D8E0BEF000EFF61 /* AGC.m in Sources */,
 				F5B138210DC68844000D09CB /* FrameCounter.m in Sources */,
+				F53019540DF5E72A00B9B778 /* OV7F7F.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2840,6 +2869,7 @@
 				F5285DAB0248103E01AEB99D /* English */,
 				F5285DAE0248104601AEB99D /* German */,
 				F55855D402EEF4BF0166DE1F /* French */,
+				F530194A0DF5E6C700B9B778 /* Russian */,
 			);
 			name = DriverLocalizable.strings;
 			sourceTree = "<group>";
@@ -2850,6 +2880,7 @@
 				F52D2ED1025A7383016EC628 /* English */,
 				F52D2ED2025A7383016EC628 /* German */,
 				F5787F3E0331468F01153FEE /* French */,
+				F53019760DF5ED8600B9B778 /* Russian */,
 			);
 			name = WebcamHelp;
 			sourceTree = "<group>";
@@ -2860,6 +2891,7 @@
 				F53B90550240CDFF0166DE75 /* English */,
 				F563AB4B0247FDC601BF65F7 /* German */,
 				F5787F180331464B01153FEE /* French */,
+				F53019480DF5E67400B9B778 /* Russian */,
 			);
 			name = MyImageDocument.nib;
 			sourceTree = "<group>";
@@ -2870,6 +2902,7 @@
 				F55DD83B021311680166DE0F /* English */,
 				F563AB4C0247FDC601BF65F7 /* German */,
 				F5787F190331465201153FEE /* French */,
+				F53019470DF5E64800B9B778 /* Russian */,
 			);
 			name = MainMenu.nib;
 			sourceTree = "<group>";
@@ -2880,6 +2913,7 @@
 				F563AB490247FDC601BF65F7 /* English */,
 				F563AB4A0247FDC601BF65F7 /* German */,
 				F55855D302EEF4A70166DE1F /* French */,
+				F53019750DF5ED5A00B9B778 /* Russian */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
@@ -2890,6 +2924,7 @@
 				F5E6AA660371F8920166D062 /* English */,
 				F5E6AA6B0371F8B00166D062 /* German */,
 				F5E6AA6C0371F8B90166D062 /* French */,
+				F53019490DF5E6A700B9B778 /* Russian */,
 			);
 			name = MyMovieDocument.nib;
 			sourceTree = "<group>";
