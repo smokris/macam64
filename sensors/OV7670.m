@@ -211,26 +211,112 @@ static register_array registersNormal7670[] =
 	{ OV511_DONE_BUS, 0x0, 0x00 },
 };	
 
+
 - (int) configure
 {
     return [self setRegisterArray:registersNormal7670];
 }
+
 
 // super method set resolution works incorrectly with VF0400 (blue color over image)
 - (void) setResolution:(CameraResolution)r fps:(short)fr   
 {
 }
 
+
 - (void) setResolution1:(CameraResolution)r fps:(short)fr
 {
+#define RES_MASK (OV7670_COM7_FMT_QCIF|OV7670_COM7_FMT_QVGA|OV7670_COM7_FMT_CIF)
+    
+    switch (r) 
+    {
+        case ResolutionSIF:
+            [self setRegister:OV7670_REG_COM7 toValue:OV7670_COM7_FMT_QVGA withMask:RES_MASK];	// Quarter VGA (SIF)
+			
+			[self setRegister:OV7670_REG_HSTART toValue:0x15];	
+			[self setRegister:OV7670_REG_HSTOP toValue:0x03];	
+			[self setRegister:OV7670_REG_HREF toValue:0x6b];	
+			
+			[self setRegister:OV7670_REG_VSTART toValue:0x02];	
+			[self setRegister:OV7670_REG_VSTOP toValue:0x7a];	
+			[self setRegister:OV7670_REG_VREF toValue:0x0a];	
+            break;
+            
+		case ResolutionCIF:
+            [self setRegister:OV7670_REG_COM7 toValue:OV7670_COM7_FMT_CIF withMask:RES_MASK];	// CIF
+			
+			[self setRegister:OV7670_REG_HSTART toValue:0x15];	
+			[self setRegister:OV7670_REG_HSTOP toValue:0x0b];	
+			[self setRegister:OV7670_REG_HREF toValue:0x6b];
+			
+			[self setRegister:OV7670_REG_VSTART toValue:0x03];	
+			[self setRegister:OV7670_REG_VSTOP toValue:0x7a];	
+			[self setRegister:OV7670_REG_VREF toValue:0x0a];	
+            break;
+            
+		case ResolutionQCIF:
+            [self setRegister:OV7670_REG_COM7 toValue:OV7670_COM7_FMT_QCIF withMask:RES_MASK];	// QCIF
+			
+			[self setRegister:OV7670_REG_HSTART toValue:0x39];	
+			[self setRegister:OV7670_REG_HSTOP toValue:0x04];	
+			[self setRegister:OV7670_REG_HREF toValue:0x6b];	
+			
+			[self setRegister:OV7670_REG_VSTART toValue:0x03];	
+			[self setRegister:OV7670_REG_VSTOP toValue:0x7a];	
+			[self setRegister:OV7670_REG_VREF toValue:0x0a];	
+			break;
+			
+        case ResolutionVGA:
+            [self setRegister:OV7670_REG_COM7 toValue:0x00 withMask:RES_MASK];	// VGA
+			
+			[self setRegister:OV7670_REG_HSTART toValue:0x13];	
+			[self setRegister:OV7670_REG_HSTOP toValue:0x01];	
+			[self setRegister:OV7670_REG_HREF toValue:0x6b];	
+			
+			[self setRegister:OV7670_REG_VSTART toValue:0x02];	
+			[self setRegister:OV7670_REG_VSTOP toValue:0x7a];	
+			[self setRegister:OV7670_REG_VREF toValue:0x0a];	
+			break;
+            
+        default:
+            break;
+    }
 }
+
 
 - (void) setResolution2:(CameraResolution)r fps:(short)fr
 {
 }
 
+
 - (void) setResolution3:(CameraResolution)r fps:(short)fr
 {
+	switch (fr) 
+    {
+        case 30:
+			[self setRegister:0x11 toValue:0x00];  // original rate
+            break;
+            
+        case 25:
+        case 20:
+            [self setRegister:0x11 toValue:0x01]; // half rate (now the default)
+            break;
+            
+        case 15:
+			[self setRegister:0x11 toValue:0x02];
+			break;
+            
+        case 10:
+			[self setRegister:0x11 toValue:0x05];
+			break;
+            
+        case 5:
+			[self setRegister:0x11 toValue:0x0a];
+			break;
+            
+        default:
+            break;
+    }
 }
 
 @end
