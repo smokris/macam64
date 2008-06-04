@@ -329,13 +329,14 @@
     {
 		case ResolutionSIF:
 		case ResolutionVGA:
-		
-			return YES;
+            return YES;
             
-		case ResolutionSQSIF:
-		case ResolutionQSIF:
-		case ResolutionQCIF:
 		case ResolutionCIF:
+			return [sensor isKindOfClass:[OV7670 class]];
+			
+		case ResolutionQCIF:					
+		case ResolutionQSIF:		
+		case ResolutionSQSIF:			
 		case ResolutionSVGA:
         default: 
             return NO;
@@ -348,7 +349,7 @@
 - (CameraResolution) defaultResolutionAndRate: (short *) rate
 {
 	if (rate) 
-        *rate = 30;
+        *rate = 25;   // 30 rate blinks when connected with usb hub
     
 	return ResolutionVGA;
 }
@@ -370,8 +371,12 @@
     
     switch (r) 
     {
-        case ResolutionSIF:
-            [self setRegister:OV519_REG_X_OFFSETL toValue:([sensor isKindOfClass:[OV7670 class]] ? 0x00 : 0x01)];	// Don't ask why but this make VGA/SIF works correctly (blue image!) // AG change
+        case ResolutionCIF:
+			[self setRegister:OV519_REG_X_OFFSETL toValue:0x1];	
+            break;
+            
+		case ResolutionSIF:
+            [self setRegister:OV519_REG_X_OFFSETL toValue:[sensor isKindOfClass:[OV7670 class]] ? 0x00 : 0x01];	// Don't ask why but this make VGA/SIF works correctly (blue image!) // AG change
             break;
             
         case ResolutionVGA:
@@ -383,7 +388,7 @@
     }
     
     [sensor setResolution2:r fps:fr];
-    
+   
     switch (fr) 
     {
         // FIXME (from ov51x): these are only valid at the max resolution.
@@ -687,6 +692,8 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 - (int) getRegister:(UInt8)reg
 {
     UInt8 buf[16];  // Not sure we need this, but why not
+	
+	usleep(1000);  // Now it operates with usb hub
     
     if (![self usbReadCmdWithBRequest:1 wValue:0 wIndex:reg buf:buf len:1]) 
     {
@@ -704,13 +711,15 @@ IsocFrameResult  OV519IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     buf[0] = val;
     
-    if (![self usbWriteCmdWithBRequest:1 wValue:0 wIndex:reg buf:buf len:1]) 
-    {
-        NSLog(@"OV519:setRegister:usbWriteCmdWithBRequest error");
-        return -1;
-    }
+    usleep(1000);  // Now it operates with usb hub 
     
-    return 0;
+	if(![self usbWriteCmdWithBRequest:1 wValue:0 wIndex:reg buf:buf len:1]) 
+    {
+		NSLog(@"OV519:setRegister:usbWriteCmdWithBRequest error");
+		return -1;
+	}
+    
+	return 0;
 }
 
 
