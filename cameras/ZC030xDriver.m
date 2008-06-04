@@ -265,7 +265,7 @@ static int force_sensor_id = -1;
 {
     [super startupCamera];
     
-    [self setCompression:1];
+    [self setCompression:2]; // 2 instead of 1 makes normal frame rate
 }
 
 
