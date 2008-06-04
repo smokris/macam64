@@ -8,6 +8,7 @@
 
 #import "OmniVisionSensor.h"
 #import "OV76xx.h"
+#import "OV7F7F.h"
 
 
 @implementation OmniVisionSensor
@@ -21,6 +22,9 @@
     
     if (sensor == NULL) 
         sensor = [OV76xx findSensor:driver];
+    
+    if (sensor == NULL) 
+        sensor = [OV7F7F findSensor:driver];
     
     return sensor;
 }
