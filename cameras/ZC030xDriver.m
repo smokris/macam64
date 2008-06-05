@@ -265,7 +265,11 @@ static int force_sensor_id = -1;
 {
     [super startupCamera];
     
-    [self setCompression:2]; // 2 instead of 1 makes normal frame rate
+    // Set the default compression, use can always adjust
+    // 1 yields good picture quality
+    // 2 yields better frame-rate, but blocking becomes visible
+    
+    [self setCompression:1];
 }
 
 
