@@ -454,14 +454,6 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
             @"Genius VideoCam Messenger", @"name", NULL], 
         
-        [NSDictionary dictionaryWithObjectsAndKeys:
-            [NSNumber numberWithUnsignedShort:0x608f], @"idProduct",
-            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
-            @"Genius Look 315FS or Sweex USB Webcam 300K", @"name", NULL], 
-        // Genius Look 315FS
-        // Sweex USB Webcam 300K (JA000060)
-        // These are actually SN9C103, not 102
-
         NULL];
 }
 
@@ -474,6 +466,43 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     spca50x->desc = GeniusVideoCamMessenger;
     spca50x->sensor = SENSOR_OV7630;
     spca50x->customid = SN9C102;
+    
+    spca50x->i2c_ctrl_reg = 0x80;
+    spca50x->i2c_base = 0x21;
+    spca50x->i2c_trigger_on_write = 0;
+    
+	return self;
+}
+
+@end
+
+
+@implementation SonixDriverVariant5B
+
++ (NSArray *) cameraUsbDescriptions 
+{
+    return [NSArray arrayWithObjects:
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x608f], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Genius Look 315FS or Sweex USB Webcam 300K", @"name", NULL], 
+        
+        // Genius Look 315FS
+        // Sweex USB Webcam 300K (JA000060)
+        
+        NULL];
+}
+
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    spca50x->desc = GeniusVideoCamMessenger;
+    spca50x->sensor = SENSOR_OV7630;
+    spca50x->customid = SN9C103;
     
     spca50x->i2c_ctrl_reg = 0x80;
     spca50x->i2c_base = 0x21;

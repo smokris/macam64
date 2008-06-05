@@ -315,6 +315,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SonixDriverVariant3 class]];
     [self registerCameraDriver:[SonixDriverVariant4 class]];
     [self registerCameraDriver:[SonixDriverVariant5 class]];
+    [self registerCameraDriver:[SonixDriverVariant5B class]];
     [self registerCameraDriver:[SonixDriverVariant6 class]];
     [self registerCameraDriver:[SonixDriverVariant7 class]];
     [self registerCameraDriver:[SonixDriverVariant8 class]];
