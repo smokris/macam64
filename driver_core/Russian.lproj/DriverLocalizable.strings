@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
+<!--
+macam - webcam app and QuickTime driver component
+Copyright (C) 2002 Matthias Krauss (macam@matthias-krauss.de)
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+$Id$
+
+Russian translation by Andrey Gruzdev
+-->
+<plist version="0.9">
+<dict>
+	<key>Auto gain</key>
+	<string>Авто яркость</string>
+	<key>Automatic</key>
+	<string>Авто</string>
+	<key>CPiA-based camera</key>
+	<string>CPiA камера</string>
+	<key>Camera</key>
+	<string>Камера</string>
+	<key>CameraErrorBusy</key>
+	<string>Камера используется
+другим приложением</string>
+	<key>CameraErrorInternal</key>
+	<string>Внутренняя ошибка</string>
+	<key>CameraErrorDecoding</key>
+	<string>Ошибка декодирования изображения</string>
+	<key>CameraErrorUSBNeedsUSB2</key>
+	<string>Извините, эта камера требует USB 2.0</string>
+	<key>CameraErrorNoBandwidth</key>
+	<string>Нехватка
+скорости шины USB</string>
+	<key>CameraErrorNoCam</key>
+	<string>Камера отсутствует</string>
+	<key>CameraErrorNoMem</key>
+	<string>Нехватка памяти</string>
+	<key>CameraErrorNoPower</key>
+	<string>Нехватка питания
+для камеры
+на шине USB</string>
+	<key>CameraErrorOK</key>
+	<string>OK</string>
+	<key>CameraErrorTimeout</key>
+	<string>Процессор перегружен</string>
+	<key>CameraErrorUSBProblem</key>
+	<string>Проблемы на нине USB</string>
+	<key>CameraErrorUnimplemented</key>
+	<string>Не поддерживается</string>
+	<key>Compress:</key>
+	<string>Сжатие:</string>
+	<key>Dummy camera for user feedback</key>
+	<string>Виртуальная камера</string>
+	<key>Flip</key>
+	<string>Отражение</string>
+	<key>Format:</key>
+	<string>Формат:</string>
+	<key>Fps:</key>
+	<string>Fps:</string>
+	<key>Gain:</key>
+	<string>Яркость:</string>
+	<key>Gamma:</key>
+	<string>Гамма:</string>
+	<key>Image Data</key>
+	<string>Image Data</string>
+	<key>Indoor</key>
+	<string>В помещении</string>
+	<key>Linear</key>
+	<string>Исходный</string>
+	<key>Outdoor</key>
+	<string>На улице</string>
+	<key>STV680-based camera</key>
+	<string>Dual mode camera</string>
+	<key>Save as defaults</key>
+	<string>Сохранить, как значения про умолчанию</string>
+	<key>Shutter:</key>
+	<string>Затвор:</string>
+	<key>UnknownError</key>
+	<string>Неизвестная ошибка</string>
+	<key>WB</key>
+	<string>WB</string>
+</dict>
+</plist>
