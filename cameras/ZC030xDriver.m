@@ -225,6 +225,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative Webcam Vista Pro", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x2936], @"idProduct",  // sensor ??? CMOS VGS
+            [NSNumber numberWithUnsignedShort:0x1b3b], @"idVendor",   // ZC0301PL according to FAQ
+            @"Conceptronic USB Chatcam with microphone [CLLCHATCAM]", @"name", NULL],   // jack, *not* USB Audio Class
+        
         NULL];
 }
 
