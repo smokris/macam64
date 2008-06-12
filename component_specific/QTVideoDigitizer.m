@@ -697,7 +697,7 @@ pascal VideoDigitizerError vdigGetInputName(vdigGlobals storage, long videoInput
         return qtParamErr;
     
     // Get the name
-    [bridge getName:cstr];
+    [bridge getName:cstr maxLength:255];
     
     // Append #1, or #2 etc to the camera name to make it unique
     index = [bridge getIndexOfCamera];
@@ -912,7 +912,7 @@ pascal VideoDigitizerError vdigGetDeviceNameAndFlags(vdigGlobals storage, Str255
         return qtParamErr;
     
     // Get the name
-    [bridge getName:cstr];
+    [bridge getName:cstr maxLength:255];
     
     // Append #1, or #2 etc to the camera name to make it unique
     index = [bridge getIndexOfCamera];
