@@ -159,7 +159,8 @@ pascal ComponentResult sgpnRegister(sgpnGlobals storage) {
             bridge=[[MyBridge alloc] initWithCentral:central cid:cid];
 //Note that we pass the bridge to the vdig in the Component refcon with a retain count of 1.
             if (bridge) {
-                if ([central getName:cname forID:cid]) {
+                if ([central getRegistrationName:cname forID:cid maxLength:255]) 
+                {
                     CStr2PStr(cname,pname);
                     PtrToHand ((Ptr)pname, &name, pname[0]+1);
                     comp=RegisterComponent(&cd,&vdigMainEntry,
@@ -256,8 +257,8 @@ pascal ComponentResult sgpnGetDITL(sgpnGlobals storage, Handle* ditl) {
 
 
 pascal ComponentResult sgpnInstall(sgpnGlobals storage, SGChannel channel, DialogRef dlg, short itemOffset) {
-    char cstr[200];
-    unsigned char pstr[200];
+    char cstr[256];
+    unsigned char pstr[256];
     ComponentResult err=0;
     VideoDigitizerComponent vdig;
     ComponentDescription cd;
@@ -275,7 +276,8 @@ pascal ComponentResult sgpnInstall(sgpnGlobals storage, SGChannel channel, Dialo
     bridge=(**storage).bridge=(**((vdigGlobals)(GetComponentInstanceStorage(vdig)))).bridge;
     if ((bridge)==NULL) return internalQuickTimeError;	//We NEED the bridge
     [bridge retain];				//Hold the bridge
-    if ([bridge getName:cstr]) {			//Try to get the camera name
+    if ([bridge getName:cstr maxLength:255]) 			//Try to get the camera name
+    {
         CStr2PStr(cstr,pstr);
         GetDialogItem(dlg,itemOffset+1,&dit,&di,&dib);		
         SetDialogItemText(di,pstr);
