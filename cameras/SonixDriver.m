@@ -1164,17 +1164,9 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 	if (self == NULL) 
         return NULL;
     
-    spca50x->sensor = SENSOR_OV7630;  // NO
-    spca50x->sensor = SENSOR_MI0360;  // NO
-    spca50x->sensor = SENSOR_HV7131R; // NO
-    spca50x->sensor = SENSOR_OV7660;  // NO
-    spca50x->sensor = SENSOR_TAS5130CXX;  // NO
-    spca50x->sensor = SENSOR_MO4000;  // NO
-    spca50x->sensor = SENSOR_OV7648;  // not connected
-    spca50x->sensor = SENSOR_PAS202;  // NO
+    // Both from Paolo Lima from Genius serviceteam
     
-    // Which sensor is it?
-    
+    spca50x->sensor = SENSOR_HV7131R;
     spca50x->customid = SN9C102P;
     
 	return self;
