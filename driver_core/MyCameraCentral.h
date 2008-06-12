@@ -100,8 +100,8 @@
 - (MyCameraDriver*) useDummyForError:(CameraError)err;
 - (NSString*) nameForID:(unsigned long)cid;
 - (NSString*) nameForDriver:(MyCameraDriver*)driver;
-- (BOOL) getName:(char*)name forID:(unsigned long)cid;
-- (BOOL) getName:(char*)name forDriver:(MyCameraDriver*)driver;
+- (BOOL) getName:(char*)name forID:(unsigned long)cid maxLength:(unsigned)maxLength;
+- (BOOL) getRegistrationName:(char*)name forID:(unsigned long)cid maxLength:(unsigned)maxLength;
 
 //Camera defaults managements
 - (BOOL) setCameraToDefaults:(MyCameraDriver*) camera;
