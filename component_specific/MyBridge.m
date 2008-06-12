@@ -266,9 +266,12 @@
     return valid;
 }
 
-- (BOOL) getName:(char*)name {
-    if (!driverStarted) return NO;
-    return [central getName:name forID:cid];
+- (BOOL) getName:(char*)name maxLength:(unsigned)maxLength
+{
+    if (!driverStarted) 
+        return NO;
+    
+    return [central getName:name forID:cid maxLength:maxLength];
 }
 
 - (short) getIndexOfCamera 
@@ -649,5 +652,37 @@
     return driverGrabRunning;
 }
 
+
+- (NSImageView *) getHistogramView
+{
+    return NULL;
+}
+
+
+- (NSTextField *) getDebugMessageField
+{
+    return NULL;
+}
+
+
+- (void) updateStatus:(NSString *)status fpsDisplay:(float)fpsDisplay fpsReceived:(float)fpsReceived
+{
+/*
+    NSString * append;
+    NSString * newStatus;
+    
+    if (fpsReceived == 0.0) 
+        append = [NSString stringWithFormat:LStr(@" (%3.1f fps)"), fpsDisplay];
+    else 
+        append = [NSString stringWithFormat:LStr(@" (%3.1f fps, receiving %3.1f fps)"), fpsDisplay, fpsReceived];
+    
+    if (status == NULL) 
+        newStatus = [[NSString stringWithString:LStr(@"Status: Playing")] stringByAppendingString:append];
+    else 
+        newStatus = [status stringByAppendingString:append];
+    
+    [statusText setStringValue:newStatus];
+*/
+}
 
 @end

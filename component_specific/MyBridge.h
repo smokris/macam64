@@ -106,7 +106,7 @@ typedef enum BridgeClientState {
 
 - (BOOL) isStarted;                 // Returns if the bridge is currently started (in use) 
 - (BOOL) isCameraValid;             // Returns if there currently is a real, valid camera that can deliver real video
-- (BOOL) getName:(char*)name;		// Try to get the camera name
+- (BOOL) getName:(char*)name maxLength:(unsigned)maxLength;		// Try to get the camera name
 - (short) getIndexOfCamera;         // Return the index of the camera
 
 //-----------------------
@@ -173,5 +173,8 @@ typedef enum BridgeClientState {
 - (void) cameraHasShutDown:(id)cam;
 - (void) grabFinished:(id)cam withError:(CameraError)err;
 
+- (NSImageView *) getHistogramView;
+- (NSTextField *) getDebugMessageField;
+- (void) updateStatus:(NSString *)status fpsDisplay:(float)fpsDisplay fpsReceived:(float)fpsReceived;
 
 @end
