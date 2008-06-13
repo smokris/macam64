@@ -153,6 +153,18 @@
         [NSThread detachNewThreadSelector:@selector(buttonThread:) toTarget:self withObject:threadData];
     }
     
+#if REALLY_VERBOSE
+    NSLog(@"GenericDriver init, info = \n");
+    NSLog(@" cid = %i\n", [cameraInfo cid]);
+    NSLog(@" VID = 0x%04X\n", [cameraInfo vendorID]);
+    NSLog(@" PID = 0x%04X\n", [cameraInfo productID]);
+    NSLog(@" lid = 0x%08X\n", [cameraInfo locationID]);
+    NSLog(@" version = 0x%04X\n", [cameraInfo versionNumber]);
+    NSLog(@" name = %@\n", [cameraInfo cameraName]);
+    NSLog(@" driver = %i\n", [cameraInfo driver]);
+    NSLog(@" driver class name = %@\n", NSStringFromClass([cameraInfo driverClass]));
+#endif
+    
     [self startupCamera];
     
 	return [super startupWithUsbLocationId:usbLocationId];
