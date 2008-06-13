@@ -106,6 +106,10 @@ MyCameraCentral* sharedCameraCentral=NULL;
 - (NSString *) cameraDisabledKeyFromVendorID:(UInt16)vid andProductID:(UInt16)pid;
 - (NSString *) cameraDisabledKeyFromDriver:(MyCameraDriver *)camera;
 
+- (void) listAllCameras;
+- (void) listAllDuplicates;
+- (void) listAllMultiDriver;
+
 @end
     
 
@@ -212,6 +216,128 @@ MyCameraCentral* sharedCameraCentral=NULL;
     cameras=NULL;
     
     [super dealloc]; // where is the constructor?
+}
+
+- (void) listAllCameras
+{
+    int             i;
+    MyCameraInfo *  info = NULL;
+    
+    printf("\n");
+    printf("List of all Cameras:\n");
+    printf("==========\n");
+    
+    for (i = 0; i < [cameraTypes count]; i++) 
+    {
+        info = [cameraTypes objectAtIndex:i];
+        
+        printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [info cid], (unsigned) [info vendorID], (unsigned) [info productID], [NSStringFromClass([info driverClass]) cString], [[info cameraName] cString]);
+    }
+    
+    printf("========== ==========\n");
+}
+
+- (void) listAllDuplicates
+{
+    int             i, j;
+    BOOL            first;
+    MyCameraInfo *  info = NULL;
+    
+    printf("\n");
+    printf("List of all Duplicates (VID, PID, Driver):\n");
+    
+    for (i = 0; i < [cameraTypes count]; i++) 
+    {
+        SInt32          usbVendor;
+        SInt32          usbProduct;
+        NSString *      driverName;
+        
+        first = YES;
+        info = [cameraTypes objectAtIndex:i];
+        
+        usbVendor = [info vendorID];
+        usbProduct = [info productID];
+        driverName = NSStringFromClass([info driverClass]);
+        
+        for (j = 0; j < [cameraTypes count]; j++) 
+        {
+            MyCameraInfo * other = [cameraTypes objectAtIndex:j];
+            
+            if (usbVendor != [other vendorID]) 
+                continue;
+            
+            if (usbProduct != [other productID]) 
+                continue;
+            
+            if (![driverName isEqualToString:NSStringFromClass([other driverClass])]) 
+                continue;
+            
+            if (j == i) 
+                continue;
+            
+            if (j < i) 
+                break;
+            
+            if (first) 
+            {
+                first = NO;
+                printf("==========\n");
+                printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [info cid], (unsigned) [info vendorID], (unsigned) [info productID], [NSStringFromClass([info driverClass]) cString], [[info cameraName] cString]);
+            }
+            printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [other cid], (unsigned) [other vendorID], (unsigned) [other productID], [NSStringFromClass([other driverClass]) cString], [[other cameraName] cString]);
+        }
+    }
+    
+    printf("========== ==========\n");
+}
+
+- (void) listAllMultiDriver
+{
+    int             i, j;
+    BOOL            first;
+    MyCameraInfo *  info = NULL;
+    
+    printf("\n");
+    printf("List of cameras with Multiple Drivers (VID, PID):\n");
+    
+    for (i = 0; i < [cameraTypes count]; i++) 
+    {
+        SInt32          usbVendor;
+        SInt32          usbProduct;
+        
+        first = YES;
+        info = [cameraTypes objectAtIndex:i];
+        
+        usbVendor = [info vendorID];
+        usbProduct = [info productID];
+        
+        for (j = 0; j < [cameraTypes count]; j++) 
+        {
+            MyCameraInfo * other = [cameraTypes objectAtIndex:j];
+            
+            if (usbVendor != [other vendorID]) 
+                continue;
+            
+            if (usbProduct != [other productID]) 
+                continue;
+            
+            if (j == i) 
+                continue;
+            
+            if (j < i) 
+                break;
+            
+            if (first) 
+            {
+                first = NO;
+                printf("==========\n");
+                printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [info cid], (unsigned) [info vendorID], (unsigned) [info productID], [NSStringFromClass([info driverClass]) cString], [[info cameraName] cString]);
+            }
+            printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [other cid], (unsigned) [other vendorID], (unsigned) [other productID], [NSStringFromClass([other driverClass]) cString], [[other cameraName] cString]);
+        }
+    }
+    
+    printf("========== ==========\n");
 }
 
 - (BOOL) startupWithNotificationsOnMainThread:(BOOL)nomt recognizeLaterPlugins:(BOOL)rlp{
@@ -401,6 +527,11 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[KworldTV300UDriver class]];  // This is very incomplete at this time
 #endif
     
+#if 0
+    [self listAllCameras];
+    [self listAllDuplicates];
+    [self listAllMultiDriver];
+#endif
     
     //Get the IOKit master port (needed for communication with IOKit)
     ret = IOMasterPort(MACH_PORT_NULL, &masterPort);
