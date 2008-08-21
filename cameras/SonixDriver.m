@@ -758,6 +758,11 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
             @"Skype Video Pack Camera (Model C7) (0x613e)", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x6143], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Sonix PC Cam 168 version 2 (0x6143)", @"name", NULL], 
+        
         NULL];
 }
 
@@ -827,6 +832,9 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     if (0x6130 <= productID && productID <= 0x613f) 
         spca50x->customid = SN9C120;
     
+    if (0x6140 <= productID && productID <= 0x614f) // only sure about 6143
+        spca50x->customid = SN9C120;                // SN9C120B actually
+    
     if (0x6240 <= productID && productID <= 0x627f) 
         spca50x->customid = SN9C201;
     
@@ -880,6 +888,9 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
     
     if (productID == 0x6128) 
         spca50x->sensor = SENSOR_OV7630;    // not sure what this should be yet, try 7660 as well (OV7648 is not supported yet)
+    
+    if (productID == 0x6143) 
+        spca50x->sensor = SENSOR_MI0360;  // actually SP80708, whatever that is
     
     // Now set the i2c base register
     
