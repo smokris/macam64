@@ -1908,6 +1908,12 @@ void BufferProviderRelease(void * info, const void * data, size_t size)
         printf("QuickTime image decoding error!\n");
 #endif
     
+    if (LUT != NULL) 
+        [LUT processImage:nextImageBuffer 
+                  numRows:[self height] 
+                 rowBytes:nextImageBufferRowBytes 
+                      bpp:nextImageBufferBPP];
+    
     return (err) ? NO : YES;
 }
 
