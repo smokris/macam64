@@ -211,7 +211,7 @@
     grabContext.bytesPerFrame=usbFrameBytes;
     grabContext.framesPerTransfer=50;
     grabContext.framesInRing=1000;
-    grabContext.concurrentTransfers=3;
+    grabContext.concurrentTransfers=2;
     grabContext.finishedTransfers=0;
 	if (videoDevice == NULL)
 		grabContext.bytesPerChunk = [self height] * [self width] * 6 / 4 + chunkHeader + chunkFooter;  // 4 yuv pixels fit into 4 bytes + header + footer
