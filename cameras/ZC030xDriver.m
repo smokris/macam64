@@ -530,6 +530,18 @@ IsocFrameResult  zc30xIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 {
     return [NSArray arrayWithObjects:
         
+        // E2500 uses VC302, PEPi/PEPI2 chipset, also M/N V-UCV39, P/N 860-000114, PID LZ613BC
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x089d], @"idProduct",  // SENSOR_MC501CB
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam Connect or E2500 (0x089d)", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x08d9], @"idProduct",  // SENSOR_MC501CB
+            [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
+            @"Logitech QuickCam Connect (0x08d9)", @"name", NULL], 
+        
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:0x08dd], @"idProduct",  // SENSOR_MC501CB
             [NSNumber numberWithUnsignedShort:VENDOR_LOGITECH], @"idVendor",
