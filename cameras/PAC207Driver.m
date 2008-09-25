@@ -80,7 +80,7 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x04], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
-            @"PixArt PAC207 based webcam (previously unknown 04)", @"name", NULL], 
+            @"Labtec Webcam 1200 (PAC207 with 0x2464)", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC207_BASE + 0x05], @"idProduct",
