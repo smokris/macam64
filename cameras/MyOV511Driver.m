@@ -476,7 +476,7 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
     grabContext.framesPerTransfer=192;
 #endif
     grabContext.framesInRing=grabContext.framesPerTransfer*16;
-    grabContext.concurrentTransfers=3;
+    grabContext.concurrentTransfers=2;
     grabContext.finishedTransfers=0;
     grabContext.bytesPerChunk=[self height]*[self width]*6/4+chunkHeader+chunkFooter;	//4 yuv pixels fit into 4 bytes  + header + footer
     grabContext.nextReadOffset=0;
