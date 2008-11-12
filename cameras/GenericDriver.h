@@ -173,6 +173,9 @@ typedef struct GenericGrabContext
     short numFullBuffers;		  // The number of full (ready-to-decode) buffers in the array above
     bool  fillingChunk;			  // (true) if we're currently filling a buffer
     
+    size_t  headerLength;
+    void *  headerData;
+    
     GenericFrameInfo frameInfo;   // Use this to get more information from the frame scanner
     
     FrameCounter * receiveFPS;

@@ -603,6 +603,9 @@ int  genericIsocDataCopier(void * destination, const void * source, size_t lengt
     
     grabContext.maxFramesBetweenChunks = 1000; // That's a second. Normally we should get at least one chunk per second
     
+    grabContext.headerLength = 0;
+    grabContext.headerData = NULL;
+    
     [self setIsocFrameFunctions];  // can also adjust number of transfers, frames, buffers, buffer-sizes
     
     if (grabContext.numberOfTransfers > GENERIC_MAX_TRANSFERS) 
@@ -894,7 +897,7 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
                 droppedFrames = 0;
                 droppedChunks = 0;
                 
-                // When the new chunk starts in the middle of a frame, we must copy the tail
+                // When the new chunk starts in the middle of a frame, we must copy the tail to the old chunk
                 
                 if (gCtx->fillingChunk && tailLength > 0) 
                 {
@@ -946,6 +949,14 @@ static void isocComplete(void * refcon, IOReturn result, void * arg0)
                 }
                 gCtx->fillingChunk = true;				// Now we're filling (still in the lock to be sure no buffer is lost)
                 gCtx->fillingChunkBuffer.numBytes = 0;	// Start with empty buffer
+                
+                if (gCtx->headerLength > 0) 
+                {
+                    int add = (*gCtx->isocDataCopier)(gCtx->fillingChunkBuffer.buffer + gCtx->fillingChunkBuffer.numBytes, 
+                                                      gCtx->headerData, gCtx->headerLength, gCtx->chunkBufferLength - gCtx->fillingChunkBuffer.numBytes);
+                    gCtx->fillingChunkBuffer.numBytes += add;
+                }
+                
                 [gCtx->chunkListLock unlock];			// Free access to the chunk buffers
 				
 				gettimeofday(&gCtx->fillingChunkBuffer.tvStart, NULL); // set the time of the buffer
