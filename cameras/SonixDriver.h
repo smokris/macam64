@@ -170,3 +170,91 @@
 - (id) initWithCentral: (id) c;
 
 @end
+
+
+#import "Sensor.h"
+#import "OV7660.h"
+#import "OV7670.h"
+
+
+@interface SonixSN9CDriver : GenericDriver 
+{
+    Sensor * sensor;
+    UInt8    i2cBase;
+}
+
++ (NSArray *) cameraUsbDescriptions;
+
+- (id) initWithCentral:(id)c;
+- (BOOL) setGrabInterfacePipe;
+
+- (int) getRegister:(UInt16) reg;
+- (int) setRegister:(UInt16) reg toValue:(UInt16) val;
+- (int) getRegisterList:(UInt16) reg number:(int) length into:(UInt8 *) buffer;
+- (int) setRegisterList:(UInt16) reg number:(int) length withValues:(UInt8 *) buffer;
+
+- (int) getSensorRegister:(UInt16) reg;
+- (int) setSensorRegister:(UInt16) reg toValue:(UInt16) val;
+
+- (int) waitOnI2C;
+- (int) setSensorRegister8:(UInt8 *) buffer;
+
+@end
+
+@interface SonixSN9C10xDriver : SonixSN9CDriver 
+
++ (NSArray *) cameraUsbDescriptions;
+
+- (id) initWithCentral:(id)c;
+
+//- (void) setIsocFrameFunctions;
+//- (BOOL) startupGrabStream;
+
+@end
+
+@interface SonixSN9C1xxDriver : SonixSN9CDriver 
+{
+    void * jpegHeader;
+}
+
++ (NSArray *) cameraUsbDescriptions;
+
+- (id) initWithCentral:(id)c;
+- (void) setIsocFrameFunctions;
+//- (BOOL) startupGrabStream;
+
+@end
+
+@interface SonixSN9C20xDriver : SonixSN9CDriver 
+
+//+ (NSArray *) cameraUsbDescriptions;
+
+//- (id) initWithCentral:(id)c;
+//- (void) setIsocFrameFunctions;
+//- (BOOL) startupGrabStream;
+
+@end
+
+@interface SonixSN9C20xxDriver : SonixSN9CDriver 
+
+//+ (NSArray *) cameraUsbDescriptions;
+
+//- (id) initWithCentral:(id)c;
+//- (void) setIsocFrameFunctions;
+//- (BOOL) startupGrabStream;
+
+@end
+
+
+@interface SonixSN9C105Driver : SonixSN9C1xxDriver 
+
++ (NSArray *) cameraUsbDescriptions;
+
+- (id) initWithCentral:(id)c;
+- (BOOL) startupGrabStream;
+
+@end
+
+
+
+
