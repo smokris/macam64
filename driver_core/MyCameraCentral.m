@@ -522,6 +522,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
     
     [self registerCameraDriver:[R5U870Driver class]];
     
+    [self registerCameraDriver:[SonixSN9C105Driver class]];    // Seems to work, still needs refinement
+    
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
     [self registerCameraDriver:[KworldTV300UDriver class]];  // This is very incomplete at this time
