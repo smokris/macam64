@@ -1724,14 +1724,23 @@ void createJpegHeader(void * buffer, int width, int height, int quality, int sam
 }
 
 
+//
+// For, this is all that is supported
+//
 - (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate 
 {
     if (rate < 0 || 30 < rate) 
         return NO;
     
+    if (rate < 15 || 15 < rate) 
+        return NO;
+    
     switch (res) 
     {
         case ResolutionCIF:
+            return NO;
+            break;
+            
         case ResolutionVGA:
             return YES;
             break;
@@ -1807,6 +1816,10 @@ void createJpegHeader(void * buffer, int width, int height, int quality, int sam
 {
 	self = [super initWithCentral:c];
 	if (self == NULL) 
+        return NULL;
+    
+    LUT = [[LookUpTable alloc] init];
+	if (LUT == NULL) 
         return NULL;
     
     usbReducedBandwidth = YES;
@@ -1915,6 +1928,12 @@ typedef struct WriteRegisterListBuffer
     
     [sensor configure];
     */
+    
+	[self setBrightness:0.5];
+	[self setContrast:0.5];
+	[self setSaturation:0.5];
+	[self setGamma:0.5];
+	[self setSharpness:0.5];
 }
 
 
@@ -2000,6 +2019,11 @@ typedef struct WriteRegisterListBuffer
         { 0xc1, 0x21, 0x8b, 0x99, 0x99, 0xcf, 0x00, 0x10 }, 
         { 0xb1, 0x21, 0x92, 0x00, 0x00, 0x00, 0x00, 0x10 }, 
         { 0xa1, 0x21, 0xa1, 0x00, 0x00, 0x00, 0x00, 0x10 }, 
+        // added
+//      { 0xa1, 0x21, 0x13, 0xfc, 0x00, 0x00, 0x00, 0x10 }, // turns on AGC
+//      { 0xa1, 0x21, 0x13, 0xff, 0x00, 0x00, 0x00, 0x10 }, // turns on AGC, AWB, AEC
+        { 0xa1, 0x21, 0x13, 0xfd, 0x00, 0x00, 0x00, 0x10 }, // turns on AGC, AEC //  best choice
+        
         { 0x00 }
     };
     
