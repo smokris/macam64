@@ -215,6 +215,7 @@
 @interface SonixSN9C1xxDriver : SonixSN9CDriver 
 {
     void * jpegHeader;
+    CameraResolution rawResolution;
 }
 
 + (NSArray *) cameraUsbDescriptions;
@@ -222,6 +223,11 @@
 - (id) initWithCentral:(id)c;
 - (void) setIsocFrameFunctions;
 //- (BOOL) startupGrabStream;
+- (BOOL) setupDecoding;
+
+- (short) rawWidth;
+- (short) rawHeight;
+- (CameraResolution) rawResolution;
 
 @end
 

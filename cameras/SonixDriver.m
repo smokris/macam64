@@ -1437,6 +1437,8 @@ IsocFrameResult  sn9cxxxIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 
 // welcome to the new unified sonix architecture
 
+#include "MiscTools.h"
+
 
 @implementation SonixSN9CDriver  // Generic for all these chips
 
@@ -1715,6 +1717,8 @@ void createJpegHeader(void * buffer, int width, int height, int quality, int sam
 	if (self == NULL) 
         return NULL;
     
+    rawResolution = ResolutionVGA;
+
     compressionType = jpegCompression;
     jpegVersion = 1;
     
@@ -1737,8 +1741,14 @@ void createJpegHeader(void * buffer, int width, int height, int quality, int sam
     
     switch (res) 
     {
+        case ResolutionSQSIF:
+        case ResolutionQSIF:
+//      case ResolutionQCIF: // some bug
+        case ResolutionSIF:
         case ResolutionCIF:
-            return NO;
+        case ResolutionSVGA:
+        case ResolutionXGA:
+            return YES;
             break;
             
         case ResolutionVGA:
@@ -1760,6 +1770,35 @@ void createJpegHeader(void * buffer, int width, int height, int quality, int sam
 }
 
 
+- (short) rawWidth
+{
+    return WidthOfResolution(rawResolution);
+}
+
+
+- (short) rawHeight
+{
+    return HeightOfResolution(rawResolution);
+}
+
+
+- (CameraResolution) rawResolution
+{
+    return rawResolution;
+}
+
+
+- (BOOL) setupDecoding 
+{
+    BOOL ok = [super setupDecoding];
+    
+    (**QuicktimeDecoding.imageDescription).width = [self rawWidth];
+    (**QuicktimeDecoding.imageDescription).height = [self rawHeight];
+    
+    return ok;
+}
+
+
 - (void) setIsocFrameFunctions
 {
     grabContext.isocFrameScanner = sn9cxxxIsocFrameScanner;
@@ -1767,7 +1806,7 @@ void createJpegHeader(void * buffer, int width, int height, int quality, int sam
     
     // jpeg header
     
-    createJpegHeader(jpegHeader, [self width], [self height], 3, 0x21);
+    createJpegHeader(jpegHeader, [self rawWidth], [self rawHeight], 3, 0x21);
     
     grabContext.headerData = jpegHeader;
     grabContext.headerLength = getJpegHeaderLength();    
