@@ -43,15 +43,18 @@ pascal ComponentResult vdigMainEntry(ComponentParameters * params, Handle storag
         cid = [(**globals).bridge cid];
     }
 #if EXCEPT_COMPRESS_DONE
-    if (params->what!=kVDCompressDoneSelect) 
+    if ((params->what != kVDCompressDoneSelect) && 
+        (params->what != kVDReleaseCompressBufferSelect) && 
+        (params->what != kVDCompressOneFrameAsyncSelect)) 
     {
 #endif
         if (ResolveVDSelector(params->what, selectorName)) 
         {
             NSLog(@"QT call to vdig (%d): %s\n", cid, selectorName);
-        } else 
+        } 
+        else 
         {
-            NSLog(@"QT call unknown selector %d\n",params->what);
+            NSLog(@"QT call unknown selector %d\n", params->what);
         }
 #if EXCEPT_COMPRESS_DONE
     }
@@ -68,7 +71,9 @@ pascal ComponentResult vdigMainEntry(ComponentParameters * params, Handle storag
     
 #if LOG_QT_CALLS
 #if EXCEPT_COMPRESS_DONE
-    if (params->what!=kVDCompressDoneSelect) 
+    if ((params->what != kVDCompressDoneSelect) && 
+        (params->what != kVDReleaseCompressBufferSelect) &&
+        (params->what != kVDCompressOneFrameAsyncSelect)) 
     {
 #endif
         NSLog(@"QT call resulted in %d\n", (int) err);
@@ -639,7 +644,7 @@ pascal VideoDigitizerError vdigCompressDone(vdigGlobals storage, Boolean * done,
                 gettimeofday(&currentTime, NULL);
                 timersub(&currentTime, &myTime, &difference);
 #if REALLY_VERBOSE
-                NSLog(@"Video frame delay = %d ms.\n", (int) (difference.tv_sec * 1000 + difference.tv_usec / 1000));
+//                NSLog(@"Video frame delay = %d ms.\n", (int) (difference.tv_sec * 1000 + difference.tv_usec / 1000));
 #endif
                 delta = 600 * (difference.tv_sec * 1000000 + difference.tv_usec) / 1000000;
                 if (t->value.lo < delta) 
