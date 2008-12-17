@@ -62,6 +62,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
             @"PixArt PAC7311 based camera (F)", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x262c], @"idProduct",                // different controller?
+            [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
+            @"Philips SPC 230NC (probably)", @"name", NULL], 
+        
         // This supposedly uses a PAC7312 instead, not sure if that makes any difference
         
         [NSDictionary dictionaryWithObjectsAndKeys:
