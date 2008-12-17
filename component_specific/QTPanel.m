@@ -50,33 +50,51 @@ enum {
     uppSGPanelSetEventFilterProcInfo = 0x00000FF0
 };
 
-pascal ComponentResult sgpnMainEntry (ComponentParameters *params, Handle storage) {	
+
+pascal ComponentResult sgpnMainEntry (ComponentParameters *params, Handle storage) 
+{
     ComponentResult err = 0;
     ProcPtr procPtr = 0;
     ProcInfoType procInfo;
+    
 #ifdef LOG_QT_CALLS
     char selectorName[200];
-    if(ResolveVDSelector(params->what, selectorName)) {
-        printf("QT call to sgpn:%s\n",selectorName);
-    } else {
-        printf("QT call unknown selector %d\n",params->what);
+    
+    if (ResolveVDSelector(params->what, selectorName)) 
+    {
+        NSLog(@"QT call to sgpn: %s\n", selectorName);
+    } 
+    else 
+    {
+        NSLog(@"QT call unknown selector %d\n", params->what);
     }
 #endif
-    if (sgpnLookupSelector(params->what,&procPtr,&procInfo)) {
-	err=CallComponentFunctionWithStorageProcInfo((Handle)storage, params, procPtr,procInfo);
-    } else {
-        err=badComponentSelector;
+    
+    if (sgpnLookupSelector(params->what, &procPtr, &procInfo)) 
+    {
+        err = CallComponentFunctionWithStorageProcInfo((Handle) storage, params, procPtr, procInfo);
+    } 
+    else 
+    {
+        err = badComponentSelector;
     }
+    
 #ifdef LOG_QT_CALLS
-    printf("QT call resulted in %d\n",(int)err);
+    NSLog(@"QT call resulted in %d\n", (int) err);
 #endif
+    
     return err;
 }
 
-bool sgpnLookupSelector(short what,ProcPtr* ptr,ProcInfoType* info) {
-    bool ok=true;
-    if (what < 0) {
-        switch(what) {
+
+bool sgpnLookupSelector(short what,ProcPtr* ptr,ProcInfoType* info) 
+{
+    bool ok = true;
+    
+    if (what < 0) 
+    {
+        switch (what) 
+        {
             case kComponentRegisterSelect:  *info=uppCallComponentRegisterProcInfo;
                                             *ptr=(ComponentRoutineUPP)sgpnRegister; break;
             case kComponentOpenSelect:      *info=uppCallComponentOpenProcInfo;
@@ -113,6 +131,9 @@ bool sgpnLookupSelector(short what,ProcPtr* ptr,ProcInfoType* info) {
                                                 *ptr=(ComponentRoutineUPP)sgpnSetSettings; break;
             case kSGPanelGetSettingsSelect: 	*info=uppSGPanelGetSettingsProcInfo;
                                                 *ptr=(ComponentRoutineUPP)sgpnGetSettings; break;
+                
+                // kSGPanelGetDITLForSizeSelect
+                
 default: ok=false; break;
         }
         
@@ -133,7 +154,7 @@ pascal ComponentResult sgpnRegister(sgpnGlobals storage) {
 #if REALLY_VERBOSE
         NSLog(@"Camera central already inited - probably duplicate register. Skipping...");
 #endif
-        return 1;
+        return 0;
     }
     
     MyCameraCentral* central;
