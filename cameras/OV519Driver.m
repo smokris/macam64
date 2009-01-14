@@ -129,6 +129,11 @@
             [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
             @"Creative Live! Cam Vista IM (VF0420)", @"name", NULL], 
         
+		[NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x4068], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Creative Live! Cam Notebook (VF0470)", @"name", NULL], 
+        
         NULL];
 }
 
