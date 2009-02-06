@@ -9,6 +9,10 @@
 
 #import <GenericDriver.h>
 
+/*							ADDR		DEF		R/W	*/
+#define	OV534_REG_GAIN		0x14	/*	0x00	RW	*/
+#define	OV534_REG_SHUTR		0x15	/*	0x00	RW	*/
+
 
 @interface OV534Driver : GenericDriver 
 
@@ -21,6 +25,13 @@
 @interface OV538Driver : OV534Driver 
 
 + (NSArray *) cameraUsbDescriptions;
+
+- (BOOL) canSetGain;
+- (void) setGain:(float)v;
+
+- (BOOL) canSetShutter;
+- (void) setShutter:(float)v;
+- (void) setAutoGain:(BOOL)v;
 
 @end
 

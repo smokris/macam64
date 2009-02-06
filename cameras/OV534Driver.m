@@ -86,6 +86,93 @@
     [super startupCamera];
 }
 
+// Gain and shutter combined
+// all of the gain/shutter settings are reverse engineered from USB data... 
+- (BOOL) canSetAutoGain 
+{
+    return YES;
+}
+
+- (void) setAutoGain:(BOOL)v{
+     BOOL old = [self isAutoGain];
+    [super setAutoGain:v];
+    if (v == old) {
+        return;
+	}
+		
+	if(v == 0){
+		// turn off auto gain and exposure...
+		NSLog(@"Turning OFF auto gain and shutter...\n");
+		[self setRegister:0xF2 toValue:(UInt8)0x13]; // F2 opening part, common with this cam.
+		[self setRegister:0xF5 toValue:(UInt8)0x33]; // F5 and F6 closing part, common with this cam.
+		[self setRegister:0xF6 toValue:(UInt8)0x33]; // ---
+		
+		[self setRegister:0xF5 toValue:(UInt8)0xF9]; // F5 and F6 closing part, common with this cam.
+		[self setRegister:0xF6 toValue:(UInt8)0xF9]; // ---
+		
+		[self setRegister:0xF4 toValue:(UInt8)0x00]; // no idea what this does...
+		
+		[self setRegister:0xF2 toValue:(UInt8)0x13]; // F2 opening part, common with this cam.
+		[self setRegister:0xF3 toValue:(UInt8)0xF0]; // <<--- this line turns AUTO exposure and gain OFF.
+		[self setRegister:0xF5 toValue:(UInt8)0x37]; // F5 and F6 closing part, common with this cam.
+		[self setRegister:0xF6 toValue:(UInt8)0x37]; // ---
+	}else{
+		NSLog(@"Turning ON auto gain and shutter...\n");
+		// turn on auto gain and exposure...
+		[self setRegister:0xF2 toValue:(UInt8)0x13]; // F2 opening part, common with this cam.
+		[self setRegister:0xF5 toValue:(UInt8)0x33]; // F5 and F6 closing part, common with this cam.
+		[self setRegister:0xF6 toValue:(UInt8)0x33]; // ---
+
+		[self setRegister:0xF5 toValue:(UInt8)0xF9]; // F5 and F6 closing part, common with this cam.
+		[self setRegister:0xF6 toValue:(UInt8)0xF9]; // ---
+		
+		[self setRegister:0xF4 toValue:(UInt8)0x00]; // get current AUTO state, maybe not needed?
+		
+		[self setRegister:0xF2 toValue:(UInt8)0x13]; // F2 opening part, common with this cam.
+		[self setRegister:0xF3 toValue:(UInt8)0xF5]; // <<--- this line turns AUTO exposure and gain ON.
+													 // setting 0xF3 to: 
+													 //   - 0xF0 (all off)
+													 //   - 0xF1 (just auto shutter)
+													 //   - 0xF5 (auto shutter and gain)
+		[self setRegister:0xF5 toValue:(UInt8)0x37]; // F5 and F6 closing part, common with this cam.
+		[self setRegister:0xF6 toValue:(UInt8)0x37]; // ---
+		
+		
+	}
+}
+
+// ----- Gain ------
+- (BOOL) canSetGain 
+{
+    return YES;
+}
+- (void) setGain:(float)v
+{
+	UInt8 value = (UInt8) (v*31);
+	//NSLog(@"Setting gain to %02x.\n", value);
+	[self setRegister:0xF2 toValue:(UInt8)0x00]; // F2 opening part, common with this cam.
+	[self setRegister:0xF3 toValue:value];
+	[self setRegister:0xF5 toValue:(UInt8)0x37]; // F5 and F6 closing part, common with this cam.
+	[self setRegister:0xF6 toValue:(UInt8)0x37]; // ---	
+	gain = v;
+}
+
+// ----- Shutter ------
+- (BOOL) canSetShutter 
+{
+    return YES;
+}
+- (void) setShutter:(float)v
+{
+	UInt8 value = (UInt8) (v*255);
+	//NSLog(@"Setting gain to %02x.\n", value);
+	[self setRegister:0xF2 toValue:(UInt8)0x10]; // F2 opening part, common with this cam.
+	[self setRegister:0xF3 toValue:value];
+	[self setRegister:0xF5 toValue:(UInt8)0x37]; // F5 and F6 closing part, common with this cam.
+	[self setRegister:0xF6 toValue:(UInt8)0x37]; // ---
+	shutter = v;
+}
+
 
 
 - (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate 
