@@ -246,16 +246,13 @@
 {
     [self initCamera];
     
-	[self setBrightness:0.5];
-	[self setContrast:0.5];
-	[self setGamma:0.5];
-	[self setSaturation:0.5];
-	[self setHue:0.65];
-	[self setSharpness:0.5];
-	[self setAutoGain:NO];
-	
+    [super startupCamera];
+    
 	[self setGain:1.0];
-	[self setShutter:1.0];	
+	[self setShutter:1.0];
+    
+	[self setHue:0.65];
+//  [self setWhiteBalanceMode:WhiteBalanceAutomatic];  // has no effect
 }
 
 
@@ -464,7 +461,10 @@
 
 //------------ HUE ---------------
 // NOTE this is fake hue - we are just changing the blue gain :)
-- (BOOL) canSetHue { return YES;  }
+- (BOOL) canSetHue 
+{ 
+    return [self whiteBalanceMode] != WhiteBalanceAutomatic;
+}
 
 - (void) setHue:(float)v {
 	
@@ -550,6 +550,33 @@
     [super setAutoGain:v];    
 }
 //---------------
+
+
+
+//
+// WhiteBalance
+//
+- (BOOL) canSetWhiteBalanceModeTo: (WhiteBalanceMode) newMode 
+{
+    if (newMode == WhiteBalanceAutomatic) 
+        return YES;
+    
+    return [super canSetWhiteBalanceModeTo:newMode];
+}
+
+- (void) setWhiteBalanceMode: (WhiteBalanceMode) newMode 
+{
+    if (newMode == WhiteBalanceAutomatic) 
+    {
+        [self setSensorRegister:0x63 toValue:0xe0];
+    }
+    else 
+    {
+        [self setSensorRegister:0x63 toValue:0xAA];
+    }
+    
+    [super setWhiteBalanceMode:newMode];
+}
 
 
 //
