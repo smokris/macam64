@@ -7,17 +7,44 @@
 //
 
 
-#import <GenericDriver.h>
-
-/*							ADDR		DEF		R/W	*/
-#define	OV534_REG_GAIN		0x14	/*	0x00	RW	*/
-#define	OV534_REG_SHUTR		0x15	/*	0x00	RW	*/
+#import "GenericDriver.h"
 
 
 @interface OV534Driver : GenericDriver 
 
 + (NSArray *) cameraUsbDescriptions;
 - (id) initWithCentral:(id)c;
+
+- (void) startupCamera;
+- (void) setResolution:(CameraResolution)r fps:(short)fr;
+- (short) findFrameRateForResolution:(CameraResolution)res;
+
+- (void) setGain:(float)v;
+- (BOOL) canSetGain;
+
+- (void) setShutter:(float)v;
+- (BOOL) canSetShutter;
+
+- (void) setHue:(float)v;
+- (BOOL) canSetHue;
+
+- (BOOL) canSetFlicker;
+- (void) setFlicker:(FlickerType)fType;
+
+// Gain and shutter combined
+- (BOOL) canSetAutoGain;
+- (void) setAutoGain:(BOOL) v;
+- (BOOL) isUVC;
+
+- (int) getRegister:(UInt16)reg;
+- (int) setRegister:(UInt16)reg toValue:(UInt16)val;
+- (int) verifySetRegister:(UInt16)reg toValue:(UInt8)val;
+
+- (void) initSCCB;
+- (BOOL) sccbStatusOK;
+
+- (int) getSensorRegister:(UInt8)reg;
+- (int) setSensorRegister:(UInt8)reg toValue:(UInt8)val;
 
 @end
 
@@ -26,12 +53,4 @@
 
 + (NSArray *) cameraUsbDescriptions;
 
-- (BOOL) canSetGain;
-- (void) setGain:(float)v;
-
-- (BOOL) canSetShutter;
-- (void) setShutter:(float)v;
-- (void) setAutoGain:(BOOL)v;
-
 @end
-
