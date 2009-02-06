@@ -325,6 +325,7 @@ extern NSString* SnapshotQualityPrefsKey;
 - (IBAction)whiteBalanceChanged:(id)sender {
     WhiteBalanceMode wb=[whiteBalancePopup indexOfSelectedItem]+1;
     [driver setWhiteBalanceMode:wb];
+    [hueSlider setEnabled:[driver canSetHue]];
 }
 
 - (IBAction)blackwhiteCheckboxChanged:(id)sender {
