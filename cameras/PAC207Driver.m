@@ -573,6 +573,12 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
     return [self usbMaximizeBandwidth:[self getGrabbingPipe]  suggestedAltInterface:-1  numAltInterfaces:8];
 }
 
+
+- (BOOL) canSetUSBReducedBandwidth
+{
+    return YES;
+}
+
 //
 // Scan the frame and return the results
 //
