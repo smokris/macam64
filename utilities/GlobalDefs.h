@@ -27,6 +27,7 @@ This is the global definitions file. It includes some compiling options, some co
 #ifndef _GLOBALDEFS_
 #define _GLOBALDEFS_
 
+
 typedef enum WhiteBalanceMode 
 {
     WhiteBalanceLinear		= 1,
@@ -36,9 +37,11 @@ typedef enum WhiteBalanceMode
     WhiteBalanceManual    	= 5,
 } WhiteBalanceMode;
 
+
 typedef enum CameraResolution 
 {
     ResolutionInvalid = 0,	// Indicates a wrong or not applicable resolution
+    ResolutionMin   = 1,    // This should not need to change
     ResolutionSQSIF = 1,	// SQSIF =  128 x  96
     ResolutionQSIF  = 2,	//  QSIF =  160 x 120, also known as QQVGA
     ResolutionQCIF  = 3,	//  QCIF =  176 x 144
@@ -48,7 +51,13 @@ typedef enum CameraResolution
     ResolutionSVGA  = 7,	//  SVGA =  800 x 600
     ResolutionXGA   = 8,	//   XGA = 1024 x 768
     ResolutionUXGA  = 9,	//  UXGA = 1600 x 1200
+    
+    ResolutionMax   = 9,    // This should ytack the largest resolution
 } CameraResolution;
+
+
+#define MaximumFPS  125
+
 
 typedef enum CameraError 
 {
