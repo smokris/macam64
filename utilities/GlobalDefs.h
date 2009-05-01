@@ -56,7 +56,7 @@ typedef enum CameraResolution
 } CameraResolution;
 
 
-#define MaximumFPS  125
+#define MaximumFPS  180
 
 
 typedef enum CameraError 
