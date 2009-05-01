@@ -50,6 +50,9 @@ void ShowPipesInfo(IOUSBInterfaceInterface **intf);
 short WidthOfResolution(CameraResolution r);
 short HeightOfResolution(CameraResolution r);
 
+// FPS item menu lookup
+short MenuItem2FPS(int item);
+int FPS2MenuItem(short fps);
 
 // Replace deprecated calls
 void SetQDRect(Rect  * rect, short left, short top, short right, short bottom);

@@ -158,6 +158,57 @@ short HeightOfResolution(CameraResolution r) {
     return ret;
 }
 
+// FPS item menu lookups
+
+short MenuItem2FPS(int item)
+{
+    switch (item) 
+    {
+        case -1: return -1; // Looking up a non-item, return -1
+            
+        case 0: return 0;  // fastest
+        case 1: return 5;
+        case 2: return 10;
+        case 3: return 15;
+        case 4: return 20;
+        case 5: return 25;
+        case 6: return 30;
+        case 7: return 40;
+        case 8: return 45;
+        case 9: return 50;
+        case 10: return 60;
+        case 11: return 75;
+        case 12: return 100;
+        case 13: return 125;
+    }
+    
+    return -1; // error
+}
+
+int FPS2MenuItem(short fps)
+{
+    switch (fps) 
+    {
+        case 0: return 0;
+        case 5: return 1;
+        case 10: return 2;
+        case 15: return 3;
+        case 20: return 4;
+        case 25: return 5;
+        case 30: return 6;
+        case 40: return 7;
+        case 45: return 8;
+        case 50: return 9;
+        case 60: return 10;
+        case 75: return 11;
+        case 100: return 12;
+        case 125: return 13;
+    }
+    
+    return 0; // fastest
+}
+
+
 void SetQDRect(Rect  * rect, short left, short top, short right, short bottom)
 {
     rect->left = left;
