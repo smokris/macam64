@@ -17,7 +17,6 @@
 
 - (void) startupCamera;
 - (void) setResolution:(CameraResolution)r fps:(short)fr;
-- (short) findFrameRateForResolution:(CameraResolution)res;
 
 - (void) setGain:(float)v;
 - (BOOL) canSetGain;
