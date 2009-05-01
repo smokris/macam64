@@ -275,14 +275,14 @@ Image buffers. There are two sets: lastIamgeBuffer and nextImageBuffer. The clie
 - (short) width;						//Current image width
 - (short) height;						//Current image height
 - (CameraResolution) resolution;		//Current image predefined format constant
-- (short) fps;							//Current frames per second
+- (short) fps;							//Current frames per second, 0 means fastest possible
 - (BOOL) supportsResolution:(CameraResolution)r fps:(short)fr;	//Does this combination work?
 - (void) setResolution:(CameraResolution)r fps:(short)fr;	//Set a resolution and frame rate
 
 //Resolution and fps negotiation - the default implementation will use [supportsResolution:fps:] to find something.
 //Override these if you want to.
 - (CameraResolution) findResolutionForWidth:(short)width height:(short) height;	//returns a (hopefully) good native resolution
-- (short) findFrameRateForResolution:(CameraResolution)res;	//returns fps or <=0 if resolution not supported
+- (short) findFrameRateForResolution:(CameraResolution)res;	//returns fps < 0 if resolution not supported
 - (CameraResolution) defaultResolutionAndRate:(short*)fps;	//Override this to set the startup resolution
 
 //Grabbing
