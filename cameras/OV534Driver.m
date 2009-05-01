@@ -257,49 +257,113 @@
 
 
 //------------ RESOLUTION AND FPS ---------------
-- (void) setResolution:(CameraResolution)r fps:(short)fr {	// Set a resolution and frame rate. 
-    if (![self supportsResolution:r fps:fr]) return;
+//
+// Set a resolution and frame rate. 
+//
+- (void) setResolution:(CameraResolution)r fps:(short)fr 
+{
+    if (![self supportsResolution:r fps:fr]) 
+        return;
+    
     [stateLock lock];
-    if (!isGrabbing) {
-       
-		resolution=r;
-        fps=fr;
+    
+    if (!isGrabbing) 
+    {
+        fps = fr;
+		resolution = r;
 		
-		if( resolution == ResolutionVGA ){
-		
-			if( fps == 15 ){ // measured 25
+        //
+        // sensor register 0x11 is the clock divider, 
+        // the six low bits are used, you always add one, 
+        // unbless it is zero, which is when you get crazy 
+        //
+        // when sensor register 0x0d is set to 0x41, the total is 60
+        //                                  to 0xc1, the total is 120
+        //                                  to 0x81, the total is 150 **
+        //
+        // simpe set the total and the divider to get a number
+        //
+        // usually controller register 0xe5 is set to 0x04
+        // except when ** (0x0d is set to 0x81) when it is set to 0x02
+        //
+
+		if (resolution == ResolutionVGA) 
+		{
+            if (fps == 0) 
+                fps = 40;
+            
+			if (fps == 5) 
+            {
+                // 5 = 60 / 12
+				[self setSensorRegister:0x11 toValue:0x0b];
+				[self setSensorRegister:0x0d toValue:0x41];
+				[self verifySetRegister:0xe5 toValue:0x04];
+			}
+			else if (fps == 10) 
+            {
+                // 10 = 60 / 6
+				[self setSensorRegister:0x11 toValue:0x05];
+				[self setSensorRegister:0x0d toValue:0x41];
+				[self verifySetRegister:0xe5 toValue:0x04];
+			}
+			else if (fps == 15) 
+            {
+                // 15 = 60 / 4
 				[self setSensorRegister:0x11 toValue:0x03];
 				[self setSensorRegister:0x0d toValue:0x41];
-				[self setSensorRegister:0x14 toValue:0x41];
-			}else if( fps == 30 ){ // previously 30 // measured 30
-				
-				[self setSensorRegister:0x11 toValue:0x04];
-				[self sccbStatusOK];				
-				[self setSensorRegister:0x0d toValue:0x81];
-				[self sccbStatusOK];				
-				[self verifySetRegister:0xe5 toValue:0x02];
-
-//				[self setSensorRegister:0x11 toValue:0x01];
-//				[self setSensorRegister:0x0d toValue:0x41];
-//				[self setSensorRegister:0x14 toValue:0x41];
-				
-				
-			}else if( fps == 60 ){ // previously 60 // measured 100 but image not moving
-				[self setSensorRegister:0x11 toValue:0x01];
-				[self sccbStatusOK];
-				[self setSensorRegister:0x0d toValue:0x41];
-				[self sccbStatusOK];
-				[self verifySetRegister:0xe5 toValue:0x02];
-
-//				[self setSensorRegister:0x11 toValue:0x01];
-//				[self setSensorRegister:0x0d toValue:0xc1];
-//				[self setSensorRegister:0x14 toValue:0x41];
-//				//a bit of a hack for now - we can get 50 fps by setting the flickr comp rate to 50hz
-				[self setFlicker:enableFlicker50Hz];
+				[self verifySetRegister:0xe5 toValue:0x04];
 			}
-	
-		}else if(resolution == ResolutionSIF){
-
+			else if (fps == 20) 
+            {
+                // 20 = 60 / 3
+				[self setSensorRegister:0x11 toValue:0x02];
+				[self setSensorRegister:0x0d toValue:0x41];
+				[self verifySetRegister:0xe5 toValue:0x04];
+			}
+            else if (fps == 25) 
+            {
+                // cannot use 60, cannot use 120
+                // 25 = 150 / 6
+				[self setSensorRegister:0x11 toValue:0x05];
+				[self setSensorRegister:0x0d toValue:0x81];
+				[self verifySetRegister:0xe5 toValue:0x02];
+            }
+            else if (fps == 30) 
+            {
+                // so many choices
+                // 30 = 60 / 2
+                // 30 = 120 / 4
+                // 30 = 150 / 5
+				[self setSensorRegister:0x11 toValue:0x04];
+				[self setSensorRegister:0x0d toValue:0x81];
+				[self verifySetRegister:0xe5 toValue:0x02];
+			}
+            else if (fps == 40) 
+            {
+                // 40 = 120 / 3
+				[self setSensorRegister:0x11 toValue:0x02];
+				[self setSensorRegister:0x0d toValue:0xc1];
+				[self verifySetRegister:0xe5 toValue:0x04];
+			}
+            else if (fps == 50) // measures 100 but image not moving
+            {
+                // cannot get this to work!
+                // 50 = 150 / 3
+				[self setSensorRegister:0x11 toValue:0x02];
+				[self setSensorRegister:0x0d toValue:0x81];
+				[self verifySetRegister:0xe5 toValue:0x02];
+			}
+            else if (fps == 60) // measures 120 but image not moving
+            {
+                // cannot get this to work
+                // 60 = 120 / 2
+				[self setSensorRegister:0x11 toValue:0x01];
+				[self setSensorRegister:0x0d toValue:0xc1];
+				[self verifySetRegister:0xe5 toValue:0x04];
+			}
+		}
+        else if (resolution == ResolutionSIF) 
+        {
 			//these were found by sniffing the windows ps3 eye app
 			//maccam reports the fps is either higher or lower than 
 			//what we are asking for - 
@@ -313,60 +377,129 @@
 			//but the bytes I sniffed with snoopy pro - show 0x09 and 0x00 
 			//hmm might be needed for 320 by 240 and the other one for 640 480????
 			
-			if( fps == 15 ){ // previously 15 // measured 18
-				[self setSensorRegister:0x11 toValue:0x09];
-				[self sccbStatusOK];												
+            //
+            // sensor register 0x11 is the clock divider, 
+            // the six low bits are used, you always add one, 
+            // unbless it is zero, which is when you get crazy 
+            //
+            // the speeds are three times as fast for SIF!
+            //
+            // when sensor register 0x0d is set to 0x41, the total is 180
+            //                                  to 0xc1, the total is 360
+            //                                  to 0x81, the total is 450 **
+            //
+            // simpe set the total and the divider to get a number
+            //
+            // usually controller register 0xe5 is set to 0x04
+            // except when ** (0x0d is set to 0x81) when it is set to 0x02
+            //
+            
+            if (fps == 0) 
+                fps = 120;
+            
+            if (fps == 5) 
+            {
+                // 5 = 180 / 36
+				[self setSensorRegister:0x11 toValue:0x23];
 				[self setSensorRegister:0x0d toValue:0x41];
-				[self sccbStatusOK];												
-				//[self setSensorRegister:0x09 toValue:0x00];		
-				[self verifySetRegister:0xe5 toValue:0x04];				
-				
-			}else if( fps == 30 ){ // previously 30 // measured 36
-				[self setSensorRegister:0x11 toValue:0x04];
-				[self sccbStatusOK];												
+				[self verifySetRegister:0xe5 toValue:0x04];
+            }
+            else if (fps == 10) 
+            {
+                // 10 = 180 / 18
+				[self setSensorRegister:0x11 toValue:0x11];
 				[self setSensorRegister:0x0d toValue:0x41];
-				[self sccbStatusOK];												
-				//[self setSensorRegister:0x09 toValue:0x00];	
-				[self verifySetRegister:0xe5 toValue:0x04];				
-					
-			}else if( fps == 60){ // previously 60 // measured 72
-				[self setSensorRegister:0x11 toValue:0x04];
-				[self sccbStatusOK];								
-				[self setSensorRegister:0x0d toValue:0xc1];
-				[self sccbStatusOK];				
-				[self verifySetRegister:0xe5 toValue:0x04];				
-				
-				//[self setSensorRegister:0x09 toValue:0x00];		
+				[self verifySetRegister:0xe5 toValue:0x04];
+            }
+			else if (fps == 15) 
+            {
+                // 15 = 180 / 12
+				[self setSensorRegister:0x11 toValue:0x0b];
+				[self setSensorRegister:0x0d toValue:0x41];
+				[self verifySetRegister:0xe5 toValue:0x04];
 			}
-			else if( fps == 75 ){ // previously 75 // measured 90
+            else if (fps == 20) 
+            {
+                // 20 = 180 / 9
+				[self setSensorRegister:0x11 toValue:0x08];
+				[self setSensorRegister:0x0d toValue:0x41];
+				[self verifySetRegister:0xe5 toValue:0x04];
+            }
+            else if (fps == 25) 
+            {
+                // 25 = 450 / 18
+				[self setSensorRegister:0x11 toValue:0x11];
+				[self setSensorRegister:0x0d toValue:0x81];
+				[self verifySetRegister:0xe5 toValue:0x02];
+            }
+            else if (fps == 30) 
+            {
+                // 30 = 180 / 6
+				[self setSensorRegister:0x11 toValue:0x05];
+				[self setSensorRegister:0x0d toValue:0x41];
+				[self verifySetRegister:0xe5 toValue:0x04];
+			}
+            else if (fps == 40) 
+            {
+                // 40 = 360 / 9
+				[self setSensorRegister:0x11 toValue:0x08];
+				[self setSensorRegister:0x0d toValue:0xc1];
+				[self verifySetRegister:0xe5 toValue:0x04];
+			}
+            else if (fps == 45) 
+            {
+                // 45 = 180 / 4
 				[self setSensorRegister:0x11 toValue:0x03];
-				[self sccbStatusOK];				
-				[self setSensorRegister:0x0d toValue:0xc1];
-				[self sccbStatusOK];				
-				[self verifySetRegister:0xe5 toValue:0x04];				
-				//[self setSensorRegister:0x09 toValue:0x00];		
+				[self setSensorRegister:0x0d toValue:0x41];
+				[self verifySetRegister:0xe5 toValue:0x04];
 			}
-			else if( fps == 100 ){ // previously 100 // measured 120
-				[self setSensorRegister:0x11 toValue:0x02];
-				[self sccbStatusOK];								
+            else if (fps == 50) 
+            {
+                // 50 = 450 / 9
+				[self setSensorRegister:0x11 toValue:0x08];
+				[self setSensorRegister:0x0d toValue:0x81];
+				[self verifySetRegister:0xe5 toValue:0x02];
+			}
+            else if (fps == 60) 
+            {
+                // 60 = 180 / 3
+                // 60 = 360 / 6
+				[self setSensorRegister:0x11 toValue:0x05];
 				[self setSensorRegister:0x0d toValue:0xc1];
-				//[self setSensorRegister:0x09 toValue:0x00];	
-				[self sccbStatusOK];				
-				[self verifySetRegister:0xe5 toValue:0x04];	
+				[self verifySetRegister:0xe5 toValue:0x04];
+			}
+			else if (fps == 75) 
+            {
+                // 75 = 450 / 6
+				[self setSensorRegister:0x11 toValue:0x05];
+				[self setSensorRegister:0x0d toValue:0x81];
+				[self verifySetRegister:0xe5 toValue:0x02];
+			}
+			else if (fps == 90) 
+            {
+                // 90 = 180 / 2
+                // 90 = 360 / 4
+				[self setSensorRegister:0x11 toValue:0x03];
+				[self setSensorRegister:0x0d toValue:0xc1];
+				[self verifySetRegister:0xe5 toValue:0x04];
 			}		
-			else if( fps == 125 ){ // previously 125 // measured 140 (received 230!?), some artifacts
-				[self setSensorRegister:0x11 toValue:0x01];
-				[self sccbStatusOK];								
+			else if (fps == 120) 
+            {
+                // 120 = 360 / 3
+				[self setSensorRegister:0x11 toValue:0x02];
 				[self setSensorRegister:0x0d toValue:0xc1];
-				[self sccbStatusOK];				
-				[self verifySetRegister:0xe5 toValue:0x02];	
-				
-				//[self setSensorRegister:0x09 toValue:0x00];		
+				[self verifySetRegister:0xe5 toValue:0x04];
+			}		
+			else if (fps == 180) 
+            {
+                // 180 = 360 / 2
+				[self setSensorRegister:0x11 toValue:0x01];
+				[self setSensorRegister:0x0d toValue:0xc1];
+				[self verifySetRegister:0xe5 toValue:0x04];
 			}
-		
 		}
-		
     }
+    
     [stateLock unlock];
 }
 
@@ -379,7 +512,11 @@
             switch (rate) 
             {
                 case 0:
+                case 5:
+                case 10:
                 case 15:
+                case 20:
+                case 25:
                 case 30:
                 case 40:
                 case 50:
@@ -394,14 +531,20 @@
             switch (rate) 
             {
                 case 0:
+                case 5:
+                case 10:
                 case 15:
+                case 20:
+                case 25:
                 case 30:
                 case 40:
+                case 45:
                 case 50:
                 case 60:
                 case 75:
-                case 100:
-                case 125:
+                case 90:
+                case 120:
+                case 180:
                     return YES;
                 default:
                     return NO;
