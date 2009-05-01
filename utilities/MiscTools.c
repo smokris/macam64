@@ -178,8 +178,10 @@ short MenuItem2FPS(int item)
         case 9: return 50;
         case 10: return 60;
         case 11: return 75;
-        case 12: return 100;
-        case 13: return 125;
+        case 12: return 90;
+        case 13: return 100;
+        case 14: return 120;
+        case 15: return 180;
     }
     
     return -1; // error
@@ -201,8 +203,10 @@ int FPS2MenuItem(short fps)
         case 50: return 9;
         case 60: return 10;
         case 75: return 11;
-        case 100: return 12;
-        case 125: return 13;
+        case 90: return 12;
+        case 100: return 13;
+        case 120: return 14;
+        case 180: return 15;
     }
     
     return 0; // fastest
