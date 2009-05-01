@@ -253,22 +253,32 @@ extern NSString* SnapshotQualityPrefsKey;
     [self manGainChanged:self];
 }
 
-- (IBAction)formatChanged:(id)sender {
+- (IBAction)formatChanged:(id)sender 
+{
     NSRect winFrame;
     NSRect screenFrame;
     NSSize minWinSize;
-    //Part one: Set new driver format
-    CameraResolution res=(CameraResolution)([sizePopup indexOfSelectedItem]+1);
-    int fps=5*[fpsPopup indexOfSelectedItem]+5;
-    if (driver==NULL) return;
-    if ([driver supportsResolution:res fps:fps]) {
+    
+    // Part one: Set new driver format
+    
+    CameraResolution res = (CameraResolution) ([sizePopup indexOfSelectedItem]+1);
+    int fps = MenuItem2FPS([fpsPopup indexOfSelectedItem]);
+    
+    if (driver==NULL) 
+            return;
+    
+    if ([driver supportsResolution:res fps:fps]) 
+    {
         [driver setResolution:res fps:fps];
-        res=[driver resolution];
-        fps=[driver fps]/5-1;
-        [sizePopup selectItemAtIndex:((int)res)-1];
-        [fpsPopup selectItemAtIndex:fps];
+        res = [driver resolution];
+        fps = [driver fps];
+        
+        [sizePopup selectItemAtIndex:((int) res) - 1];
+        [fpsPopup selectItemAtIndex:FPS2MenuItem(fps)];
     }
-//Part two: Check if our imageRep still fits to the driver size
+    
+    // Part two: Check if our imageRep still fits to the driver size
+    
     if (imageRep) {
         if (([driver width]!=[imageRep pixelsWide])||([driver height]!=[imageRep pixelsHigh])) {
             [previewView setImage:NULL];
@@ -1345,7 +1355,7 @@ OSStatus PathToFSSpec (NSString *path, FSSpec *outSpec)
             [shutterSlider setFloatValue:[driver shutter]];
             [manGainCheckbox setIntValue:([driver isAutoGain]==NO)?1:0];
             [sizePopup selectItemAtIndex:[driver resolution]-1];
-            [fpsPopup selectItemAtIndex:([driver fps]/5)-1];
+            [fpsPopup selectItemAtIndex:FPS2MenuItem([driver fps])];
             [flickerPopup selectItemAtIndex:[driver flicker]];
             [compressionSlider setFloatValue:((float)[driver compression])
                 /((float)(([driver maxCompression]>0)?[driver maxCompression]:1))];
@@ -1493,10 +1503,11 @@ LStr(@"The camera you just plugged in contains %i stored images. Do you want to 
     int res;
     int wb;
     if (item==NULL) return NO;
-    fps=([fpsPopup indexOfItem:item]+1)*5;
-    if (fps>0) {		//validate fps entry
-        if (driver==NULL) return NO;	//No camera - no fps
-        else return [driver supportsResolution:[driver resolution] fps:fps];
+    fps = MenuItem2FPS([fpsPopup indexOfItem:item]);
+    if (fps >= 0) {		//validate fps entry
+        if (driver == NULL) return NO;	//No camera - no fps
+        else 
+            return [driver supportsResolution:[driver resolution] fps:fps];
     }
     res=[sizePopup indexOfItem:item]+1;
     if (res>0) {	//validate res entry

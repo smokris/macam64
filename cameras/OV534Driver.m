@@ -271,7 +271,7 @@
 				[self setSensorRegister:0x11 toValue:0x03];
 				[self setSensorRegister:0x0d toValue:0x41];
 				[self setSensorRegister:0x14 toValue:0x41];
-			}else if( fps == 20 ){ // previously 30 // measured 30
+			}else if( fps == 30 ){ // previously 30 // measured 30
 				
 				[self setSensorRegister:0x11 toValue:0x04];
 				[self sccbStatusOK];				
@@ -284,7 +284,7 @@
 //				[self setSensorRegister:0x14 toValue:0x41];
 				
 				
-			}else if( fps == 30 ){ // previously 60 // measured 100 but image not moving
+			}else if( fps == 60 ){ // previously 60 // measured 100 but image not moving
 				[self setSensorRegister:0x11 toValue:0x01];
 				[self sccbStatusOK];
 				[self setSensorRegister:0x0d toValue:0x41];
@@ -313,7 +313,7 @@
 			//but the bytes I sniffed with snoopy pro - show 0x09 and 0x00 
 			//hmm might be needed for 320 by 240 and the other one for 640 480????
 			
-			if( fps == 5 ){ // previously 15 // measured 18
+			if( fps == 15 ){ // previously 15 // measured 18
 				[self setSensorRegister:0x11 toValue:0x09];
 				[self sccbStatusOK];												
 				[self setSensorRegister:0x0d toValue:0x41];
@@ -321,7 +321,7 @@
 				//[self setSensorRegister:0x09 toValue:0x00];		
 				[self verifySetRegister:0xe5 toValue:0x04];				
 				
-			}else if( fps == 10 ){ // previously 30 // measured 36
+			}else if( fps == 30 ){ // previously 30 // measured 36
 				[self setSensorRegister:0x11 toValue:0x04];
 				[self sccbStatusOK];												
 				[self setSensorRegister:0x0d toValue:0x41];
@@ -329,7 +329,7 @@
 				//[self setSensorRegister:0x09 toValue:0x00];	
 				[self verifySetRegister:0xe5 toValue:0x04];				
 					
-			}else if( fps == 15){ // previously 60 // measured 72
+			}else if( fps == 60){ // previously 60 // measured 72
 				[self setSensorRegister:0x11 toValue:0x04];
 				[self sccbStatusOK];								
 				[self setSensorRegister:0x0d toValue:0xc1];
@@ -338,7 +338,7 @@
 				
 				//[self setSensorRegister:0x09 toValue:0x00];		
 			}
-			else if( fps == 20 ){ // previously 75 // measured 90
+			else if( fps == 75 ){ // previously 75 // measured 90
 				[self setSensorRegister:0x11 toValue:0x03];
 				[self sccbStatusOK];				
 				[self setSensorRegister:0x0d toValue:0xc1];
@@ -346,7 +346,7 @@
 				[self verifySetRegister:0xe5 toValue:0x04];				
 				//[self setSensorRegister:0x09 toValue:0x00];		
 			}
-			else if( fps == 25 ){ // previously 100 // measured 120
+			else if( fps == 100 ){ // previously 100 // measured 120
 				[self setSensorRegister:0x11 toValue:0x02];
 				[self sccbStatusOK];								
 				[self setSensorRegister:0x0d toValue:0xc1];
@@ -354,7 +354,7 @@
 				[self sccbStatusOK];				
 				[self verifySetRegister:0xe5 toValue:0x04];	
 			}		
-			else if( fps == 30 ){ // previously 125 // measured 140 (received 230!?), some artifacts
+			else if( fps == 125 ){ // previously 125 // measured 140 (received 230!?), some artifacts
 				[self setSensorRegister:0x11 toValue:0x01];
 				[self sccbStatusOK];								
 				[self setSensorRegister:0x0d toValue:0xc1];
@@ -370,23 +370,42 @@
     [stateLock unlock];
 }
 
+
 - (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate 
 {
     switch (res) 
     {
         case ResolutionVGA:
-            if (rate == 30 || rate ==  20 || rate == 15) 
-//          if (rate == 60 || rate ==  30 || rate == 15) 
-            return YES;
-            return NO;
+            switch (rate) 
+            {
+                case 0:
+                case 15:
+                case 30:
+                case 40:
+                case 50:
+                case 60:
+                    return YES;
+                default:
+                    return NO;
+            }
             break;
             
         case ResolutionSIF:
-            //if (rate == 50 || rate ==  30 || rate == 15) 		
-//          if (rate  == 15 || rate == 30 || rate == 60 || rate == 75 || rate == 100 || rate == 125 ) 
-            if (rate  == 5 || rate == 10 || rate == 15 || rate == 20 || rate == 25 || rate == 30 ) 
-                return YES;
-                return NO;
+            switch (rate) 
+            {
+                case 0:
+                case 15:
+                case 30:
+                case 40:
+                case 50:
+                case 60:
+                case 75:
+                case 100:
+                case 125:
+                    return YES;
+                default:
+                    return NO;
+            }
             break;
             
         default: 
@@ -397,27 +416,12 @@
 
 - (CameraResolution) defaultResolutionAndRate: (short *) rate
 {
-	if (rate) *rate = 25;
-	return ResolutionSIF;
+	if (rate) 
+        *rate = 30;
+    
+	return ResolutionVGA;
 }
 
-- (short) findFrameRateForResolution:(CameraResolution)res 
-{
-    return [super findFrameRateForResolution:res]; // for now
-    
-	short fpsRun=125;
-	
-    if( res == ResolutionVGA ){
-		fpsRun = 60;
-	}
-	
-	//had to modify the interface builder file to give me options more than 30 fps
-	while (fpsRun>=5) {
-        if ([self supportsResolution:res fps:fpsRun]) return fpsRun;
-        else fpsRun-=5;
-    }
-    return 0;
-}
 
 //------------ LED ---------------
 - (BOOL) canSetLed
