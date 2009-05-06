@@ -23,11 +23,12 @@
 //
 
 
-#import <SPCA5XXDriver.h>
+#import <GenericDriver.h>
 
 
-@interface PAC7311Driver : SPCA5XXDriver 
+@interface PAC7311Driver : GenericDriver 
 {
+    void * jpegHeader;
 }
 
 + (NSArray *) cameraUsbDescriptions;
@@ -37,4 +38,19 @@
 - (BOOL) setGrabInterfacePipe;
 - (void) setIsocFrameFunctions;
 
+- (int) setRegisterSequence:(const UInt8 *)sequence number:(int)length;
+- (void) setRegisterVariable:(const UInt8 *)sequence;
+
+- (void) initializeCamera;
+
 @end
+
+
+@interface PAC7302Driver : PAC7311Driver 
+
++ (NSArray *) cameraUsbDescriptions;
+
+- (void) initializeCamera;
+
+@end
+
