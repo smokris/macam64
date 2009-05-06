@@ -92,6 +92,8 @@ typedef struct GenericFrameInfo
     int averageBlueGreenSet;
     int averageRedGreen;
     int averageRedGreenSet;
+    
+    int locationHint;
 } GenericFrameInfo;
 
 // Forward declarations
