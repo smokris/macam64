@@ -84,6 +84,8 @@
 #import "WinbondDriver.h"
 #import "R5U870Driver.h"
 #import "CX11646Driver.h"
+#import "TP68xxDriver.h"
+#import "SQ905C.h"
 
 #include "unistd.h"
 
@@ -396,6 +398,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
 #endif
     [self registerCameraDriver:[MyQCOrbitDriver class]];
     [self registerCameraDriver:[SQ905 class]];
+    [self registerCameraDriver:[SQ905CDriver class]];
+    [self registerCameraDriver:[SQ905Cvariant1 class]];
 #if EXPERIMENTAL
     [self registerCameraDriver:[SQ930C class]];
 #endif
@@ -456,6 +460,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SN9C20xDriver class]];
     
     [self registerCameraDriver:[PAC7311Driver class]];
+    [self registerCameraDriver:[PAC7302Driver class]];
     
     [self registerCameraDriver:[MR97311Driver class]];
     [self registerCameraDriver:[MR97310Driver class]];
@@ -523,6 +528,10 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[R5U870Driver class]];
     
     [self registerCameraDriver:[SonixSN9C105Driver class]];    // Seems to work, still needs refinement
+    
+    [self registerCameraDriver:[TP6801Driver class]];
+    [self registerCameraDriver:[TP6811Driver class]];
+    [self registerCameraDriver:[TP6813Driver class]];
     
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
