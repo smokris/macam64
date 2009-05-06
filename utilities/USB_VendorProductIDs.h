@@ -302,7 +302,7 @@
 #define PRODUCT_SPC_500NC               0x2603      // PAC7312 (also a Typhoon?)
 #define PRODUCT_TRUST_WB_300P           0x2608      // PAC7311
 #define PRODUCT_TRUST_WB_3500P          0x260e      // PAC7311 (many cameras)
-#define PRODUCT_PAC7311_GENERIC_F       0x260f      // PAC7311
+#define PRODUCT_PAC7302_GENERIC         0x2620      // PAC7311
 
 #define VENDOR_JEILIN           0x0979
 #define PRODUCT_JL2005A_TOY_CAMERA      0x0224      // JL2005ADriver
