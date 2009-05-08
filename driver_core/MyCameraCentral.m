@@ -86,6 +86,7 @@
 #import "CX11646Driver.h"
 #import "TP68xxDriver.h"
 #import "SQ905C.h"
+#import "UVCDriver.h"
 
 #include "unistd.h"
 
@@ -419,6 +420,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[PAC207DriverRotated class]];
     
     [self registerCameraDriver:[PicoDriver class]];
+    
+    [self registerCameraDriver:[UVCDriver class]];  // There should be another way to invoke this driver (i.e. matching driver classes)
     
     
     // Based on gspca (subclass SPCA5xxDriver)
