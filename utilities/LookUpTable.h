@@ -74,6 +74,8 @@
 - (void) processImage:(UInt8 *)buffer numRows:(long)numRows rowBytes:(long)rowBytes bpp:(short)bpp;
 - (void) processImageRep:(NSBitmapImageRep *)imageRep buffer:(UInt8 *)buffer numRows:(long)numRows rowBytes:(long)rowBytes bpp:(short)bpp;
 
+- (void) untwistImage:(UInt8 *)srcBuffer width:(int)width height:(int)height into:(UInt8 *)dstBuffer rowBytes:(int)dstRowBytes bpp:(short)dstBPP;
+
 // Get/set properties
 - (float) brightness;	//[-1.0 ... 1.0], 0.0 = no change, more = brighter
 - (void) setBrightness:(float)newBrightness;

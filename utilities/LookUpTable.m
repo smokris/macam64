@@ -352,6 +352,36 @@
 }
 
 
+//
+//  take a column first image and turn it into a row first image
+//  assume input image has 3bpp
+//
+- (void) untwistImage:(UInt8 *)srcBuffer width:(int)width height:(int)height into:(UInt8 *)dstBuffer rowBytes:(int)dstRowBytes bpp:(short)dstBPP
+{
+    UInt8 * srcPtr;
+    UInt8 * dstPtr;
+    long  w, h;
+    short srcBPP = 3;
+    int srcRowBytes = width * srcBPP;
+    
+    for (h = 0; h < height; h++) 
+    {
+        srcPtr = srcBuffer + h * srcRowBytes;
+
+        for (w = 0; w < width; w++) 
+        {
+            dstPtr = dstBuffer + w * dstRowBytes + h * dstBPP;
+
+            dstPtr[0] = srcPtr[0];
+            dstPtr[1] = srcPtr[1];
+            dstPtr[2] = srcPtr[2];
+            
+            srcPtr += srcBPP;
+        }
+    }
+}
+
+
 - (void) recalcTransferLookup 
 {
     float f,r,g,b;
