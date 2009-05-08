@@ -96,6 +96,8 @@
     
     decodingSkipBytes = 46;
     
+//    +#define V4L2_PIX_FMT_YVYU    v4l2_fourcc('Y', 'V', 'Y', 'U') /* 16  YVU 4:2:2     */
+
     spca50x->cameratype = YUY2;
     spca50x->bridge = BRIDGE_VC0321;
     spca50x->sensor = SENSOR_OV7660;
