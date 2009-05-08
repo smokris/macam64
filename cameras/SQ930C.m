@@ -57,80 +57,60 @@
             [NSNumber numberWithUnsignedShort:VENDOR_SQ], @"idVendor",
             @"SQ930C based camera", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x403c], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_CREATIVE_LABS], @"idVendor",
+            @"Webcam Live! Ultra (VF0060)", @"name", NULL], 
+        
         NULL];
 }
 
-
-- (CameraError) startupWithUsbLocationId:(UInt32) usbLocationId 
+//
+// Initialize the driver
+//
+- (id) initWithCentral: (id) c 
 {
-    CameraError error;
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
     
-    // Setup the connection to the camera
+    driverType = bulkDriver;
     
-    error = [self usbConnectToCam:usbLocationId configIdx:0];
-    
-    if (error != CameraErrorOK) 
-    {
-        printf("Trying to connect with configuration = 1");
-        error = [self usbConnectToCam:usbLocationId configIdx:1];
-    }
-    
-    if (error != CameraErrorOK) 
-    {
-        printf("Trying to connect with configuration = -1");
-        error = [self usbConnectToCam:usbLocationId configIdx:-1];
-    }
-    
-    if (error != CameraErrorOK) 
-        return error;
-    
-    // Get the ID from the camera
-    // This will allow more precise idetification of abilities
-/*    
-    [self reset];
-    [self accessRegister:REGISTER_GET_ID];
-    
-    [self readData:modelID len:4];
-    [self reset];
-    
-    sqModel = [self decodeModelID];
-    sqModelName = [self getModelName];
-*/    
-    // Set some default parameters
-    
-    [self setBrightness:0.5];
-    [self setContrast:0.5];
-    [self setSaturation:0.5];
-    [self setSharpness:0.5];
-    [self setGamma: 0.5];
-    
-    // Do the remaining, usual connection stuff
-    
-    {
-        short fr;
-        CameraResolution r = [self defaultResolutionAndRate:&fr];
-        WhiteBalanceMode wb = [self defaultWhiteBalanceMode];
-        [self setResolution:r fps:fr];
-        [self setWhiteBalanceMode:wb];
-        isStarted = YES;
-    }
-    
-//  error = [super startupWithUsbLocationId:usbLocationId];
-    
-    return error;
+    compressionType = quicktimeImage;  // Does some error checking on image
+    quicktimeCodec = kJPEGCodecType;
+
+	return self;
 }
 
 
-/////////////////////////////////////////////
-//
-//  Digital Still Camera (DSC) functionality
-//
-/////////////////////////////////////////////
-
-
-- (BOOL) canStoreMedia 
+- (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate 
 {
-    return NO;
+    switch (res) 
+    {
+        case ResolutionVGA:
+            if (rate > 30) 
+                return NO;
+            return YES;
+            break;
+            
+        case ResolutionSIF:
+            if (rate > 30) 
+                return NO;
+            return YES;
+            break;
+            
+        default: 
+            return NO;
+    }
+}
+
+
+- (CameraResolution) defaultResolutionAndRate: (short *) rate
+{
+	if (rate) 
+        *rate = 30;
+    
+	return ResolutionVGA;
 }
 
 

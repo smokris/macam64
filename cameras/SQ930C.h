@@ -26,7 +26,6 @@
 
 #import "GenericDriver.h"
 
-//#include "SQ905.h"
 
 
 @interface SQ930C : GenericDriver 
