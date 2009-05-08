@@ -525,6 +525,11 @@ IsocFrameResult  sonixIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
             [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
             @"LG LIC-200", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:                             // really a '101 with a 7131D sensor! is it close enought?
+            [NSNumber numberWithUnsignedShort:0x602a], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Meade ETX-105EC Camera (0x602a) [experimental]", @"name", NULL], 
+        
         NULL];
 }
 
@@ -1846,6 +1851,11 @@ void createJpegHeader(void * buffer, int width, int height, int quality, int sam
             [NSNumber numberWithUnsignedShort:PRODUCT_LIFECAM_VX_3000], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_MICROSOFT], @"idVendor",
             @"Microsoft LifeCam VX-3000", @"name", NULL], 
+        
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x60c0], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_SONIX], @"idVendor",
+            @"Sonix SN 535 (0x60c0)", @"name", NULL], 
         
         NULL];
 }
