@@ -180,16 +180,16 @@
 
 //  SCCB/sensorinterface
 
-#define EYEREG_SCCB_ADDRESS   0xf1   /* ? */
-#define EYEREG_SCCB_SUBADDR   0xf2
-#define EYEREG_SCCB_WRITE     0xf3
-#define EYEREG_SCCB_READ      0xf4
-#define EYEREG_SCCB_OPERATION 0xf5
-#define EYEREG_SCCB_STATUS    0xf6
+#define OV534_REG_SCCB_ADDRESS   0xf1   // Store the address of the sensor
+#define OV534_REG_SCCB_SUBADDR   0xf2
+#define OV534_REG_SCCB_WRITE     0xf3
+#define OV534_REG_SCCB_READ      0xf4
+#define OV534_REG_SCCB_OPERATION 0xf5
+#define OV534_REG_SCCB_STATUS    0xf6
 
-#define EYE_SCCB_OP_WRITE_3 0x37
-#define EYE_SCCB_OP_WRITE_2 0x33
-#define EYE_SCCB_OP_READ_2  0xf9
+#define OV534_SCCB_OP_WRITE_3    0x37
+#define OV534_SCCB_OP_WRITE_2    0x33
+#define OV534_SCCB_OP_READ_2     0xf9
 
 
 @interface OV534Driver (Private)
@@ -577,6 +577,9 @@
     [self setRegister:0x21 toValue:0x80 withMask:0x80];
     [self setRegister:0x23 toValue:(v ? 0x80 : 0x00) withMask:0x80];
     
+    if (!v)  
+        [self setRegister:0x21 toValue:0x00 withMask:0x80];
+    
     [super setLed:v];
 }
 //-------
@@ -688,12 +691,17 @@
 
 - (void) setAutoGain:(BOOL) v
 {
-	if( v ){
-		[self setSensorRegister:0x13 toValue:0x05 withMask:0x05]; // from 0x05 enables it
-	}else{
-		[self setSensorRegister:0x13 toValue:0x00 withMask:0x05]; //0x00 disables auto gain
+	if (v)
+    {
+		[self setSensorRegister:0x13 toValue:0x07 withMask:0x07]; // from 0x05 enables it
+        [self setSensorRegister:0x64 toValue:0x03 withMask:0x03];
 	}
-
+    else 
+    {
+		[self setSensorRegister:0x13 toValue:0x00 withMask:0x07]; //0x00 disables auto gain
+        [self setSensorRegister:0x64 toValue:0x00 withMask:0x03];
+	}
+    
     [super setAutoGain:v];    
 }
 //---------------
@@ -891,10 +899,10 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
 {
     [self verifySetRegister:0xe7 toValue:0x3a];
     
-    [self setRegister:EYEREG_SCCB_ADDRESS toValue:0x60];
-    [self setRegister:EYEREG_SCCB_ADDRESS toValue:0x60];
-    [self setRegister:EYEREG_SCCB_ADDRESS toValue:0x60];
-    [self setRegister:EYEREG_SCCB_ADDRESS toValue:0x42];
+//    [self setRegister:OV534_REG_SCCB_ADDRESS toValue:0x60];
+//    [self setRegister:OV534_REG_SCCB_ADDRESS toValue:0x60];
+//    [self setRegister:OV534_REG_SCCB_ADDRESS toValue:0x60];
+    [self setRegister:OV534_REG_SCCB_ADDRESS toValue:0x42];
 }
 
 //
@@ -909,7 +917,7 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
     
     for (try = 0; try < SCCB_RETRY; try++) 
     {
-        ret = [self getRegister:EYEREG_SCCB_STATUS];
+        ret = [self getRegister:OV534_REG_SCCB_STATUS];
         
         if (ret == 0x00) 
             return YES;
@@ -927,10 +935,10 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
 
 - (int) getSensorRegister:(UInt8)reg
 {
-    if ([self setRegister:EYEREG_SCCB_SUBADDR toValue:reg] < 0) 
+    if ([self setRegister:OV534_REG_SCCB_SUBADDR toValue:reg] < 0) 
         return -1;
     
-    if ([self setRegister:EYEREG_SCCB_OPERATION toValue:EYE_SCCB_OP_WRITE_2] < 0) 
+    if ([self setRegister:OV534_REG_SCCB_OPERATION toValue:OV534_SCCB_OP_WRITE_2] < 0) 
         return -1;
     
     if (![self sccbStatusOK]) 
@@ -939,7 +947,7 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
         return -1;
     }
     
-    if ([self setRegister:EYEREG_SCCB_OPERATION toValue:EYE_SCCB_OP_READ_2] < 0) 
+    if ([self setRegister:OV534_REG_SCCB_OPERATION toValue:OV534_SCCB_OP_READ_2] < 0) 
         return -1;
     
     if (![self sccbStatusOK]) 
@@ -948,19 +956,19 @@ void yuv_to_rgb(UInt8 y, UInt8 u, UInt8 v, UInt8 * r, UInt8 * g, UInt8 * b)
         return -1;
     }
     
-    return [self getRegister:EYEREG_SCCB_READ];
+    return [self getRegister:OV534_REG_SCCB_READ];
 }
 
 
 - (int) setSensorRegister:(UInt8)reg toValue:(UInt8)val
 {
-    if ([self setRegister:EYEREG_SCCB_SUBADDR toValue:reg] < 0) 
+    if ([self setRegister:OV534_REG_SCCB_SUBADDR toValue:reg] < 0) 
         return -1;
     
-    if ([self setRegister:EYEREG_SCCB_WRITE toValue:val] < 0) 
+    if ([self setRegister:OV534_REG_SCCB_WRITE toValue:val] < 0) 
         return -1;
     
-    if ([self setRegister:EYEREG_SCCB_OPERATION toValue:EYE_SCCB_OP_WRITE_3] < 0) 
+    if ([self setRegister:OV534_REG_SCCB_OPERATION toValue:OV534_SCCB_OP_WRITE_3] < 0) 
         return -1;
     
     return ([self sccbStatusOK]) ? val : -1;
