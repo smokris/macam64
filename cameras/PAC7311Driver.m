@@ -922,6 +922,22 @@ int  pac73xxIsocDataCopier(void * destination, const void * source, size_t lengt
 }
 
 //
+// Initialize the camera to use the existing GSPCA code as much as posisble
+//
+- (id) initWithCentral: (id) c 
+{
+	self = [super initWithCentral:c];
+	if (self == NULL) 
+        return NULL;
+    
+    [LUT setDefaultOrientation:NormalOrientation];
+    
+    MALLOC(decodingBuffer, UInt8 *, 480 * 640 * 3, "decodingBuffer");
+    
+	return self;
+}
+
+//
 // Provide feedback about which resolutions and rates are supported
 //
 - (BOOL) supportsResolution: (CameraResolution) res fps: (short) rate 
@@ -933,18 +949,6 @@ int  pac73xxIsocDataCopier(void * destination, const void * source, size_t lengt
         return NO;
     
     return YES;
-}
-
-
-- (short) width 
-{
-    return HeightOfResolution(resolution);
-}
-
-
-- (short) height 
-{
-    return WidthOfResolution(resolution);
 }
 
 
@@ -1015,7 +1019,7 @@ int  pac73xxIsocDataCopier(void * destination, const void * source, size_t lengt
         return NO;
     }
     
-    int result = jpegProcessFrame(buffer->buffer, nextImageBuffer, [self width], [self height], nextImageBufferBPP);
+    int result = jpegProcessFrame(buffer->buffer, decodingBuffer, [self height], [self width], nextImageBufferBPP);
     
     if (result != 921600) 
         printf("jpeg processing returned %d\n", result);
@@ -1025,6 +1029,12 @@ int  pac73xxIsocDataCopier(void * destination, const void * source, size_t lengt
         NSLog(@"Oops: jpegProcessFrame() returned an error! [%i]", result);
         return NO;
     }
+    
+    // untwist (pivot)
+    
+    [LUT untwistImage:decodingBuffer width:[self height] height:[self width] into:nextImageBuffer rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
+    
+    // apply LUT transforms?
     
     [LUT processImage:nextImageBuffer numRows:[self height] rowBytes:nextImageBufferRowBytes bpp:nextImageBufferBPP];
     

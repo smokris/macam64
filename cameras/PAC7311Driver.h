@@ -47,6 +47,9 @@
 
 
 @interface PAC7302Driver : PAC7311Driver 
+{
+    UInt8 * decodingBuffer;  // Need an intermediate buffer for twisting
+}
 
 + (NSArray *) cameraUsbDescriptions;
 
