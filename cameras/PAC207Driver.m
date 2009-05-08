@@ -377,7 +377,7 @@ int pixartDecompressRow(struct code_table * table, unsigned char * input, unsign
 - (CameraResolution) defaultResolutionAndRate: (short *) rate
 {
 	if (rate) 
-        *rate = 5;
+        *rate = 0;
     
 	return ResolutionCIF;
 }
@@ -657,7 +657,7 @@ IsocFrameResult  pac207IsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
 }
 
 //
-// This is the key method that starts up the stream
+// This is the key method that sets up the camera
 //
 - (BOOL) initializeCamera 
 {
