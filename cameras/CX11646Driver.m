@@ -24,7 +24,32 @@
 
 
 // 572:041 // Creative Webcam NoteBook PD1170 [CX11646 and CX28490]
-// 572:040 // Wondereye CP-115  // Mot working, must be different somehow
+// 572:040 // Wondereye CP-115  // Not working, must be different somehow
+
+/*
+Device descriptor for Creative Webcam Notebook ( 0x0572:0x0041 )
+
+T:  Bus=02 Lev=01 Prnt=01 Port=00 Cnt=01 Dev#=  2 Spd=12  MxCh= 0
+D:  Ver= 1.10 Cls=00(>ifc ) Sub=00 Prot=00 MxPS= 8 #Cfgs=  1
+P:  Vendor=0572 ProdID=0041 Rev= 0.01
+C:* #Ifs= 1 Cfg#= 1 Atr=80 MxPwr= 98mA
+I:  If#= 0 Alt= 0 #EPs= 1 Cls=0a(data ) Sub=ff Prot=00 Driver=(none)
+E:  Ad=81(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
+I:  If#= 0 Alt= 1 #EPs= 1 Cls=0a(data ) Sub=ff Prot=00 Driver=(none)
+E:  Ad=81(I) Atr=01(Isoc) MxPS= 154 Ivl=1ms
+I:  If#= 0 Alt= 2 #EPs= 1 Cls=0a(data ) Sub=ff Prot=00 Driver=(none)
+E:  Ad=81(I) Atr=01(Isoc) MxPS= 307 Ivl=1ms
+I:  If#= 0 Alt= 3 #EPs= 1 Cls=0a(data ) Sub=ff Prot=00 Driver=(none)
+E:  Ad=81(I) Atr=01(Isoc) MxPS= 461 Ivl=1ms
+I:  If#= 0 Alt= 4 #EPs= 1 Cls=0a(data ) Sub=ff Prot=00 Driver=(none)
+E:  Ad=81(I) Atr=01(Isoc) MxPS= 614 Ivl=1ms
+I:  If#= 0 Alt= 5 #EPs= 1 Cls=0a(data ) Sub=ff Prot=00 Driver=(none)
+E:  Ad=81(I) Atr=01(Isoc) MxPS= 768 Ivl=1ms
+I:  If#= 0 Alt= 6 #EPs= 1 Cls=0a(data ) Sub=ff Prot=00 Driver=(none)
+E:  Ad=81(I) Atr=01(Isoc) MxPS= 921 Ivl=1ms
+I:  If#= 0 Alt= 7 #EPs= 1 Cls=0a(data ) Sub=ff Prot=00 Driver=(none)
+E:  Ad=81(I) Atr=01(Isoc) MxPS=1023 Ivl=1ms
+*/
 
 
 #import "CX11646Driver.h"
@@ -42,12 +67,12 @@
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_CX11646_VERSION1], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_CONEXANT], @"idVendor",
-            @"Wondereye CP-115", @"name", NULL], 
+            @"WonderEye CP-115", @"name", NULL], 
         
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_CX11646_VERSION2], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_CONEXANT], @"idVendor",
-            @"Creative Webcam Notebook (PD1170)", @"name", NULL], 
+            @"Creative Webcam Notebook (PD1170) or Polaroid PhotoMax PDC 301;", @"name", NULL], 
         
         NULL];
 }
