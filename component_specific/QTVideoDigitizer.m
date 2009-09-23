@@ -210,6 +210,32 @@ bool vdigLookupSelector(short what,ProcPtr* ptr,ProcInfoType* info) {
 			case kVDSelectUniqueIDsSelect:          *info = uppVDSelectUniqueIDsProcInfo;
                                                     *ptr = (ComponentRoutineUPP) vdigSelectUniqueIDs; 
                                                     break;
+			
+			// Theo added
+			case kVDGetHueSelect:					*info = uppVDGetHueProcInfo;
+                                                    *ptr = (ComponentRoutineUPP) vdigGetHue; 
+                                                    break;
+
+			case kVDSetHueSelect:					*info = uppVDSetHueProcInfo;
+                                                    *ptr = (ComponentRoutineUPP) vdigSetHue; 
+                                                    break;
+			
+			case kVDGetBlackLevelValueSelect:		*info = uppVDGetBlackLevelValueProcInfo;
+                                                    *ptr = (ComponentRoutineUPP) vdigGetGain; 
+                                                    break;
+
+			case kVDSetBlackLevelValueSelect:		*info = uppVDSetBlackLevelValueProcInfo;
+                                                    *ptr = (ComponentRoutineUPP) vdigSetGain; 
+                                                    break;
+
+			case kVDGetWhiteLevelValueSelect:		*info = uppVDGetWhiteLevelValueProcInfo;
+                                                    *ptr = (ComponentRoutineUPP) vdigGetShutter; 
+                                                    break;
+
+			case kVDSetWhiteLevelValueSelect:		*info = uppVDSetWhiteLevelValueProcInfo;
+                                                    *ptr = (ComponentRoutineUPP) vdigSetShutter; 
+                                                    break;
+			// end Theo added
             
 //			case kVDCopyPreferredAudioDeviceSelect: *info = uppVDCopyPreferredAudioDeviceProcInfo;
 //                                                  *ptr = (ComponentRoutineUPP) vdigCopyPreferredAudioDevice; 
@@ -531,6 +557,58 @@ pascal VideoDigitizerError vdigSetSaturation(vdigGlobals storage,unsigned short*
     return 0;
 }
 
+
+//theo added
+pascal VideoDigitizerError vdigGetHue(vdigGlobals storage,unsigned short* val) {
+    if (![(**storage).bridge canSetHue]) return badComponentSelector;	//The camera doesn't support this
+    if (!val) return qtParamErr;		//force valid pointer
+    *val=[(**storage).bridge hue];
+    return 0;
+}
+
+pascal VideoDigitizerError vdigSetHue(vdigGlobals storage,unsigned short* val) {
+    if (![(**storage).bridge canSetHue]) return badComponentSelector;	//The camera doesn't support this
+    if (!val) return qtParamErr;		//force valid pointer
+    [(**storage).bridge setHue:(*val)];
+    *val=[(**storage).bridge hue];
+    return 0;
+}
+
+pascal VideoDigitizerError vdigGetGain(vdigGlobals storage,unsigned short* val) {
+    if (![(**storage).bridge canSetGain]) return badComponentSelector;	//The camera doesn't support this
+    if (!val) return qtParamErr;		//force valid pointer
+    *val=[(**storage).bridge gain];
+    return 0;
+}
+
+pascal VideoDigitizerError vdigSetGain(vdigGlobals storage,unsigned short* val) {
+    if (![(**storage).bridge canSetGain]) return badComponentSelector;	//The camera doesn't support this
+    if (!val) return qtParamErr;		//force valid pointer
+    [(**storage).bridge setGain:(*val)];
+    *val=[(**storage).bridge gain];
+    return 0;
+}
+
+pascal VideoDigitizerError vdigGetShutter(vdigGlobals storage,unsigned short* val) {
+    if (![(**storage).bridge canSetShutter]) return badComponentSelector;	//The camera doesn't support this
+    if (!val) return qtParamErr;		//force valid pointer
+    *val=[(**storage).bridge shutter];
+    return 0;
+}
+
+pascal VideoDigitizerError vdigSetShutter(vdigGlobals storage,unsigned short* val) {
+    if (![(**storage).bridge canSetShutter]) return badComponentSelector;	//The camera doesn't support this
+    if (!val) return qtParamErr;		//force valid pointer
+    [(**storage).bridge setShutter:(*val)];
+    *val=[(**storage).bridge shutter];
+    return 0;
+}
+
+//end theo added
+
+
+
+
 pascal VideoDigitizerError vdigGetSharpness(vdigGlobals storage,unsigned short* val) {
     if (![(**storage).bridge canSetSharpness]) return badComponentSelector;	//The camera doesn't support this
     if (!val) return qtParamErr;		//force valid pointer
@@ -588,6 +666,23 @@ pascal VideoDigitizerError vdigSetCompression(vdigGlobals storage,OSType compres
 }
 
 pascal VideoDigitizerError vdigSetFrameRate(vdigGlobals storage,Fixed fps) {
+	
+	CameraResolution res = [(**storage).bridge resolution];
+	
+	float tmpFps = (float)fps / 65535.0f;
+	short realFps = (short)tmpFps;
+	
+	if( [(**storage).bridge supportsResolution:res fps:realFps] ){
+		 [(**storage).bridge setResolution:res fps:realFps];
+#if REALLY_VERBOSE		 
+		 printf("theo - setting fps to %i \n", realFps);
+#endif
+	}else{
+#if REALLY_VERBOSE		 	
+		 printf("theo - we failed to set fps to %i \n", realFps);
+#endif
+	}
+
     (**storage).fps=fps;	//We remember but ignore this
     return 0;
 }
