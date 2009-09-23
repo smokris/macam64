@@ -25,6 +25,7 @@
 #include <QuickTime/QuickTime.h>
 #include <QuickTime/QuickTimeComponents.h>
 #include <QuickTime/QuickTimeComponents.k.h>
+
 #include "GlobalDefs.h"
 #import "MyBridge.h"
 
@@ -105,6 +106,15 @@ pascal VideoDigitizerError vdigSetSaturation(vdigGlobals storage,unsigned short*
 pascal VideoDigitizerError vdigGetSharpness(vdigGlobals storage,unsigned short* val);
 pascal VideoDigitizerError vdigSetSharpness(vdigGlobals storage,unsigned short* val);
 pascal VideoDigitizerError vdigGetPreferredTimeScale(vdigGlobals storage,TimeScale* ts);
+
+// Theo added hue, gain, shutter
+
+pascal VideoDigitizerError vdigGetHue(vdigGlobals storage,unsigned short* val);
+pascal VideoDigitizerError vdigSetHue(vdigGlobals storage,unsigned short* val);
+pascal VideoDigitizerError vdigGetGain(vdigGlobals storage,unsigned short* val);
+pascal VideoDigitizerError vdigSetGain(vdigGlobals storage,unsigned short* val);
+pascal VideoDigitizerError vdigGetShutter(vdigGlobals storage,unsigned short* val);
+pascal VideoDigitizerError vdigSetShutter(vdigGlobals storage,unsigned short* val);
 
 pascal VideoDigitizerError vdigGetUniqueIDs(vdigGlobals storage, UInt64 * device, UInt64 * input);
 pascal VideoDigitizerError vdigSelectUniqueIDs(vdigGlobals storage, UInt64 * deviceID, UInt64 * inputID);
