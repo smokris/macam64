@@ -100,6 +100,7 @@ static const UInt8 start_7311[] =
 	0xa0, 4,	0x44, 0x44, 0x44, 0x04,
 	0xf0, 13,	0x01, 0x00, 0x00, 0x00, 0x22, 0x00, 0x20, 0x00,
     0x3f, 0x00, 0x0a, 0x01, 0x00,
+    
 	0xff, 1,	0x04,	// page 4
 	0x00, 254,			// load the page 4
 	0x11, 1,	0x01,
@@ -114,6 +115,7 @@ static const UInt8 page4_7311[] =
 	0x09, 0x00, 0xaa, 0xaa, 0x07, 0x00, 0x00, 0x62,
 	0x08, 0xaa, 0x07, 0x00, 0x00, 0x00, 0x00, 0x00,
 	0x00, 0x00, 0x00, 0x03, 0xa0, 0x01, 0xf4, 0xaa,
+//	0xaa, 0x00, 0x08, 0xaa, 0x03, 0xaa, 0x00, 0x01,
 	0xaa, 0x00, 0x08, 0xaa, 0x03, 0xaa, 0x00, 0x68,
 	0xca, 0x10, 0x06, 0x78, 0x00, 0x00, 0x00, 0x00,
 	0x23, 0x28, 0x04, 0x11, 0x00, 0x00
@@ -475,6 +477,8 @@ int jpegProcessFrame(unsigned char * rq, unsigned char * fb, int good_img_width,
 //
 - (void) startupCamera
 {
+    [self setRegister:0x78 toValue:0x00];
+    
     [self initializeCamera];
     
     [super startupCamera];
@@ -623,7 +627,7 @@ int  pac73xxIsocDataCopier(void * destination, const void * source, size_t lengt
             copied += tocopy;
             
             start = position + 4;
-            position += 3;
+            position += 4;
         }
     }
     
@@ -664,7 +668,7 @@ int  pac73xxIsocDataCopier(void * destination, const void * source, size_t lengt
 - (void) setIsocFrameFunctions
 {
     grabContext.isocFrameScanner = pac73xxIsocFrameScanner;
-    grabContext.isocDataCopier = genericIsocDataCopier;
+    grabContext.isocDataCopier = pac73xxIsocDataCopier;
     
     // set up the jpeg header
     
@@ -688,6 +692,19 @@ int  pac73xxIsocDataCopier(void * destination, const void * source, size_t lengt
 	sethvflip(gspca_dev);
     */
     
+    [self setRegister:0xff toValue:0x01];
+    [self setRegister:0x80 toValue:0x10];  // set contrast
+    [self setRegister:0x11 toValue:0x01];  // load registers to sensor (Bit 0, auto clear)
+
+    [self setRegister:0xff toValue:0x04];
+    [self setRegister:0x0f toValue:0x10];  // set brightness
+    [self setRegister:0x11 toValue:0x01];  // load registers to sensor (Bit 0, auto clear)
+    
+    [self setRegister:0xff toValue:0x01];
+    [self setRegister:0x10 toValue:0x10];  // set colors?
+    [self setRegister:0x11 toValue:0x01];  // load registers to sensor (Bit 0, auto clear)
+    
+    
 	// Set the correct resolution
     
     switch ([self resolution]) 
@@ -706,8 +723,12 @@ int  pac73xxIsocDataCopier(void * destination, const void * source, size_t lengt
             
         default:
         case ResolutionVGA:
+            [self setRegister:0xff toValue:0x04];
+            [self setRegister:0x02 toValue:0x03];
             [self setRegister:0xff toValue:0x01];
+            [self setRegister:0x08 toValue:0x08];
             [self setRegister:0x17 toValue:0x00];
+//          [self setRegister:0x80 toValue:0x1c];
             [self setRegister:0x87 toValue:0x12];
             break;
 	}
@@ -720,6 +741,7 @@ int  pac73xxIsocDataCopier(void * destination, const void * source, size_t lengt
 	// Start the stream
     
     [self setRegister:0xff toValue:0x01];
+    [self setRegister:0x78 toValue:0x04];
     [self setRegister:0x78 toValue:0x05];
     
     return YES;
@@ -737,7 +759,7 @@ int  pac73xxIsocDataCopier(void * destination, const void * source, size_t lengt
     [self setRegister:0xff toValue:0x01];
     [self setRegister:0x3e toValue:0x20];
     
-    [self setRegister:0x78 toValue:0x44];
+    [self setRegister:0x78 toValue:0x04];
     [self setRegister:0x78 toValue:0x44];
     [self setRegister:0x78 toValue:0x44]; // Bit_0=start stream, Bit_6=LED
 }
@@ -1576,7 +1598,7 @@ static int init_jpeg_decoder(__u8 *data)
 	/* set up a quantization table */
 	if (quant[0] == 0 || quant[1] == 0) 
     {
-        int index = 6; // 0 .. 7
+        int index = 4; // 0 .. 7
         quant[0] = GsmartQTable[index * 2 + 0];
         quant[1] = GsmartQTable[index * 2 + 1];
 //		printf("No quantization tables\n");
