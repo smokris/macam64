@@ -322,6 +322,22 @@
     if (driver) [driver setSaturation:((float)c)/65535.0f];
 }
 
+
+- (BOOL)canSetHue {
+    if (driver) return [driver canSetHue];
+    else return NO;
+}
+
+- (unsigned short)hue {
+    if (driver) return (unsigned short)([driver hue]*65535.0f);
+    else return 0;
+}
+
+- (void)setHue:(unsigned short)c {
+    if (driver) [driver setHue:((float)c)/65535.0f];
+}
+
+
 - (BOOL)canSetSharpness {
     if (driver) return [driver canSetSharpness];
     else return NO;

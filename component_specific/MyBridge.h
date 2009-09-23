@@ -122,6 +122,11 @@ typedef enum BridgeClientState {
 - (BOOL)canSetSaturation;		//Returns if the camera supports saturation adjustment
 - (unsigned short)saturation;		//Returns the saturation in the range [0..65535], if supported
 - (void)setSaturation:(unsigned short)c;//Sets the saturation in the range [0..65535], if supported
+
+- (BOOL)canSetHue;		//Returns if the camera supports saturation adjustment
+- (unsigned short)hue;		//Returns the saturation in the range [0..65535], if supported
+- (void)setHue:(unsigned short)c;//Sets the saturation in the range [0..65535], if supported
+
 - (BOOL)canSetSharpness;		//Returns if the camera supports sharpness adjustment
 - (unsigned short)sharpness;		//Returns the sharpness in the range [0..65535], if supported
 - (void)setSharpness:(unsigned short)c; //Sets the sharpness in the range [0..65535], if supported
