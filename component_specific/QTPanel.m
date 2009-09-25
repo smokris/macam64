@@ -520,13 +520,13 @@ void UpdateFormatMenus(sgpnGlobals storage, DialogRef dlg, short itemOffset) {
         EnableControl(resCtrl);
         EnableControl(fpsCtrl);
         SetControlValue(resCtrl,(short)res);		//Update selection
-        SetControlValue(fpsCtrl,fps/5);
+        SetControlValue(fpsCtrl, FPS2MenuItem(fps));
         for (i=1;i<=numRes;i++) {			//Update available resolutons
             if ([bridge supportsResolution:(CameraResolution)i fps:fps]) EnableMenuItem(resMenu,i);
             else DisableMenuItem(resMenu,i);
         }
         for (i=1;i<=numFps;i++) {			//Update available frame rates
-            if ([bridge supportsResolution:res fps:i*5]) EnableMenuItem(fpsMenu,i);
+            if ([bridge supportsResolution:res fps:MenuItem2FPS(i)]) EnableMenuItem(fpsMenu,i);
             else DisableMenuItem(fpsMenu,i);
         }
     }

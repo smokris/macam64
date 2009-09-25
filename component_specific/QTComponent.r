@@ -311,12 +311,22 @@ resource 'MENU' (1004) {
     allEnabled,enabled,
     "Framerate",
 {
+    "0",noIcon,noKey,noMark,plain,
     "5",noIcon,noKey,noMark,plain,
     "10",noIcon,noKey,noMark,plain,
     "15",noIcon,noKey,noMark,plain,
     "20",noIcon,noKey,noMark,plain,
     "25",noIcon,noKey,noMark,plain,
     "30",noIcon,noKey,noMark,plain,
+    "40",noIcon,noKey,noMark,plain,
+    "45",noIcon,noKey,noMark,plain,
+    "50",noIcon,noKey,noMark,plain,
+    "60",noIcon,noKey,noMark,plain,
+    "75",noIcon,noKey,noMark,plain,
+    "90",noIcon,noKey,noMark,plain,
+    "100",noIcon,noKey,noMark,plain,
+    "120",noIcon,noKey,noMark,plain,
+    "180",noIcon,noKey,noMark,plain,
 }
 };
 
