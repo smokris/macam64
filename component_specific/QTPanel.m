@@ -426,7 +426,8 @@ pascal ComponentResult sgpnItem(sgpnGlobals storage, SGChannel channel, DialogRe
             break;
         case 8:							//fps menu
             GetDialogItemAsControl(dlg,itemOffset+8,&ctrl);
-            fps=(GetControlValue(ctrl))*5;
+//          fps=(GetControlValue(ctrl))*5;
+            fps = MenuItem2FPS(GetControlValue(ctrl) - 1);
             [bridge setResolution:[bridge resolution] fps:fps];
             UpdateFormatMenus(storage,dlg,itemOffset);
             if ((**storage).grabber) SGChangedSource((**storage).grabber,channel);	//Notify about fps change
@@ -520,13 +521,13 @@ void UpdateFormatMenus(sgpnGlobals storage, DialogRef dlg, short itemOffset) {
         EnableControl(resCtrl);
         EnableControl(fpsCtrl);
         SetControlValue(resCtrl,(short)res);		//Update selection
-        SetControlValue(fpsCtrl, FPS2MenuItem(fps));
+        SetControlValue(fpsCtrl, FPS2MenuItem(fps) + 1);
         for (i=1;i<=numRes;i++) {			//Update available resolutons
             if ([bridge supportsResolution:(CameraResolution)i fps:fps]) EnableMenuItem(resMenu,i);
             else DisableMenuItem(resMenu,i);
         }
         for (i=1;i<=numFps;i++) {			//Update available frame rates
-            if ([bridge supportsResolution:res fps:MenuItem2FPS(i)]) EnableMenuItem(fpsMenu,i);
+            if ([bridge supportsResolution:res fps:MenuItem2FPS(i-1)]) EnableMenuItem(fpsMenu,i);
             else DisableMenuItem(fpsMenu,i);
         }
     }
