@@ -136,7 +136,7 @@ resource 'dlle' (258) {
 
 resource 'DITL' (258) {
 {
-{0,0,20,200},		/* 1: Camera name */
+{0,0,20,400},		/* 1: Camera name */
     StaticText {
         enabled,
         "Not available"
@@ -146,47 +146,47 @@ resource 'DITL' (258) {
         enabled,
         "Flip"
     },
-{50,60,75,200},		/* 3: Gamma slider */
+{50,100,75,300},		/* 3: Gamma slider */
     Control {
         enabled,
         1000
     },
-{25,60,45,200},		/* 4: Auto gain checkbox */
+{25,100,45,300},		/* 4: Auto gain checkbox */
 CheckBox {
     enabled,
     "Auto gain"
 },
-{75,60,100,200},	/* 5: Gain slider */
+{75,100,100,300},	/* 5: Gain slider */
 Control {
     enabled,
     1001
 },
-{100,60,125,200},	/* 6: Shutter/Exposure slider */
+{100,100,125,300},	/* 6: Shutter/Exposure slider */
 Control {
     enabled,
     1002
 },
-{190,0,215,200},	/* 7: Resolution popup menu */
+{190,0,215,300},	/* 7: Resolution popup menu */
 Control {
     enabled,
     1003
 },
-{215,0,240,200},	/* 8: fps popup menu */
+{215,0,240,300},	/* 8: fps popup menu */
 Control {
     enabled,
     1004
 },
-{125,60,150,200},	/* 9: compression slider */
+{125,100,150,300},	/* 9: compression slider */
 Control {
     enabled,
     1005
 },
-{250,60,270,200},	/* 10: save prefs button */
+{250,160,270,300},	/* 10: save prefs button */
 Button {
     enabled,
     "Save as defaults"
 },
-{165,0,190,200},	/* 11: White Balance popup menu */
+{165,0,190,300},	/* 11: White Balance popup menu */
 Control {
     enabled,
     1006
@@ -206,7 +206,7 @@ StaticText {
     enabled,
     "Shutter:"
 },
-{125,0,150,60},		/* 15: Compress label static text */
+{125,0,150,95},		/* 15: Compress label static text */
 StaticText {
     enabled,
     "Compress:"
@@ -214,7 +214,7 @@ StaticText {
 }};
 
 resource 'CNTL' (1000) {
-{0,0,20,200},
+{0,0,20,300},
     500,
     visible,
     1000,
@@ -225,7 +225,7 @@ resource 'CNTL' (1000) {
 };
 
 resource 'CNTL' (1001) {
-{0,0,20,200},
+{0,0,20,300},
     500,
     visible,
     1000,
@@ -236,7 +236,7 @@ resource 'CNTL' (1001) {
 };
 
 resource 'CNTL' (1002) {
-{0,0,20,200},
+{0,0,20,300},
     500,
     visible,
     1000,
@@ -247,7 +247,7 @@ resource 'CNTL' (1002) {
 };
 
 resource 'CNTL' (1003) {
-{0,0,20,200},
+{0,0,20,300},
     0,
     visible,
     60,
@@ -258,7 +258,7 @@ resource 'CNTL' (1003) {
 };
 
 resource 'CNTL' (1004) {
-{0,0,20,200},
+{0,0,20,300},
     0,
     visible,
     60,
@@ -269,7 +269,7 @@ resource 'CNTL' (1004) {
 };
 
 resource 'CNTL' (1005) {
-{0,0,40,200},
+{0,0,40,300},
     0,
     visible,
     2,
@@ -280,7 +280,7 @@ resource 'CNTL' (1005) {
 };
 
 resource 'CNTL' (1006) {
-{0,0,20,200},
+{0,0,20,300},
     0,
     visible,
     60,
