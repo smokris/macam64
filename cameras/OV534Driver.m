@@ -289,9 +289,6 @@
 
 		if (resolution == ResolutionVGA) 
 		{
-            if (fps == 0) 
-                fps = 40;
-            
 			if (fps == 5) 
             {
                 // 5 = 60 / 12
@@ -312,6 +309,7 @@
 				[self setSensorRegister:0x11 toValue:0x03];
 				[self setSensorRegister:0x0d toValue:0x41];
 				[self verifySetRegister:0xe5 toValue:0x04];
+//				[self setSensorRegister:0x14 toValue:0x41]; // instead of setting e5 to 04 in Theo's driver
 			}
 			else if (fps == 20) 
             {
@@ -338,7 +336,7 @@
 				[self setSensorRegister:0x0d toValue:0x81];
 				[self verifySetRegister:0xe5 toValue:0x02];
 			}
-            else if (fps == 40) 
+            else if (fps == 40 || fps == 0) 
             {
                 // 40 = 120 / 3
 				[self setSensorRegister:0x11 toValue:0x02];
@@ -393,9 +391,6 @@
             // usually controller register 0xe5 is set to 0x04
             // except when ** (0x0d is set to 0x81) when it is set to 0x02
             //
-            
-            if (fps == 0) 
-                fps = 120;
             
             if (fps == 5) 
             {
@@ -483,7 +478,7 @@
 				[self setSensorRegister:0x0d toValue:0xc1];
 				[self verifySetRegister:0xe5 toValue:0x04];
 			}		
-			else if (fps == 120) 
+			else if (fps == 120 || fps == 0) 
             {
                 // 120 = 360 / 3
 				[self setSensorRegister:0x11 toValue:0x02];
@@ -740,7 +735,7 @@
 - (void) setIsocFrameFunctions
 {
     grabContext.chunkBufferLength = 2 * [self width] * [self height];	
-	if ([self width] == 320) 
+	if ([self width] == 320) // Actually grabs 640 pixels wide, right half is blank though
         grabContext.chunkBufferLength = 4 * [self width] * [self height];	// theo changed from  2 * [self width] * [self height];
 	
     grabContext.numberOfChunkBuffers = 3;  // Must be at least 2; 3 is better at high frame-rates
