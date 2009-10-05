@@ -940,6 +940,11 @@ int  pac73xxIsocDataCopier(void * destination, const void * source, size_t lengt
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
             @"PixArt PAC7302 based camera (0x0f)", @"name", NULL], 
         
+        [NSDictionary dictionaryWithObjectsAndKeys:
+            [NSNumber numberWithUnsignedShort:0x3009], @"idProduct",
+            [NSNumber numberWithUnsignedShort:VENDOR_HERCULES], @"idVendor",
+            @"Hercules Classic Link", @"name", NULL], 
+        
         NULL];
 }
 
