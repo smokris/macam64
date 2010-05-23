@@ -401,9 +401,11 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SQ905 class]];
     [self registerCameraDriver:[SQ905CDriver class]];
     [self registerCameraDriver:[SQ905Cvariant1 class]];
-#if EXPERIMENTAL
+    
     [self registerCameraDriver:[SQ930C class]];
-#endif
+    [self registerCameraDriver:[SQ930B class]];
+    [self registerCameraDriver:[SQ930Bvariant1 class]];
+    
 //  [self registerCameraDriver:[MyPixartDriver class]]; // Deprecated in favor of PixartDriver - has problems
 //  [self registerCameraDriver:[PixartDriver class]];   // Disabled because working on SPCA5XX-based version instead
 #if EXPERIMENTAL
