@@ -9,6 +9,7 @@
 #import "FrameCounter.h"
 
 #include <unistd.h>
+#include <sys/time.h>
 
 
 @implementation FrameCounter

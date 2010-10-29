@@ -10,6 +10,7 @@
 #import "Histogram.h"
 
 #include <unistd.h>
+#include <sys/time.h>
 
 
 @implementation Histogram

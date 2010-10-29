@@ -20,7 +20,8 @@
 
 #import "MyCameraCentral.h"
 
-#include "sys/time.h"
+#include <sys/time.h>
+
 #include "Resolvers.h"
 #include "MiscTools.h"
 

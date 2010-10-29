@@ -439,7 +439,6 @@
 		F535ED6108DB3970007943DA /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417601DA8EF70157C38C /* CoreFoundation.framework */; };
 		F535ED6208DB3970007943DA /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F5AA417801DA8F350157C38C /* IOKit.framework */; };
 		F535ED6308DB3970007943DA /* QuickTime.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1D01E5D0440166DE0F /* QuickTime.framework */; };
-		F535ED6408DB3970007943DA /* ICACameraPriv.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 39FE215504030E7E00BAABE7 /* ICACameraPriv.framework */; };
 		F535ED6508DB3970007943DA /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F538BD1B01E5D03A0166DE0F /* Carbon.framework */; };
 		F535F1E308DF2703007943DA /* SPCA5XXDriver.h in Headers */ = {isa = PBXBuildFile; fileRef = F535F1DB08DF2703007943DA /* SPCA5XXDriver.h */; };
 		F535F1E408DF2703007943DA /* SPCA5XXDriver.m in Sources */ = {isa = PBXBuildFile; fileRef = F535F1DC08DF2703007943DA /* SPCA5XXDriver.m */; };
@@ -536,6 +535,7 @@
 		F5821C870DAC0F690052E94E /* SpaceCam.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C600DAC0F690052E94E /* SpaceCam.init */; };
 		F5821C880DAC0F690052E94E /* trust_space.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C610DAC0F690052E94E /* trust_space.init */; };
 		F5821C890DAC0F690052E94E /* Twinkle.init in Resources */ = {isa = PBXBuildFile; fileRef = F5821C620DAC0F690052E94E /* Twinkle.init */; };
+		F58BA891127B5C4F008068AE /* ICADevices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F58BA890127B5C4F008068AE /* ICADevices.framework */; };
 		F592C8E30974504700183A7D /* spcausb.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E20974504700183A7D /* spcausb.h */; };
 		F592C8E50974504700183A7D /* spcausb.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E20974504700183A7D /* spcausb.h */; };
 		F592C8EA0974520E00183A7D /* sonix.h in Headers */ = {isa = PBXBuildFile; fileRef = F592C8E90974520E00183A7D /* sonix.h */; };
@@ -896,7 +896,6 @@
 		39CBD64F03DC0D79000F7EFC /* MyKiaraFlippedDriver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyKiaraFlippedDriver.m; sourceTree = "<group>"; };
 		39CBD65003DC0D79000F7EFC /* MyKiaraFlippedDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyKiaraFlippedDriver.h; sourceTree = "<group>"; };
 		39FE214904030BB800BAABE7 /* ICD_CameraCalls.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ICD_CameraCalls.h; sourceTree = "<group>"; };
-		39FE215504030E7E00BAABE7 /* ICACameraPriv.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ICACameraPriv.framework; path = /System/Library/PrivateFrameworks/ICACameraPriv.framework; sourceTree = "<absolute>"; };
 		F500FB6D022FB1BD01369AA6 /* Global */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = Global; path = app.icns; sourceTree = "<group>"; };
 		F500FB6E022FB1BD01369AA6 /* DownloadToolbarItem.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = DownloadToolbarItem.tiff; sourceTree = "<group>"; };
 		F500FB6F022FB1BD01369AA6 /* NextCamToolbarItem.tiff */ = {isa = PBXFileReference; lastKnownFileType = image.tiff; path = NextCamToolbarItem.tiff; sourceTree = "<group>"; };
@@ -1056,6 +1055,7 @@
 		F58976FE03758BEE01159FE2 /* MyNSMovieExtensions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyNSMovieExtensions.h; sourceTree = "<group>"; };
 		F589EB0E02268A6901D99A1F /* MySTV680Driver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MySTV680Driver.h; sourceTree = "<group>"; };
 		F589EB0F02268A6901D99A1F /* MySTV680Driver.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MySTV680Driver.m; sourceTree = "<group>"; };
+		F58BA890127B5C4F008068AE /* ICADevices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ICADevices.framework; path = /System/Library/Frameworks/ICADevices.framework; sourceTree = "<absolute>"; };
 		F58DB238024E9803019A97FC /* MyImageWindowController.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyImageWindowController.h; sourceTree = "<group>"; };
 		F58DB239024E9803019A97FC /* MyImageWindowController.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyImageWindowController.m; sourceTree = "<group>"; };
 		F592C8E20974504700183A7D /* spcausb.h */ = {isa = PBXFileReference; comments = OK; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; name = spcausb.h; path = spca5xx_files/spcausb.h; sourceTree = "<group>"; };
@@ -1147,9 +1147,9 @@
 		F5C5C2280A26C3CD00737FBB /* CN0352PDriver.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = CN0352PDriver.h; sourceTree = "<group>"; };
 		F5C80D8D02417A800166DE75 /* MyScrollView.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MyScrollView.h; sourceTree = "<group>"; };
 		F5C80D8E02417A800166DE75 /* MyScrollView.m */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.objc; path = MyScrollView.m; sourceTree = "<group>"; };
-		F5CD7018092AEBF600E9EEE3 /* generate_app.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_app.plist; sourceTree = "<group>"; };
-		F5CD701A092AEC1000E9EEE3 /* generate_ica_module.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_ica_module.plist; sourceTree = "<group>"; };
-		F5CD701C092AEC2600E9EEE3 /* generate_component.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.xml; path = generate_component.plist; sourceTree = "<group>"; };
+		F5CD7018092AEBF600E9EEE3 /* generate_app.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = generate_app.plist; sourceTree = "<group>"; };
+		F5CD701A092AEC1000E9EEE3 /* generate_ica_module.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = generate_ica_module.plist; sourceTree = "<group>"; };
+		F5CD701C092AEC2600E9EEE3 /* generate_component.plist */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text.plist.xml; path = generate_component.plist; sourceTree = "<group>"; };
 		F5CFB8AE09D8804E001FBB48 /* CTDC1100Driver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTDC1100Driver.h; sourceTree = "<group>"; };
 		F5CFB8AF09D8804E001FBB48 /* CTDC1100Driver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTDC1100Driver.m; sourceTree = "<group>"; };
 		F5CFE5FA09D069DF00C6DB41 /* ExampleDriver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExampleDriver.h; sourceTree = "<group>"; };
@@ -1295,8 +1295,8 @@
 				F535ED6108DB3970007943DA /* CoreFoundation.framework in Frameworks */,
 				F535ED6208DB3970007943DA /* IOKit.framework in Frameworks */,
 				F535ED6308DB3970007943DA /* QuickTime.framework in Frameworks */,
-				F535ED6408DB3970007943DA /* ICACameraPriv.framework in Frameworks */,
 				F535ED6508DB3970007943DA /* Carbon.framework in Frameworks */,
+				F58BA891127B5C4F008068AE /* ICADevices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1339,7 +1339,7 @@
 				F5AA417801DA8F350157C38C /* IOKit.framework */,
 				F538BD1D01E5D0440166DE0F /* QuickTime.framework */,
 				F538BD1B01E5D03A0166DE0F /* Carbon.framework */,
-				39FE215504030E7E00BAABE7 /* ICACameraPriv.framework */,
+				F58BA890127B5C4F008068AE /* ICADevices.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -2289,6 +2289,8 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = F5E3BBBF08A9C910009E490F /* Build configuration list for PBXProject "macam" */;
+			compatibilityVersion = "Xcode 2.4";
+			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
 				English,
@@ -2299,6 +2301,7 @@
 			);
 			mainGroup = 29B97314FDCFA39411CA2CEA /* wc */;
 			projectDirPath = "";
+			projectRoot = "";
 			targets = (
 				F535EC0808DB3970007943DA /* app */,
 				F535EC9708DB3970007943DA /* component */,
@@ -3060,7 +3063,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -3080,7 +3082,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				OPTIMIZATION_CFLAGS = "-O2";
+				GCC_OPTIMIZATION_LEVEL = 2;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -3098,6 +3100,8 @@
 		F5E3BBC008A9C910009E490F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
 				COPY_PHASE_STRIP = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
 				GCC_MODEL_TUNING = "";
@@ -3115,7 +3119,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.4;
 				OTHER_LDFLAGS = "";
 				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
-				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
+				SDKROOT = /Developer/SDKs/MacOSX10.5.sdk;
 				ZERO_LINK = NO;
 			};
 			name = Debug;
@@ -3236,7 +3240,6 @@
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
 				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
 				GCC_OPTIMIZATION_LEVEL = 0;
-				OPTIMIZATION_CFLAGS = "-O0";
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
@@ -3356,7 +3359,7 @@
 			buildSettings = {
 				COPY_PHASE_STRIP = YES;
 				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				OPTIMIZATION_CFLAGS = "-O2";
+				GCC_OPTIMIZATION_LEVEL = 2;
 				OTHER_CFLAGS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_REZFLAGS = "";
