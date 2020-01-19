@@ -183,7 +183,7 @@ static int pac_decompress_row(struct code_table *table, unsigned char *inp, unsi
 {
 	CameraError err;
 
-    if(err = [self usbConnectToCam:usbLocationId configIdx:0]) return err; // setup connection to camera
+    if((err = [self usbConnectToCam:usbLocationId configIdx:0])) return err; // setup connection to camera
 
 	[self setBrightness:0.5];
 	[self setContrast:0.5];
@@ -689,7 +689,7 @@ static void transferComplete(void *refcon, IOReturn result, void *arg0)
 
     ChangeMyThreadPriority(10); // We need to update the isoch read in time, so timing is important for us
 
-	if(err = [self startupGrabbing]) shouldBeGrabbing = NO;
+	if((err = [self startupGrabbing])) shouldBeGrabbing = NO;
 
     // Get usb timing info
     if(shouldBeGrabbing){
@@ -859,7 +859,7 @@ static void transferComplete(void *refcon, IOReturn result, void *arg0)
 
 	init_pixart_decoder(codeTable);
 
-    if(err = [self setupGrabContext]){
+    if((err = [self setupGrabContext])){
         [self cleanupGrabContext];
 		shouldBeGrabbing = NO;
 	}

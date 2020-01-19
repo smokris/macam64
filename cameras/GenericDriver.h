@@ -66,8 +66,6 @@ typedef enum CompressionType
     unknownCompression,
     noCompression,
     jpegCompression,
-    quicktimeImage,
-    quicktimeSequence,
     gspcaCompression,
     proprietaryCompression,
 } CompressionType;
@@ -219,7 +217,6 @@ typedef struct GenericGrabContext
     
     CompressionType compressionType;
     int jpegVersion;
-    UInt32 quicktimeCodec;
     
     struct // Using Cocoa decoding
     {
@@ -228,19 +225,6 @@ typedef struct GenericGrabContext
         NSGraphicsContext * bitmapGC;
         CGContextRef        imageContext;
     } CocoaDecoding;
-    
-    struct // Using QuickTime decoding
-    {
-        GWorldPtr               gworldPtr;
-        Rect                    boundsRect;
-        NSBitmapImageRep  *     imageRep;
-        ImageDescriptionHandle  imageDescription;
-    } QuicktimeDecoding;
-    
-    struct // Using Image Compression Manager for decoding sequences
-    {
-        ImageSequence           sequenceIdentifier;
-    } SequenceDecoding;
     
     BOOL buttonThreadRunning;
     BOOL buttonThreadShouldBeRunning;
@@ -268,13 +252,9 @@ typedef struct GenericGrabContext
 - (BOOL) setupJpegCompression;
 - (BOOL) setupJpegVersion1;
 - (BOOL) setupJpegVersion2;
-- (BOOL) setupQuicktimeImageCompression;
-- (BOOL) setupQuicktimeSequenceCompression;
 - (void) cleanupDecoding;
 
 - (BOOL) decodeBufferCocoaJPEG: (GenericChunkBuffer *) buffer;
-- (BOOL) decodeBufferQuicktimeImage: (GenericChunkBuffer *) buffer;
-- (BOOL) decodeBufferQuicktimeSequence: (GenericChunkBuffer *) buffer;
 
 - (NSTextField *) getDebugMessageField;
 

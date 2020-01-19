@@ -753,7 +753,7 @@ static bool StartNextIsochRead(SONIXGrabContext* grabContext, int transferIdx) {
 // imageCounter
 			if (0) 
 			{
-			NSString * filename=[NSString stringWithFormat:@"/Users/harald/frame%04i.%@", imageCounter, @"raw"];
+			NSString * filename=[NSString stringWithFormat:@"/Users/harald/frame%04lu.%@", imageCounter, @"raw"];
 			NSData * data = [NSData dataWithBytesNoCopy: currChunk.buffer
 												 length: currChunk.numBytes];
 			[[NSFileManager defaultManager] createFileAtPath: filename 

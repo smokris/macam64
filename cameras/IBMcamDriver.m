@@ -194,13 +194,13 @@
 #endif
     
     if (version == 0x0002) 
-        return [[IBMcamModel1Driver alloc] initWithCentral:c];
+        return (id)[[IBMcamModel1Driver alloc] initWithCentral:c];
     
     if (version == 0x030A) 
-        return [[IBMcamModel2Driver alloc] initWithCentral:c];
+        return (id)[[IBMcamModel2Driver alloc] initWithCentral:c];
     
     if (version == 0x0301) 
-        return [[IBMcamModel3Driver alloc] initWithCentral:c];
+        return (id)[[IBMcamModel3Driver alloc] initWithCentral:c];
     
     NSLog(@"This is an unknown model! (%04x) It is unlikely to work.\n", version);
     

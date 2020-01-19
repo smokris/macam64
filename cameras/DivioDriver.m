@@ -806,7 +806,7 @@ static inline int decodeBlock( struct rqBitReader *br, int *block, int *dc )
 	iDCT_line(block[8], block[9], block[10], block[11]);
 	iDCT_line(block[12], block[13], block[14], block[15]);
 
-	return ( ! hdr & 0x700 );
+	return ! ( hdr & 0x700 );
 }
 
 

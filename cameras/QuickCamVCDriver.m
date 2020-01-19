@@ -464,7 +464,7 @@ IsocFrameResult  exampleIsocFrameScanner(IOUSBIsocFrame * frame, UInt8 * buffer,
         printf("There was a problem reading the chunk\n");
     }
     
-    printf("A chunk of length %ld was just read (expected %ld).\n", totalLength, expectedLength);
+    printf("A chunk of length %u was just read (expected %u).\n", totalLength, expectedLength);
         
 #if 0
 	unsigned long oldjif, rate, diff;

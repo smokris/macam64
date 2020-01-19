@@ -19,7 +19,6 @@
 */
 
 #import <Cocoa/Cocoa.h>
-#include <QuickTime/QuickTime.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOCFPlugIn.h>
 #include <IOKit/usb/IOUSBLib.h>

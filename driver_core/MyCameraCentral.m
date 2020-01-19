@@ -34,57 +34,57 @@
 #import "MyCPIACameraDriver.h"
 #import "MyQX3Driver.h"
 #import "MySTV680Driver.h"
-#import "MyIntelPCCameraPro.h"
+// #import "MyIntelPCCameraPro.h"
 #import "MyDummyCameraDriver.h"
 #import "MyQCExpressADriver.h"
 #import "MyQCExpressBDriver.h"
 #import "MyQCWebDriver.h"
 #import "QCMessengerDriver.h"
-#import "MyVicamDriver.h"
-#import "MySPCA504Driver.h"
-#import "MyOV511Driver.h"
+// #import "MyVicamDriver.h"
+// #import "MySPCA504Driver.h"
+// #import "MyOV511Driver.h"
 #import "MySonix2028Driver.h"
 #import "MySE401Driver.h"
 #import "MyQCProBeigeDriver.h"
-#import "MySPCA500Driver.h"
+// #import "MySPCA500Driver.h"
 #import "MyQCOrbitDriver.h"
 #import "SQ905.h"
-#import "SQ930C.h"
+// #import "SQ930C.h"
 //#import "MyPixartDriver.h"
 //#import "PixartDriver.h"
 #import "PAC7311Driver.h"
-#import "SPCA5XXDriver.h"
+// #import "SPCA5XXDriver.h"
 #import "PAC207Driver.h"
-#import "SPCA561ADriver.h"
-#import "SPCA508Driver.h"
-#import "TV8532Driver.h"
-#import "ZC030xDriver.h"
+// #import "SPCA561ADriver.h"
+// #import "SPCA508Driver.h"
+// #import "TV8532Driver.h"
+// #import "ZC030xDriver.h"
 #import "CTDC1100Driver.h"
 #import "KworldTV300UDriver.h"
 #import "QuickCamVCDriver.h"
-#import "OV519Driver.h"
-#import "SonixDriver.h"
-#import "SPCA501ADriver.h"
-#import "SPCA525Driver.h"
-#import "PicoDriver.h"
+// #import "OV519Driver.h"
+// #import "SonixDriver.h"
+// #import "SPCA501ADriver.h"
+// #import "SPCA525Driver.h"
+// #import "PicoDriver.h"
 #import "M560xDriver.h"
-#import "VC032xDriver.h"
-#import "MR97311Driver.h"
+// #import "VC032xDriver.h"
+// #import "MR97311Driver.h"
 #import "IBMcamDriver.h"
-#import "SPCA500Driver.h"
-#import "SPCA504Driver.h"
-#import "SPCA505Driver.h"
-#import "SPCA506Driver.h"
-#import "SPCA533Driver.h"
-#import "SPCA536Driver.h"
-#import "SPCA551Driver.h"
+// #import "SPCA500Driver.h"
+// #import "SPCA504Driver.h"
+// #import "SPCA505Driver.h"
+// #import "SPCA506Driver.h"
+// #import "SPCA533Driver.h"
+// #import "SPCA536Driver.h"
+// #import "SPCA551Driver.h"
 #import "OV534Driver.h"
 #import "DivioDriver.h"
-#import "ET61xx51Driver.h"
+// #import "ET61xx51Driver.h"
 #import "WinbondDriver.h"
 #import "R5U870Driver.h"
-#import "CX11646Driver.h"
-#import "TP68xxDriver.h"
+// #import "CX11646Driver.h"
+// #import "TP68xxDriver.h"
 #import "SQ905C.h"
 #import "UVCDriver.h"
 
@@ -146,9 +146,9 @@ MyCameraCentral* sharedCameraCentral=NULL;
     if (!cValue) return;
     if (!cKey) return;
     pool=[[NSAutoreleasePool alloc] init];
-    string=[NSString stringWithCString:cKey];
+    string=[NSString stringWithUTF8String:cKey];
     string=[self localizedStringFor:string];
-    tmpCStr=[string lossyCString];
+    tmpCStr=[string UTF8String];
     CStr2CStr(tmpCStr,cValue);	//Note: No bounds check! Don't write dramas...
     [pool release];
 }
@@ -185,7 +185,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     delegate=NULL;
     inVDIG = NO;
     
-    if (Gestalt(gestaltSystemVersion, &osVersion) != noErr)
+//    if (Gestalt(gestaltSystemVersion, &osVersion) != noErr)
         osVersion = 0x1047;  // Assume recent OS version
 
     // Cache localized error codes
@@ -234,7 +234,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     {
         info = [cameraTypes objectAtIndex:i];
         
-        printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [info cid], (unsigned) [info vendorID], (unsigned) [info productID], [NSStringFromClass([info driverClass]) cString], [[info cameraName] cString]);
+        printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [info cid], (unsigned) [info vendorID], (unsigned) [info productID], [NSStringFromClass([info driverClass]) UTF8String], [[info cameraName] UTF8String]);
     }
     
     printf("========== ==========\n");
@@ -285,9 +285,9 @@ MyCameraCentral* sharedCameraCentral=NULL;
             {
                 first = NO;
                 printf("==========\n");
-                printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [info cid], (unsigned) [info vendorID], (unsigned) [info productID], [NSStringFromClass([info driverClass]) cString], [[info cameraName] cString]);
+                printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [info cid], (unsigned) [info vendorID], (unsigned) [info productID], [NSStringFromClass([info driverClass]) UTF8String], [[info cameraName] UTF8String]);
             }
-            printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [other cid], (unsigned) [other vendorID], (unsigned) [other productID], [NSStringFromClass([other driverClass]) cString], [[other cameraName] cString]);
+            printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [other cid], (unsigned) [other vendorID], (unsigned) [other productID], [NSStringFromClass([other driverClass]) UTF8String], [[other cameraName] UTF8String]);
         }
     }
     
@@ -334,9 +334,9 @@ MyCameraCentral* sharedCameraCentral=NULL;
             {
                 first = NO;
                 printf("==========\n");
-                printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [info cid], (unsigned) [info vendorID], (unsigned) [info productID], [NSStringFromClass([info driverClass]) cString], [[info cameraName] cString]);
+                printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [info cid], (unsigned) [info vendorID], (unsigned) [info productID], [NSStringFromClass([info driverClass]) UTF8String], [[info cameraName] UTF8String]);
             }
-            printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [other cid], (unsigned) [other vendorID], (unsigned) [other productID], [NSStringFromClass([other driverClass]) cString], [[other cameraName] cString]);
+            printf("%03lu, 0x%04X, 0x%04X, %s, %s\n", [other cid], (unsigned) [other vendorID], (unsigned) [other productID], [NSStringFromClass([other driverClass]) UTF8String], [[other cameraName] UTF8String]);
         }
     }
     
@@ -366,8 +366,8 @@ MyCameraCentral* sharedCameraCentral=NULL;
     
     // Add Driver classes (this is where we have to add new model classes!)
     
-    [self registerCameraDriver:[MySPCA500Driver class]];
-    [self registerCameraDriver:[MyAiptekPocketDV class]];
+    // [self registerCameraDriver:[MySPCA500Driver class]];
+    // [self registerCameraDriver:[MyAiptekPocketDV class]];
     [self registerCameraDriver:[MyKiaraFamilyDriver class]];
     [self registerCameraDriver:[MyKiaraFamilyPowerSaveDriver class]];
     [self registerCameraDriver:[MyKiaraFlippedDriver class]];
@@ -380,17 +380,17 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[MyQCExpressBDriver class]];
     [self registerCameraDriver:[MyQCWebDriver class]];
     [self registerCameraDriver:[QCMessengerDriver class]];
-    [self registerCameraDriver:[MyVicamDriver class]];
-    [self registerCameraDriver:[MySPCA504Driver class]];
-    [self registerCameraDriver:[MyOV511Driver class]];
-    [self registerCameraDriver:[MyOV511PlusDriver class]];
+    // [self registerCameraDriver:[MyVicamDriver class]];
+    // [self registerCameraDriver:[MySPCA504Driver class]];
+    // [self registerCameraDriver:[MyOV511Driver class]];
+    // [self registerCameraDriver:[MyOV511PlusDriver class]];
     [self registerCameraDriver:[MySonix2028Driver class]];
-	[self registerCameraDriver:[MyViviCam3350BDriver class]];
-	[self registerCameraDriver:[MyFunCamDriver class]];
-	[self registerCameraDriver:[MySwedaSSP09BDriver class]];
+    // [self registerCameraDriver:[MyViviCam3350BDriver class]];
+    // [self registerCameraDriver:[MyFunCamDriver class]];
+    // [self registerCameraDriver:[MySwedaSSP09BDriver class]];
     [self registerCameraDriver:[MySE401Driver class]];
-    [self registerCameraDriver:[SE402Driver class]]; // test
-    [self registerCameraDriver:[EP800Driver class]]; // test
+    // [self registerCameraDriver:[SE402Driver class]]; // test
+    // [self registerCameraDriver:[EP800Driver class]]; // test
     [self registerCameraDriver:[MyQCProBeigeDriver class]];
 #if 0
     [self registerCameraDriver:[QuickCamVCDriver class]];
@@ -402,18 +402,18 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[SQ905CDriver class]];
     [self registerCameraDriver:[SQ905Cvariant1 class]];
     
-    [self registerCameraDriver:[SQ930C class]];
+    // [self registerCameraDriver:[SQ930C class]];
 //    [self registerCameraDriver:[SQ930B class]];
 //    [self registerCameraDriver:[SQ930Bvariant1 class]];
     
 //  [self registerCameraDriver:[MyPixartDriver class]]; // Deprecated in favor of PixartDriver - has problems
 //  [self registerCameraDriver:[PixartDriver class]];   // Disabled because working on SPCA5XX-based version instead
 #if EXPERIMENTAL
-    [self registerCameraDriver:[SPCA525Driver class]];    
+    [self registerCameraDriver:[SPCA525Driver class]];
 #endif
-    [self registerCameraDriver:[OV519Driver class]];
-    [self registerCameraDriver:[OV518Driver class]];
-    [self registerCameraDriver:[OV518PlusDriver class]];
+    // [self registerCameraDriver:[OV519Driver class]];
+    // [self registerCameraDriver:[OV518Driver class]];
+    // [self registerCameraDriver:[OV518PlusDriver class]];
     
     [self registerCameraDriver:[OV534Driver class]];
     [self registerCameraDriver:[OV538Driver class]];
@@ -421,103 +421,103 @@ MyCameraCentral* sharedCameraCentral=NULL;
     [self registerCameraDriver:[PAC207Driver class]];
     [self registerCameraDriver:[PAC207DriverRotated class]];
     
-    [self registerCameraDriver:[PicoDriver class]];
+    // [self registerCameraDriver:[PicoDriver class]];
     
     [self registerCameraDriver:[UVCDriver class]];  // There should be another way to invoke this driver (i.e. matching driver classes)
     
     
     // Based on gspca (subclass SPCA5xxDriver)
     
-    [self registerCameraDriver:[SPCA561ADriver class]];
+    // [self registerCameraDriver:[SPCA561ADriver class]];
     
-    [self registerCameraDriver:[TV8532Driver class]];
-    [self registerCameraDriver:[TV8532RotatedDriver class]];
+    // [self registerCameraDriver:[TV8532Driver class]];
+    // [self registerCameraDriver:[TV8532RotatedDriver class]];
     
-    [self registerCameraDriver:[ZC030xDriver class]];
-    [self registerCameraDriver:[ZC030xDriverBGR class]];
-    [self registerCameraDriver:[ZC030xDriverInverted class]];
-    [self registerCameraDriver:[ZC030xDriverMic class]];
-    [self registerCameraDriver:[ZC030xDriverVF0250 class]];
-    [self registerCameraDriver:[ZC030xDriverOV7620 class]];
-    [self registerCameraDriver:[ZC030xDriverMC501CB class]];
+    // [self registerCameraDriver:[ZC030xDriver class]];
+    // [self registerCameraDriver:[ZC030xDriverBGR class]];
+    // [self registerCameraDriver:[ZC030xDriverInverted class]];
+    // [self registerCameraDriver:[ZC030xDriverMic class]];
+    // [self registerCameraDriver:[ZC030xDriverVF0250 class]];
+    // [self registerCameraDriver:[ZC030xDriverOV7620 class]];
+    // [self registerCameraDriver:[ZC030xDriverMC501CB class]];
     
-    [self registerCameraDriver:[VC0321Driver class]];
-    [self registerCameraDriver:[VC0323Driver class]];
+    // [self registerCameraDriver:[VC0321Driver class]];
+    // [self registerCameraDriver:[VC0323Driver class]];
     
-    [self registerCameraDriver:[SonixDriver class]];
-    [self registerCameraDriver:[SonixDriverVariant1 class]];
-    [self registerCameraDriver:[SonixDriverVariant2 class]];
-    [self registerCameraDriver:[SonixDriverVariant3 class]];
-    [self registerCameraDriver:[SonixDriverVariant4 class]];
-    [self registerCameraDriver:[SonixDriverVariant5 class]];
-    [self registerCameraDriver:[SonixDriverVariant5B class]];
-    [self registerCameraDriver:[SonixDriverVariant6 class]];
-    [self registerCameraDriver:[SonixDriverVariant7 class]];
-    [self registerCameraDriver:[SonixDriverVariant8 class]];
-    [self registerCameraDriver:[SonixDriverOV6650 class]];
+    // [self registerCameraDriver:[SonixDriver class]];
+    // [self registerCameraDriver:[SonixDriverVariant1 class]];
+    // [self registerCameraDriver:[SonixDriverVariant2 class]];
+    // [self registerCameraDriver:[SonixDriverVariant3 class]];
+    // [self registerCameraDriver:[SonixDriverVariant4 class]];
+    // [self registerCameraDriver:[SonixDriverVariant5 class]];
+    // [self registerCameraDriver:[SonixDriverVariant5B class]];
+    // [self registerCameraDriver:[SonixDriverVariant6 class]];
+    // [self registerCameraDriver:[SonixDriverVariant7 class]];
+    // [self registerCameraDriver:[SonixDriverVariant8 class]];
+    // [self registerCameraDriver:[SonixDriverOV6650 class]];
     
-    [self registerCameraDriver:[SN9CxxxDriver class]];
-    [self registerCameraDriver:[SN9CxxxDriverPhilips1 class]];
-    [self registerCameraDriver:[SN9CxxxDriverMicrosoft1 class]];
-    [self registerCameraDriver:[SN9CxxxDriverGenius1 class]];
-    [self registerCameraDriver:[SN9CxxxDriverGenius2 class]];
+    // [self registerCameraDriver:[SN9CxxxDriver class]];
+    // [self registerCameraDriver:[SN9CxxxDriverPhilips1 class]];
+    // [self registerCameraDriver:[SN9CxxxDriverMicrosoft1 class]];
+    // [self registerCameraDriver:[SN9CxxxDriverGenius1 class]];
+    // [self registerCameraDriver:[SN9CxxxDriverGenius2 class]];
     
-    [self registerCameraDriver:[SN9C20xDriver class]];
-    
+    // [self registerCameraDriver:[SN9C20xDriver class]];
+     
     [self registerCameraDriver:[PAC7311Driver class]];
     [self registerCameraDriver:[PAC7302Driver class]];
-    
-    [self registerCameraDriver:[MR97311Driver class]];
-    [self registerCameraDriver:[MR97310Driver class]];
-    
-    [self registerCameraDriver:[SPCA500Driver class]];
-    [self registerCameraDriver:[SPCA500DriverIntel1 class]];
-    [self registerCameraDriver:[SPCA500DriverLogitech1 class]];
-    [self registerCameraDriver:[SPCA500DriverClickSmart310 class]];
-    [self registerCameraDriver:[SPCA500DriverKodakEZ200 class]];
-    
-    [self registerCameraDriver:[SPCA501ADriver class]];
-    [self registerCameraDriver:[SPCA501ADriverVariant1 class]];
-    [self registerCameraDriver:[SPCA501ADriverVariant2 class]];
-    [self registerCameraDriver:[SPCA501ADriverVariant3 class]];
-//  [self registerCameraDriver:[SPCA501ADriverVariant4 class]];
-    
-    [self registerCameraDriver:[SPCA504ADriver class]];
-    [self registerCameraDriver:[SPCA504ADriverAiptekMiniCam class]];
-    [self registerCameraDriver:[SPCA504BDriver class]];
-    [self registerCameraDriver:[SPCA504B_P3Driver class]];
-    [self registerCameraDriver:[SPCA504CDriver class]];
-    [self registerCameraDriver:[SPCA504CDriverClickSmart420 class]];
-    
-    [self registerCameraDriver:[SPCA505Driver class]];
-    [self registerCameraDriver:[SPCA505BDriver class]];
-    
-    [self registerCameraDriver:[SPCA506Driver class]];
-    [self registerCameraDriver:[SPCA506ADriver class]];
-    
-    [self registerCameraDriver:[SPCA508Driver class]];
-    [self registerCameraDriver:[SPCA508CS110Driver class]];
-    [self registerCameraDriver:[SPCA508SightcamDriver class]];
-    [self registerCameraDriver:[SPCA508Sightcam2Driver class]];
-    [self registerCameraDriver:[SPCA508CreativeVistaDriver class]];
-    
-    [self registerCameraDriver:[SPCA533Driver class]];
-    [self registerCameraDriver:[SPCA533ADriver class]];
-    [self registerCameraDriver:[SPCA533ADriverMegapixV4 class]];
-    [self registerCameraDriver:[SPCA533ADriverClickSmart820 class]];
-    
-    [self registerCameraDriver:[SPCA536Driver class]];
-    [self registerCameraDriver:[SPCA536ADriver class]];
-    
-    [self registerCameraDriver:[SPCA551ADriver class]];  // not finished, maybe not necessary?
 
-    [self registerCameraDriver:[ET61xx51Driver class]];
-    [self registerCameraDriver:[ET61x151Driver class]];
-    
-    [self registerCameraDriver:[CX11646Driver class]];
-    
+//     [self registerCameraDriver:[MR97311Driver class]];
+//     [self registerCameraDriver:[MR97310Driver class]];
+
+//     [self registerCameraDriver:[SPCA500Driver class]];
+//     [self registerCameraDriver:[SPCA500DriverIntel1 class]];
+//     [self registerCameraDriver:[SPCA500DriverLogitech1 class]];
+//     [self registerCameraDriver:[SPCA500DriverClickSmart310 class]];
+//     [self registerCameraDriver:[SPCA500DriverKodakEZ200 class]];
+
+//     [self registerCameraDriver:[SPCA501ADriver class]];
+//     [self registerCameraDriver:[SPCA501ADriverVariant1 class]];
+//     [self registerCameraDriver:[SPCA501ADriverVariant2 class]];
+//     [self registerCameraDriver:[SPCA501ADriverVariant3 class]];
+// //  [self registerCameraDriver:[SPCA501ADriverVariant4 class]];
+
+//     [self registerCameraDriver:[SPCA504ADriver class]];
+//     [self registerCameraDriver:[SPCA504ADriverAiptekMiniCam class]];
+//     [self registerCameraDriver:[SPCA504BDriver class]];
+//     [self registerCameraDriver:[SPCA504B_P3Driver class]];
+//     [self registerCameraDriver:[SPCA504CDriver class]];
+//     [self registerCameraDriver:[SPCA504CDriverClickSmart420 class]];
+
+//     [self registerCameraDriver:[SPCA505Driver class]];
+//     [self registerCameraDriver:[SPCA505BDriver class]];
+
+//     [self registerCameraDriver:[SPCA506Driver class]];
+//     [self registerCameraDriver:[SPCA506ADriver class]];
+
+//     [self registerCameraDriver:[SPCA508Driver class]];
+//     [self registerCameraDriver:[SPCA508CS110Driver class]];
+//     [self registerCameraDriver:[SPCA508SightcamDriver class]];
+//     [self registerCameraDriver:[SPCA508Sightcam2Driver class]];
+//     [self registerCameraDriver:[SPCA508CreativeVistaDriver class]];
+
+//     [self registerCameraDriver:[SPCA533Driver class]];
+//     [self registerCameraDriver:[SPCA533ADriver class]];
+//     [self registerCameraDriver:[SPCA533ADriverMegapixV4 class]];
+//     [self registerCameraDriver:[SPCA533ADriverClickSmart820 class]];
+
+//     [self registerCameraDriver:[SPCA536Driver class]];
+//     [self registerCameraDriver:[SPCA536ADriver class]];
+
+//     [self registerCameraDriver:[SPCA551ADriver class]];  // not finished, maybe not necessary?
+
+//     [self registerCameraDriver:[ET61xx51Driver class]];
+//     [self registerCameraDriver:[ET61x151Driver class]];
+
+//     [self registerCameraDriver:[CX11646Driver class]];
+
     // End of gpsca drivers
-    
+
     [self registerCameraDriver:[M560xDriver class]];
     
     [self registerCameraDriver:[IBMcamUnknownModelDriver class]];
@@ -532,12 +532,12 @@ MyCameraCentral* sharedCameraCentral=NULL;
     
     [self registerCameraDriver:[R5U870Driver class]];
     
-    [self registerCameraDriver:[SonixSN9C105Driver class]];    // Seems to work, still needs refinement
+    // [self registerCameraDriver:[SonixSN9C105Driver class]];    // Seems to work, still needs refinement
     
-    [self registerCameraDriver:[TP6801Driver class]];
-    [self registerCameraDriver:[TP6811Driver class]];
-    [self registerCameraDriver:[TP6813Driver class]];
-    
+//     [self registerCameraDriver:[TP6801Driver class]];
+//     [self registerCameraDriver:[TP6811Driver class]];
+//     [self registerCameraDriver:[TP6813Driver class]];
+
 #if EXPERIMENTAL
     [self registerCameraDriver:[CTDC1100Driver class]];      // This is incomplete st this time
     [self registerCameraDriver:[KworldTV300UDriver class]];  // This is very incomplete at this time
@@ -616,7 +616,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
         [info setDriverClass:[MyDummyCameraDriver class]];
         [info setProductID:[MyDummyCameraDriver cameraUsbProductID]];
         [info setVendorID:[MyDummyCameraDriver cameraUsbVendorID]];
-        [info setCameraName: [NSString stringWithFormat:@"%@ #%i", [MyDummyCameraDriver cameraName], i+1]];
+        [info setCameraName: [NSString stringWithFormat:@"%@ #%li", [MyDummyCameraDriver cameraName], i+1]];
         [info setCentral: self];
         [cameras addObject:info];
     }
@@ -824,7 +824,7 @@ MyCameraCentral* sharedCameraCentral=NULL;
     if (!camName) 
         return NO;
     
-    [camName getCString:name maxLength:maxLength];
+    [camName getCString:name maxLength:maxLength encoding:NSUTF8StringEncoding];
     
     return YES;
 }
@@ -838,14 +838,14 @@ MyCameraCentral* sharedCameraCentral=NULL;
         if ([[cameras objectAtIndex:l] cid] == cid) 
         {
  			NSString * name = [[cameras objectAtIndex:l] cameraName];
-            camName = [NSString stringWithFormat: @"%@ #%d", name, cid]; 
+            camName = [NSString stringWithFormat: @"%@ #%lu", name, cid]; 
  			// This is not so user friendly but name is not be changed after other cameras unplugging etc.
         }
     
     if (!camName) 
         return NO;
     
-    [camName getCString:name maxLength:maxLength];
+    [camName getCString:name maxLength:maxLength encoding:NSUTF8StringEncoding];
     
     return YES;
 }
@@ -1059,7 +1059,7 @@ void DeviceAdded(void *refCon, io_iterator_t iterator) {
     io_service_t	usbDeviceRef;
     MyCameraInfo*	dev;
     io_object_t		notification;
-    while (usbDeviceRef = IOIteratorNext(iterator)) {
+    while ((usbDeviceRef = IOIteratorNext(iterator))) {
         UInt32 locID;
         UInt16 versionNumber;
         

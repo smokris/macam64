@@ -1518,12 +1518,12 @@
 
     //Go through results
     
-    while (usbDeviceRef=IOIteratorNext(iterator)) {
+    while ((usbDeviceRef=IOIteratorNext(iterator))) {
         UInt32 locId;
         
         err = IOCreatePlugInInterfaceForService(usbDeviceRef, kIOUSBDeviceUserClientTypeID, kIOCFPlugInInterfaceID, &iodev, &score);
-        CheckError(err,"usbConnectToCam-IOCreatePlugInInterfaceForService");
-        if ((!iodev)||(err)) return CameraErrorInternal;	//Bail - find better error code ***
+        // CheckError(err,"usbConnectToCam-IOCreatePlugInInterfaceForService");
+        if ((!iodev)||(err)) continue;
 
         //ask plugin interface for device interface
         err = (*iodev)->QueryInterface(iodev, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID), (LPVOID)&dev);
@@ -1919,7 +1919,7 @@
             sprintf(cstr,"%02i:%02i:%02i:%02i",h,m,s,f);
             MiniDrawString(lastImageBuffer,lastImageBufferBPP,lastImageBufferRowBytes,10,10,cstr);
             MiniDrawString(lastImageBuffer,lastImageBufferBPP,lastImageBufferRowBytes,10,23,
-                            (char*)[[[self getCameraInfo] cameraName] cString]);
+                            (char*)[[[self getCameraInfo] cameraName] UTF8String]);
         }
         [self mergeImageReady];				//notify delegate about the image. perhaps get a new buffer
     }

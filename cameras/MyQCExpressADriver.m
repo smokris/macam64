@@ -443,7 +443,7 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                         }
                         break;
                     default:
-                        NSLog(@"unknown chunk %04x, length: %i",(unsigned short)dataRunCode,dataRunLength);
+                        NSLog(@"unknown chunk %04x, length: %li",(unsigned short)dataRunCode,dataRunLength);
                         if (dataRunLength) DumpMem(frameBase+frameRun,dataRunLength);
                             break;
                 } 

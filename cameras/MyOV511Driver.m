@@ -258,7 +258,7 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         [self setContrast:0.567f];
         [self setSaturation:0.630f];
     } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620 ||
-        SENS_OV6620) {
+        sensorType == SENS_OV6620) {
         [self setBrightness:0.5f];
         [self setContrast:0.5f];
         [self setSaturation:0.5f];
@@ -285,7 +285,7 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         if ((b!=SAA7111A_BRIGHTNESS(brightness)))
             [self i2cWrite:OV7610_REG_BRT val:b];
     } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620 ||
-        SENS_OV6620) {
+        sensorType == SENS_OV6620) {
         b=OV7610_BRIGHTNESS(CLAMP_UNIT(v));
         if ((b!=OV7610_BRIGHTNESS(brightness)))
             [self i2cWrite:0x06 val:b];
@@ -302,7 +302,7 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         if (b!=SAA7111A_CONTRAST(contrast))
             [self i2cWrite:0x0b val:b];
     } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620 ||
-        SENS_OV6620) {
+        sensorType == SENS_OV6620) {
         b=OV7610_CONTRAST(CLAMP_UNIT(v));
         if (b!=OV7610_CONTRAST(contrast))
             [self i2cWrite:0x05 val:b];
@@ -319,7 +319,7 @@ static unsigned char uvQuanTable511[] = OV511_UVQUANTABLE;
         if (b!=SAA7111A_SATURATION(saturation))
             [self i2cWrite:OV7610_REG_SAT val:b];
     } else if(sensorType == SENS_OV7610 || sensorType == SENS_OV7620 ||
-        SENS_OV6620) {
+        sensorType == SENS_OV6620) {
         b=OV7610_SATURATION(CLAMP_UNIT(v));
         if (b!=OV7610_SATURATION(saturation))
             [self i2cWrite:0x03 val:b];
@@ -1183,7 +1183,7 @@ static bool StartNextIsochRead(OV511GrabContext* grabContext, int transferIdx) {
 				}
 		
 			} else {
-				NSLog(@"OV511:error chunk s = %d e =%d s2 = %d e2 = %d", currChunk.start,currChunk.end,currChunk.start2,currChunk.end2);
+				NSLog(@"OV511:error chunk s = %ld e =%ld s2 = %ld e2 = %ld", currChunk.start,currChunk.end,currChunk.start2,currChunk.end2);
 			}
         }
 

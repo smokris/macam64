@@ -229,7 +229,7 @@ typedef struct OV511GrabContext {	//Everything the grabbing thread internals nee
 	NSPort*		decoderPort;	
 } OV511GrabContext;
 
-@interface MyOV511Driver : MyCameraDriver {
+@interface MyOV511Driver : MyCameraDriver <NSPortDelegate> {
     
 //Camera Type
     short customId;

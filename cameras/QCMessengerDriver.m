@@ -358,8 +358,8 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                 dataRunLength = (frameBase[frameRun + 2] << 8) + frameBase[frameRun + 3];
                 frameRun += 4;
 
-                if (0x0200 <= dataRunCode && dataRunCode <= 0x02ff ||
-                    0x4200 <= dataRunCode && dataRunCode <= 0x42ff) {
+                if ((0x0200 <= dataRunCode && dataRunCode <= 0x02ff) ||
+                    (0x4200 <= dataRunCode && dataRunCode <= 0x42ff)) {
                     if (gCtx->fillingChunk) {
                         if (gCtx->fillingChunkBuffer.numBytes + dataRunLength <= gCtx->chunkBufferLength) {
                             // copy the data run to our chunk
@@ -369,7 +369,7 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                             gCtx->fillingChunkBuffer.numBytes += dataRunLength;
 #if 1
                             if (dataRunCode == 0x02ff || dataRunCode == 0x42ff) {
-                                NSLog(@"flush frame since dataRunCode is 0x%04x", dataRunCode);
+                                NSLog(@"flush frame since dataRunCode is 0x%04lx", dataRunCode);
                                 DiscardFillingChunk(gCtx);
                             }
 #endif
@@ -423,7 +423,7 @@ static void isocComplete(void *refcon, IOReturn result, void *arg0) {
                         }
                         break;
                     default:
-                        NSLog(@"unknown chunk %04x, length: %i", (unsigned short)dataRunCode, dataRunLength);
+                        NSLog(@"unknown chunk %04x, length: %lu", (unsigned short)dataRunCode, dataRunLength);
                         if (dataRunLength) DumpMem(frameBase + frameRun, dataRunLength);
                         break;
                     }

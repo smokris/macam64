@@ -169,7 +169,7 @@ Camera specific constants - see CPIA documentation for details. There is ONE VER
 // See 2.3.4 of 'developer.pdf'
 - (void) setGPIO: (unsigned char)port and:(unsigned char)andMask or:(unsigned char) orMask {
     // Pass through mode (can we not do this once at init) ? 
-    [self usbWriteCmdWithBRequest:WRITE_VC_REG wValue:(0x90 | (0x8F<<8)) wIndex:(0x50) buf:nil len:0];
+    [self usbWriteCmdWithBRequest:WRITE_VC_REG wValue:(unsigned short)(0x90 | (0x8F<<8)) wIndex:(0x50) buf:nil len:0];
     // And do the GPIO data
     [self usbWriteCmdWithBRequest:WRITE_MC_PORT wValue:(port | (andMask<<8)) wIndex:(orMask) buf:nil len:0];
 }
