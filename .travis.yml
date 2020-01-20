@@ -1,0 +1,17 @@
+os: osx
+language: objective-c
+compiler: clang
+
+script:
+    - mkdir build
+      && cd build
+      && cmake ..
+      && cmake --build . --parallel
+before_deploy:
+    - zip ../macam64.zip libmacam64.a
+deploy:
+    provider: releases
+    file: ../macam64.zip
+    skip_cleanup: true
+    on:
+        tags: true
