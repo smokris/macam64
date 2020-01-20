@@ -11,6 +11,8 @@ macam is 2006-2007 (c) [The macam project](http://webcam-osx.sourceforge.net/).
     cmake ..
     cmake --build . --parallel
 
+…or download a build from https://github.com/smokris/macam64/releases.
+
 ## Using
 Currently this project only produces a static library.  See https://github.com/smokris/vuo-nodes/blob/master/smokris/smokris.macam.receive.m for sample code to use the library.
 
