@@ -124,7 +124,7 @@
 #undef RGBSCALER_MACROS
 
 //Row blitting c functions
-inline void ScaleRowRGBToRGB (unsigned char* src, unsigned char* dst, int srcLength, int dstLength)
+/*inline*/ void ScaleRowRGBToRGB (unsigned char* src, unsigned char* dst, int srcLength, int dstLength)
 #define SRC_RGB
 #define DST_RGB
 #define SCALE_ROW
@@ -133,7 +133,7 @@ inline void ScaleRowRGBToRGB (unsigned char* src, unsigned char* dst, int srcLen
 #undef DST_RGB
 #undef SCALE_ROW
 
-inline void ScaleRowRGBAToRGB (unsigned char* src, unsigned char* dst, int srcLength, int dstLength)
+/*inline*/ void ScaleRowRGBAToRGB (unsigned char* src, unsigned char* dst, int srcLength, int dstLength)
 #define SRC_RGBA
 #define DST_RGB
 #define SCALE_ROW
@@ -142,7 +142,7 @@ inline void ScaleRowRGBAToRGB (unsigned char* src, unsigned char* dst, int srcLe
 #undef DST_RGB
 #undef SCALE_ROW
 
-inline void ScaleRowRGBToRGBA (unsigned char* src, unsigned char* dst, int srcLength, int dstLength)
+/*inline*/ void ScaleRowRGBToRGBA (unsigned char* src, unsigned char* dst, int srcLength, int dstLength)
 #define SRC_RGB
 #define DST_RGBA
 #define SCALE_ROW
@@ -151,7 +151,7 @@ inline void ScaleRowRGBToRGBA (unsigned char* src, unsigned char* dst, int srcLe
 #undef DST_RGBA
 #undef SCALE_ROW
 
-inline void ScaleRowRGBAToRGBA (unsigned char* src, unsigned char* dst, int srcLength, int dstLength)
+/*inline*/ void ScaleRowRGBAToRGBA (unsigned char* src, unsigned char* dst, int srcLength, int dstLength)
 #define SRC_RGBA
 #define DST_RGBA
 #define SCALE_ROW
@@ -161,7 +161,7 @@ inline void ScaleRowRGBAToRGBA (unsigned char* src, unsigned char* dst, int srcL
 #undef SCALE_ROW
 
 //2-Row mixing functions
-inline void BlendRowsToRGB (unsigned char* r1,unsigned char* r2,int w1, int w2, int len, unsigned char* dst)
+/*inline*/ void BlendRowsToRGB (unsigned char* r1,unsigned char* r2,int w1, int w2, int len, unsigned char* dst)
 #define DST_RGB
 #define BLEND_ROWS
 #include "RGBScalerIncluded.h"
@@ -170,7 +170,7 @@ inline void BlendRowsToRGB (unsigned char* r1,unsigned char* r2,int w1, int w2, 
 
 
 //2-Row mixing functions
-inline void BlendRowsToRGBA (unsigned char* r1,unsigned char* r2,int w1, int w2, int len, unsigned char* dst)
+/*inline*/ void BlendRowsToRGBA (unsigned char* r1,unsigned char* r2,int w1, int w2, int len, unsigned char* dst)
 #define DST_RGBA
 #define BLEND_ROWS
 #include "RGBScalerIncluded.h"

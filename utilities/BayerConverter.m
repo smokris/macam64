@@ -276,7 +276,7 @@
         default: //Assume type 2
 #ifdef VERBOSE
             NSLog(@"BayerConverter: Unknown bayer data type: %i",type);
-#endif VERBOSE
+#endif
             componentStep=2;
             green1Run =src;
             red1Run   =src+1;

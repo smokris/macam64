@@ -60,6 +60,12 @@ add_library(macam64
 	cameras/SQ905C.m
 	cameras/UVCDriver.m
 	cameras/WinbondDriver.m
+	cameras/stv600_sensors/MyHDCS1000Sensor.m
+	cameras/stv600_sensors/MySTV600Sensor.m
+	cameras/stv600_sensors/MyHDCS1020Sensor.m
+	cameras/stv600_sensors/MyPB0100Sensor.m
+	cameras/stv600_sensors/MyVV6410Sensor.m
+	cameras/stv600_sensors/VV6450Sensor.m
 	cameras/pwc_files/pwc-dec23.c
 	cameras/pwc_files/pwc-kiara.c
 	cameras/pwc_files/pwc-misc.c
@@ -100,8 +106,15 @@ add_library(macam64
 	# cameras/SQ930C.m
 	# cameras/TP68xxDriver.m
 
+	utilities/AGC.m
+	utilities/BayerConverter.m
+	utilities/FrameCounter.m
+	utilities/Histogram.m
+	utilities/LookUpTable.m
 	utilities/MiniGraphicsTools.c
 	utilities/MiscTools.c
+	utilities/RGB888Scaler.m
+	utilities/RGBScaler.m
 	utilities/Resolvers.c
 	utilities/yuv2rgb.c
 )
