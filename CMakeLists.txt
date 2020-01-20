@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.15)
 project(macam64 VERSION 0.1.0)
 
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
