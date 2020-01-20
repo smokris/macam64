@@ -13,5 +13,8 @@ deploy:
     provider: releases
     file: ../macam64.zip
     skip_cleanup: true
+    api_key:
+        secure: Bou/FgjAlmBWHLJJVyH7vlw50bbxQTASSM6daAe+Cfr721UAezdZ7s7sMmQoZoPwRWdJNTOIx1E33nb/d4rLejA3Nb1jkLf0Ga+ydFwWHqlTva+D6ISa2kGXghxiNEZgtPvh0zqlbmeG6jroJV/0AAN7oqG8de7TYgrbZO4cn1loPTIsAhvjRxmcgMSMJ1q5IeX+8kY06EIriiIP7NAQALxt1lLCXxyCrjavvviAgtgmA3Lf5G4YOwc5SlDUS1VroTxa94dTid2kx4LrYk6dgwsM71y19qez4xWJMuDbZVkisNbDpTKG02q5S7FJOf61xR6j14GTZ1frTzPIfxecnb6YiNzZP2D1m9v1etQNd14pbLeG/ZIeNqisFV1KbrI2CobMqQyb8GmshHZe+QGoY7A4CNEMhRr+Bu5CPKQ8ZHdUELk47b4irrDWyZREKzzEUBpI+05LIrbc19/sll5nQZJGQJNChZC67+Zdgvzc96N9QW04/pGlLaBgbiy/1laL2dPmLCoVmQ/q5c1s07fBi1dGcuKSyak+aV0cVcN4McNazKB8N1+sUYaUZoFgtyl5ZPwIuiWIN83AT/xVX4LH4b+UzZ9DuREFkxf437vwcHy11FkReMFe+YDQP/c633E5Lo5sachjqS/Rwp7i0GuxbvCjCV+qt8Zr1MgyuBWObho=
     on:
+        repo: smokris/macam64
         tags: true
