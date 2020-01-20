@@ -19,11 +19,8 @@
 
 + (NSArray *) cameraUsbDescriptions 
 {
-    return [NSArray arrayWithObjects:
-        
+	return nil;
         // None! See subclasses.
-        
-        NULL];
 }
 
 //
@@ -78,11 +75,8 @@
 
 + (NSArray *) cameraUsbDescriptions 
 {
-    return [NSArray arrayWithObjects:
-        
+    return nil;
         // none! instantiated from superclass
-        
-        NULL];
 }
 
 @end
@@ -92,14 +86,15 @@
 
 + (NSArray *) cameraUsbDescriptions 
 {
-    return [NSArray arrayWithObjects:
+	return nil;
         /*
+    return [NSArray arrayWithObjects:
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_STINGRAY_C], @"idProduct", 
             [NSNumber numberWithUnsignedShort:VENDOR_VEO], @"idVendor", 
             @"Veo Stingray (0x800c)", @"name", NULL], 
-        */
         NULL];
+        */
 }
 
 @end
@@ -109,11 +104,8 @@
 
 + (NSArray *) cameraUsbDescriptions 
 {
-    return [NSArray arrayWithObjects:
-        
+	return nil;
         // none! instantiated from superclass
-        
-        NULL];
 }
 
 @end

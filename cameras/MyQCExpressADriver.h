@@ -22,7 +22,6 @@
 #import <Cocoa/Cocoa.h>
 #import "MyCameraDriver.h"
 #include <Carbon/Carbon.h>
-#include <QuickTime/QuickTime.h>
 #include <IOKit/IOKitLib.h>
 #include <IOKit/IOCFPlugIn.h>
 #include <IOKit/usb/IOUSBLib.h>

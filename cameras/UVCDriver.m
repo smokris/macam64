@@ -15,16 +15,15 @@
 
 + (NSArray *) cameraUsbDescriptions 
 {
-    return [NSArray arrayWithObjects:
-        
+	return nil;
         /*
+    return [NSArray arrayWithObjects:
         [NSDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithUnsignedShort:PRODUCT_PAC7311_GENERIC + 0x00], @"idProduct",
             [NSNumber numberWithUnsignedShort:VENDOR_PIXART], @"idVendor",
             @"PixArt PAC7311 based camera (0x00)", @"name", NULL], 
-        */
-        
         NULL];
+        */
 }
 
 

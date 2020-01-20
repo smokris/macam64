@@ -1,11 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 project(macam64 VERSION 0.1.0)
 
-set(CMAKE_OSX_SYSROOT /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.10)
-if (NOT EXISTS ${CMAKE_OSX_SYSROOT})
-	message(FATAL_ERROR "\nPlease install ${CMAKE_OSX_SYSROOT}")
-endif()
 
 set(CMAKE_C_STANDARD 99)
 string(JOIN " " CMAKE_C_FLAGS "${CMAKE_C_FLAGS}"
